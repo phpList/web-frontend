@@ -1,53 +1,69 @@
 language: php
+
 matrix:
   include:
   - php: 7.0
   - php: 7.1
+
 services:
 - mysql
+
 env:
   global:
   - PHPLIST_DATABASE_NAME=phplist
   - PHPLIST_DATABASE_USER=travis
   - PHPLIST_DATABASE_PASSWORD=''
+
 notifications:
   slack:
     rooms:
       secure: dUJuh2x7eUSLOJHYB0MAPzvK4/rcZmZZGp16vZw8gdPdvdyIBgESsmQjIhlFkJVCA9fIWoJ2llk0TKzRFJXdVaJ1LBpmTz3Tf+8fhCY1Hq8oCCdSWgmfHRPgLt9CwHkvl5mhj1Pszy7IQP0phmGk6/DbLe8A0tpr89yeGDgFYlWU0nuSSN3gRlt9gGW4DYWpED02ps2gzU3/2avV8CLZB7ukbhCuLr0Ft2Fx6Ni1tE60T9wzTTl9CUjEONmTt/FLxsnBPsyLAUt8H9VrsMNlgDp+0v/rTGb2Dxw+AoH9ZNAYevA2O6Gbz+MgB3IY8+hQq/iRtqnnrzXv+QwANsKqbNaEauzqBd4hzdKRITZpABgwCQmvGFlo3RbxhcKO34BEi9HpbScyoZp7F3XLdfJVV3/cbUq2HmExuaY0fF0G6Xe4BkexKbNW+unTGtuS2O0qeKa4Hrt/599j7cCTTYET9CQDeh5TE92NrHIM50xAbxLcvxJQdFeGhr5uWi2Ifqy0S591W+hEzad1mMOpS8ApQ2jEMvEgrhJsPX56NLtfqR47j2fa8GMBq7VTMu6euAIP7gKgFzfR5JPA0E7lax8bjqkL95yHxOlVSkFgU3/Mcwr6DvDOIiouX+l4Z97PS+ND4EI24hN6IqABnGmBBYjDUrD2iGEhY6/A5pAktQHQOUw=
   on_success: change
   on_failure: always
+
 sudo: false
+
 cache:
   directories:
   - vendor
   - "$HOME/.composer/cache"
+
 before_install:
 - phpenv config-rm xdebug.ini
+
 install:
 - composer install
+
 before_script:
-- 'echo; echo "Creating the database and importing the database schema"; mysql -e
-  "CREATE DATABASE ${PHPLIST_DATABASE_NAME};"; mysql -u root -e "GRANT ALL ON ${PHPLIST_DATABASE_NAME}.*
-  TO ${PHPLIST_DATABASE_USER}@''%'';"; mysql ${PHPLIST_DATABASE_NAME} < vendor/phplist/phplist4-core/Database/Schema.sql;
+- >
+  echo;
+  echo "Creating the database and importing the database schema";
+  mysql -e "CREATE DATABASE ${PHPLIST_DATABASE_NAME};";
+  mysql -u root -e "GRANT ALL ON ${PHPLIST_DATABASE_NAME}.* TO ${PHPLIST_DATABASE_USER}@''%'';";
+  mysql ${PHPLIST_DATABASE_NAME} < vendor/phplist/phplist4-core/Database/Schema.sql;
 
-'
 script:
-- 'echo; echo "Linting all PHP files"; find Classes/ Tests/ -name ''*.php'' -print0
-  | xargs -0 -n 1 -P 4 php -l;
+- >
+  echo;
+  echo "Linting all PHP files";
+  find Classes/ Tests/ -name ''*.php'' -print0 | xargs -0 -n 1 -P 4 php -l;
 
-'
-- 'echo; echo "Running the integration tests"; vendor/bin/phpunit -c Configuration/PHPUnit/phpunit.xml
-  Tests/Integration/;
+- >
+  echo;
+  echo "Running the integration tests";
+  vendor/bin/phpunit -c Configuration/PHPUnit/phpunit.xml Tests/Integration/;
 
-'
-- 'echo; echo "Running the static analysis"; vendor/bin/phpstan analyse -l 5 Classes/
-  Tests/;
+- >
+  echo;
+  echo "Running the static analysis";
+  vendor/bin/phpstan analyse -l 5 Classes/ Tests/;
 
-'
-- 'echo; echo "Running PHPMD"; vendor/bin/phpmd Classes/ text vendor/phplist/phplist4-core/Configuration/PHPMD/rules.xml;
+- >
+  echo;
+  echo "Running PHPMD";
+  vendor/bin/phpmd Classes/ text vendor/phplist/phplist4-core/Configuration/PHPMD/rules.xml;
 
-'
-- 'echo; echo "Running PHP_CodeSniffer"; vendor/bin/phpcs --standard=vendor/phplist/phplist4-core/Configuration/PhpCodeSniffer/
-  Classes/ Tests/;
-
-'
+- >
+  echo;
+  echo "Running PHP_CodeSniffer";
+  vendor/bin/phpcs --standard=vendor/phplist/phplist4-core/Configuration/PhpCodeSniffer/ Classes/ Tests/;

@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "PhpList\\WebFrontend\\": "Classes/"
+            "PhpList\\WebFrontend\\": "src/"
         }
     },
     "autoload-dev": {

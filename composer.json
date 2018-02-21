@@ -26,7 +26,7 @@
     "require": {
         "php": "~7.0.0 || ~7.1.0 || ~7.2.0",
 
-        "phplist/phplist4-core": "4.0.x-dev",
+        "phplist/core": "4.0.x-dev",
 
         "roave/security-advisories": "dev-master"
     },
@@ -83,7 +83,7 @@
         "symfony-var-dir": "var",
         "symfony-web-dir": "public",
         "symfony-tests-dir": "tests",
-        "phplist/phplist4-core": {
+        "phplist/core": {
             "bundles": [],
             "routes": {}
         }

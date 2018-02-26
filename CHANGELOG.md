@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - Integration tests for the dev and test environment (#44)
 
 ### Changed
+- Move the PHPUnit configuration file (#54)
 - Use the renamed phplist/core package (#53)
 - Adopt more of the default Symfony project structure (#49, #50, #51)
 

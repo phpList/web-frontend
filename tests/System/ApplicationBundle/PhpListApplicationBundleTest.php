@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\System\ApplicationBundle;
 
 use GuzzleHttp\Client;
-use PhpList\PhpList4\TestingSupport\Traits\SymfonyServerTrait;
+use PhpList\Core\TestingSupport\Traits\SymfonyServerTrait;
 use PHPUnit\Framework\TestCase;
 
 /**

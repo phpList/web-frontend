@@ -1,4 +1,4 @@
-name: phpList Build
+name: phpList Web Frontend Build
 on: [push, pull_request]
 jobs:
   main:
@@ -22,8 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
-        dependencies: ['latest', 'oldest']
+        php-versions: ['7.2', '7.3', '7.4', '8.0']
+        # dependencies: ['latest', 'oldest']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -49,24 +49,31 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install the latest dependencies
-        run: composer update --with-dependencies --prefer-stable --prefer-dist
-        if: ${{ matrix.dependencies }} == "latest"
-      - name: Install lowest dependencies from 
-        run: composer update --with-dependencies --prefer-stable --prefer-dist --prefer-lowest
-        if: ${{ matrix.dependencies }} == "oldest"
+        run: composer install
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
+      # - name: Install lowest dependencies from 
+      #   run: composer update --with-dependencies --prefer-stable --prefer-dist --prefer-lowest
+      #   if: ${{ matrix.dependencies }} == "oldest"
       - name: Set up database schema
         run: mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }} ${{ env.DB_DATABASE }} < vendor/phplist/core/resources/Database/Schema.sql
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
       - name: Validating composer.json
         run: composer validate --no-check-all --no-check-lock --strict;
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
       - name: Linting all php files
         run: find src/ tests/ public/ -name ''*.php'' -print0 | xargs -0 -n 1 -P 4 php -l; php -l;
-      - name: Run integration tests with phpunit
-        run: vendor/bin/phpunit tests/Integration/
-      - name: Running the system tests
+      - name: Running integration tests with phpunit
         run: vendor/bin/phpunit tests/Integration/;
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
+      - name: Running the system tests
+        run: vendor/bin/phpunit tests/System/;
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
       - name: Running static analysis
         run: vendor/bin/phpstan analyse -l 5 src/ tests/;
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
       - name: Running PHPMD
         run: vendor/bin/phpmd src/ text vendor/phplist/core/config/PHPMD/rules.xml;
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]
       - name: Running PHP_CodeSniffer
         run: vendor/bin/phpcs --standard=vendor/phplist/core/config/PhpCodeSniffer/ src/ tests/;
+        continue-on-error: ${{matrix.php-versions == '8.0' }} # [temp-php8]

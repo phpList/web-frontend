@@ -1,6 +1,6 @@
 # phpList 4 web frontend
 
-[![Build Status](https://github.com/phpList/web-frontend/workflows/phpList%20Build/badge.svg)](https://github.com/phpList/web-frontend/actions)
+[![Build Status](https://github.com/phpList/web-frontend/workflows/phpList%20Web%20Frontend%20Build/badge.svg)](https://github.com/phpList/web-frontend/actions)
 [![Latest Stable Version](https://poser.pugx.org/phplist/web-frontend/v/stable.svg)](https://packagist.org/packages/phpList/web-frontend)
 [![Total Downloads](https://poser.pugx.org/phplist/web-frontend/downloads.svg)](https://packagist.org/packages/phpList/web-frontend)
 [![Latest Unstable Version](https://poser.pugx.org/phplist/web-frontend/v/unstable.svg)](https://packagist.org/packages/phpList/web-frontend)

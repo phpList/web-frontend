@@ -33,14 +33,14 @@
         "phplist/core": "dev-ISSUE-337"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5.2",
-        "phpunit/phpunit-mock-objects": "^6.1.2",
+        "phpunit/phpunit": "^9.5",
         "guzzlehttp/guzzle": "^7.2.0",
         "squizlabs/php_codesniffer": "^3.5.8",
-        "phpstan/phpstan": " ^0.12.57",
+        "phpstan/phpstan": "^1.10",
         "nette/caching": "^3.1.0",
         "nikic/php-parser": "^v4.10.4",
-        "phpmd/phpmd": "^2.9.1"
+        "phpmd/phpmd": "^2.9.1",
+        "symfony/process": "^6.4"
     },
     "autoload": {
         "psr-4": {
@@ -52,15 +52,6 @@
             "PhpList\\WebFrontend\\Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../core",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "scripts": {
         "list-modules": [
             "PhpList\\Core\\Composer\\ScriptHandler::listModules"
@@ -87,7 +78,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-ISSUE-337": "v5.0.x-dev"
+            "dev-ISSUE-337": "5.0.x-dev"
         },
         "symfony-app-dir": "bin",
         "symfony-bin-dir": "bin",

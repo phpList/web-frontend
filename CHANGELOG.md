@@ -16,6 +16,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+## 5.0.0-alpha1
+
+### Changed
+- updated to php8.1
+
 ## 4.0.0-alpha2
 
 ### Added

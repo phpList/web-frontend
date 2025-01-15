@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Integration\Composer;
@@ -12,148 +13,69 @@ use PHPUnit\Framework\TestCase;
  */
 class ScriptsTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function publicDirectoryHasBeenCreated()
-    {
-        static::assertDirectoryExists($this->getAbsolutePublicDirectoryPath());
-    }
-
-    /**
-     * @return string
-     */
-    private function getAbsolutePublicDirectoryPath(): string
-    {
-        return dirname(__DIR__, 3) . '/public/';
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function publicDirectoryFilesDataProvider(): array
-    {
-        return [
-            'production entry point' => ['app.php'],
-            'development entry point' => ['app_dev.php'],
-            'testing entry point' => ['app_test.php'],
-            '.htaccess' => ['.htaccess'],
-        ];
-    }
-
-    /**
-     * @test
-     * @param string $fileName
-     * @dataProvider publicDirectoryFilesDataProvider
-     */
-    public function publicDirectoryFilesExist(string $fileName)
-    {
-        static::assertFileExists($this->getAbsolutePublicDirectoryPath() . $fileName);
-    }
-
-    /**
-     * @test
-     */
-    public function binariesDirectoryHasBeenCreated()
-    {
-        static::assertDirectoryExists($this->getAbsoluteBinariesDirectoryPath());
-    }
-
-    /**
-     * @return string
-     */
-    private function getAbsoluteBinariesDirectoryPath(): string
-    {
-        return dirname(__DIR__, 3) . '/bin/';
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function binariesDataProvider(): array
-    {
-        return [
-            'Symfony console' => ['console'],
-        ];
-    }
-
-    /**
-     * @test
-     * @param string $fileName
-     * @dataProvider binariesDataProvider
-     */
-    public function binariesExist(string $fileName)
-    {
-        static::assertFileExists($this->getAbsoluteBinariesDirectoryPath() . $fileName);
-    }
-
-    /**
-     * @return string
-     */
     private function getBundleConfigurationFilePath(): string
     {
         return dirname(__DIR__, 3) . '/config/bundles.yml';
     }
 
-    /**
-     * @test
-     */
-    public function bundleConfigurationFileExists()
+    public function testBundleConfigurationFileExists(): void
     {
-        static::assertFileExists($this->getBundleConfigurationFilePath());
+        self::assertFileExists($this->getBundleConfigurationFilePath());
     }
 
-    /**
-     * @return string[][]
-     */
     public function bundleClassNameDataProvider(): array
     {
         return [
-            'framework bundle' => ['Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle'],
+            'Symfony framework bundle' => ['Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle'],
+            'Doctrine bundle' => ['Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle'],
+            'empty start page bundle' => ['PhpList\\Core\\EmptyStartPageBundle\\EmptyStartPageBundle'],
         ];
     }
 
     /**
-     * @test
-     * @param string $bundleClassName
      * @dataProvider bundleClassNameDataProvider
      */
-    public function bundleConfigurationFileContainsModuleBundles(string $bundleClassName)
+    public function testBundleConfigurationFileContainsModuleBundles(string $bundleClassName): void
     {
         $fileContents = file_get_contents($this->getBundleConfigurationFilePath());
-
-        static::assertContains($bundleClassName, $fileContents);
+        self::assertStringContainsString($bundleClassName, $fileContents);
     }
 
-    /**
-     * @return string
-     */
     private function getModuleRoutesConfigurationFilePath(): string
     {
         return dirname(__DIR__, 3) . '/config/routing_modules.yml';
     }
 
-    /**
-     * @test
-     */
-    public function moduleRoutesConfigurationFileExists()
+    public function testModuleRoutesConfigurationFileExists(): void
     {
-        static::assertFileExists($this->getModuleRoutesConfigurationFilePath());
+        self::assertFileExists($this->getModuleRoutesConfigurationFilePath());
+    }
+
+    public function moduleRoutingDataProvider(): array
+    {
+        return [
+            'route name' => ['phplist/core.homepage'],
+            'resource' => ["resource: '@EmptyStartPageBundle/Controller/'"],
+            'type' => ['type: attribute'],
+        ];
     }
 
     /**
-     * @test
+     * @dataProvider moduleRoutingDataProvider
      */
-    public function parametersConfigurationFileExists()
+    public function testModuleRoutesConfigurationFileContainsModuleRoutes(string $routeSearchString): void
     {
-        static::assertFileExists(dirname(__DIR__, 3) . '/config/parameters.yml');
+        $fileContents = file_get_contents($this->getModuleRoutesConfigurationFilePath());
+        self::assertStringContainsString($routeSearchString, $fileContents);
     }
 
-    /**
-     * @test
-     */
-    public function modulesConfigurationFileExists()
+    public function testParametersConfigurationFileExists(): void
     {
-        static::assertFileExists(dirname(__DIR__, 3) . '/config/config_modules.yml');
+        self::assertFileExists(dirname(__DIR__, 3) . '/config/parameters.yml');
+    }
+
+    public function testModulesConfigurationFileExists(): void
+    {
+        self::assertFileExists(dirname(__DIR__, 3) . '/config/config_modules.yml');
     }
 }

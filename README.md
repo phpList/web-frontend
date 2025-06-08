@@ -15,7 +15,7 @@ phpList is an open source newsletter manager.
 ## About this package
 
 This module will contain the web frontend for phpList 4. It will not have any
-SQL queries, but use functionality from the phpList 4 core for DB access.
+SQL queries but use functionality from the phpList 4 core for DB access.
 
 This module is optional, i.e., it will be possible to run phpList 4 without a
 web frontend.
@@ -38,3 +38,7 @@ contribute and how to run the unit tests and style checks locally.
 This project adheres to a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
 By participating in this project and its community, you are expected to uphold
 this code.
+
+## Command to running this project for local testing
+
+symfony local:server:start

@@ -9,26 +9,22 @@ use GuzzleHttp\Exception\GuzzleException;
 use PhpList\WebFrontend\Service\ApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SecurityController extends AbstractController
+class AuthController extends AbstractController
 {
     private ApiClient $apiClient;
-    private SessionInterface $session;
 
-    public function __construct(ApiClient $apiClient, RequestStack $requestStack)
+    public function __construct(ApiClient $apiClient)
     {
         $this->apiClient = $apiClient;
-        $this->session = $requestStack->getSession();
     }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(Request $request): Response
     {
-        if ($this->session->has('auth_token')) {
+        if ($request->getSession()->has('auth_token')) {
             return $this->redirectToRoute('empty_start_page');
         }
 
@@ -40,8 +36,8 @@ class SecurityController extends AbstractController
 
             try {
                 $authData = $this->apiClient->authenticate($username, $password);
-                $this->session->set('auth_token', $authData['key']);
-                $this->session->set('auth_expiry_date', $authData['key']);
+                $request->getSession()->set('auth_token', $authData['key']);
+                $request->getSession()->set('auth_expiry_date', $authData['key']);
                 $this->apiClient->setAuthToken($authData['key']);
 
                 return $this->redirectToRoute('empty_start_page');
@@ -58,9 +54,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/logout', name: 'logout')]
-    public function logout(): Response
+    public function logout(Request $request): Response
     {
-        $this->session->remove('auth_token');
+        $request->getSession()->remove('auth_token');
 
         return $this->redirectToRoute('login');
     }

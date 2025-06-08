@@ -33,14 +33,14 @@ class ApiClient
     public function authenticate(string $username, string $password): array
     {
         try {
-            $response = $this->request('POST', '/api/login', [
+            $response = $this->request('POST', '/api/v2/sessions', [
                 'json' => [
-                    'username' => $username,
+                    'loginName' => $username,
                     'password' => $password,
                 ]
             ]);
 
-            if (!isset($response['token'])) {
+            if (!isset($response['key'])) {
                 throw new \RuntimeException('Authentication failed: No token received');
             }
 

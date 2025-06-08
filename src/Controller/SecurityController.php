@@ -40,19 +40,10 @@ class SecurityController extends AbstractController
 
             try {
                 $authData = $this->apiClient->authenticate($username, $password);
+                $this->session->set('auth_token', $authData['key']);
+                $this->session->set('auth_expiry_date', $authData['key']);
+                $this->apiClient->setAuthToken($authData['key']);
 
-                // Store token in session
-                $this->session->set('auth_token', $authData['token']);
-
-                // Store user data if needed
-                if (isset($authData['user'])) {
-                    $this->session->set('user', $authData['user']);
-                }
-
-                // Set token for future API requests
-                $this->apiClient->setAuthToken($authData['token']);
-
-                // Redirect to dashboard
                 return $this->redirectToRoute('empty_start_page');
             } catch (Exception $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
@@ -69,9 +60,7 @@ class SecurityController extends AbstractController
     #[Route('/logout', name: 'logout')]
     public function logout(): Response
     {
-        // Clear session data
         $this->session->remove('auth_token');
-        $this->session->remove('user');
 
         return $this->redirectToRoute('login');
     }

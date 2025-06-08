@@ -1,4 +1,8 @@
 # config/services.yaml
+parameters:
+  api_base_url: '%env(API_BASE_URL)%'
+  env(API_BASE_URL): 'http://api.phplist.local/api/v2'
+
 services:
   _defaults:
     autowire: true
@@ -14,8 +18,8 @@ services:
 
   PhpList\WebFrontend\Service\ApiClient:
     arguments:
-      $baseUrl: '${env(API_BASE_URL):http://api.phplist.local/api/v2}'
-#    calls:
+      $baseUrl: '%api_base_url%'
+      #    calls:
 #      - setAuthToken: ['%session.auth_token%']
 
   PhpList\WebFrontend\Controller\:

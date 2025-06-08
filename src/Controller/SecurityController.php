@@ -25,11 +25,11 @@ class SecurityController extends AbstractController
         $this->session = $requestStack->getSession();
     }
 
-    #[Route('', name: 'login', methods: ['GET', 'POST'])]
+    #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(Request $request): Response
     {
         if ($this->session->has('auth_token')) {
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('empty_start_page');
         }
 
         $error = null;
@@ -53,7 +53,7 @@ class SecurityController extends AbstractController
                 $this->apiClient->setAuthToken($authData['token']);
 
                 // Redirect to dashboard
-                return $this->redirectToRoute('dashboard');
+                return $this->redirectToRoute('empty_start_page');
             } catch (Exception $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
             } catch (GuzzleException $e) {

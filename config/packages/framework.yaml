@@ -1,0 +1,5 @@
+framework:
+    secret: '%kernel.secret%'
+    http_method_override: false
+    php_errors:
+        log: true

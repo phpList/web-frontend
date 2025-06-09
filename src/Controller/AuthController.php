@@ -29,6 +29,11 @@ class AuthController extends AbstractController
         }
 
         $error = null;
+        $session = $request->getSession();
+        if ($session->has('login_error')) {
+            $error = $session->get('login_error');
+            $session->remove('login_error');
+        }
 
         if ($request->isMethod('POST')) {
             $username = $request->request->get('username');

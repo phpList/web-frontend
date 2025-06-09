@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use PhpList\WebFrontend\EventSubscriber\UnauthorizedSubscriber;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class UnauthorizedSubscriberTest extends TestCase
 {
     private UnauthorizedSubscriber $subscriber;
-    private UrlGeneratorInterface $urlGenerator;
+    private UrlGeneratorInterface&MockObject $urlGenerator;
 
     protected function setUp(): void
     {

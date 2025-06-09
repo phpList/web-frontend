@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Service;
 
-namespace PhpList\WebFrontend\Service;
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
@@ -29,7 +27,7 @@ class ApiClient
 
     /**
      * @throws GuzzleException
-     * @throws RuntimeException|JsonException
+     * @throws RuntimeException
      */
     public function authenticate(string $username, string $password): array
     {

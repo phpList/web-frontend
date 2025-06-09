@@ -9,6 +9,7 @@ namespace PhpList\WebFrontend\Service;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
+use RuntimeException;
 
 class ApiClient
 {
@@ -28,7 +29,7 @@ class ApiClient
 
     /**
      * @throws GuzzleException
-     * @throws JsonException
+     * @throws RuntimeException|JsonException
      */
     public function authenticate(string $username, string $password): array
     {
@@ -41,13 +42,13 @@ class ApiClient
             ]);
 
             if (!isset($response['key'])) {
-                throw new \RuntimeException('Authentication failed: No token received');
+                throw new RuntimeException('Authentication failed: No token received');
             }
 
             return $response;
         } catch (GuzzleException $e) {
             if ($e->getCode() === 401) {
-                throw new \RuntimeException('Invalid credentials', 401, $e);
+                throw new RuntimeException('Invalid credentials', 401, $e);
             }
             throw $e;
         }

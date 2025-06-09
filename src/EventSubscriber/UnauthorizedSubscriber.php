@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpList\WebFrontend\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

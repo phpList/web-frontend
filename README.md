@@ -39,7 +39,23 @@ This project adheres to a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
 By participating in this project and its community, you are expected to uphold
 this code.
 
-## Command to running this project for local testing
-
+## Commands for running this project for local testing
+```bash
+# Start the Symfony local server
 symfony local:server:start
-yarn encore dev
+```
+
+```bash
+# Compile and watch assets (including Vue.js components)
+yarn encore dev --watch
+```
+
+## Vue.js Integration
+This project uses Vue.js for interactive UI components. Vue components are located in the `assets/vue/` directory and are mounted to specific DOM elements:
+
+- `App.vue` is mounted to the element with ID `vue-app`
+
+To add new Vue components:
+1. Create the component in the `assets/vue/` directory
+2. Import and mount it in `assets/app.js`
+3. Add a mount point in the appropriate template

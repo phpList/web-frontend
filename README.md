@@ -42,3 +42,4 @@ this code.
 ## Command to running this project for local testing
 
 symfony local:server:start
+yarn encore dev

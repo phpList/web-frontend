@@ -53,7 +53,7 @@ class AuthController extends AbstractController
             }
         }
 
-        return $this->render('security/login.html.twig', [
+        return $this->render('auth/login.html.twig', [
             'error' => $error,
         ]);
     }

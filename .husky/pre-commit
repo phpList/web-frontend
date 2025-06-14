@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Running PHPStan..."
+php vendor/bin/phpstan analyse -l 5 src/ tests/ || exit 1
+
+echo "📏 Running PHPMD..."
+php vendor/bin/phpmd src/ text vendor/phplist/core/config/PHPMD/rules.xml || exit 1
+
+echo "🧹 Running PHPCS..."
+php vendor/bin/phpcs --standard=vendor/phplist/core/config/PhpCodeSniffer/ src/ tests/ || exit 1

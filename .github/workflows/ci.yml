@@ -3,7 +3,7 @@ on: [push, pull_request]
 jobs:
   main:
     name: phpList Base Dist on PHP ${{ matrix.php-versions }}, with dist ${{ matrix.dependencies }} [Build, Test]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       DB_DATABASE: phplist
       DB_USERNAME: root
@@ -37,6 +37,16 @@ jobs:
           curl -sS https://get.symfony.com/cli/installer | bash
           mv $HOME/.symfony*/bin/symfony /usr/local/bin/symfony
           symfony version
+      - name: Install Google Chrome
+        run: |
+          curl -sSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /usr/share/keyrings/google.gpg > /dev/null
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+      - name: Set Panther to use Chrome
+        run: |
+          echo "PANTHER_NO_HEADLESS=0" >> .env.test
+          echo "PANTHER_CHROME_BINARY=/usr/bin/google-chrome" >> .env.test
       - name: Start mysql service
         run: sudo /etc/init.d/mysql start
       - name: Verify MySQL connection on host

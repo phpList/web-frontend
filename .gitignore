@@ -14,3 +14,6 @@
 /var/
 /vendor/
 .phpunit.result.cache
+.env
+/node_modules
+/drivers/

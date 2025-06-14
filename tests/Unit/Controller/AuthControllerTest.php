@@ -9,7 +9,6 @@ use PhpList\WebFrontend\Service\ApiClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +64,7 @@ class AuthControllerTest extends TestCase
 
         $response = $this->controller->login($request);
 
-        $this->assertStringContainsString('security/login.html.twig', $response->getContent());
+        $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString('with params', $response->getContent());
     }
 
@@ -93,7 +92,7 @@ class AuthControllerTest extends TestCase
 
         $response = $this->controller->login($request);
 
-        $this->assertStringContainsString('security/login.html.twig', $response->getContent());
+        $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString('Test error message', $response->getContent());
     }
 
@@ -153,7 +152,7 @@ class AuthControllerTest extends TestCase
 
         $response = $this->controller->login($request);
 
-        $this->assertStringContainsString('security/login.html.twig', $response->getContent());
+        $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString('Invalid credentials', $response->getContent());
     }
 

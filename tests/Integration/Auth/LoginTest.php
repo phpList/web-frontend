@@ -4,30 +4,27 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Integration\Auth;
 
+use PHPUnitRetry\RetryAnnotationTrait;
+use PHPUnitRetry\RetryTrait;
 use Symfony\Component\Panther\PantherTestCase;
-use Symfony\Component\Panther\Client;
 
+/**
+ * @retryAttempts 5
+ * @retryIfException Facebook\WebDriver\Exception\NoSuchWindowException
+ * @retryDelaySeconds 10
+ */
 class LoginTest extends PantherTestCase
 {
-    protected static ?Client $client = null;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        self::$client = static::createPantherClient([
-            'browser' => static::CHROME,
-        ]);
-    }
-
-    public function tearDown(): void
-    {
-        self::$client?->quit();
-        parent::tearDown();
-    }
+    use RetryAnnotationTrait;
+    use RetryTrait;
 
     public function testLoginPageFormFieldsAreVisible(): void
     {
-        self::$client->request('GET', '/app_test.php/login');
+        $client = static::createPantherClient([
+            'browser' => static::CHROME,
+            'connection_timeout_in_ms' => 10000,
+        ]);
+        $client->request('GET', '/app_test.php/login');
 
         $this->assertPageTitleContains('phpList - Login');
 
@@ -45,9 +42,13 @@ class LoginTest extends PantherTestCase
 
     public function testLoginFormSubmission(): void
     {
-        self::$client->request('GET', '/app_test.php/login');
+        $client = static::createPantherClient([
+            'browser' => static::CHROME,
+            'connection_timeout_in_ms' => 20000,
+        ]);
+        $client->request('GET', '/app_test.php/login');
 
-        self::$client->submitForm('Sign in', [
+        $client->submitForm('Sign in', [
             'username' => 'invalid_user',
             'password' => 'invalid_password'
         ]);

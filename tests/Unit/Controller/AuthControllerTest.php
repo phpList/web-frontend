@@ -119,7 +119,7 @@ class AuthControllerTest extends TestCase
         $request->setSession($session);
 
         $this->apiClient->method('authenticate')
-            ->with('admin', 'secret')
+            ->with('testuser', 'testpass')
             ->willReturn(['key' => 'test-token']);
 
         $this->apiClient->expects($this->once())
@@ -128,7 +128,8 @@ class AuthControllerTest extends TestCase
 
         $response = $this->controller->login($request);
 
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('empty_start_page', $response->getTargetUrl());
     }
 
     public function testLoginWithPostRequestFailure(): void
@@ -147,7 +148,7 @@ class AuthControllerTest extends TestCase
         $request->setSession($session);
 
         $this->apiClient->method('authenticate')
-            ->with('testuser', 'wrongpass')
+            ->with('testuser', 'testpass')
             ->willThrowException(new RuntimeException('Invalid credentials'));
 
         $response = $this->controller->login($request);

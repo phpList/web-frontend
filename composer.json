@@ -15,12 +15,17 @@
         {
             "name": "Xheni Myrtaj",
             "email": "xheni@phplist.com",
-            "role": "Maintainer"
+            "role": "Former developer"
         },
         {
             "name": "Oliver Klee",
             "email": "oliver@phplist.com",
             "role": "Former developer"
+        },
+        {
+            "name": "Tatevik Grigoryan",
+            "email": "tatevik@phplist.com",
+            "role": "Maintainer"
         }
     ],
     "support": {
@@ -89,7 +94,6 @@
         "symfony-tests-dir": "tests",
         "phplist/core": {
             "bundles": [
-                "FOS\\RestBundle\\FOSRestBundle",
                 "PhpList\\WebFrontend\\PhpListFrontendBundle"
             ],
             "routes": {

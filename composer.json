@@ -35,7 +35,7 @@
     },
     "require": {
         "php": "^8.1",
-        "phplist/core": "dev-ISSUE-345",
+        "phplist/core": "v5.0.0-alpha8",
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2"
     },

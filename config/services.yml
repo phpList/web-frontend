@@ -1,0 +1,31 @@
+# config/services.yaml
+parameters:
+  api_base_url: '%env(API_BASE_URL)%'
+  env(API_BASE_URL): 'http://api.phplist.local/api/v2'
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  PhpList\WebFrontend\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
+
+  PhpList\WebFrontend\Service\ApiClient:
+    arguments:
+      $baseUrl: '%api_base_url%'
+      #    calls:
+#      - setAuthToken: ['%session.auth_token%']
+
+  PhpList\WebFrontend\Controller\:
+    resource: '../src/Controller'
+    public: true
+    autowire: true
+    tags: ['controller.service_arguments']
+
+  Symfony\Component\HttpFoundation\Session\SessionInterface: '@session'

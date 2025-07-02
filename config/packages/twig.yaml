@@ -1,0 +1,5 @@
+twig:
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    default_path: '%kernel.application_dir%/templates'
+    auto_reload: true

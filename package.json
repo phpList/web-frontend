@@ -1,0 +1,20 @@
+{
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@symfony/webpack-encore": "^5.1.0",
+    "babel-loader": "^10.0.0",
+    "husky": "^9.1.7",
+    "vue-loader": "^17.3.1",
+    "vue-template-compiler": "^2.7.14",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-notifier": "^1.15.0"
+  },
+  "dependencies": {
+    "vue": "^3.5.16"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
+}

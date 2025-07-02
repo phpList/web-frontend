@@ -6,7 +6,7 @@ namespace PhpList\WebFrontend\Controller;
 
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use PhpList\WebFrontend\Service\ApiClient;
+use PhpList\RestApiClient\Endpoint\AuthClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,9 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
-    private ApiClient $apiClient;
+    private AuthClient $apiClient;
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(AuthClient $apiClient)
     {
         $this->apiClient = $apiClient;
     }
@@ -40,10 +40,9 @@ class AuthController extends AbstractController
             $password = $request->request->get('password');
 
             try {
-                $authData = $this->apiClient->authenticate($username, $password);
+                $authData = $this->apiClient->login($username, $password);
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['key']);
-                $this->apiClient->setAuthToken($authData['key']);
 
                 return $this->redirectToRoute('empty_start_page');
             } catch (Exception $e) {

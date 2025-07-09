@@ -1,7 +1,7 @@
 # config/services.yaml
 parameters:
   api_base_url: '%env(API_BASE_URL)%'
-  env(API_BASE_URL): 'http://api.phplist.local/api/v2'
+  env(API_BASE_URL): 'http://api.phplist.local/api/v2/'
 
 services:
   _defaults:
@@ -29,3 +29,10 @@ services:
     tags: ['controller.service_arguments']
 
   Symfony\Component\HttpFoundation\Session\SessionInterface: '@session'
+
+  PhpList\RestApiClient\Client:
+    $baseUrl: '%api_base_url%'
+
+  PhpList\RestApiClient\Endpoint\AuthClient:
+    autoconfigure: true
+    autowire: true

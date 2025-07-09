@@ -9,6 +9,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use RuntimeException;
 
+/**
+ * @deprecated since phplist/rest-api-client should be used instead.
+ */
 class ApiClient
 {
     private Client $client;

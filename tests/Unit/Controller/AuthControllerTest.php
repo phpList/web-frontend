@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Unit\Controller;
 
 use PhpList\WebFrontend\Controller\AuthController;
-use PhpList\WebFrontend\Service\ApiClient;
+use PhpList\RestApiClient\Endpoint\AuthClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -16,12 +16,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AuthControllerTest extends TestCase
 {
-    private ApiClient&MockObject $apiClient;
+    private AuthClient&MockObject $apiClient;
     private AuthController $controller;
 
     protected function setUp(): void
     {
-        $this->apiClient = $this->createMock(ApiClient::class);
+        $this->apiClient = $this->createMock(AuthClient::class);
 
         $this->controller = $this->getMockBuilder(AuthController::class)
             ->setConstructorArgs([$this->apiClient])
@@ -118,13 +118,9 @@ class AuthControllerTest extends TestCase
         ]);
         $request->setSession($session);
 
-        $this->apiClient->method('authenticate')
+        $this->apiClient->method('login')
             ->with('testuser', 'testpass')
             ->willReturn(['key' => 'test-token']);
-
-        $this->apiClient->expects($this->once())
-            ->method('setAuthToken')
-            ->with('test-token');
 
         $response = $this->controller->login($request);
 
@@ -147,14 +143,17 @@ class AuthControllerTest extends TestCase
         ]);
         $request->setSession($session);
 
-        $this->apiClient->method('authenticate')
+        $this->apiClient->method('login')
             ->with('testuser', 'testpass')
             ->willThrowException(new RuntimeException('Invalid credentials'));
 
         $response = $this->controller->login($request);
 
         $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
-        $this->assertStringContainsString('Invalid credentials', $response->getContent());
+        $this->assertStringContainsString(
+            'Invalid credentials or server error: Invalid credentials',
+            $response->getContent(),
+        );
     }
 
     public function testLoginWithExistingSession(): void

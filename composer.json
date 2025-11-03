@@ -15,6 +15,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/tatevikgr/phplist-api-client"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tatevikgr/rss-bundle.git"
         }
     ],
     "minimum-stability": "dev",
@@ -43,7 +47,7 @@
     },
     "require": {
         "php": "^8.1",
-        "phplist/core": "dev-main",
+        "phplist/core": "dev-dev",
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
         "tatevikgr/rest-api-client": "dev-ISSUE-357"
@@ -112,6 +116,11 @@
                     "prefix": "/"
                 }
             }
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
         }
     }
 }

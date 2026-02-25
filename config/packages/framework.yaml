@@ -3,3 +3,8 @@ framework:
     http_method_override: false
     php_errors:
         log: true
+    session:
+        enabled: true
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax

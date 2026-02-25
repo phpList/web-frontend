@@ -50,6 +50,7 @@
         "phplist/core": "dev-main",
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
+        "symfony/security-bundle": "^6.4",
         "tatevikgr/rest-api-client": "dev-ISSUE-357"
     },
     "require-dev": {
@@ -107,7 +108,8 @@
         "symfony-tests-dir": "tests",
         "phplist/core": {
             "bundles": [
-                "PhpList\\WebFrontend\\PhpListFrontendBundle"
+                "PhpList\\WebFrontend\\PhpListFrontendBundle",
+                "Symfony\\Bundle\\SecurityBundle\\SecurityBundle"
             ],
             "routes": {
                 "rest-api": {

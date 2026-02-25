@@ -36,15 +36,21 @@ class AuthController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $username = $request->request->get('username');
-            $password = $request->request->get('password');
+            $username = trim((string) $request->request->get('username', ''));
+            $password = (string) $request->request->get('password', '');
+
+            if ($username === '' || $password === '') {
+                return $this->render('auth/login.html.twig', [
+                    'error' => 'Username and password are required.',
+                ]);
+            }
 
             try {
                 $authData = $this->apiClient->login($username, $password);
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['key']);
 
-                return $this->redirectToRoute('empty_start_page');
+                return $this->redirectToRoute('dashboard');
             } catch (Exception $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
             } catch (GuzzleException $e) {

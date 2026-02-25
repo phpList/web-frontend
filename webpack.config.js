@@ -6,6 +6,10 @@ Encore
     .addEntry('app', './assets/app.js')
     .enableVueLoader()
     .enableSingleRuntimeChunk()
+    .copyFiles({
+        from: './assets/images',
+        to: 'images/[path][name].[hash:8].[ext]',
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();

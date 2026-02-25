@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Controller;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\WebFrontend\Attribute\PublicRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ class AuthController extends AbstractController
         $this->apiClient = $apiClient;
     }
 
+    #[PublicRoute]
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(Request $request): Response
     {
@@ -64,6 +66,7 @@ class AuthController extends AbstractController
     }
 
     #[Route('/logout', name: 'logout')]
+    #[PublicRoute]
     public function logout(Request $request): Response
     {
         $request->getSession()->remove('auth_token');

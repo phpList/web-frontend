@@ -1,8 +1,9 @@
 <!-- assets/vue/components/charts/LineChart.vue -->
 <template>
-  <div class="linechart">
+  <div class="w-100">
     <svg
-        class="linechart__svg"
+        class="w-100"
+        :style="{ height }"
         viewBox="0 0 100 40"
         preserveAspectRatio="none"
     >
@@ -12,9 +13,10 @@
           :key="'grid-' + y"
           :x1="0"
           :x2="100"
-          :y1="(y * 10)"
-          :y2="(y * 10)"
-          class="linechart__grid-line"
+          :y1="y * 10"
+          :y2="y * 10"
+          stroke="#e5e7eb"
+          stroke-width="0.3"
       />
 
       <!-- series polylines -->
@@ -22,17 +24,17 @@
           v-for="(path, idx) in paths"
           :key="'series-' + idx"
           :points="path"
-          class="linechart__line"
-          :class="'linechart__line--' + idx"
           fill="none"
+          stroke-width="1.8"
+          :stroke="seriesColors[idx % seriesColors.length]"
       />
     </svg>
 
-    <div class="linechart__labels">
+    <div class="d-flex justify-content-between mt-2 small text-secondary">
       <span
           v-for="(label, idx) in labels"
           :key="'label-' + idx"
-          class="linechart__label"
+          class="flex-fill text-truncate text-center"
       >
         {{ label }}
       </span>
@@ -53,7 +55,24 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  // control rendered SVG height (Bootstrap handles width)
+  height: {
+    type: String,
+    default: '210px',
+  },
+  // optional custom colors for series
+  colors: {
+    type: Array,
+    default: () => [
+      '#0d6efd', // primary
+      '#198754', // success
+      '#dc3545', // danger
+      '#0dcaf0', // info
+    ],
+  },
 })
+
+const seriesColors = computed(() => props.colors)
 
 const paths = computed(() => {
   if (!props.series.length || !props.labels.length) return []
@@ -65,53 +84,14 @@ const paths = computed(() => {
   const range = max === min ? 1 : max - min
 
   return props.series.map((s) => {
-    return s.data.map((value, index) => {
-      const x =
-          pointCount === 1 ? 50 : (index / (pointCount - 1)) * 100
-      const normalized = (value - min) / range
-      const y = 35 - normalized * 25 // padding top/bottom
-      return `${x},${y}`
-    }).join(' ')
+    return s.data
+        .map((value, index) => {
+          const x = pointCount === 1 ? 50 : (index / (pointCount - 1)) * 100
+          const normalized = (value - min) / range
+          const y = 35 - normalized * 25 // padding top/bottom
+          return `${x},${y}`
+        })
+        .join(' ')
   })
 })
 </script>
-
-<style scoped>
-.linechart {
-  width: 100%;
-}
-
-.linechart__svg {
-  width: 100%;
-  height: 210px;
-}
-
-.linechart__grid-line {
-  stroke: #e5e7eb;
-  stroke-width: 0.3;
-}
-
-.linechart__line {
-  stroke-width: 1.8;
-}
-
-/* two simple colors for the first two series */
-.linechart__line--0 {
-  stroke: #4f46e5;
-}
-.linechart__line--1 {
-  stroke: #f97316;
-}
-
-.linechart__labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.linechart__label {
-  min-width: 0;
-}
-</style>

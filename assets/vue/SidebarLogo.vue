@@ -1,21 +1,17 @@
 <template>
-  <RouterLink to="/" class="sidebar-logo">
-    <div class="sidebar-logo__mark">
+  <RouterLink to="/" class="d-flex align-items-center text-decoration-none px-4 py-3">
+    <div class="d-flex align-items-center justify-content-center rounded mr-2" style="width:32px;height:32px;">
       <img
-          class="sidebar-logo__img"
+          class="w-100 h-100 img-fluid d-block"
           :src="logo"
           alt="Logo"
+          style="object-fit: contain;"
       />
     </div>
 
-    <div class="sidebar-logo__text">
-      <span class="sidebar-logo__name">{{ name }}</span>
-      <span
-          v-if="version"
-          class="sidebar-logo__version"
-      >
-        {{ version }}
-      </span>
+    <div class="d-flex align-items-center">
+      <div class="h6 mb-0 fw-bold text-dark">{{ name }}</div>
+      <div v-if="version" class="h6 mb-0 fw-bold text-primary">{{ version }}</div>
     </div>
   </RouterLink>
 </template>
@@ -35,46 +31,3 @@ const props = defineProps({
   },
 })
 </script>
-
-<style scoped>
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 1.25rem 1.5rem;
-  text-decoration: none;
-}
-
-.sidebar-logo__mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidebar-logo__img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.sidebar-logo__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.sidebar-logo__name {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.sidebar-logo__version {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6366f1;
-}
-</style>

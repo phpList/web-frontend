@@ -1,9 +1,12 @@
 <template>
-  <aside class="sidebar">
-    <div class="sidebar__top">
+  <aside
+      class="d-flex flex-column bg-light border-end p-3"
+      style="min-height: 100vh; width: 260px;"
+  >
+    <div class="mb-3">
       <SidebarLogo />
 
-      <nav class="sidebar__nav">
+      <nav class="nav flex-column gap-2 mt-2">
         <SidebarNavSection
             v-for="section in sections"
             :key="section.id"
@@ -12,6 +15,7 @@
       </nav>
     </div>
   </aside>
+
 </template>
 
 <script setup>
@@ -32,7 +36,7 @@ const sections = [
     id: 'marketing',
     label: 'Marketing',
     items: [
-      { label: 'Campaigns', icon: 'plane', route: '/campaigns', badge: 3 },
+      { label: 'Campaigns', icon: 'plane', route: '/campaigns' },
       { label: 'Templates', icon: 'layout', route: '/templates' },
     ],
   },
@@ -40,7 +44,7 @@ const sections = [
     id: 'analytics',
     label: 'Analytics',
     items: [
-      { label: 'Bounces & Reports', icon: 'chart-bar', route: '/reports' },
+      { label: 'Bounces & Reports', icon: 'chart', route: '/reports' },
     ],
   },
   {

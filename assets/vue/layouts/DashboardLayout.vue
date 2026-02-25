@@ -1,16 +1,23 @@
 <!-- assets/vue/layouts/DashboardLayout.vue -->
 <template>
-  <div class="layout">
-    <aside class="layout__sidebar">
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <aside
+        class="bg-white border-end py-3"
+        style="width: 260px;"
+    >
       <slot name="sidebar"></slot>
     </aside>
 
-    <div class="layout__content">
-      <header class="layout__topbar">
+    <!-- Content area -->
+    <div class="d-flex flex-column flex-grow-1">
+      <!-- Topbar -->
+      <header class="bg-white border-bottom py-3 px-4">
         <slot name="topbar"></slot>
       </header>
 
-      <main class="layout__main">
+      <!-- Main content -->
+      <main class="flex-grow-1 overflow-auto py-4 px-5 bg-light">
         <slot />
       </main>
     </div>
@@ -20,35 +27,3 @@
 <script setup>
 /* No imports required */
 </script>
-
-<style scoped>
-.layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  height: 100vh;
-}
-
-.layout__sidebar {
-  background: #fff;
-  border-right: 1px solid #e5e7eb;
-  padding: 1rem 0;
-}
-
-.layout__content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.layout__topbar {
-  padding: 1rem 1.25rem;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.layout__main {
-  padding: 1.5rem 2rem;
-  overflow-y: auto;
-  background: #f8fafc;
-}
-</style>

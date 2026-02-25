@@ -1,8 +1,8 @@
 <template>
-  <div class="sidebar-section">
-    <p class="sidebar-section__label">{{ label }}</p>
+  <div class="sidebar-section mb-4">
+    <p class="sidebar-section__label text-uppercase text-muted small px-3 mb-2">{{ label }}</p>
 
-    <ul class="sidebar-section__list">
+    <ul class="sidebar-section__list nav flex-column mb-2" role="navigation" :aria-label="label">
       <SidebarNavItem
           v-for="item in items"
           :key="item.label"

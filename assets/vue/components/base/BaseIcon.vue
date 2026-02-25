@@ -1,12 +1,23 @@
 <template>
-  <span class="base-icon" v-html="svg"></span>
+  <!-- Wrapper handles layout & color via Bootstrap utilities -->
+  <span :class="wrapperClass" v-html="svg" aria-hidden="true"></span>
 </template>
 
 <script setup>
 import { computed } from "vue";
 
 const props = defineProps({
-  name: { type: String, required: true }
+  name: { type: String, required: true },
+
+  size: {
+    type: String,
+    default: "md", // "sm", "md", "lg"
+  },
+
+  muted: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // Simple internal SVG registry
@@ -38,23 +49,27 @@ const icons = {
   edit: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg></button>`,
 
   delete: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2 lucide-trash-2" aria-hidden="true"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`,
-
-
 };
 
 const svg = computed(() => icons[props.name] || "");
-</script>
 
-<style scoped>
-.base-icon {
-  display: inline-flex;
-  width: 1.2rem;
-  height: 1.2rem;
-  color: #475569;
-}
-.base-icon svg {
-  width: 100%;
-  height: 100%;
-  stroke-width: 2;
-}
-</style>
+const wrapperClass = computed(() => {
+  const classes = [
+    "d-inline-flex",
+    "align-items-center",
+    "justify-content-center",
+  ];
+
+  if (props.muted) {
+    classes.push("text-secondary");
+  }
+
+  if (props.size === "sm") {
+    classes.push("me-1");
+  } else if (props.size === "lg") {
+    classes.push("me-2");
+  }
+
+  return classes.join(" ");
+});
+</script>

@@ -1,8 +1,10 @@
 <!-- assets/vue/components/dashboard/RecentCampaignsCard.vue -->
 <template>
   <BaseCard>
-    <header class="rc-header">
-      <h2>Recent Campaigns</h2>
+    <header class="mb-3">
+      <h2 class="h6 fw-bold text-dark mb-0">
+        Recent Campaigns
+      </h2>
     </header>
 
     <CampaignsTable :rows="rows" />
@@ -20,12 +22,3 @@ const props = defineProps({
   },
 })
 </script>
-
-<style scoped>
-.rc-header h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 1rem;
-}
-</style>

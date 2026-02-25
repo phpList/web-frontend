@@ -1,9 +1,13 @@
 <!-- assets/vue/components/base/BaseProgressBar.vue -->
 <template>
-  <div class="progress">
+  <div class="progress bg-secondary bg-opacity-25 rounded-pill" :style="wrapperStyle">
     <div
-        class="progress__fill"
+        class="progress-bar bg-primary rounded-pill"
+        role="progressbar"
         :style="{ width: value + '%' }"
+        :aria-valuenow="value"
+        aria-valuemin="0"
+        aria-valuemax="100"
     ></div>
   </div>
 </template>
@@ -14,22 +18,13 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  height: {
+    type: String,
+    default: "6px", // allows easy overrides: "4px", "10px", etc.
+  },
 })
+
+const wrapperStyle = {
+  height: props.height,
+}
 </script>
-
-<style scoped>
-.progress {
-  width: 100%;
-  height: 6px;
-  background: #e2e8f0;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progress__fill {
-  height: 100%;
-  background: #4f46e5;
-  border-radius: inherit;
-  transition: width 0.2s ease-in-out;
-}
-</style>

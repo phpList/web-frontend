@@ -11,15 +11,12 @@
         />
       </nav>
     </div>
-
-    <SidebarCapacityCard class="sidebar__bottom" />
   </aside>
 </template>
 
 <script setup>
 import SidebarLogo from './SidebarLogo.vue'
 import SidebarNavSection from './SidebarNavSection.vue'
-import SidebarCapacityCard from './SidebarCapacityCard.vue'
 
 const sections = [
   {
@@ -35,7 +32,7 @@ const sections = [
     id: 'marketing',
     label: 'Marketing',
     items: [
-      { label: 'Campaigns', icon: 'paper-plane', route: '/campaigns', badge: 3 },
+      { label: 'Campaigns', icon: 'plane', route: '/campaigns' },
       { label: 'Templates', icon: 'layout', route: '/templates' },
     ],
   },
@@ -43,7 +40,7 @@ const sections = [
     id: 'analytics',
     label: 'Analytics',
     items: [
-      { label: 'Bounces & Reports', icon: 'chart-bar', route: '/reports' },
+      { label: 'Bounces & Reports', icon: 'chart', route: '/reports' },
     ],
   },
   {

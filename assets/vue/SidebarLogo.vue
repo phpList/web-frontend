@@ -1,8 +1,11 @@
 <template>
   <RouterLink to="/" class="sidebar-logo">
     <div class="sidebar-logo__mark">
-      <!-- simple mark, swap with an <img> if you have a logo -->
-      <span class="sidebar-logo__dot" />
+      <img
+          class="sidebar-logo__img"
+          :src="logo"
+          alt="Logo"
+      />
     </div>
 
     <div class="sidebar-logo__text">
@@ -19,6 +22,7 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import logo from '../images/logo-48.png'
 
 const props = defineProps({
   name: {
@@ -45,17 +49,15 @@ const props = defineProps({
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.sidebar-logo__dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: #f9fafb;
+.sidebar-logo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .sidebar-logo__text {

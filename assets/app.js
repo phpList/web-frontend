@@ -1,9 +1,12 @@
+console.log('app.js loaded');
 import { createApp } from 'vue';
 import App from './vue/App.vue';
+import { router } from './router';
 
-// Mount the main app if the element exists
 const appElement = document.getElementById('vue-app');
 if (appElement) {
-    createApp(App).mount('#vue-app');
+    const app = createApp(App);
+    app.use(router);
+    app.mount('#vue-app');
 }
 

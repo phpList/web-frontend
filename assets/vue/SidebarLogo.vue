@@ -1,0 +1,78 @@
+<template>
+  <RouterLink to="/" class="sidebar-logo">
+    <div class="sidebar-logo__mark">
+      <!-- simple mark, swap with an <img> if you have a logo -->
+      <span class="sidebar-logo__dot" />
+    </div>
+
+    <div class="sidebar-logo__text">
+      <span class="sidebar-logo__name">{{ name }}</span>
+      <span
+          v-if="version"
+          class="sidebar-logo__version"
+      >
+        {{ version }}
+      </span>
+    </div>
+  </RouterLink>
+</template>
+
+<script setup>
+import { RouterLink } from 'vue-router'
+
+const props = defineProps({
+  name: {
+    type: String,
+    default: 'phpList',
+  },
+  version: {
+    type: String,
+    default: '4',
+  },
+})
+</script>
+
+<style scoped>
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+}
+
+.sidebar-logo__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-logo__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #f9fafb;
+}
+
+.sidebar-logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.sidebar-logo__name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.sidebar-logo__version {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6366f1;
+}
+</style>

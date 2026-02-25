@@ -1013,6 +1013,11 @@
     "@vue/compiler-dom" "3.5.16"
     "@vue/shared" "3.5.16"
 
+"@vue/devtools-api@^6.6.4":
+  version "6.6.4"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.4.tgz#cbe97fe0162b365edc1dba80e173f90492535343"
+  integrity sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==
+
 "@vue/reactivity@3.5.16":
   version "3.5.16"
   resolved "https://registry.yarnpkg.com/@vue/reactivity/-/reactivity-3.5.16.tgz#528c535a088b3c1b67f285f1f2211be79425b962"
@@ -3055,6 +3060,13 @@ vue-loader@^17.3.1:
     chalk "^4.1.0"
     hash-sum "^2.0.0"
     watchpack "^2.4.0"
+
+vue-router@4:
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.6.4.tgz#a0a9cb9ef811a106d249e4bb9313d286718020d8"
+  integrity sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==
+  dependencies:
+    "@vue/devtools-api" "^6.6.4"
 
 vue-template-compiler@^2.7.14:
   version "2.7.16"

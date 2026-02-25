@@ -4,7 +4,7 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .addEntry('app', './assets/app.js')
-    .enableVueLoader()
+    .enableVueLoader(() => {}, { version: 3 })
     .enableSingleRuntimeChunk()
     .copyFiles({
         from: './assets/images',

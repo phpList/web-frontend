@@ -10,6 +10,10 @@
 
     {# Add your own custom CSS later if needed #}
     {{ encore_entry_link_tags('app') }}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
 </head>
 <body>
 <main class="">

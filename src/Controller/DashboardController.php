@@ -17,7 +17,8 @@ class DashboardController extends AbstractController
         $this->apiClient = $apiClient;
     }
 
-    #[Route('/', name: 'dashboard', methods: ['GET'])]
+    #[Route('/', name: 'home', methods: ['GET'])]
+    #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
     public function index(Request $request): Response
     {
 //        if (!$request->getSession()->has('auth_token')) {

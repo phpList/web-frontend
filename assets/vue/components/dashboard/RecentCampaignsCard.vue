@@ -13,7 +13,7 @@
 
 <script setup>
 import BaseCard from '../../components/base/BaseCard.vue'
-import CampaignsTable from '../../CampaignsTable.vue'
+import CampaignsTable from './CampaignsTable.vue'
 
 const props = defineProps({
   // todo: take from backend

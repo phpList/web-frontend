@@ -1,4 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
+const path = require('path');
 
 Encore
     .setOutputPath('public/build/')
@@ -10,6 +11,10 @@ Encore
     .copyFiles({
         from: './assets/images',
         to: 'images/[path][name].[hash:8].[ext]',
+    })
+    .addAliases({
+        '@': path.resolve(__dirname, 'assets'),
+        '@images': path.resolve(__dirname, 'assets/images'),
     })
 ;
 

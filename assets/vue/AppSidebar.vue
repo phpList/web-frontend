@@ -1,19 +1,21 @@
 <template>
   <aside
-      class="d-flex flex-column bg-light border-end p-3"
+      class="d-flex flex-column bg-white border-right"
       style="min-height: 100vh; width: 260px;"
   >
-    <div class="mb-3">
+    <!-- Sidebar topbar (logo area) matches main topbar paddings: py-3 px-4 -->
+    <div class="py-3 px-4 border-bottom">
       <SidebarLogo />
-
-      <nav class="nav flex-column gap-2 mt-2">
-        <SidebarNavSection
-            v-for="section in sections"
-            :key="section.id"
-            v-bind="section"
-        />
-      </nav>
     </div>
+
+    <!-- Navigation area -->
+    <nav class="nav flex-column gap-2 p-3">
+      <SidebarNavSection
+          v-for="section in sections"
+          :key="section.id"
+          v-bind="section"
+      />
+    </nav>
   </aside>
 
 </template>

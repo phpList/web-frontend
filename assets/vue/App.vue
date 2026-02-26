@@ -9,5 +9,5 @@
 </template>
 
 <script setup>
-import AppSidebar from './AppSidebar.vue'
+import AppSidebar from './components/sidebar/AppSidebar.vue'
 </script>

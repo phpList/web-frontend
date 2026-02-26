@@ -12,7 +12,7 @@
 
 <script setup>
 import KpiCard from './KpiCard.vue'
-
+// todo: take the data from backend
 const kpis = [
   {
     id: 'subscribers',

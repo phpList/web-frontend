@@ -1,7 +1,7 @@
 <template>
   <aside
-      class="d-flex flex-column bg-white border-right"
-      style="min-height: 100vh; width: 260px;"
+      class="d-flex flex-column bg-white border-right sticky-top"
+      style="height: 100vh; width: 260px;"
   >
     <!-- Sidebar topbar (logo area) matches main topbar paddings: py-3 px-4 -->
     <div class="py-3 px-4 border-bottom">
@@ -9,7 +9,7 @@
     </div>
 
     <!-- Navigation area -->
-    <nav class="nav flex-column gap-2 p-3">
+    <nav class="nav flex-column gap-2 p-3 overflow-auto flex-grow-1">
       <SidebarNavSection
           v-for="section in sections"
           :key="section.id"

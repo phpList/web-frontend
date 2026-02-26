@@ -3,7 +3,7 @@
     <div
       v-for="kpi in kpis"
       :key="kpi.id"
-      class="col-12 col-sm-6 col-lg-4"
+      class="col-12 col-sm-4 col-lg-3 mb-sm-4"
     >
       <KpiCard v-bind="kpi" class="h-100" />
     </div>
@@ -28,8 +28,23 @@ const kpis = [
     value: '12',
     change: '0.0%',
     trend: 'neutral',
-    icon: 'send',
+    icon: 'plane',
   },
-  // ...
+  {
+    id: 'open-rate',
+    label: 'Open Rate',
+    value: '12',
+    change: '0.0%',
+    trend: 'neutral',
+    icon: 'rate',
+  },
+  {
+    id: 'bounce-rate',
+    label: 'Bounce Rate',
+    value: '12',
+    change: '0.0%',
+    trend: 'neutral',
+    icon: 'info',
+  },
 ]
 </script>

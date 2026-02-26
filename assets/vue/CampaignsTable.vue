@@ -22,7 +22,7 @@
 
       <td>
           <span
-              class="badge rounded-pill fw-semibold"
+              class="badge rounded-pill fw-semibold text-white"
               :class="statusClass(row.status)"
           >
             {{ row.status }}
@@ -56,9 +56,9 @@ const statusClass = (status) => {
   const s = status.toLowerCase()
 
   return {
-    sent: 'bg-success bg-opacity-10 text-success',
-    scheduled: 'bg-primary bg-opacity-10 text-primary',
-    draft: 'bg-secondary bg-opacity-10 text-secondary',
+    sent: 'bg-success bg-opacity-10 text-white px-2',
+    scheduled: 'bg-primary bg-opacity-10 text-white px-2',
+    draft: 'bg-secondary bg-opacity-10 text-white px-2',
   }[s] || 'bg-light text-dark'
 }
 </script>

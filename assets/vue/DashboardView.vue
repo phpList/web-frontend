@@ -79,9 +79,6 @@
         <div class="col-12 col-lg-8">
           <PerformanceChartCard :labels="chart.labels" :series="chart.series" class="h-100" />
         </div>
-        <div class="col-12 col-lg-4">
-          <SystemOverviewCard class="h-100" />
-        </div>
       </section>
 
       <!-- Recent items list -->
@@ -98,7 +95,6 @@
 import DashboardLayout from './layouts/DashboardLayout.vue'
 import KpiGrid from './components/dashboard/KpiGrid.vue'
 import PerformanceChartCard from './components/dashboard/PerformanceChartCard.vue'
-import SystemOverviewCard from './components/dashboard/SystemOverviewCard.vue'
 import RecentCampaignsCard from './components/dashboard/RecentCampaignsCard.vue'
 import BaseIcon from './components/base/BaseIcon.vue'
 import avatar from '@images/avatar.jpg'

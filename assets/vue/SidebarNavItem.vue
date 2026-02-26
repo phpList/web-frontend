@@ -10,10 +10,10 @@
     >
       <BaseIcon
           :name="item.icon"
-          class="me-2"
+          class="me-2 mr-2"
           :class="isActive ? 'text-primary' : 'text-secondary'"
       />
-      <span>{{ item.label }}</span>
+      <span class="text-dark font-weight-bold">{{ item.label }}</span>
 
       <BaseBadge
           v-if="item.badge !== null && item.badge !== undefined"

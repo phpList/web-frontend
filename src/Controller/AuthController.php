@@ -25,7 +25,7 @@ class AuthController extends AbstractController
     public function login(Request $request): Response
     {
         if ($request->getSession()->has('auth_token')) {
-            return $this->redirectToRoute('empty_start_page');
+            return $this->redirectToRoute('home');
         }
 
         $error = null;
@@ -50,7 +50,7 @@ class AuthController extends AbstractController
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['key']);
 
-                return $this->redirectToRoute('dashboard');
+                return $this->redirectToRoute('home');
             } catch (Exception $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
             } catch (GuzzleException $e) {

@@ -30,3 +30,7 @@ services:
   PhpList\RestApiClient\Endpoint\AuthClient:
     autoconfigure: true
     autowire: true
+
+  PhpList\RestApiClient\Endpoint\SubscribersClient:
+    autoconfigure: true
+    autowire: true

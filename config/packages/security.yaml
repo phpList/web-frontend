@@ -6,6 +6,10 @@ security:
     in_memory: { memory: null }
 
   firewalls:
+    api:
+      pattern: ^/api/v2
+      security: false
+
     main:
       pattern: ^/
       lazy: true
@@ -16,4 +20,6 @@ security:
 
   access_control:
     - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/api/v2, roles: PUBLIC_ACCESS }
     - { path: ^/, roles: ROLE_ADMIN }
+

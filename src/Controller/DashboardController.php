@@ -18,7 +18,6 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/', name: 'home', methods: ['GET'])]
-    #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
     public function index(Request $request): Response
     {
 //        if (!$request->getSession()->has('auth_token')) {

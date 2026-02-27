@@ -29,7 +29,7 @@ const sections = [
     id: 'general',
     label: 'General',
     items: [
-      { label: 'Dashboard', icon: 'grid', route: '/dashboard', badge: null },
+      { label: 'Dashboard', icon: 'grid', route: '/', badge: null },
       { label: 'Subscribers', icon: 'users', route: '/subscribers' },
       { label: 'Lists & Segments', icon: 'list', route: '/lists' },
     ],

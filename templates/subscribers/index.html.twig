@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}phpList - Subscribers{% endblock %}
+
+{% block body %}
+    <div id="vue-app"></div>
+
+    <script>
+        window.__INITIAL_SUBSCRIBERS__ = {{ initial_subscribers|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }};
+    </script>
+{% endblock %}

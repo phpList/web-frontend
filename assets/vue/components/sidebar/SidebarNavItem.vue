@@ -2,28 +2,31 @@
   <li class="list-unstyled mb-1">
     <RouterLink
         :to="item.route"
-        class="d-flex align-items-center px-3 py-2 rounded sidebar-link"
-        :class="{
-      'bg-primary bg-opacity-10 text-primary fw-semibold': isActive,
-      'text-secondary': !isActive
-    }"
-        style="white-space: nowrap;"
+        custom
+        v-slot="{ navigate, href, isActive }"
     >
-      <BaseIcon
-          :name="item.icon"
-          class="me-2 mr-2"
-          :class="isActive ? 'text-primary' : 'text-secondary'"
-      />
-
-      <span class="text-dark font-weight-bold">{{ item.label }}</span>
-
-      <BaseBadge
-          v-if="item.badge !== null && item.badge !== undefined"
-          variant="counter"
-          class="ms-auto"
+      <a
+          :href="href"
+          @click="navigate"
+          class="d-flex align-items-center px-3 py-1 rounded fw-bold"
+          :class="isActive ? 'bg-light text-primary' : 'text-dark'"
       >
-        {{ item.badge }}
-      </BaseBadge>
+        <BaseIcon
+            :name="item.icon"
+            class="me-2"
+            :muted="!isActive"
+        />
+
+        <span>{{ item.label }}</span>
+
+        <BaseBadge
+            v-if="item.badge != null"
+            variant="counter"
+            class="ms-auto"
+        >
+          {{ item.badge }}
+        </BaseBadge>
+      </a>
     </RouterLink>
   </li>
 </template>

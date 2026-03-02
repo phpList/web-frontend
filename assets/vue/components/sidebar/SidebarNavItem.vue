@@ -41,3 +41,4 @@ const props = defineProps({
 const route = useRoute()
 const isActive = computed(() => route.path === props.item.route)
 </script>
+

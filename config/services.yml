@@ -34,3 +34,7 @@ services:
   PhpList\RestApiClient\Endpoint\SubscribersClient:
     autoconfigure: true
     autowire: true
+
+  PhpList\WebFrontend\EventListener\ApiSessionListener:
+    tags:
+      - { name: kernel.event_subscriber }

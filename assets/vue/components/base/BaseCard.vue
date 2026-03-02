@@ -16,17 +16,17 @@ const props = defineProps({
 })
 
 const cardVariantMap = {
-  default: 'card shadow-sm border-0 bg-white',
-  subtle: 'card shadow-sm border-0 bg-light',
-  danger: 'card shadow-sm border-0 bg-danger text-white',
-  success: 'card shadow-sm border-0 bg-success text-white',
+  default: 'rounded-lg shadow-sm border border-gray-100 bg-white',
+  subtle: 'rounded-lg shadow-sm border-0 bg-gray-50',
+  danger: 'rounded-lg shadow-sm border-0 bg-red-600 text-white',
+  success: 'rounded-lg shadow-sm border-0 bg-green-600 text-white',
 }
 
 const bodyVariantMap = {
-  default: 'card-body p-4',
-  subtle: 'card-body p-4',
-  danger: 'card-body p-4',
-  success: 'card-body p-4',
+  default: 'p-4',
+  subtle: 'p-4',
+  danger: 'p-4',
+  success: 'p-4',
 }
 
 const cardClasses = cardVariantMap[props.variant] || cardVariantMap.default

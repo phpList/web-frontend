@@ -1,34 +1,33 @@
 <template>
-  <li class="list-unstyled mb-1">
-    <RouterLink
-        :to="item.route"
-        custom
-        v-slot="{ navigate, href, isActive }"
+  <RouterLink
+      :to="item.route"
+      custom
+      v-slot="{ navigate, href, isActive }"
+  >
+    <a
+        :href="href"
+        @click="navigate"
+        class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors group no-underline"
+        :class="isActive ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50'"
     >
-      <a
-          :href="href"
-          @click="navigate"
-          class="d-flex align-items-center px-3 py-1 rounded fw-bold"
-          :class="isActive ? 'bg-light text-primary' : 'text-dark'"
-      >
+      <div class="flex items-center gap-3">
         <BaseIcon
             :name="item.icon"
-            class="me-2"
-            :muted="!isActive"
+            :active="isActive"
         />
 
-        <span>{{ item.label }}</span>
+        <span class="font-medium text-sm">{{ item.label }}</span>
+      </div>
 
-        <BaseBadge
-            v-if="item.badge != null"
-            variant="counter"
-            class="ms-auto"
-        >
-          {{ item.badge }}
-        </BaseBadge>
-      </a>
-    </RouterLink>
-  </li>
+      <BaseBadge
+          v-if="item.badge != null"
+          variant="counter"
+          class="ml-auto"
+      >
+        {{ item.badge }}
+      </BaseBadge>
+    </a>
+  </RouterLink>
 </template>
 
 <script setup>

@@ -1,14 +1,12 @@
 <template>
-  <div class="mb-4">
-    <p class="text-uppercase text-muted small px-3 mb-2">{{ label }}</p>
+  <div class="space-y-1">
+    <p class="px-4 mt-8 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:mt-0">{{ label }}</p>
 
-    <ul class="nav flex-column mb-2" role="navigation" :aria-label="label">
-      <SidebarNavItem
-          v-for="item in items"
-          :key="item.label"
-          :item="item"
-      />
-    </ul>
+    <SidebarNavItem
+        v-for="item in items"
+        :key="item.label"
+        :item="item"
+    />
   </div>
 </template>
 

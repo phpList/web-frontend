@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+@theme {
+  --color-primary: #2563eb;
+  --color-secondary: #6b7280;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-info: #0891b2;
+}
+
+@source "../../templates/**/*.twig";
+@source "../**/*.vue";

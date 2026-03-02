@@ -3,20 +3,20 @@
     <!-- Topbar slot -->
 
     <!-- Main content -->
-    <div class="container-fluid">
+    <div class="w-full">
       <!-- KPI Cards -->
       <KpiGrid />
 
       <!-- Chart + Overview -->
-      <section class="row g-4 mb-4">
-        <div class="col-12 col-lg-8">
-          <PerformanceChartCard :labels="chart.labels" :series="chart.series" class="h-100" />
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        <div class="lg:col-span-8">
+          <PerformanceChartCard :labels="chart.labels" :series="chart.series" class="h-full" />
         </div>
       </section>
 
       <!-- Recent items list -->
-      <section class="row g-4">
-        <div class="col-12">
+      <section class="grid grid-cols-1 gap-6">
+        <div class="w-full">
           <RecentCampaignsCard />
         </div>
       </section>

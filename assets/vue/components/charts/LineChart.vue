@@ -1,8 +1,8 @@
 <!-- assets/vue/components/charts/LineChart.vue -->
 <template>
-  <div class="w-100">
+  <div class="w-full">
     <svg
-        class="w-100"
+        class="w-full"
         :style="{ height }"
         viewBox="0 0 100 40"
         preserveAspectRatio="none"
@@ -30,11 +30,11 @@
       />
     </svg>
 
-    <div class="d-flex justify-content-between mt-2 small text-secondary">
+    <div class="flex justify-between mt-2 text-xs text-gray-500">
       <span
           v-for="(label, idx) in labels"
           :key="'label-' + idx"
-          class="flex-fill text-truncate text-center"
+          class="flex-1 truncate text-center"
       >
         {{ label }}
       </span>
@@ -55,7 +55,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  // control rendered SVG height (Bootstrap handles width)
+  // control rendered SVG height (Tailwind handles width)
   height: {
     type: String,
     default: '210px',
@@ -64,10 +64,10 @@ const props = defineProps({
   colors: {
     type: Array,
     default: () => [
-      '#0d6efd', // primary
-      '#198754', // success
-      '#dc3545', // danger
-      '#0dcaf0', // info
+      '#2563eb', // blue-600
+      '#16a34a', // green-600
+      '#dc2626', // red-600
+      '#0891b2', // cyan-600
     ],
   },
 })

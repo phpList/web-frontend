@@ -20,14 +20,15 @@ const props = defineProps({
 })
 
 const buttonClass = computed(() => {
+  const base = 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2';
   switch (props.variant) {
     case 'secondary':
-      return 'btn btn-secondary';
+      return `${base} text-gray-700 bg-white border-gray-300 hover:bg-gray-50 focus:ring-blue-500`;
     case 'ghost':
-      return 'btn btn-link text-primary';
+      return 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-transparent hover:bg-blue-50 focus:outline-none';
     case 'primary':
     default:
-      return 'btn btn-primary';
+      return `${base} text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500`;
   }
 })
 </script>

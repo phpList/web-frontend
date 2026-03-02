@@ -1,10 +1,10 @@
 <template>
-  <div class="d-flex" style="min-height: 100vh;">
+  <div class="min-h-screen bg-[#F8FAFC] flex text-slate-900 font-sans">
     <AppSidebar />
 
-    <main class="flex-grow-1">
+    <div class="flex flex-col flex-1 min-h-screen">
       <RouterView />
-    </main>
+    </div>
   </div>
 </template>
 

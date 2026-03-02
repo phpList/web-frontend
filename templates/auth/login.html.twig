@@ -4,69 +4,61 @@
 {% block title %}phpList - Login{% endblock %}
 
 {% block body %}
-    <div class="bg-light">
-        <div class="min-vh-100 d-flex flex-column align-items-center justify-content-center">
-            <div class="d-flex align-items-center mb-3">
-                <img src="{{ asset('/favicon-48.png') }}" alt="phpList icon" width="40" height="40" class="me-2 mr-2"/>
-                <h1 class="fs-4 fw-bold mb-0">
-                    phpList <span class="text-primary">4</span>
+    <div class="bg-gray-200">
+        <div class="min-h-screen flex flex-col items-center justify-center">
+            <div class="flex items-center mb-6">
+                <img src="{{ asset('/favicon-48.png') }}" alt="phpList icon" width="40" height="40" class="mr-2"/>
+                <h1 class="text-xl font-bold mb-0">
+                    phpList <span class="text-blue-600">4</span>
                 </h1>
             </div>
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-5">
-                        <div class="card shadow-lg border-0"  style="border-radius: 1rem;">
-                            <div class="card-body p-4 p-md-5">
+            <div class="w-full max-w-md px-4">
+                <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+                    <div class="p-8 md:p-10">
 
-                                <!-- Heading -->
-                                <h4 class="fs-5 fw-bold mb-1">Sign in to your account</h4>
-                                <p class="text-muted small mb-3">
-                                    Enter your credentials to access your dashboard.
-                                </p>
+                        <!-- Heading -->
+                        <h4 class="text-lg font-bold mb-1">Sign in to your account</h4>
+                        <p class="text-gray-500 text-sm mb-6">
+                            Enter your credentials to access your dashboard.
+                        </p>
 
-                                {% if error %}
-                                    <div class="alert alert-danger">{{ error }}</div>
-                                {% endif %}
+                        {% if error %}
+                            <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-4 text-sm">{{ error }}</div>
+                        {% endif %}
 
-                                <form method="post">
-                                    <div class="mb-3">
-                                        <label for="username" class="form-label small fw-semibold">Login</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control border-start-0" name="username" id="username" required autofocus/>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <label for="password" class="form-label small fw-semibold mb-1">Password</label>
-                                            <a href="#" class="small text-decoration-none">Forgot password?</a>
-                                        </div>
-                                        <div class="input-group">
-                                            <input type="password" class="form-control border-start-0" id="password" name="password" required/>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-grid mb-2 mt-4">
-                                        <button type="submit" class="btn btn-primary fw-semibold w-100">
-                                            Sign In
-                                        </button>
-                                    </div>
-
-                                    <p class="text-center text-muted small mb-0">
-                                        Access is restricted to authorised administrators only.
-                                    </p>
-                                </form>
+                        <form method="post">
+                            <div class="mb-4">
+                                <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Login</label>
+                                <input type="text" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" name="username" id="username" required autofocus/>
                             </div>
 
-                            <div class="card-footer bg-white border-0 text-center py-3"  style="border-radius: 1rem;">
-                                <div class="small text-muted">
-                                    <a href="#" class="text-muted text-decoration-none me-2">Documentation</a>
-                                    <span class="text-muted">·</span>
-                                    <a href="#" class="text-muted text-decoration-none mx-2">Support Forum</a>
-                                    <span class="text-muted">·</span>
-                                    <span class="ms-2">phpList v4.0.0-rc1</span>
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
+                                    <a href="#" class="text-xs text-blue-600 hover:text-blue-500 no-underline">Forgot password?</a>
                                 </div>
+                                <input type="password" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" id="password" name="password" required/>
                             </div>
+
+                            <div class="mb-6">
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                    Sign In
+                                </button>
+                            </div>
+
+                            <p class="text-center text-gray-500 text-xs mb-0">
+                                Access is restricted to authorised administrators only.
+                            </p>
+                        </form>
+                    </div>
+
+                    <div class="bg-gray-50 border-t border-gray-100 text-center py-4 px-8">
+                        <div class="text-xs text-gray-500">
+                            <a href="#" class="text-gray-500 hover:text-gray-700 no-underline mr-2">Documentation</a>
+                            <span class="text-gray-300">·</span>
+                            <a href="#" class="text-gray-500 hover:text-gray-700 no-underline mx-2">Support Forum</a>
+                            <span class="text-gray-300">·</span>
+                            <span class="ml-2 text-gray-400">phpList v4.0.0-rc1</span>
                         </div>
                     </div>
                 </div>

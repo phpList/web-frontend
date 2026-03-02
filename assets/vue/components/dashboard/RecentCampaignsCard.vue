@@ -2,7 +2,7 @@
 <template>
   <BaseCard>
     <header class="mb-3">
-      <h2 class="h6 fw-bold text-dark mb-0">
+      <h2 class="text-sm font-bold text-gray-900 mb-0">
         Recent Campaigns
       </h2>
     </header>

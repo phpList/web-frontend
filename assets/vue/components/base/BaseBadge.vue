@@ -3,7 +3,7 @@
   <span :class="badgeClass">
     <slot />
   </span>
-<!-- Renders a Bootstrap badge; styling controlled via variant prop -->
+<!-- Renders a Tailwind badge; styling controlled via variant prop -->
 </template>
 
 <script setup>
@@ -16,12 +16,13 @@ const props = defineProps({
 })
 
 const badgeClass = computed(() => {
+  const base = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
   switch (props.variant) {
     case 'counter':
-      return 'badge badge-primary';
+      return `${base} bg-indigo-50 text-indigo-600 border border-indigo-100`;
     case 'neutral':
     default:
-      return 'badge badge-secondary';
+      return `${base} bg-gray-100 text-gray-800`;
   }
 })
 </script>

@@ -1,12 +1,12 @@
 <template>
-  <table class="table align-middle mb-0">
-    <thead class="border-bottom">
-    <tr class="text-uppercase small text-secondary fw-semibold">
-      <th class="ps-0">Campaign Name</th>
-      <th>Status</th>
-      <th>Date</th>
-      <th>Open Rate</th>
-      <th class="pe-0">Click Rate</th>
+  <table class="w-full text-left border-collapse">
+    <thead class="border-b">
+    <tr class="uppercase text-xs text-gray-500 font-semibold">
+      <th class="py-3 pr-4">Campaign Name</th>
+      <th class="py-3 px-4">Status</th>
+      <th class="py-3 px-4">Date</th>
+      <th class="py-3 px-4">Open Rate</th>
+      <th class="py-3 pl-4">Click Rate</th>
     </tr>
     </thead>
 
@@ -14,29 +14,29 @@
     <tr
         v-for="row in rows"
         :key="row.id"
-        class="border-bottom"
+        class="border-b last:border-0 hover:bg-gray-50"
     >
-      <td class="ps-0 fw-medium text-dark">
+      <td class="py-3 pr-4 font-medium text-gray-900">
         {{ row.name }}
       </td>
 
-      <td>
+      <td class="py-3 px-4">
           <span
-              class="badge rounded-pill fw-semibold text-white"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
               :class="statusClass(row.status)"
           >
             {{ row.status }}
           </span>
       </td>
 
-      <td>{{ row.date }}</td>
-      <td>{{ row.openRate ?? '—' }}</td>
-      <td class="pe-0">{{ row.clickRate ?? '—' }}</td>
+      <td class="py-3 px-4 text-sm text-gray-500">{{ row.date }}</td>
+      <td class="py-3 px-4 text-sm text-gray-500">{{ row.openRate ?? '—' }}</td>
+      <td class="py-3 pl-4 text-sm text-gray-500">{{ row.clickRate ?? '—' }}</td>
     </tr>
 
     <!-- empty state -->
     <tr v-if="!rows.length">
-      <td colspan="5" class="text-center py-4 text-secondary">
+      <td colspan="5" class="text-center py-8 text-gray-500">
         No subscribers yet.
       </td>
     </tr>
@@ -56,9 +56,9 @@ const statusClass = (status) => {
   const s = status.toLowerCase()
 
   return {
-    sent: 'bg-success bg-opacity-10 text-white px-2',
-    scheduled: 'bg-primary bg-opacity-10 text-white px-2',
-    draft: 'bg-secondary bg-opacity-10 text-white px-2',
-  }[s] || 'bg-light text-dark'
+    sent: 'bg-green-100 text-green-800',
+    scheduled: 'bg-blue-100 text-blue-800',
+    draft: 'bg-gray-100 text-gray-800',
+  }[s] || 'bg-gray-100 text-gray-800'
 }
 </script>

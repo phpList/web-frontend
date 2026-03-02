@@ -1,19 +1,19 @@
 <!-- components/dashboard/KpiCard.vue -->
 <template>
   <BaseCard>
-    <header class="d-flex align-items-center mb-2">
+    <header class="flex items-center mb-2">
       <div
-        class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-secondary me-2"
+        class="inline-flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-2"
         style="width: 40px; height: 40px;"
       >
         <BaseIcon :name="icon" />
       </div>
-      <p class="mb-0 text-muted text-uppercase small fw-semibold">{{ label }}</p>
+      <p class="mb-0 text-gray-500 uppercase text-xs font-semibold">{{ label }}</p>
     </header>
 
-    <p class="mb-1 fs-3 fw-bold">{{ value }}</p>
+    <p class="mb-1 text-2xl font-bold">{{ value }}</p>
 
-    <p class="mb-0 small" :class="trendClass">
+    <p class="mb-0 text-sm" :class="trendClass">
       {{ change }} vs last month
     </p>
   </BaseCard>
@@ -35,5 +35,5 @@ const props = defineProps({
   icon: String,
 })
 
-const trendClass = computed(() => (props.trend === 'down' ? 'text-danger' : 'text-success'))
+const trendClass = computed(() => (props.trend === 'down' ? 'text-red-600' : 'text-green-600'))
 </script>

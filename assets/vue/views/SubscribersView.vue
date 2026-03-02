@@ -3,7 +3,7 @@
     <!-- Topbar slot -->
 
     <!-- Main content -->
-    <div class="container-fluid">
+    <div class="w-full">
 
     </div>
   </AdminLayout>

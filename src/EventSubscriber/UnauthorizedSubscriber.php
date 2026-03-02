@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use GuzzleHttp\Exception\ClientException;
+use PhpList\RestApiClient\Exception\AuthenticationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
@@ -31,7 +32,10 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if ($exception instanceof ClientException && $exception->getCode() === 401) {
+        if (
+            ($exception instanceof ClientException && $exception->getCode() === 401) ||
+            $exception instanceof AuthenticationException
+        ) {
             $request = $event->getRequest();
             $session = $request->getSession();
 

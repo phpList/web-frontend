@@ -23,9 +23,9 @@ const activeFilter = ref('all')
 
 const filters = [
   { id: 'all', label: 'All' },
-  { id: 'active', label: 'Active' },
   { id: 'unconfirmed', label: 'Unconfirmed' },
-  { id: 'bounced', label: 'Bounced' },
-  { id: 'unsubscribed', label: 'Unsubscribed' },
+  { id: 'blacklisted', label: 'Blacklisted' },
+  { id: 'confirmed', label: 'Confirmed' },
+  { id: 'non-blacklisted', label: 'Non-Blacklisted' },
 ]
 </script>

@@ -17,4 +17,8 @@
 import AdminLayout from '../layouts/AdminLayout.vue'
 import SubscriberDirectory from '../components/subscribers/SubscriberDirectory.vue'
 import ActivitySidebar from '../components/subscribers/ActivitySidebar.vue'
+import { inject } from 'vue'
+
+const subscribers = inject('subscribers')
+const pagination = inject('pagination')
 </script>

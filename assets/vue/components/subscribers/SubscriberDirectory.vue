@@ -23,7 +23,28 @@
       </div>
       <SubscriberFilters />
     </div>
-    <SubscriberTable />
+    <SubscriberTable :subscribers="subscribers" />
+    <div class="p-6 border-t border-slate-200 flex justify-between items-center text-sm text-slate-500">
+      <div>
+        Showing <span class="font-medium text-slate-900">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900">{{ pagination.total }}</span> subscribers
+      </div>
+      <div class="flex gap-2">
+        <button
+          class="px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          :disabled="pagination.isFirstPage"
+          @click="previousPage"
+        >
+          Previous
+        </button>
+        <button
+          class="px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          :disabled="!pagination.hasMore"
+          @click="nextPage"
+        >
+          Next
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,4 +52,43 @@
 import BaseIcon from '../base/BaseIcon.vue'
 import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
+import { inject, ref } from 'vue'
+
+const initialSubscribers = inject('subscribers')
+const initialPagination = inject('pagination')
+
+const subscribers = ref(initialSubscribers)
+const pagination = ref(initialPagination)
+
+const fetchSubscribers = async (afterId = null) => {
+  const url = new URL('/subscribers', window.location.origin)
+  if (afterId !== null) {
+    url.searchParams.append('after_id', afterId)
+  }
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    const data = await response.json()
+    subscribers.value = data.items
+    pagination.value = data.pagination
+  } catch (error) {
+    console.error('Failed to fetch subscribers:', error)
+  }
+}
+
+const nextPage = () => {
+  if (pagination.value.hasMore) {
+    fetchSubscribers(pagination.value.afterId)
+  }
+}
+
+const previousPage = () => {
+  if (!pagination.value.isFirstPage) {
+    fetchSubscribers(pagination.value.prevId === 0 ? null : pagination.value.prevId)
+  }
+}
 </script>

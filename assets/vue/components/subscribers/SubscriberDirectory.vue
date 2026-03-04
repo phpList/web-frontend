@@ -15,9 +15,11 @@
           <button class="p-2 border border-slate-200  rounded-lg hover:bg-slate-50 transition-colors">
             <BaseIcon name="filter" class="w-4 h-4 text-slate-500" />
           </button>
-          <button class="px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center gap-2 transition-colors">
-            <BaseIcon name="upload" class="w-4 h-4 text-white" />
-            Import CSV
+          <button
+              class="px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
+          >
+            <BaseIcon name="upload" class="w-4 h-4" />
+            <span class="flex items-center">Import CSV</span>
           </button>
         </div>
       </div>

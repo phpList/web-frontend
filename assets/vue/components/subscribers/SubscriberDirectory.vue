@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="px-6 py-4 bg-slate-50/50 border-b border-slate-200">
-      <SubscriberFilters />
+      <SubscriberFilters @filter-change="handleFilterChange" />
     </div>
     <SubscriberTable :subscribers="subscribers" />
     <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
@@ -65,11 +65,15 @@ const initialPagination = inject('pagination')
 
 const subscribers = ref(initialSubscribers)
 const pagination = ref(initialPagination)
+const currentFilter = ref(null)
 
 const fetchSubscribers = async (afterId = null) => {
   const url = new URL('/subscribers', window.location.origin)
   if (afterId !== null) {
     url.searchParams.append('after_id', afterId)
+  }
+  if (currentFilter.value) {
+    url.searchParams.append('filter', currentFilter.value)
   }
 
   try {
@@ -96,5 +100,10 @@ const previousPage = () => {
   if (!pagination.value.isFirstPage) {
     fetchSubscribers(pagination.value.prevId === 0 ? null : pagination.value.prevId)
   }
+}
+
+const handleFilterChange = (filterId) => {
+  currentFilter.value = filterId
+  fetchSubscribers()
 }
 </script>

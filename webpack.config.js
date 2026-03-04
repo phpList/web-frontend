@@ -4,7 +4,6 @@ const path = require('path');
 Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
-    .enablePostCssLoader()
     .addEntry('app', './assets/app.js')
     .addStyleEntry('styles', './assets/styles/app.css')
     .enableVueLoader(() => {}, { version: 3 })

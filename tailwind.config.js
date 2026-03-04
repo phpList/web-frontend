@@ -7,7 +7,6 @@ module.exports = {
     "./assets/vue/**/*.vue",
     "./assets/vue/**/**/*.vue",
   ],
-  prefix: "",
   theme: {
     screens: {
       xs: "0px",
@@ -22,6 +21,7 @@ module.exports = {
         body: ["Poppins", "-apple-system", "sans-serif"],
       },
       colors: {
+        'ext-wf1': '#dc2626',
       },
     },
   },
@@ -30,5 +30,7 @@ module.exports = {
     preflight: false,
   },
   safelist: [
-
-  ],};
+    'text-ext-wf1',
+    'bg-ext-wf1',
+  ],
+};

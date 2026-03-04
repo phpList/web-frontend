@@ -7,7 +7,9 @@
       </h2>
     </header>
 
-    <CampaignsTable :rows="rows" />
+    <div class="overflow-x-auto">
+      <CampaignsTable :rows="rows" />
+    </div>
   </BaseCard>
 </template>
 

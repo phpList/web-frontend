@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
+use DateTimeImmutable;
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
@@ -65,7 +66,7 @@ class SubscribersController extends AbstractController
                     'email' => $subscriber->email,
                     'confirmed' => $subscriber->confirmed,
                     'blacklisted' => $subscriber->blacklisted,
-                    'createdAt' => $subscriber->createdAt,
+                    'createdAt' => (new DateTimeImmutable($subscriber->createdAt))->format('Y-m-d H:i:s'),
                     'uniqueId' => $subscriber->uniqueId,
                     'listCount' => count($subscriber->subscribedLists),
                 ];

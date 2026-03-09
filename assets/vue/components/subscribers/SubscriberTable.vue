@@ -44,7 +44,7 @@
             {{ subscriber.listCount }}
           </td>
           <td class="px-6 py-4 text-slate-600">
-            {{ formatDate(subscriber.createdAt?.date) }}
+            {{ subscriber.createdAt }}
           </td>
           <td class="px-6 py-4 text-right">
             <button class="text-slate-400 hover:text-slate-600">
@@ -88,12 +88,8 @@
               <BaseIcon name="list" class="w-3 h-3" />
               {{ subscriber.listCount }} Lists
             </span>
-            <span class="flex items-center gap-1">
-              <BaseIcon name="eye" class="w-3 h-3" />
-              {{ subscriber.openCount || 0 }} Opens
-            </span>
             <span class="ml-auto">
-              {{ formatDate(subscriber.createdAt?.date, true) }}
+              {{ subscriber.createdAt }}
             </span>
           </div>
         </div>

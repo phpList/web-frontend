@@ -20,6 +20,10 @@ class SubscribersController extends AbstractController
     {
     }
 
+    /**
+     * @SuppressWarnings("CyclomaticComplexity")
+     * @SuppressWarnings("NPathComplexity")
+     */
     #[Route('/subscribers', name: 'subscribers', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {

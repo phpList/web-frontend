@@ -42,7 +42,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
         }
 
         $session = $request->getSession();
-        if (!$session || !$session->has('auth_token')) {
+        if (!$session->has('auth_token')) {
             $loginUrl = $this->urlGenerator->generate('login');
             $event->setResponse(new RedirectResponse($loginUrl));
         }
@@ -50,7 +50,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
     private function isPublicPath(Request $request): bool
     {
-        $path = $request->getPathInfo() ?? '/';
+        $path = $request->getPathInfo();
 
         // Public login route
         if ($path === '/login' || str_starts_with($path, '/login')) {

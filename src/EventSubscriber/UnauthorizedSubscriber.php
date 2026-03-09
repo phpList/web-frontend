@@ -32,8 +32,7 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if (
-            ($exception instanceof ClientException && $exception->getCode() === 401) ||
+        if (($exception instanceof ClientException && $exception->getCode() === 401) ||
             $exception instanceof AuthenticationException
         ) {
             $request = $event->getRequest();

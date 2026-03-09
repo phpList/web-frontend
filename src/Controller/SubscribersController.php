@@ -9,6 +9,7 @@ use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,8 +21,12 @@ class SubscribersController extends AbstractController
     }
 
     #[Route('/subscribers', name: 'subscribers', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request): JsonResponse|Response
     {
+        if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
+            return $this->render('subscribers/index.html.twig');
+        }
+
         $afterId = (int) $request->query->get('after_id');
         $limit = max(1, (int) $request->query->get('limit', 10));
 
@@ -70,17 +75,10 @@ class SubscribersController extends AbstractController
                 'hasMore' => $collection->pagination->hasMore ,
                 'total' => $collection->pagination->total,
                 'prevId' => $prevId,
-                'isFirstPage' => $afterId === null || $afterId === 0,
+                'isFirstPage' => $afterId === 0,
             ],
         ];
 
-        if ($request->isXmlHttpRequest() || $request->headers->get('Accept') === 'application/json') {
-            return $this->json($initialData);
-        }
-
-        return $this->render('subscribers/index.html.twig', [
-            'subscribers' => $initialData['items'],
-            'pagination' => $initialData['pagination'],
-        ]);
+        return $this->json($initialData);
     }
 }

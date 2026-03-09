@@ -58,14 +58,24 @@
 import BaseIcon from '../base/BaseIcon.vue'
 import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
-import { inject, ref } from 'vue'
+import { inject, ref, onMounted } from 'vue'
 
-const initialSubscribers = inject('subscribers')
-const initialPagination = inject('pagination')
+const initialSubscribers = inject('subscribers', [])
+const initialPagination = inject('pagination', {
+  total: 0,
+  isFirstPage: true,
+  hasMore: false,
+  afterId: null,
+  prevId: null
+})
 
 const subscribers = ref(initialSubscribers)
 const pagination = ref(initialPagination)
 const currentFilter = ref(null)
+
+onMounted(() => {
+  fetchSubscribers()
+})
 
 const fetchSubscribers = async (afterId = null) => {
   const url = new URL('/subscribers', window.location.origin)

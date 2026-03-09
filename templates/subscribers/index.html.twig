@@ -3,9 +3,5 @@
 {% block title %}phpList - Subscribers{% endblock %}
 
 {% block body %}
-    <div id="vue-subscribers"
-         data-subscribers="{{ subscribers|json_encode|e('html_attr') }}"
-         data-pagination="{{ pagination|json_encode|e('html_attr') }}"
-    ></div>
-
+    <div id="vue-subscribers"></div>
 {% endblock %}

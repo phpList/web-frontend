@@ -73,7 +73,7 @@ const fetchSubscribers = async (afterId = null) => {
     url.searchParams.append('after_id', afterId)
   }
   if (currentFilter.value) {
-    url.searchParams.append('filter', currentFilter.value)
+    url.searchParams.append(currentFilter.value, 'true')
   }
 
   try {

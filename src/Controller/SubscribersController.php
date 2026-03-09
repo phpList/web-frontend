@@ -22,41 +22,34 @@ class SubscribersController extends AbstractController
     #[Route('/subscribers', name: 'subscribers', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $afterId = $request->query->get('after_id') !== null ? (int) $request->query->get('after_id') : null;
+        $afterId = (int) $request->query->get('after_id');
         $limit = max(1, (int) $request->query->get('limit', 10));
-        $filterValue = $request->query->get('filter');
 
-        $filter = new SubscribersFilterRequest();
-        $map = [
-            'confirmed' => ['isConfirmed', true],
-            'unconfirmed' => ['isConfirmed', false],
-            'blacklisted' => ['isBlacklisted', true],
-            'non-blacklisted' => ['isBlacklisted', false],
-        ];
-        if (isset($map[$filterValue])) {
-            [$property, $value] = $map[$filterValue];
-            $filter->$property = $value;
-        }
+        $filter = new SubscribersFilterRequest(
+            isConfirmed: $request->query->has('confirmed') ? true :
+                ($request->query->has('unconfirmed') ? false : null),
+            isBlacklisted: $request->query->has('blacklisted') ? true :
+                ($request->query->has('non-blacklisted') ? false : null),
+            sortBy: $request->query->get('sortBy'),
+            sortDirection: $request->query->get('sortDirection'),
+            findColumn: $request->query->get('findColumn'),
+            findValue: $request->query->get('findValue'),
+        );
 
         $collection = $this->subscribersClient->getSubscribers($filter, $afterId, $limit);
 
         $history = $request->getSession()->get('subscribers_history', []);
-        if ($afterId === null) {
-            $history = [];
-        }
-        if ($afterId !== null && !in_array($afterId, $history, true)) {
+        if (!in_array($afterId, $history, true)) {
             $history[] = $afterId;
             $request->getSession()->set('subscribers_history', $history);
         }
 
         $prevId = null;
-        if ($afterId !== null) {
-            $index = array_search($afterId, $history, true);
-            if ($index === 0) {
-                $prevId = 0;
-            } elseif ($index > 0) {
-                $prevId = $history[$index - 1];
-            }
+        $index = array_search($afterId, $history, true);
+        if ($index === 0) {
+            $prevId = 0;
+        } elseif ($index > 0) {
+            $prevId = $history[$index - 1];
         }
 
         $initialData = [

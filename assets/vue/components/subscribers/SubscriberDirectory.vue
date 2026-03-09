@@ -4,15 +4,26 @@
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <h2 class="text-xl font-bold text-slate-900 ">Subscriber Directory</h2>
         <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-          <div class="relative flex-1 sm:w-64">
-            <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              v-model="searchQuery"
-              placeholder="Search subscribers..."
-              class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200  rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              type="text"
-              @input="handleSearch"
+          <div class="flex gap-2 flex-1 sm:w-[400px]">
+            <div class="relative flex-1">
+              <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                v-model="searchQuery"
+                placeholder="Search subscribers..."
+                class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200  rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                type="text"
+                @input="handleSearch"
+              >
+            </div>
+            <select
+                v-model="searchColumn"
+                class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                @change="handleSearch"
             >
+              <option v-for="col in searchColumns" :key="col.id" :value="col.id">
+                {{ col.label }}
+              </option>
+            </select>
           </div>
           <div class="flex gap-2">
             <button class="flex-1 sm:flex-none p-2 border border-slate-200  rounded-lg hover:bg-slate-50 transition-colors flex justify-center items-center">
@@ -76,7 +87,14 @@ const subscribers = ref(initialSubscribers)
 const pagination = ref(initialPagination)
 const currentFilter = ref(null)
 const searchQuery = ref('')
+const searchColumn = ref('email')
 let searchTimeout = null
+
+const searchColumns = [
+  { id: 'email', label: 'Email' },
+  { id: 'foreignKey', label: 'Foreign Key' },
+  { id: 'uniqueId', label: 'Unique ID' }
+]
 
 const allowedFilters = subscriberFilters.map(f => f.id)
 
@@ -92,7 +110,7 @@ const updateUrl = (afterId = null) => {
   }
 
   if (searchQuery.value) {
-    url.searchParams.set('findColumn', 'email')
+    url.searchParams.set('findColumn', searchColumn.value)
     url.searchParams.set('findValue', searchQuery.value)
   } else {
     url.searchParams.delete('findColumn')
@@ -116,6 +134,10 @@ const getFilterFromUrl = () => {
     searchQuery.value = params.get('findValue')
   }
 
+  if (params.has('findColumn')) {
+    searchColumn.value = params.get('findColumn')
+  }
+
   return foundFilter || 'all'
 }
 
@@ -135,7 +157,7 @@ const fetchSubscribers = async (afterId = null) => {
   }
 
   if (searchQuery.value) {
-    url.searchParams.set('findColumn', 'email')
+    url.searchParams.set('findColumn', searchColumn.value)
     url.searchParams.set('findValue', searchQuery.value)
   }
 

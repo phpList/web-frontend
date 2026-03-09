@@ -85,4 +85,58 @@ class SubscribersController extends AbstractController
 
         return $this->json($initialData);
     }
+
+    #[Route('/subscribers/export', name: 'subscribers_export', methods: 'GET')]
+    public function export(Request $request): Response
+    {
+        $filter = new SubscribersFilterRequest(
+            isConfirmed: $request->query->has('confirmed') ? true :
+                ($request->query->has('unconfirmed') ? false : null),
+            isBlacklisted: $request->query->has('blacklisted') ? true :
+                ($request->query->has('non-blacklisted') ? false : null),
+            sortBy: $request->query->get('sortBy'),
+            sortDirection: $request->query->get('sortDirection'),
+            findColumn: $request->query->get('findColumn'),
+            findValue: $request->query->get('findValue'),
+        );
+        $collection = $this->subscribersClient->getSubscribers($filter, 0);
+        $exportData = $collection->items;
+        if (empty($exportData)) {
+            return new Response('No subscribers to export.', Response::HTTP_NOT_FOUND);
+        }
+        $handle = fopen('php://temp', 'r+');
+
+        $headers = array_keys((array) $exportData[0]);
+        fputcsv($handle, $headers);
+
+        foreach ($exportData as $data) {
+            $row = [
+                'id' => $data->id,
+                'email' => $data->email,
+                'createdAt' => (new DateTimeImmutable($data->createdAt))->format('Y-m-d H:i:s'),
+                'confirmed' => $data->confirmed,
+                'blacklisted' => $data->blacklisted,
+                'bounceCount' => $data->bounceCount,
+                'uniqueId' => $data->uniqueId,
+                'htmlEmail' => $data->htmlEmail,
+                'disabled' => $data->disabled,
+                'lists' => implode('|', array_map(fn($list) => $list['name'], $data->subscribedLists)),
+            ];
+
+            fputcsv($handle, $row);
+        }
+
+        rewind($handle);
+        $csvContent = stream_get_contents($handle);
+        fclose($handle);
+
+        $response = new Response($csvContent);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set(
+            'Content-Disposition',
+            'attachment; filename="subscribers_export_' . date('Y-m-d_H-i-s') . '.csv"'
+        );
+
+        return $response;
+    }
 }

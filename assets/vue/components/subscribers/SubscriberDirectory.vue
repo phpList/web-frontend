@@ -31,6 +31,7 @@
             </button>
             <button
                 class="flex-[3] sm:flex-none px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
+                @click="exportSubscribers"
             >
               <BaseIcon name="download" class="w-4 h-4" />
               <span class="flex items-center whitespace-nowrap">Export CSV</span>
@@ -202,5 +203,13 @@ const previousPage = () => {
 const handleFilterChange = (filterId) => {
   currentFilter.value = filterId || 'all'
   fetchSubscribers()
+}
+
+const exportSubscribers = () => {
+  const url = new URL('/subscribers/export', window.location.origin)
+  if (currentFilter.value && currentFilter.value !== 'all') {
+    url.searchParams.set(currentFilter.value, 'true')
+  }
+  window.location.href = url.toString()
 }
 </script>

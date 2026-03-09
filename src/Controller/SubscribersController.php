@@ -6,6 +6,7 @@ namespace PhpList\WebFrontend\Controller;
 
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
+use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,8 +23,21 @@ class SubscribersController extends AbstractController
     {
         $afterId = $request->query->get('after_id') !== null ? (int) $request->query->get('after_id') : null;
         $limit = max(1, (int) $request->query->get('limit', 10));
+        $filterValue = $request->query->get('filter');
 
-        $collection = $this->subscribersClient->getSubscribers($afterId, $limit);
+        $filter = new SubscribersFilterRequest();
+        $map = [
+            'confirmed' => ['isConfirmed', true],
+            'unconfirmed' => ['isConfirmed', false],
+            'blacklisted' => ['isBlacklisted', true],
+            'non-blacklisted' => ['isBlacklisted', false],
+        ];
+        if (isset($map[$filterValue])) {
+            [$property, $value] = $map[$filterValue];
+            $filter->$property = $value;
+        }
+
+        $collection = $this->subscribersClient->getSubscribers($filter, $afterId, $limit);
 
         $history = $request->getSession()->get('subscribers_history', []);
         if ($afterId === null) {

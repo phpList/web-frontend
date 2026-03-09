@@ -7,9 +7,11 @@
           <div class="relative flex-1 sm:w-64">
             <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
+              v-model="searchQuery"
               placeholder="Search subscribers..."
               class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200  rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               type="text"
+              @input="handleSearch"
             >
           </div>
           <div class="flex gap-2">
@@ -58,7 +60,7 @@
 import BaseIcon from '../base/BaseIcon.vue'
 import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
-import { inject, ref, onMounted } from 'vue'
+import { inject, ref, onMounted, watch } from 'vue'
 import { subscriberFilters } from './subscriberFilters'
 
 const initialSubscribers = inject('subscribers', [])
@@ -73,6 +75,8 @@ const initialPagination = inject('pagination', {
 const subscribers = ref(initialSubscribers)
 const pagination = ref(initialPagination)
 const currentFilter = ref(null)
+const searchQuery = ref('')
+let searchTimeout = null
 
 const allowedFilters = subscriberFilters.map(f => f.id)
 
@@ -87,6 +91,14 @@ const updateUrl = (afterId = null) => {
     url.searchParams.set(currentFilter.value, 'true')
   }
 
+  if (searchQuery.value) {
+    url.searchParams.set('findColumn', 'email')
+    url.searchParams.set('findValue', searchQuery.value)
+  } else {
+    url.searchParams.delete('findColumn')
+    url.searchParams.delete('findValue')
+  }
+
   if (afterId) {
     url.searchParams.set('after_id', afterId)
   } else {
@@ -99,6 +111,11 @@ const updateUrl = (afterId = null) => {
 const getFilterFromUrl = () => {
   const params = new URLSearchParams(window.location.search)
   const foundFilter = allowedFilters.find(filter => params.get(filter) === 'true')
+  
+  if (params.has('findValue')) {
+    searchQuery.value = params.get('findValue')
+  }
+
   return foundFilter || 'all'
 }
 
@@ -117,6 +134,11 @@ const fetchSubscribers = async (afterId = null) => {
     url.searchParams.set(currentFilter.value, 'true')
   }
 
+  if (searchQuery.value) {
+    url.searchParams.set('findColumn', 'email')
+    url.searchParams.set('findValue', searchQuery.value)
+  }
+
   try {
     const response = await fetch(url, {
       headers: { Accept: 'application/json' }
@@ -131,6 +153,15 @@ const fetchSubscribers = async (afterId = null) => {
   } catch (error) {
     console.error('Failed to fetch subscribers:', error)
   }
+}
+
+const handleSearch = () => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+  searchTimeout = setTimeout(() => {
+    fetchSubscribers()
+  }, 300)
 }
 
 const nextPage = () => {

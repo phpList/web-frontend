@@ -5,7 +5,7 @@
         <h2 class="text-xl font-bold text-slate-900 ">Subscriber Directory</h2>
         <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
           <div class="relative flex-1 sm:w-64">
-            <BaseIcon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               placeholder="Search subscribers..."
               class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200  rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
@@ -59,6 +59,7 @@ import BaseIcon from '../base/BaseIcon.vue'
 import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
 import { inject, ref, onMounted } from 'vue'
+import { subscriberFilters } from './subscriberFilters'
 
 const initialSubscribers = inject('subscribers', [])
 const initialPagination = inject('pagination', {
@@ -73,28 +74,60 @@ const subscribers = ref(initialSubscribers)
 const pagination = ref(initialPagination)
 const currentFilter = ref(null)
 
+const allowedFilters = subscriberFilters.map(f => f.id)
+
+const updateUrl = (afterId = null) => {
+  const url = new URL(window.location.href)
+
+  allowedFilters.forEach(filter => {
+    url.searchParams.delete(filter)
+  })
+
+  if (currentFilter.value && currentFilter.value !== 'all') {
+    url.searchParams.set(currentFilter.value, 'true')
+  }
+
+  if (afterId) {
+    url.searchParams.set('after_id', afterId)
+  } else {
+    url.searchParams.delete('after_id')
+  }
+
+  window.history.replaceState({}, '', url)
+}
+
+const getFilterFromUrl = () => {
+  const params = new URLSearchParams(window.location.search)
+  const foundFilter = allowedFilters.find(filter => params.get(filter) === 'true')
+  return foundFilter || 'all'
+}
+
 onMounted(() => {
+  currentFilter.value = getFilterFromUrl()
   fetchSubscribers()
 })
 
 const fetchSubscribers = async (afterId = null) => {
   const url = new URL('/subscribers', window.location.origin)
   if (afterId !== null) {
-    url.searchParams.append('after_id', afterId)
+    url.searchParams.set('after_id', afterId)
   }
-  if (currentFilter.value) {
-    url.searchParams.append(currentFilter.value, 'true')
+
+  if (currentFilter.value && currentFilter.value !== 'all') {
+    url.searchParams.set(currentFilter.value, 'true')
   }
 
   try {
     const response = await fetch(url, {
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: { Accept: 'application/json' }
     })
+
     const data = await response.json()
+
     subscribers.value = data.items
     pagination.value = data.pagination
+
+    updateUrl(afterId)
   } catch (error) {
     console.error('Failed to fetch subscribers:', error)
   }
@@ -108,12 +141,13 @@ const nextPage = () => {
 
 const previousPage = () => {
   if (!pagination.value.isFirstPage) {
-    fetchSubscribers(pagination.value.prevId === 0 ? null : pagination.value.prevId)
+    const id = pagination.value.prevId === 0 ? null : pagination.value.prevId
+    fetchSubscribers(id)
   }
 }
 
 const handleFilterChange = (filterId) => {
-  currentFilter.value = filterId
+  currentFilter.value = filterId || 'all'
   fetchSubscribers()
 }
 </script>

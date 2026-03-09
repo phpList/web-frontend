@@ -18,6 +18,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { subscriberFilters } from './subscriberFilters'
 
 const activeFilter = ref('all')
 
@@ -33,11 +34,5 @@ const toggleFilter = (filterId) => {
   emit('filter-change', activeFilter.value)
 }
 
-const filters = [
-  { id: 'all', label: 'All' },
-  { id: 'unconfirmed', label: 'Unconfirmed' },
-  { id: 'blacklisted', label: 'Blacklisted' },
-  { id: 'confirmed', label: 'Confirmed' },
-  { id: 'non-blacklisted', label: 'Non-Blacklisted' },
-]
+const filters = subscriberFilters
 </script>

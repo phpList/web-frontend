@@ -3,7 +3,7 @@ import { createApp } from 'vue';
 import App from './vue/App.vue';
 import { router } from './router';
 
-const appElement = document.getElementById('vue-app') || document.getElementById('vue-subscribers');
+const appElement = document.getElementById('vue-app');
 
 if (appElement) {
     const app = createApp(App);

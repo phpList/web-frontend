@@ -20,11 +20,6 @@ class DashboardController extends AbstractController
     #[Route('/', name: 'home', methods: ['GET'])]
     public function index(Request $request): Response
     {
-//        if (!$request->getSession()->has('auth_token')) {
-//            return $this->redirectToRoute('login');
-//        }
-
-        return $this->render('dashboard/index.html.twig', [
-        ]);
+        return $this->render('dashboard/index.html.twig');
     }
 }

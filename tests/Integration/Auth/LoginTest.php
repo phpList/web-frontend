@@ -30,14 +30,14 @@ class LoginTest extends PantherTestCase
 
         $this->assertSelectorExists('input[name="username"]');
         $this->assertSelectorExists('input[name="password"]');
-        $this->assertSelectorTextContains('label[for="username"]', 'Username');
+        $this->assertSelectorTextContains('label[for="username"]', 'Login');
         $this->assertSelectorTextContains('label[for="password"]', 'Password');
         $this->assertSelectorExists('button[type="submit"]');
-        $this->assertSelectorTextContains('button[type="submit"]', 'Sign in');
+        $this->assertSelectorTextContains('button[type="submit"]', 'Sign In');
         $this->assertSelectorExists('.login-container');
         $this->assertSelectorExists('#vue-app');
 
-        $this->assertSelectorTextContains('h1', 'Sign in to phpList');
+        $this->assertSelectorTextContains('h4', 'Sign in to your account');
     }
 
     public function testLoginFormSubmission(): void
@@ -48,7 +48,7 @@ class LoginTest extends PantherTestCase
         ]);
         $client->request('GET', '/app_test.php/login');
 
-        $client->submitForm('Sign in', [
+        $client->submitForm('Sign In', [
             'username' => 'invalid_user',
             'password' => 'invalid_password'
         ]);

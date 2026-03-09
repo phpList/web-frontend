@@ -28,7 +28,7 @@ class SubscribersController extends AbstractController
     public function index(Request $request): JsonResponse|Response
     {
         if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
-            return $this->render('subscribers/index.html.twig');
+            return $this->render('spa.html.twig', ['page' => 'Subscribers']);
         }
 
         $afterId = (int) $request->query->get('after_id');

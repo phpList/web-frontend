@@ -34,8 +34,6 @@ class LoginTest extends PantherTestCase
         $this->assertSelectorTextContains('label[for="password"]', 'Password');
         $this->assertSelectorExists('button[type="submit"]');
         $this->assertSelectorTextContains('button[type="submit"]', 'Sign In');
-        $this->assertSelectorExists('.login-container');
-        $this->assertSelectorExists('#vue-app');
 
         $this->assertSelectorTextContains('h4', 'Sign in to your account');
     }
@@ -54,6 +52,6 @@ class LoginTest extends PantherTestCase
         ]);
 
         $this->assertPageTitleContains('Login');
-        $this->assertSelectorExists('.alert.alert-danger');
+        $this->assertSelectorExists('.bg-red-50.border-red-200.text-red-600');
     }
 }

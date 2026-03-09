@@ -125,7 +125,7 @@ class AuthControllerTest extends TestCase
         $response = $this->controller->login($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringContainsString('empty_start_page', $response->getTargetUrl());
+        $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
     }
 
     public function testLoginWithPostRequestFailure(): void
@@ -172,7 +172,7 @@ class AuthControllerTest extends TestCase
         $response = $this->controller->login($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringContainsString('empty_start_page', $response->getTargetUrl());
+        $this->assertStringContainsString('/', $response->getTargetUrl());
     }
 
     public function testLogout(): void

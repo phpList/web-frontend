@@ -41,7 +41,7 @@ class PhpListApplicationBundleTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString(
-            'This page has been intentionally left empty.',
+            'Access is restricted to authorised administrators only.',
             $response->getBody()->getContents()
         );
     }

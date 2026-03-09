@@ -32,8 +32,8 @@
             <button
                 class="flex-[3] sm:flex-none px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
             >
-              <BaseIcon name="upload" class="w-4 h-4" />
-              <span class="flex items-center whitespace-nowrap">Import CSV</span>
+              <BaseIcon name="download" class="w-4 h-4" />
+              <span class="flex items-center whitespace-nowrap">Export CSV</span>
             </button>
           </div>
         </div>

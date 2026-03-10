@@ -26,9 +26,6 @@
             </select>
           </div>
           <div class="flex gap-2">
-            <button class="flex-1 sm:flex-none p-2 border border-slate-200  rounded-lg hover:bg-slate-50 transition-colors flex justify-center items-center">
-              <BaseIcon name="filter" class="w-4 h-4 text-slate-500" />
-            </button>
             <button
                 class="flex-[3] sm:flex-none px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
                 @click="exportSubscribers"

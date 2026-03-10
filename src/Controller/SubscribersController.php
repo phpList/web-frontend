@@ -39,8 +39,6 @@ class SubscribersController extends AbstractController
                 ($request->query->has('unconfirmed') ? false : null),
             isBlacklisted: $request->query->has('blacklisted') ? true :
                 ($request->query->has('non-blacklisted') ? false : null),
-            sortBy: $request->query->get('sortBy'),
-            sortDirection: $request->query->get('sortDirection'),
             findColumn: $request->query->get('findColumn'),
             findValue: $request->query->get('findValue'),
         );
@@ -94,8 +92,6 @@ class SubscribersController extends AbstractController
                 ($request->query->has('unconfirmed') ? false : null),
             isBlacklisted: $request->query->has('blacklisted') ? true :
                 ($request->query->has('non-blacklisted') ? false : null),
-            sortBy: $request->query->get('sortBy'),
-            sortDirection: $request->query->get('sortDirection'),
             findColumn: $request->query->get('findColumn'),
             findValue: $request->query->get('findValue'),
         );

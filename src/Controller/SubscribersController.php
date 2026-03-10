@@ -99,7 +99,8 @@ class SubscribersController extends AbstractController
             findColumn: $request->query->get('findColumn'),
             findValue: $request->query->get('findValue'),
         );
-        $collection = $this->subscribersClient->getSubscribers($filter, 0);
+
+        $collection = $this->subscribersClient->getSubscribers($filter, 0, $request->query->getInt('limit'));
         $exportData = $collection->items;
         if (empty($exportData)) {
             return new Response('No subscribers to export.', Response::HTTP_NOT_FOUND);

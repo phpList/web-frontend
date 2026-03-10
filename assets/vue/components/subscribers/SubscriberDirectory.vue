@@ -210,6 +210,16 @@ const exportSubscribers = () => {
   if (currentFilter.value && currentFilter.value !== 'all') {
     url.searchParams.set(currentFilter.value, 'true')
   }
+
+  if (searchQuery.value) {
+    url.searchParams.set('findColumn', searchColumn.value)
+    url.searchParams.set('findValue', searchQuery.value)
+  }
+
+  if (pagination.value.total > 0) {
+    url.searchParams.set('limit', pagination.value.total)
+  }
+
   window.location.href = url.toString()
 }
 </script>

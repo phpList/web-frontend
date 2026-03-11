@@ -37,7 +37,12 @@ class ApiSessionListener implements EventSubscriberInterface
         $authToken = $session->get('auth_token');
 
         if ($authToken) {
-            $this->apiClient->setSessionId($authToken);
+            $this->apiClient->setSessionId((string) $authToken);
+        }
+
+        $authId = $session->get('auth_id');
+        if ($authId) {
+            $this->apiClient->setId((int) $authId);
         }
     }
 }

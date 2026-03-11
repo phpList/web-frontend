@@ -29,8 +29,6 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import KpiGrid from '../components/dashboard/KpiGrid.vue'
 import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
 import RecentCampaignsCard from '../components/dashboard/RecentCampaignsCard.vue'
-import BaseIcon from '../components/base/BaseIcon.vue'
-import avatar from '@images/avatar.jpg'
 
 const chart = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],

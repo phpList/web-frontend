@@ -26,26 +26,11 @@
           Create Campaign
         </button>
 
-        <div class="h-8 w-px bg-slate-200 hidden sm:block mx-1"></div>
-
-        <button class="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-          <BaseIcon name="notification" />
-          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-        </button>
-
         <!-- User dropdown -->
         <div class="flex items-center gap-3 pl-2 group cursor-pointer">
           <div class="flex flex-col items-end hidden sm:flex">
             <span class="text-sm font-bold text-slate-800 leading-none">Admin User</span>
             <span class="text-[10px] text-slate-500 mt-0.5">Administrator</span>
-          </div>
-
-          <div class="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 border border-slate-200 overflow-hidden">
-            <img
-                alt="User Avatar"
-                class="w-full h-full object-cover"
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&amp;w=100&amp;h=100&amp;auto=format&amp;fit=crop"
-            >
           </div>
 
           <BaseIcon name="chevronDown" />

@@ -49,6 +49,7 @@ class AuthController extends AbstractController
                 $authData = $this->apiClient->login($username, $password);
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['key']);
+                $request->getSession()->set('auth_id', $authData['id']);
 
                 return $this->redirectToRoute('home');
             } catch (Exception $e) {
@@ -67,6 +68,8 @@ class AuthController extends AbstractController
     public function logout(Request $request): Response
     {
         $request->getSession()->remove('auth_token');
+        $request->getSession()->remove('auth_id');
+        $this->apiClient->logout();
 
         return $this->redirectToRoute('login');
     }

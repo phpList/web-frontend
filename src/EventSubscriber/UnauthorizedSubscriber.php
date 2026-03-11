@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use GuzzleHttp\Exception\ClientException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
-    private UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(UrlGeneratorInterface $urlGenerator)
-    {
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly FlashBagInterface $flashBag,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -32,22 +32,31 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if (($exception instanceof ClientException && $exception->getCode() === 401) ||
-            $exception instanceof AuthenticationException
-        ) {
+        if ($exception instanceof AuthenticationException) {
             $request = $event->getRequest();
-            $session = $request->getSession();
 
-            if ($session->has('auth_token')) {
-                $session->remove('auth_token');
+            if ($request->hasSession()) {
+                $session = $request->getSession();
+                $session->invalidate();
             }
 
-            $session->set('login_error', 'Your session has expired. Please log in again.');
-
             $loginUrl = $this->urlGenerator->generate('login');
-            $response = new RedirectResponse($loginUrl);
 
-            $event->setResponse($response);
+            if ($request->isXmlHttpRequest()) {
+                $event->setResponse(new JsonResponse([
+                    'error' => 'session_expired',
+                    'message' => 'Your session has expired. Please log in again.',
+                    'redirect' => $loginUrl,
+                ], 401));
+
+                return;
+            }
+
+            if ($request->hasSession()) {
+                $this->flashBag->add('error', 'Your session has expired. Please log in again.');
+            }
+
+            $event->setResponse(new RedirectResponse($loginUrl));
         }
     }
 }

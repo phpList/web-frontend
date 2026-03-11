@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Unit\EventSubscriber;
 
 use Exception;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Request as GuzzleRequest;
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\WebFrontend\EventSubscriber\UnauthorizedSubscriber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -23,11 +23,13 @@ class UnauthorizedSubscriberTest extends TestCase
 {
     private UnauthorizedSubscriber $subscriber;
     private UrlGeneratorInterface&MockObject $urlGenerator;
+    private FlashBagInterface&MockObject $flashBag;
 
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->subscriber = new UnauthorizedSubscriber($this->urlGenerator);
+        $this->flashBag = $this->createMock(FlashBagInterface::class);
+        $this->subscriber = new UnauthorizedSubscriber($this->urlGenerator, $this->flashBag);
     }
 
     public function testGetSubscribedEvents(): void
@@ -40,25 +42,17 @@ class UnauthorizedSubscriberTest extends TestCase
 
     public function testOnKernelExceptionWithUnauthorizedException(): void
     {
-        $guzzleRequest = new GuzzleRequest('GET', 'http://example.com');
-        $guzzleResponse = new GuzzleResponse(401);
-        $clientException = new ClientException('Unauthorized', $guzzleRequest, $guzzleResponse);
+        $authException = new AuthenticationException('Unauthorized');
 
         $session = $this->createMock(SessionInterface::class);
-        $session->expects($this->once())
-            ->method('has')
-            ->with('auth_token')
-            ->willReturn(true);
+        $session->expects($this->once())->method('invalidate');
 
-        $session->expects($this->once())
-            ->method('remove')
-            ->with('auth_token');
-
-        $session->expects($this->once())
-            ->method('set')
-            ->with('login_error', 'Your session has expired. Please log in again.');
+        $this->flashBag->expects($this->once())
+            ->method('add')
+            ->with('error', 'Your session has expired. Please log in again.');
 
         $request = $this->createMock(Request::class);
+        $request->method('hasSession')->willReturn(true);
         $request->method('getSession')->willReturn($session);
 
         $kernel = $this->createMock(HttpKernelInterface::class);
@@ -66,7 +60,7 @@ class UnauthorizedSubscriberTest extends TestCase
             $kernel,
             $request,
             HttpKernelInterface::MAIN_REQUEST,
-            $clientException
+            $authException
         );
 
         $loginUrl = '/login';
@@ -100,35 +94,55 @@ class UnauthorizedSubscriberTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    public function testOnKernelExceptionWithNonAuthTokenSession(): void
+    public function testOnKernelExceptionWithXmlHttpRequest(): void
     {
-        $guzzleRequest = new GuzzleRequest('GET', 'http://example.com');
-        $guzzleResponse = new GuzzleResponse(401);
-        $clientException = new ClientException('Unauthorized', $guzzleRequest, $guzzleResponse);
+        $authException = new AuthenticationException('Unauthorized');
 
         $session = $this->createMock(SessionInterface::class);
-        $session->expects($this->once())
-            ->method('has')
-            ->with('auth_token')
-            ->willReturn(false);
-
-        $session->expects($this->never())
-            ->method('remove')
-            ->with('auth_token');
-
-        $session->expects($this->once())
-            ->method('set')
-            ->with('login_error', 'Your session has expired. Please log in again.');
+        $session->expects($this->once())->method('invalidate');
 
         $request = $this->createMock(Request::class);
+        $request->method('hasSession')->willReturn(true);
         $request->method('getSession')->willReturn($session);
+        $request->method('isXmlHttpRequest')->willReturn(true);
 
         $kernel = $this->createMock(HttpKernelInterface::class);
         $event = new ExceptionEvent(
             $kernel,
             $request,
             HttpKernelInterface::MAIN_REQUEST,
-            $clientException
+            $authException
+        );
+
+        $loginUrl = '/login';
+        $this->urlGenerator->method('generate')
+            ->with('login')
+            ->willReturn($loginUrl);
+
+        $this->subscriber->onKernelException($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(401, $response->getStatusCode());
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals('session_expired', $data['error']);
+        $this->assertEquals($loginUrl, $data['redirect']);
+    }
+
+    public function testOnKernelExceptionWithoutSession(): void
+    {
+        $authException = new AuthenticationException('Unauthorized');
+
+        $request = $this->createMock(Request::class);
+        $request->method('hasSession')->willReturn(false);
+
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $event = new ExceptionEvent(
+            $kernel,
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+            $authException
         );
 
         $loginUrl = '/login';

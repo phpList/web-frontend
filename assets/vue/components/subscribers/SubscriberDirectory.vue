@@ -161,8 +161,14 @@ const fetchSubscribers = async (afterId = null) => {
 
   try {
     const response = await fetch(url, {
-      headers: { Accept: 'application/json' }
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
     })
+
+    if (response.status === 401) {
+      const data = await response.json()
+      window.location.href = data.redirect
+      return
+    }
 
     const data = await response.json()
 

@@ -27,13 +27,10 @@ services:
   PhpList\RestApiClient\Client:
     $baseUrl: '%api_base_url%'
 
-  PhpList\RestApiClient\Endpoint\AuthClient:
-    autoconfigure: true
+  PhpList\RestApiClient\Endpoint\:
+    resource: '../vendor/tatevikgr/rest-api-client/src/Endpoint/'
     autowire: true
-
-  PhpList\RestApiClient\Endpoint\SubscribersClient:
     autoconfigure: true
-    autowire: true
 
   PhpList\WebFrontend\EventListener\ApiSessionListener:
     tags:

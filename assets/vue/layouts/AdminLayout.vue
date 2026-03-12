@@ -29,8 +29,8 @@
         <!-- User dropdown -->
         <div class="flex items-center gap-3 pl-2 group cursor-pointer">
           <div class="flex flex-col items-end hidden sm:flex">
-            <span class="text-sm font-bold text-slate-800 leading-none">Admin User</span>
-            <span class="text-[10px] text-slate-500 mt-0.5">Administrator</span>
+            <span class="text-sm font-bold text-slate-800 leading-none">{{ adminData.login_name || 'Admin User' }}</span>
+            <span class="text-[10px] text-slate-500 mt-0.5">{{ adminData.super_user ? 'Super Admin' : 'Administrator' }}</span>
           </div>
 
           <BaseIcon name="chevronDown" />
@@ -49,6 +49,24 @@
 /* No imports required */
 import BaseIcon from "../components/base/BaseIcon.vue";
 import { useSidebar } from "../composables/useSidebar";
+import { onMounted, ref } from "vue";
 
 const { openSidebar } = useSidebar();
+const adminData = ref({});
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/admin-about', {
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    if (response.ok) {
+      adminData.value = await response.json();
+    }
+  } catch (error) {
+    console.error('Failed to fetch admin data:', error);
+  }
+});
 </script>

@@ -8,17 +8,15 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
-    private AuthClient $apiClient;
-
-    public function __construct(AuthClient $apiClient)
+    public function __construct(private readonly AuthClient $authClient)
     {
-        $this->apiClient = $apiClient;
     }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
@@ -46,10 +44,10 @@ class AuthController extends AbstractController
             }
 
             try {
-                $authData = $this->apiClient->login($username, $password);
+                $authData = $this->authClient->login($username, $password);
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['key']);
-                $request->getSession()->set('auth_id', $authData['id']);
+                $request->getSession()->set('auth_id', (int) $authData['id']);
 
                 return $this->redirectToRoute('home');
             } catch (Exception $e) {
@@ -69,8 +67,14 @@ class AuthController extends AbstractController
     {
         $request->getSession()->remove('auth_token');
         $request->getSession()->remove('auth_id');
-        $this->apiClient->logout();
+        $this->authClient->logout();
 
         return $this->redirectToRoute('login');
+    }
+
+    #[Route('/admin-about', name: 'admin_about')]
+    public function about(): JsonResponse
+    {
+        return new JsonResponse($this->authClient->getSessionUser()->toArray());
     }
 }

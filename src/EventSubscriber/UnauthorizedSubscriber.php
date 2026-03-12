@@ -7,7 +7,6 @@ namespace PhpList\WebFrontend\EventSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -17,7 +16,6 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly FlashBagInterface $flashBag,
     ) {
     }
 
@@ -53,7 +51,11 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
             }
 
             if ($request->hasSession()) {
-                $this->flashBag->add('error', 'Your session has expired. Please log in again.');
+                $session = $request->getSession();
+
+                if (method_exists($session, 'getFlashBag')) {
+                    $session->getFlashBag()->add('error', 'Your session has expired. Please log in again.');
+                }
             }
 
             $event->setResponse(new RedirectResponse($loginUrl));

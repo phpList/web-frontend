@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -23,13 +24,11 @@ class UnauthorizedSubscriberTest extends TestCase
 {
     private UnauthorizedSubscriber $subscriber;
     private UrlGeneratorInterface&MockObject $urlGenerator;
-    private FlashBagInterface&MockObject $flashBag;
 
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->flashBag = $this->createMock(FlashBagInterface::class);
-        $this->subscriber = new UnauthorizedSubscriber($this->urlGenerator, $this->flashBag);
+        $this->subscriber = new UnauthorizedSubscriber($this->urlGenerator);
     }
 
     public function testGetSubscribedEvents(): void
@@ -44,12 +43,14 @@ class UnauthorizedSubscriberTest extends TestCase
     {
         $authException = new AuthenticationException('Unauthorized');
 
-        $session = $this->createMock(SessionInterface::class);
-        $session->expects($this->once())->method('invalidate');
-
-        $this->flashBag->expects($this->once())
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $flashBag->expects($this->once())
             ->method('add')
             ->with('error', 'Your session has expired. Please log in again.');
+
+        $session = $this->createMock(Session::class);
+        $session->expects($this->once())->method('invalidate');
+        $session->method('getFlashBag')->willReturn($flashBag);
 
         $request = $this->createMock(Request::class);
         $request->method('hasSession')->willReturn(true);

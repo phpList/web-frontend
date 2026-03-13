@@ -47,7 +47,10 @@
             {{ subscriber.createdAt }}
           </td>
           <td class="px-6 py-4 text-right">
-            <button class="text-slate-400 hover:text-slate-600">
+            <button
+              class="text-slate-400 hover:text-slate-600"
+              @click="emit('view', subscriber.id)"
+            >
               <BaseIcon name="eye" class="w-4 h-4" />
             </button>
           </td>
@@ -67,6 +70,12 @@
             {{ subscriber.email.split('@')[0] }}
           </span>
           <div class="flex gap-2">
+            <button
+                class="text-slate-400 hover:text-slate-600 mr-2"
+                @click="emit('view', subscriber.id)"
+            >
+              <BaseIcon name="eye" class="w-4 h-4" />
+            </button>
             <span
               class="px-2.5 py-0.5 rounded-full text-xs font-medium"
               :class="subscriber.confirmed ? statusClasses.active : statusClasses.unconfirmed"
@@ -115,6 +124,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['view'])
 
 const formatDate = (dateString, isIso = false) => {
   if (!dateString) return '-'

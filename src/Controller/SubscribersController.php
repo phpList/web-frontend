@@ -8,12 +8,14 @@ use DateTimeImmutable;
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
+use PhpList\RestApiClient\Request\Subscriber\UpdateSubscriberRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/subscribers', name: 'subscriber_')]
 class SubscribersController extends AbstractController
 {
     public function __construct(private readonly SubscribersClient $subscribersClient)
@@ -24,7 +26,7 @@ class SubscribersController extends AbstractController
      * @SuppressWarnings("CyclomaticComplexity")
      * @SuppressWarnings("NPathComplexity")
      */
-    #[Route('/subscribers', name: 'subscribers', methods: ['GET'])]
+    #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {
         if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
@@ -84,7 +86,7 @@ class SubscribersController extends AbstractController
         return $this->json($initialData);
     }
 
-    #[Route('/subscribers/export', name: 'subscribers_export', methods: 'GET')]
+    #[Route('/export', name: 'export', methods: 'GET')]
     public function export(Request $request): Response
     {
         $filter = new SubscribersFilterRequest(
@@ -135,5 +137,31 @@ class SubscribersController extends AbstractController
         );
 
         return $response;
+    }
+
+    #[Route('/{id}', name: 'details', methods: ['GET'])]
+    public function getDetails(int $id): JsonResponse
+    {
+        $subscriber = $this->subscribersClient->getSubscriber($id);
+
+        return $this->json($subscriber);
+    }
+
+    #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    public function update(int $id, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $updateRequest = new UpdateSubscriberRequest(
+            email: $data['email'],
+            confirmed: $data['confirmed'] ?? false,
+            blacklisted: $data['blacklisted'] ?? false,
+            htmlEmail: $data['htmlEmail'] ?? false,
+            disabled: $data['disabled'] ?? false,
+        );
+
+        $subscriber = $this->subscribersClient->updateSubscriber($id, $updateRequest);
+
+        return $this->json($subscriber);
     }
 }

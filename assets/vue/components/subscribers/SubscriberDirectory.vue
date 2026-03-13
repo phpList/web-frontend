@@ -40,7 +40,13 @@
     <div class="px-6 py-4 bg-slate-50/50 border-b border-slate-200">
       <SubscriberFilters @filter-change="handleFilterChange" />
     </div>
-    <SubscriberTable :subscribers="subscribers" />
+    <SubscriberTable :subscribers="subscribers" @view="openSubscriberModal" />
+    <SubscriberModal
+      :is-open="isModalOpen"
+      :subscriber-id="selectedSubscriberId"
+      @close="closeSubscriberModal"
+      @updated="handleSubscriberUpdated"
+    />
     <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
       <div class="text-center sm:text-left">
         Showing <span class="font-medium text-slate-900">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900">{{ pagination.total }}</span> subscribers
@@ -69,6 +75,7 @@
 import BaseIcon from '../base/BaseIcon.vue'
 import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
+import SubscriberModal from './SubscriberModal.vue'
 import { inject, ref, onMounted, watch } from 'vue'
 import { subscriberFilters } from './subscriberFilters'
 
@@ -86,6 +93,8 @@ const pagination = ref(initialPagination)
 const currentFilter = ref(null)
 const searchQuery = ref('')
 const searchColumn = ref('email')
+const isModalOpen = ref(false)
+const selectedSubscriberId = ref(null)
 let searchTimeout = null
 
 const searchColumns = [
@@ -188,6 +197,29 @@ const handleSearch = () => {
   searchTimeout = setTimeout(() => {
     fetchSubscribers()
   }, 300)
+}
+
+const openSubscriberModal = (id) => {
+  selectedSubscriberId.value = id
+  isModalOpen.value = true
+}
+
+const closeSubscriberModal = () => {
+  isModalOpen.value = false
+  selectedSubscriberId.value = null
+}
+
+const handleSubscriberUpdated = (updatedSubscriber) => {
+  const index = subscribers.value.findIndex(s => s.id === updatedSubscriber.id)
+  if (index !== -1) {
+    subscribers.value[index] = {
+      ...subscribers.value[index],
+      email: updatedSubscriber.email,
+      confirmed: updatedSubscriber.confirmed,
+      blacklisted: updatedSubscriber.blacklisted,
+      listCount: updatedSubscriber.subscribedLists ? updatedSubscriber.subscribedLists.length : subscribers.value[index].listCount
+    }
+  }
 }
 
 const nextPage = () => {

@@ -99,10 +99,10 @@
                   </div>
 
                   <div v-if="subscriber" class="text-xs text-slate-400 mt-4 pt-4 border-t border-slate-100">
-                    <p>Created: {{ subscriber.created_at	 }}</p>
-                    <p>Updated: {{ subscriber.updated_at === '' ? '-' : subscriber.updated_at }}</p>
-                    <p>Bounce Count: {{ subscriber.bounce_count }}</p>
-                    <p>Unique ID: {{ subscriber.unique_id }}</p>
+                    <p>Created: {{ subscriber.createdAt }}</p>
+                    <p>Updated: {{ subscriber.updatedAt === '' ? '-' : subscriber.updatedAt }}</p>
+                    <p>Bounce Count: {{ subscriber.bounceCount }}</p>
+                    <p>Unique ID: {{ subscriber.uniqueId }}</p>
                     <p>UUID: {{ subscriber.uuid === '' ? '-' : subscriber.uuid }}</p>
                   </div>
                 </form>
@@ -134,6 +134,7 @@
 <script setup>
 import BaseIcon from '../base/BaseIcon.vue'
 import { ref, watch } from 'vue'
+import { subscribersClient } from '../../api'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -164,14 +165,7 @@ const fetchSubscriberDetails = async () => {
   loading.value = true
   error.value = null
   try {
-    const response = await fetch(`/subscribers/${props.subscriberId}`, {
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-    if (!response.ok) throw new Error('Failed to fetch subscriber details')
-    subscriber.value = await response.json()
+    subscriber.value = await subscribersClient.getSubscriber(props.subscriberId)
     
     // Update formData
     formData.value = {
@@ -192,19 +186,7 @@ const save = async () => {
   saving.value = true
   error.value = null
   try {
-    const response = await fetch(`/subscribers/${props.subscriberId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify(formData.value)
-    })
-    
-    if (!response.ok) throw new Error('Failed to update subscriber')
-    
-    const updatedSubscriber = await response.json()
+    const updatedSubscriber = await subscribersClient.updateSubscriber(props.subscriberId, formData.value)
     emit('updated', updatedSubscriber)
     close()
   } catch (err) {

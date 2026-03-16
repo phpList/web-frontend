@@ -30,7 +30,11 @@ class SubscribersController extends AbstractController
     public function index(Request $request): JsonResponse|Response
     {
         if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
-            return $this->render('spa.html.twig', ['page' => 'Subscribers']);
+            return $this->render('spa.html.twig', [
+                'page' => 'Subscribers',
+                'api_token' => $request->getSession()->get('auth_token'),
+                'api_base_url' => $this->getParameter('api_base_url'),
+            ]);
         }
 
         $afterId = (int) $request->query->get('after_id');
@@ -137,31 +141,5 @@ class SubscribersController extends AbstractController
         );
 
         return $response;
-    }
-
-    #[Route('/{id}', name: 'details', methods: ['GET'])]
-    public function getDetails(int $id): JsonResponse
-    {
-        $subscriber = $this->subscribersClient->getSubscriber($id);
-
-        return $this->json($subscriber);
-    }
-
-    #[Route('/{id}', name: 'update', methods: ['PUT'])]
-    public function update(int $id, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $updateRequest = new UpdateSubscriberRequest(
-            email: $data['email'],
-            confirmed: $data['confirmed'] ?? false,
-            blacklisted: $data['blacklisted'] ?? false,
-            htmlEmail: $data['htmlEmail'] ?? false,
-            disabled: $data['disabled'] ?? false,
-        );
-
-        $subscriber = $this->subscribersClient->updateSubscriber($id, $updateRequest);
-
-        return $this->json($subscriber);
     }
 }

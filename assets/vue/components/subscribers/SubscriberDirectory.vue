@@ -78,6 +78,7 @@ import SubscriberTable from './SubscriberTable.vue'
 import SubscriberModal from './SubscriberModal.vue'
 import { inject, ref, onMounted, watch } from 'vue'
 import { subscriberFilters } from './subscriberFilters'
+import { subscribersClient } from '../../api'
 
 const initialSubscribers = inject('subscribers', [])
 const initialPagination = inject('pagination', {
@@ -154,35 +155,47 @@ onMounted(() => {
 })
 
 const fetchSubscribers = async (afterId = null) => {
-  const url = new URL('/subscribers', window.location.origin)
-  if (afterId !== null) {
-    url.searchParams.set('after_id', afterId)
-  }
+  const filters = {}
 
   if (currentFilter.value && currentFilter.value !== 'all') {
-    url.searchParams.set(currentFilter.value, 'true')
+    filters[currentFilter.value] = true
   }
 
   if (searchQuery.value) {
-    url.searchParams.set('findColumn', searchColumn.value)
-    url.searchParams.set('findValue', searchQuery.value)
+    filters.findColumn = searchColumn.value
+    filters.findValue = searchQuery.value
   }
 
   try {
-    const response = await fetch(url, {
-      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-    })
+    const collection = await subscribersClient.getSubscribers(filters, afterId, 10)
 
-    if (response.status === 401) {
-      const data = await response.json()
-      window.location.href = data.redirect
-      return
+    subscribers.value = collection.items.map(subscriber => ({
+      id: subscriber.id,
+      email: subscriber.email,
+      confirmed: subscriber.confirmed,
+      blacklisted: subscriber.blacklisted,
+      createdAt: new Date(subscriber.createdAt).toISOString().replace('T', ' ').substring(0, 19),
+      uniqueId: subscriber.uniqueId,
+      listCount: subscriber.subscribedLists?.length || 0,
+    }))
+
+    const history = pagination.value.history || [0]
+    if (!history.includes(afterId)) {
+      history.push(afterId)
     }
 
-    const data = await response.json()
+    const index = history.indexOf(afterId)
+    const prevId = index > 0 ? history[index - 1] : 0
 
-    subscribers.value = data.items
-    pagination.value = data.pagination
+    pagination.value = {
+      limit: collection.pagination.limit,
+      afterId: collection.pagination.nextCursor,
+      hasMore: collection.pagination.hasMore,
+      total: collection.pagination.total,
+      isFirstPage: afterId === 0 || afterId === null,
+      prevId,
+      history,
+    }
 
     updateUrl(afterId)
   } catch (error) {
@@ -241,20 +254,20 @@ const handleFilterChange = (filterId) => {
 }
 
 const exportSubscribers = () => {
-  const url = new URL('/subscribers/export', window.location.origin)
+  const params = new URLSearchParams()
   if (currentFilter.value && currentFilter.value !== 'all') {
-    url.searchParams.set(currentFilter.value, 'true')
+    params.set(currentFilter.value, 'true')
   }
 
   if (searchQuery.value) {
-    url.searchParams.set('findColumn', searchColumn.value)
-    url.searchParams.set('findValue', searchQuery.value)
+    params.set('findColumn', searchColumn.value)
+    params.set('findValue', searchQuery.value)
   }
 
   if (pagination.value.total > 0) {
-    url.searchParams.set('limit', pagination.value.total)
+    params.set('limit', pagination.value.total)
   }
 
-  window.location.href = url.toString()
+  window.location.href = `/subscribers/export?${params.toString()}`
 }
 </script>

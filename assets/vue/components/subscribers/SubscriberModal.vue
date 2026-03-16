@@ -10,7 +10,7 @@
             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
               <div class="flex justify-between items-center">
                 <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
-                  Subscriber Details
+                  Subscriber Details ID: {{ subscriber.id }}
                 </h3>
                 <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
                   <BaseIcon name="close" class="w-5 h-5" />
@@ -99,9 +99,11 @@
                   </div>
 
                   <div v-if="subscriber" class="text-xs text-slate-400 mt-4 pt-4 border-t border-slate-100">
-                    <p>ID: {{ subscriber.id }}</p>
-                    <p>Unique ID: {{ subscriber.uniqueId }}</p>
-                    <p>Created: {{ subscriber.createdAt }}</p>
+                    <p>Created: {{ subscriber.created_at	 }}</p>
+                    <p>Updated: {{ subscriber.updated_at === '' ? '-' : subscriber.updated_at }}</p>
+                    <p>Bounce Count: {{ subscriber.bounce_count }}</p>
+                    <p>Unique ID: {{ subscriber.unique_id }}</p>
+                    <p>UUID: {{ subscriber.uuid === '' ? '-' : subscriber.uuid }}</p>
                   </div>
                 </form>
               </div>

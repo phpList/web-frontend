@@ -26,12 +26,21 @@
             </select>
           </div>
           <div class="flex gap-2">
-            <button
-                class="flex-[3] sm:flex-none px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
-                @click="exportSubscribers"
+            <input
+                ref="fileInput"
+                type="file"
+                class="hidden"
+                accept=".csv"
+                @change="handleFileChange"
             >
-              <BaseIcon name="download" class="w-4 h-4" />
-              <span class="flex items-center whitespace-nowrap">Export CSV</span>
+            <button
+                class="flex-[3] sm:flex-none px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="isImporting"
+                @click="importSubscribers"
+            >
+              <BaseIcon v-if="!isImporting" name="upload" class="w-4 h-4" />
+              <div v-else class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <span class="flex items-center whitespace-nowrap">{{ isImporting ? 'Importing...' : 'Import CSV' }}</span>
             </button>
           </div>
         </div>
@@ -46,6 +55,11 @@
       :subscriber-id="selectedSubscriberId"
       @close="closeSubscriberModal"
       @updated="handleSubscriberUpdated"
+    />
+    <ImportResult
+      :is-import-result-open="isImportResultOpen"
+      :import-result="importResult"
+      @close="isImportResultOpen = false"
     />
     <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
       <div class="text-center sm:text-left">
@@ -76,6 +90,7 @@ import BaseIcon from '../base/BaseIcon.vue'
 import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
 import SubscriberModal from './SubscriberModal.vue'
+import ImportResult from './ImportResult.vue'
 import { inject, ref, onMounted, watch } from 'vue'
 import { subscriberFilters } from './subscriberFilters'
 import { subscribersClient } from '../../api'
@@ -96,6 +111,14 @@ const searchQuery = ref('')
 const searchColumn = ref('email')
 const isModalOpen = ref(false)
 const selectedSubscriberId = ref(null)
+const fileInput = ref(null)
+const isImporting = ref(false)
+const isImportResultOpen = ref(false)
+const importResult = ref({
+  imported: 0,
+  skipped: 0,
+  errors: []
+})
 let searchTimeout = null
 
 const searchColumns = [
@@ -240,6 +263,33 @@ const previousPage = () => {
 const handleFilterChange = (filterId) => {
   currentFilter.value = filterId || 'all'
   fetchSubscribers()
+}
+
+const importSubscribers = () => {
+  fileInput.value.click()
+}
+
+const handleFileChange = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  isImporting.value = true
+  try {
+    const result = await subscribersClient.importSubscribers({
+      file,
+      listId: 0,
+      updateExisting: true
+    })
+    importResult.value = result
+    isImportResultOpen.value = true
+    fetchSubscribers()
+  } catch (error) {
+    console.error('Failed to import subscribers:', error)
+    alert('Failed to import subscribers. Please check the file and try again.')
+  } finally {
+    isImporting.value = false
+    event.target.value = ''
+  }
 }
 
 const exportSubscribers = () => {

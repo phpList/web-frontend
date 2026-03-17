@@ -8,7 +8,6 @@ use DateTimeImmutable;
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
-use PhpList\RestApiClient\Request\Subscriber\UpdateSubscriberRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

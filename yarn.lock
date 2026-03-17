@@ -1089,10 +1089,10 @@
     postcss "^8.5.6"
     tailwindcss "4.2.1"
 
-"@tatevikgr/rest-api-client@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@tatevikgr/rest-api-client/-/rest-api-client-1.0.1.tgz#9ce5c334068caa72bacef0a1497fbafcfe5eb0e1"
-  integrity sha512-7ghaZhdjL+Lo+cdlSoJXtWYgGK/cgJfsT640YDqJEuZrwK2BKAluBc3x0zVXHmFkH5pBOwGs1uYVu/4X56Ay5g==
+"@tatevikgr/rest-api-client@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@tatevikgr/rest-api-client/-/rest-api-client-1.0.2.tgz#d78c28a35a037fb3bfdf3ebe6d3e46163498be89"
+  integrity sha512-b/pu0LEt/p3TTDmsDIAWU95rb60weF7wGK1iuYOd+BNPCS9sineADQQ90z83C+vviU+DoEGSUqa3Uhr/jJwJLw==
   dependencies:
     axios "^1.6.0"
 

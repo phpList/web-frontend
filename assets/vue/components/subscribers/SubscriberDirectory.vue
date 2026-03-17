@@ -155,53 +155,42 @@ onMounted(() => {
 })
 
 const fetchSubscribers = async (afterId = null) => {
-  const filters = {}
+  const url = new URL('/subscribers', window.location.origin)
+  if (afterId !== null) {
+    url.searchParams.set('after_id', afterId)
+  }
 
   if (currentFilter.value && currentFilter.value !== 'all') {
-    filters[currentFilter.value] = true
+    url.searchParams.set(currentFilter.value, 'true')
   }
 
   if (searchQuery.value) {
-    filters.findColumn = searchColumn.value
-    filters.findValue = searchQuery.value
+    url.searchParams.set('findColumn', searchColumn.value)
+    url.searchParams.set('findValue', searchQuery.value)
   }
 
   try {
-    const collection = await subscribersClient.getSubscribers(filters, afterId, 10)
+    const response = await fetch(url, {
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+    })
 
-    subscribers.value = collection.items.map(subscriber => ({
-      id: subscriber.id,
-      email: subscriber.email,
-      confirmed: subscriber.confirmed,
-      blacklisted: subscriber.blacklisted,
-      createdAt: new Date(subscriber.createdAt).toISOString().replace('T', ' ').substring(0, 19),
-      uniqueId: subscriber.uniqueId,
-      listCount: subscriber.subscribedLists?.length || 0,
-    }))
-
-    const history = pagination.value.history || [0]
-    if (!history.includes(afterId)) {
-      history.push(afterId)
+    if (response.status === 401) {
+      const data = await response.json()
+      window.location.href = data.redirect
+      return
     }
 
-    const index = history.indexOf(afterId)
-    const prevId = index > 0 ? history[index - 1] : 0
+    const data = await response.json()
 
-    pagination.value = {
-      limit: collection.pagination.limit,
-      afterId: collection.pagination.nextCursor,
-      hasMore: collection.pagination.hasMore,
-      total: collection.pagination.total,
-      isFirstPage: afterId === 0 || afterId === null,
-      prevId,
-      history,
-    }
+    subscribers.value = data.items
+    pagination.value = data.pagination
 
     updateUrl(afterId)
   } catch (error) {
     console.error('Failed to fetch subscribers:', error)
   }
 }
+
 
 const handleSearch = () => {
   if (searchTimeout) {

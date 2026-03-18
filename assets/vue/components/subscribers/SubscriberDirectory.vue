@@ -120,14 +120,18 @@ const importResult = ref({
   errors: []
 })
 let searchTimeout = null
+let fetchController = null
 
 const searchColumns = [
   { id: 'email', label: 'Email' },
   { id: 'foreignKey', label: 'Foreign Key' },
   { id: 'uniqueId', label: 'Unique ID' }
 ]
+const allowedSearchColumns = searchColumns.map(column => column.id)
 
 const allowedFilters = subscriberFilters.map(f => f.id)
+
+const isAllowedSearchColumn = (column) => allowedSearchColumns.includes(column)
 
 const updateUrl = (afterId = null) => {
   const url = new URL(window.location.href)
@@ -140,7 +144,7 @@ const updateUrl = (afterId = null) => {
     url.searchParams.set(currentFilter.value, 'true')
   }
 
-  if (searchQuery.value) {
+  if (searchQuery.value && isAllowedSearchColumn(searchColumn.value)) {
     url.searchParams.set('findColumn', searchColumn.value)
     url.searchParams.set('findValue', searchQuery.value)
   } else {
@@ -160,13 +164,15 @@ const updateUrl = (afterId = null) => {
 const getFilterFromUrl = () => {
   const params = new URLSearchParams(window.location.search)
   const foundFilter = allowedFilters.find(filter => params.get(filter) === 'true')
+  const findColumnParam = params.get('findColumn')
+  const hasValidFindColumn = isAllowedSearchColumn(findColumnParam)
   
   if (params.has('findValue')) {
     searchQuery.value = params.get('findValue')
   }
 
-  if (params.has('findColumn')) {
-    searchColumn.value = params.get('findColumn')
+  if (hasValidFindColumn) {
+    searchColumn.value = findColumnParam
   }
 
   return foundFilter || 'all'
@@ -178,6 +184,10 @@ onMounted(() => {
 })
 
 const fetchSubscribers = async (afterId = null) => {
+  fetchController?.abort()
+  fetchController = new AbortController()
+  const { signal } = fetchController
+
   const url = new URL('/subscribers', window.location.origin)
   if (afterId !== null) {
     url.searchParams.set('after_id', afterId)
@@ -187,14 +197,15 @@ const fetchSubscribers = async (afterId = null) => {
     url.searchParams.set(currentFilter.value, 'true')
   }
 
-  if (searchQuery.value) {
+  if (searchQuery.value && isAllowedSearchColumn(searchColumn.value)) {
     url.searchParams.set('findColumn', searchColumn.value)
     url.searchParams.set('findValue', searchQuery.value)
   }
 
   try {
     const response = await fetch(url, {
-      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+      signal
     })
 
     if (response.status === 401) {
@@ -210,6 +221,7 @@ const fetchSubscribers = async (afterId = null) => {
 
     updateUrl(afterId)
   } catch (error) {
+    if (error?.name === 'AbortError') return
     console.error('Failed to fetch subscribers:', error)
   }
 }
@@ -297,7 +309,7 @@ const exportSubscribers = () => {
     params.set(currentFilter.value, 'true')
   }
 
-  if (searchQuery.value) {
+  if (searchQuery.value && isAllowedSearchColumn(searchColumn.value)) {
     params.set('findColumn', searchColumn.value)
     params.set('findValue', searchQuery.value)
   }

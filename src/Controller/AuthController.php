@@ -75,6 +75,15 @@ class AuthController extends AbstractController
     #[Route('/admin-about', name: 'admin_about')]
     public function about(): JsonResponse
     {
-        return new JsonResponse($this->authClient->getSessionUser()->toArray());
+        try {
+            $user = $this->authClient->getSessionUser();
+        } catch (Exception | GuzzleException $e) {
+            return new JsonResponse(
+                ['error' => 'Unable to load current user.'],
+                Response::HTTP_SERVICE_UNAVAILABLE
+            );
+        }
+
+        return new JsonResponse($user->toArray());
     }
 }

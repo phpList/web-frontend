@@ -155,11 +155,14 @@ const formData = ref({
   disabled: false
 })
 
-watch(() => props.isOpen, (newValue) => {
-  if (newValue && props.subscriberId) {
-    fetchSubscriberDetails()
+watch(
+  () => [props.isOpen, props.subscriberId],
+  ([isOpen, subscriberId]) => {
+    if (isOpen && subscriberId) {
+      fetchSubscriberDetails()
+    }
   }
-})
+)
 
 const fetchSubscriberDetails = async () => {
   loading.value = true

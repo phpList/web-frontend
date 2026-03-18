@@ -89,7 +89,7 @@ class SubscribersController extends AbstractController
         return $this->json($initialData);
     }
 
-    #[Route('/export', name: 'export', methods: 'GET')]
+    #[Route('/export', name: 'export', methods: ['GET'])]
     public function export(Request $request): Response
     {
         $filter = new SubscribersFilterRequest(

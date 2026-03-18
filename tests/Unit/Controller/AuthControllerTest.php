@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Tests\Unit\Controller;
 use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -107,13 +108,21 @@ class AuthControllerTest extends TestCase
                 ['login_error', false]
             ]);
 
+        $expected = [
+            ['auth_token', 'test-token'],
+            ['auth_expiry_date', '2026-03-18T14:15:38+04:00'],
+            ['auth_id', 1],
+        ];
+
+        $index = 0;
+
         $session->expects($this->exactly(3))
             ->method('set')
-            ->withConsecutive(
-                ['auth_token', 'test-token'],
-                ['auth_expiry_date', 'test-token'],
-                ['auth_id', 1]
-            );
+            ->willReturnCallback(function ($key, $value) use (&$expected, &$index) {
+                Assert::assertSame($expected[$index][0], $key);
+                Assert::assertSame($expected[$index][1], $value);
+                $index++;
+            });
 
         $request = Request::create('/login', 'POST', [
             'username' => 'testuser',
@@ -123,7 +132,7 @@ class AuthControllerTest extends TestCase
 
         $this->authClient->method('login')
             ->with('testuser', 'testpass')
-            ->willReturn(['key' => 'test-token', 'id' => 1]);
+            ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
 
         $response = $this->controller->login($request);
 
@@ -181,12 +190,19 @@ class AuthControllerTest extends TestCase
     public function testLogout(): void
     {
         $session = $this->createMock(SessionInterface::class);
+        $expected = [
+            ['auth_token'],
+            ['auth_id'],
+        ];
+
+        $index = 0;
+
         $session->expects($this->exactly(2))
             ->method('remove')
-            ->withConsecutive(
-                ['auth_token'],
-                ['auth_id']
-            );
+            ->willReturnCallback(function ($key) use (&$expected, &$index) {
+                Assert::assertSame($expected[$index][0], $key);
+                $index++;
+            });
 
         $request = $this->createMock(Request::class);
         $request->method('getSession')

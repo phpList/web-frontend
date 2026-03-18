@@ -10,7 +10,7 @@
             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
               <div class="flex justify-between items-center">
                 <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
-                  Subscriber Details ID: {{ subscriber.id }}
+                  Subscriber Details ID: {{ subscriber.id ?? '' }}
                 </h3>
                 <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
                   <BaseIcon name="close" class="w-5 h-5" />

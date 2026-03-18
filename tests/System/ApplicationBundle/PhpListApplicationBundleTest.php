@@ -35,7 +35,7 @@ class PhpListApplicationBundleTest extends TestCase
     public function testHomepageReturnsSuccess(): void
     {
         $this->startSymfonyServer();
-        $response = $this->httpClient->get('/api/v2', [
+        $response = $this->httpClient->get('/', [
             'base_uri' => $this->getBaseUrl(),
         ]);
 

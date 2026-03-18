@@ -108,7 +108,18 @@ class SubscribersController extends AbstractController
         }
         $handle = fopen('php://temp', 'r+');
 
-        $headers = array_keys((array) $exportData[0]);
+        $headers = [
+            'id',
+            'email',
+            'createdAt',
+            'confirmed',
+            'blacklisted',
+            'bounceCount',
+            'uniqueId',
+            'htmlEmail',
+            'disabled',
+            'lists',
+        ];
         fputcsv($handle, $headers);
 
         foreach ($exportData as $data) {

@@ -91,9 +91,9 @@ import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
 import SubscriberModal from './SubscriberModal.vue'
 import ImportResult from './ImportResult.vue'
-import { inject, ref, onMounted, watch } from 'vue'
-import { subscriberFilters } from './subscriberFilters'
-import { subscribersClient } from '../../api'
+import {inject, onMounted, ref} from 'vue'
+import {subscriberFilters} from './subscriberFilters'
+import {subscribersClient} from '../../api'
 
 const initialSubscribers = inject('subscribers', [])
 const initialPagination = inject('pagination', {
@@ -275,12 +275,11 @@ const handleFileChange = async (event) => {
 
   isImporting.value = true
   try {
-    const result = await subscribersClient.importSubscribers({
+    importResult.value = await subscribersClient.importSubscribers({
       file,
       listId: 0,
       updateExisting: true
     })
-    importResult.value = result
     isImportResultOpen.value = true
     fetchSubscribers()
   } catch (error) {

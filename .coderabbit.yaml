@@ -1,0 +1,18 @@
+language: "en-US"
+tone_instructions: "chill"
+reviews:
+  profile: "chill"
+  high_level_summary: true
+  collapse_walkthrough: true
+  suggested_labels: false
+  high_level_summary_in_walkthrough: false
+  changed_files_summary: false
+  poem: false
+  finishing_touches:
+    docstrings:
+      enabled: false
+  auto_review:
+    enabled: true
+    base_branches:
+      - ".*"
+    drafts: false

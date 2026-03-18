@@ -1,8 +1,7 @@
 <!-- assets/vue/components/base/BaseButton.vue -->
 <template>
   <button
-      class="base-button"
-      :class="`base-button--${variant}`"
+      :class="buttonClass"
       type="button"
       v-bind="$attrs"
   >
@@ -11,56 +10,26 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary',
+    default: 'primary', // primary | secondary | ghost
   },
+})
+
+const buttonClass = computed(() => {
+  const base = 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2';
+  switch (props.variant) {
+    case 'secondary':
+      return `${base} text-gray-700 bg-white border-gray-300 hover:bg-gray-50 focus:ring-blue-500`;
+    case 'ghost':
+      return 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-transparent hover:bg-blue-50 focus:outline-none';
+    case 'primary':
+    default:
+      return `${base} text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500`;
+  }
 })
 </script>
 
-<style scoped>
-.base-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-
-  border: none;
-  padding: 0.55rem 1.1rem;
-  border-radius: 0.7rem;
-
-  font-size: 0.9rem;
-  font-weight: 600;
-
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-/* PRIMARY */
-.base-button--primary {
-  background: #4f46e5;
-  color: #fff;
-}
-.base-button--primary:hover {
-  background: #4338ca;
-}
-
-/* SECONDARY */
-.base-button--secondary {
-  background: #e2e8f0;
-  color: #334155;
-}
-.base-button--secondary:hover {
-  background: #cbd5e1;
-}
-
-/* GHOST (low emphasis) */
-.base-button--ghost {
-  background: transparent;
-  color: #4f46e5;
-}
-.base-button--ghost:hover {
-  background: rgba(79, 70, 229, 0.08);
-}
-</style>

@@ -18,6 +18,18 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class AuthGateSubscriber implements EventSubscriberInterface
 {
+    private const ALLOW_LIST = [
+        '/api/v2',
+        '/build/',
+        '/assets/',
+        '/css/',
+        '/js/',
+        '/images/',
+        '/img/',
+        '/favicon',
+        '/robots.txt',
+    ];
+
     public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
     {
     }
@@ -42,7 +54,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
         }
 
         $session = $request->getSession();
-        if (!$session || !$session->has('auth_token')) {
+        if (!$session->has('auth_token')) {
             $loginUrl = $this->urlGenerator->generate('login');
             $event->setResponse(new RedirectResponse($loginUrl));
         }
@@ -50,7 +62,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
     private function isPublicPath(Request $request): bool
     {
-        $path = $request->getPathInfo() ?? '/';
+        $path = $request->getPathInfo();
 
         // Public login route
         if ($path === '/login' || str_starts_with($path, '/login')) {
@@ -63,7 +75,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
         }
 
         // Allow static assets commonly served under these prefixes
-        foreach (['/build/', '/assets/', '/css/', '/js/', '/images/', '/img/', '/favicon', '/robots.txt'] as $prefix) {
+        foreach (self::ALLOW_LIST as $prefix) {
             if (str_starts_with($path, $prefix)) {
                 return true;
             }

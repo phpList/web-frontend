@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+@theme {
+  --color-primary: #2563eb;
+  --color-secondary: #6b7280;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-info: #0891b2;
+  --color-ext-wf1: #543ff6; /** indigo-500 **/
+  --color-ext-wf2: #eef2ff; /** indigo-50 **/
+  --color-ext-wf3: #303F9F; /** indigo-700 **/
+}
+
+@source "../../templates/**/*.twig";
+@source "../**/*.vue";

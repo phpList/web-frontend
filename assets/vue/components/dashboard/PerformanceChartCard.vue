@@ -1,12 +1,19 @@
 <!-- assets/vue/components/dashboard/PerformanceChartCard.vue -->
 <template>
   <BaseCard>
-    <header class="pc-header">
-      <h2>Campaign Performance</h2>
-      <p class="pc-subtitle">Daily opens and clicks for the last 30 days</p>
+    <header class="mb-3">
+      <h2 class="text-sm font-bold text-gray-900 mb-1">
+        Campaign Performance
+      </h2>
+      <p class="text-gray-500 text-xs mb-0">
+        Daily opens and clicks for the last 30 days
+      </p>
     </header>
 
-    <div class="pc-chart-placeholder">
+    <div
+        class="flex items-center justify-center mt-3 rounded-lg bg-gray-100 text-gray-500 text-sm"
+        style="height: 220px;"
+    >
       <span>Chart Placeholder</span>
     </div>
   </BaseCard>
@@ -15,36 +22,3 @@
 <script setup>
 import BaseCard from '../../components/base/BaseCard.vue'
 </script>
-
-<style scoped>
-.pc-header h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.pc-subtitle {
-  margin-top: 0.3rem;
-  color: #64748b;
-  font-size: 0.85rem;
-}
-
-.pc-chart-placeholder {
-  margin-top: 1.2rem;
-  height: 220px;
-  border-radius: 0.75rem;
-  background: repeating-linear-gradient(
-      -45deg,
-      #e2e8f0 0,
-      #e2e8f0 10px,
-      #f8fafc 10px,
-      #f8fafc 20px
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 0.85rem;
-}
-</style>

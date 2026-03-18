@@ -8,24 +8,22 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
-    private AuthClient $apiClient;
-
-    public function __construct(AuthClient $apiClient)
+    public function __construct(private readonly AuthClient $authClient)
     {
-        $this->apiClient = $apiClient;
     }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(Request $request): Response
     {
         if ($request->getSession()->has('auth_token')) {
-            return $this->redirectToRoute('empty_start_page');
+            return $this->redirectToRoute('home');
         }
 
         $error = null;
@@ -46,11 +44,12 @@ class AuthController extends AbstractController
             }
 
             try {
-                $authData = $this->apiClient->login($username, $password);
+                $authData = $this->authClient->login($username, $password);
                 $request->getSession()->set('auth_token', $authData['key']);
-                $request->getSession()->set('auth_expiry_date', $authData['key']);
+                $request->getSession()->set('auth_expiry_date', $authData['expiry_date']);
+                $request->getSession()->set('auth_id', (int) $authData['id']);
 
-                return $this->redirectToRoute('dashboard');
+                return $this->redirectToRoute('home');
             } catch (Exception $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
             } catch (GuzzleException $e) {
@@ -67,7 +66,24 @@ class AuthController extends AbstractController
     public function logout(Request $request): Response
     {
         $request->getSession()->remove('auth_token');
+        $request->getSession()->remove('auth_id');
+        $this->authClient->logout();
 
         return $this->redirectToRoute('login');
+    }
+
+    #[Route('/admin-about', name: 'admin_about')]
+    public function about(): JsonResponse
+    {
+        try {
+            $user = $this->authClient->getSessionUser();
+        } catch (Exception | GuzzleException $e) {
+            return new JsonResponse(
+                ['error' => 'Unable to load current user.'],
+                Response::HTTP_SERVICE_UNAVAILABLE
+            );
+        }
+
+        return new JsonResponse($user->toArray());
     }
 }

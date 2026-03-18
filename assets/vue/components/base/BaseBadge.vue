@@ -1,36 +1,28 @@
 <!-- assets/vue/components/base/BaseBadge.vue -->
 <template>
-  <span class="base-badge" :class="`base-badge--${variant}`">
+  <span :class="badgeClass">
     <slot />
   </span>
+<!-- Renders a Tailwind badge; styling controlled via variant prop -->
 </template>
 
 <script setup>
+import { computed } from 'vue'
 const props = defineProps({
   variant: {
     type: String,
-    default: 'neutral', // "neutral" | "counter" | etc.
+    default: 'neutral', // neutral | counter
   },
 })
+
+const badgeClass = computed(() => {
+  const base = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
+  switch (props.variant) {
+    case 'counter':
+      return `${base} bg-indigo-50 text-ext-wf3 border border-indigo-100`;
+    case 'neutral':
+    default:
+      return `${base} bg-gray-100 text-gray-800`;
+  }
+})
 </script>
-
-<style scoped>
-.base-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.1rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.base-badge--neutral {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.base-badge--counter {
-  background: #eef2ff;
-  color: #4f46e5;
-}
-</style>

@@ -1,31 +1,52 @@
 <!-- assets/vue/components/dashboard/RecentCampaignsCard.vue -->
 <template>
   <BaseCard>
-    <header class="rc-header">
-      <h2>Recent Campaigns</h2>
+    <header class="mb-3">
+      <h2 class="text-sm font-bold text-gray-900 mb-0">
+        Recent Campaigns
+      </h2>
     </header>
 
-    <CampaignsTable :rows="rows" />
+    <div class="overflow-x-auto">
+      <CampaignsTable :rows="rows" />
+    </div>
   </BaseCard>
 </template>
 
 <script setup>
 import BaseCard from '../../components/base/BaseCard.vue'
-import CampaignsTable from '../../CampaignsTable.vue'
+import CampaignsTable from './CampaignsTable.vue'
 
 const props = defineProps({
+  // todo: take from backend
   rows: {
     type: Array,
-    default: () => [],
+    default: () => [
+      {
+        id: 'campaign-1',
+        name: 'Summer Sale',
+        status: 'Sent',
+        date: '2023-07-01',
+        openRate: '15%',
+        clickRate: '5%',
+      },
+      {
+        id: 'campaign-2',
+        name: 'Winter Sale',
+        status: 'scheduled',
+        date: '2023-07-01',
+        openRate: '23%',
+        clickRate: '0%',
+      },
+      {
+        id: 'campaign-3',
+        name: 'Autumn Sale',
+        status: 'draft',
+        date: '2023-07-01',
+        openRate: '11%',
+        clickRate: '0%',
+      },
+    ],
   },
 })
 </script>
-
-<style scoped>
-.rc-header h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 1rem;
-}
-</style>

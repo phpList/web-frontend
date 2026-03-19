@@ -5,6 +5,7 @@
 {% block body %}
     <div id="vue-app" 
          data-api-token="{{ api_token|default('') }}" 
-         data-api-base-url="{{ api_base_url|default('') }}">
+         data-api-base-url="{{ api_base_url|default('') }}"
+         data-dashboard-stats="{{ dashboard_stats|default({})|json_encode|e('html_attr') }}">
     </div>
 {% endblock %}

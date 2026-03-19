@@ -17,7 +17,7 @@
       <!-- Recent items list -->
       <section class="grid grid-cols-1 gap-6">
         <div class="w-full">
-          <RecentCampaignsCard />
+          <RecentCampaignsCard :rows="recentCampaigns" />
         </div>
       </section>
     </div>
@@ -30,11 +30,30 @@ import KpiGrid from '../components/dashboard/KpiGrid.vue'
 import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
 import RecentCampaignsCard from '../components/dashboard/RecentCampaignsCard.vue'
 
-const chart = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+const appElement = document.getElementById('vue-app')
+
+const parseDashboardStats = () => {
+  const raw = appElement?.dataset.dashboardStats
+  if (!raw) {
+    return {}
+  }
+
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
+}
+
+const dashboardStats = parseDashboardStats()
+
+const chart = dashboardStats.chart || {
+  labels: [],
   series: [
-    { name: 'Opens', data: [2500, 2200, 10000, 4000, 4500, 3800] },
-    { name: 'Clicks', data: [4200, 3500, 3200, 3000, 3600, 4100] },
+    { name: 'Opens', data: [] },
+    { name: 'Clicks', data: [] },
   ],
 }
+
+const recentCampaigns = dashboardStats.recent_campaigns || []
 </script>

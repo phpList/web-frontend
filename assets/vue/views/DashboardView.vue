@@ -8,9 +8,9 @@
       <KpiGrid />
 
       <!-- Chart + Overview -->
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-        <div class="lg:col-span-8">
-          <PerformanceChartCard :labels="chart.labels" :series="chart.series" class="h-full" />
+      <section class="grid grid-cols-1 gap-6 mb-6">
+        <div class="w-full">
+          <PerformanceChartCard :chart="chart" class="h-full" />
         </div>
       </section>
 

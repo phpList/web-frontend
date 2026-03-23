@@ -34,6 +34,9 @@ class SessionAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
+        if (!$request->hasSession()) {
+            throw new AuthenticationException('Session is not available');
+        }
         $session = $request->getSession();
 
         if ($session->has('auth_token')) {

@@ -1,6 +1,6 @@
 <template>
   <table class="w-full text-left border-collapse">
-    <thead class="border-b">
+    <thead class="border-b border-gray-200">
     <tr class="uppercase text-xs text-gray-500 font-semibold">
       <th class="py-3 pr-4">Campaign Name</th>
       <th class="py-3 px-4">Status</th>
@@ -14,7 +14,7 @@
     <tr
         v-for="row in rows"
         :key="row.id"
-        class="border-b last:border-0 hover:bg-gray-50"
+        class="border-b border-gray-200 last:border-0 hover:bg-gray-50"
     >
       <td class="py-3 pr-4 font-medium text-gray-900">
         {{ row.name }}

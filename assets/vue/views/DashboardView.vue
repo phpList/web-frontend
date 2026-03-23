@@ -8,9 +8,12 @@
       <KpiGrid />
 
       <!-- Chart + Overview -->
-      <section class="grid grid-cols-1 gap-6 mb-6">
-        <div class="w-full">
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="w-full lg:col-span-2">
           <PerformanceChartCard :chart="chart" class="h-full" />
+        </div>
+        <div class="w-full lg:col-span-1">
+          <QuickActionsCard class="h-full" />
         </div>
       </section>
 
@@ -28,6 +31,7 @@
 import AdminLayout from '../layouts/AdminLayout.vue'
 import KpiGrid from '../components/dashboard/KpiGrid.vue'
 import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
+import QuickActionsCard from '../components/dashboard/QuickActionsCard.vue'
 import RecentCampaignsCard from '../components/dashboard/RecentCampaignsCard.vue'
 
 const appElement = document.getElementById('vue-app')

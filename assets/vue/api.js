@@ -1,4 +1,4 @@
-import { Client, SubscribersClient } from '@tatevikgr/rest-api-client';
+import {Client, ListClient, SubscribersClient, SubscriptionClient} from '@tatevikgr/rest-api-client';
 
 const appElement = document.getElementById('vue-app');
 const apiToken = appElement?.dataset.apiToken;
@@ -15,4 +15,7 @@ if (apiToken) {
 }
 
 export const subscribersClient = new SubscribersClient(client);
+export const listClient = new ListClient(client);
+export const subscriptionClient = new SubscriptionClient(client);
+
 export default client;

@@ -83,6 +83,8 @@
       </div>
     </div>
   </div>
+
+  <ListSubscribersExportPanel/>
 </template>
 
 <script setup>
@@ -94,6 +96,7 @@ import ImportResult from './ImportResult.vue'
 import {inject, onMounted, ref} from 'vue'
 import {subscriberFilters} from './subscriberFilters'
 import {subscribersClient} from '../../api'
+import ListSubscribersExportPanel from "../lists/ListSubscribersExportPanel.vue";
 
 const initialSubscribers = inject('subscribers', [])
 const initialPagination = inject('pagination', {

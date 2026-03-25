@@ -245,6 +245,9 @@
           </div>
         </div>
       </div>
+
+      <ListSubscribersExportPanel :list-id="listId" :list-name="listName" />
+
     </div>
   </AdminLayout>
 </template>
@@ -253,6 +256,7 @@
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
+import ListSubscribersExportPanel from '../components/lists/ListSubscribersExportPanel.vue'
 import client, { subscriptionClient } from '../api'
 
 const route = useRoute()

@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Controller;
 use DateTimeImmutable;
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
+use PhpList\RestApiClient\Request\Subscriber\ExportSubscriberRequest;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -92,63 +93,43 @@ class SubscribersController extends AbstractController
     #[Route('/export', name: 'export', methods: ['GET'])]
     public function export(Request $request): Response
     {
-        $filter = new SubscribersFilterRequest(
-            isConfirmed: $request->query->has('confirmed') ? true :
-                ($request->query->has('unconfirmed') ? false : null),
-            isBlacklisted: $request->query->has('blacklisted') ? true :
-                ($request->query->has('non-blacklisted') ? false : null),
-            findColumn: $request->query->get('findColumn'),
-            findValue: $request->query->get('findValue'),
+        $columns = array_values(
+            array_filter(
+                $request->query->all('columns'),
+                static fn (mixed $value): bool => is_string($value) && $value !== ''
+            )
         );
 
-        $collection = $this->subscribersClient->getSubscribers($filter, 0, $request->query->getInt('limit'));
-        $exportData = $collection->items;
-        if (empty($exportData)) {
-            return new Response('No subscribers to export.', Response::HTTP_NOT_FOUND);
-        }
-        $handle = fopen('php://temp', 'r+');
+        $defaultRequest = new ExportSubscriberRequest();
 
-        $headers = [
-            'id',
-            'email',
-            'createdAt',
-            'confirmed',
-            'blacklisted',
-            'bounceCount',
-            'uniqueId',
-            'htmlEmail',
-            'disabled',
-            'lists',
-        ];
-        fputcsv($handle, $headers);
-
-        foreach ($exportData as $data) {
-            $row = [
-                'id' => $data->id,
-                'email' => $data->email,
-                'createdAt' => (new DateTimeImmutable($data->createdAt))->format('Y-m-d H:i:s'),
-                'confirmed' => $data->confirmed,
-                'blacklisted' => $data->blacklisted,
-                'bounceCount' => $data->bounceCount,
-                'uniqueId' => $data->uniqueId,
-                'htmlEmail' => $data->htmlEmail,
-                'disabled' => $data->disabled,
-                'lists' => implode('|', array_map(fn($list) => $list['name'], $data->subscribedLists)),
-            ];
-
-            fputcsv($handle, $row);
-        }
-
-        rewind($handle);
-        $csvContent = stream_get_contents($handle);
-        fclose($handle);
-
-        $response = new Response($csvContent);
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set(
-            'Content-Disposition',
-            'attachment; filename="subscribers_export_' . date('Y-m-d_H-i-s') . '.csv"'
+        $exportRequest = new ExportSubscriberRequest(
+            dateType: (string) $request->query->get('date_type', 'any'),
+            listId: $request->query->has('list_id') ? $request->query->getInt('list_id') : null,
+            dateFrom: $request->query->get('date_from') ?: null,
+            dateTo: $request->query->get('date_to') ?: null,
+            columns: $columns === [] ? $defaultRequest->columns : $columns
         );
+
+        $upstreamResponse = $this->subscribersClient->exportSubscribers($exportRequest);
+
+        $content = (string) $upstreamResponse->getBody();
+
+        $contentType = $upstreamResponse->getHeaderLine('Content-Type');
+        if ($contentType === '') {
+            $contentType = 'text/csv; charset=UTF-8';
+        }
+
+        $contentDisposition = $upstreamResponse->getHeaderLine('Content-Disposition');
+        if ($contentDisposition === '') {
+            $contentDisposition = sprintf(
+                'attachment; filename="subscribers_export_%s.csv"',
+                date('Y-m-d_H-i-s')
+            );
+        }
+
+        $response = new Response($content);
+        $response->headers->set('Content-Type', $contentType);
+        $response->headers->set('Content-Disposition', $contentDisposition);
 
         return $response;
     }

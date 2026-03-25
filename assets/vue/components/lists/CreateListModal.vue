@@ -149,9 +149,7 @@ const submitCreateList = async () => {
     return
   }
 
-  const parsedPosition = createForm.value.listPosition === ''
-    ? null
-    : Number(createForm.value.listPosition)
+  const parsedPosition = createForm.value.listPosition === '' ? null : Number(createForm.value.listPosition)
 
   if (parsedPosition !== null && (!Number.isInteger(parsedPosition) || parsedPosition < 0)) {
     createError.value = 'List Position must be a whole number greater than or equal to 0.'

@@ -207,11 +207,13 @@ const submitEditList = async () => {
     editError.value = 'Name is required.'
     return
   }
+  const rawPosition = editForm.value.listPosition
 
-  const parsedPosition =
-      editForm.value.listPosition === ''
-          ? null
-          : Number(editForm.value.listPosition)
+  let parsedPosition = null
+
+  if (rawPosition != null && String(rawPosition).trim() !== '' && String(rawPosition).trim().toLowerCase() !== 'null') {
+    parsedPosition = Number(rawPosition)
+  }
 
   if (parsedPosition !== null && (!Number.isInteger(parsedPosition) || parsedPosition < 0)) {
     editError.value = 'List Position must be a whole number greater than or equal to 0.'

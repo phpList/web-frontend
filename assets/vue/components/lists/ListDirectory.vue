@@ -196,12 +196,15 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseIcon from '../base/BaseIcon.vue'
 import CreateListModal from './CreateListModal.vue'
 import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'
 
 import { listClient } from '../../api'
+
+const router = useRouter()
 
 const mailingLists = ref([])
 const isCreateModalOpen = ref(false)
@@ -243,8 +246,7 @@ const emit = defineEmits([
   'delete',
   'add-subscriber',
   'edit',
-  'start-campaign',
-  'view-members'
+  'start-campaign'
 ])
 
 const handleDelete = async (list) => {
@@ -293,7 +295,15 @@ const handleListUpdated = async () => {
 }
 
 const handleStartCampaign = (list) => emit('start-campaign', list)
-const handleViewMembers = (list) => emit('view-members', list)
+const handleViewMembers = (list) => {
+  if (!list?.id) return
+
+  router.push({
+    name: 'list-subscribers',
+    params: { listId: list.id },
+    query: list.name ? { listName: list.name } : {}
+  })
+}
 
 const isPublic = (list) =>
     list?.public === true || list?.public === 1 || list?.public === '1'

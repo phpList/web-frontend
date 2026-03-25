@@ -32,4 +32,14 @@ class ListsController extends AbstractController
 
         return $this->json($initialData);
     }
+
+    #[Route('/{listId}/subscribers', name: 'list_subscribers', methods: ['GET'])]
+    public function view(Request $request, int $listId): JsonResponse|Response
+    {
+        return $this->render('spa.html.twig', [
+            'page' => 'List Subscribers',
+            'api_token' => $request->getSession()->get('auth_token'),
+            'api_base_url' => $this->getParameter('api_base_url'),
+        ]);
+    }
 }

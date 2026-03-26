@@ -11,8 +11,8 @@
           </div>
 
           <RouterLink
-            to="/lists"
-            class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
+              to="/lists"
+              class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             Back to Lists
           </RouterLink>
@@ -20,13 +20,14 @@
       </div>
 
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div
+            class="p-4 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h3 class="text-lg font-semibold text-slate-900">Subscribers</h3>
           <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
             <label class="text-sm text-slate-600">Status</label>
             <select
-              v-model="statusFilter"
-              class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                v-model="statusFilter"
+                class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="all">All</option>
               <option value="confirmed">Confirmed</option>
@@ -40,10 +41,10 @@
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-sm text-slate-600">Selected: {{ selectedSubscribers.length }}</span>
               <button
-                type="button"
-                class="px-3 py-2 text-xs font-medium rounded-lg border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
-                :disabled="!hasSelection || actionLoading"
-                @click="deleteSelectedSubscribers"
+                  type="button"
+                  class="px-3 py-2 text-xs font-medium rounded-lg border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
+                  :disabled="!hasSelection || actionLoading"
+                  @click="deleteSelectedSubscribers"
               >
                 Delete Selected
               </button>
@@ -51,34 +52,30 @@
 
             <div class="flex flex-col sm:flex-row sm:items-center gap-2 xl:ml-auto">
               <select
-                v-model="selectedTargetListId"
-                class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
-                :disabled="actionLoading"
+                  v-model="selectedTargetListId"
+                  class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  :disabled="actionLoading"
               >
                 <option value="">Select target list</option>
-                <option
-                  v-for="list in availableLists"
-                  :key="list.id"
-                  :value="String(list.id)"
-                >
+                <option v-for="list in availableLists" :key="list.id" :value="String(list.id)">
                   {{ list.name || `List #${list.id}` }}
                 </option>
               </select>
 
               <button
-                type="button"
-                class="px-3 py-2 text-xs font-medium rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-50"
-                :disabled="!hasSelection || !selectedTargetListId || actionLoading"
-                @click="copySelectedSubscribers"
+                  type="button"
+                  class="px-3 py-2 text-xs font-medium rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                  :disabled="!hasSelection || !selectedTargetListId || actionLoading"
+                  @click="copySelectedSubscribers"
               >
                 Copy Selected
               </button>
 
               <button
-                type="button"
-                class="px-3 py-2 text-xs font-medium rounded-lg border border-amber-200 text-amber-700 hover:bg-amber-50 disabled:opacity-50"
-                :disabled="!hasSelection || !selectedTargetListId || actionLoading"
-                @click="moveSelectedSubscribers"
+                  type="button"
+                  class="px-3 py-2 text-xs font-medium rounded-lg border border-amber-200 text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+                  :disabled="!hasSelection || !selectedTargetListId || actionLoading"
+                  @click="moveSelectedSubscribers"
               >
                 Move Selected
               </button>
@@ -92,73 +89,73 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm hidden md:table">
             <thead class="bg-slate-50 text-slate-500 font-medium">
-              <tr>
-                <th class="px-4 py-4 w-10">
-                  <input
+            <tr>
+              <th class="px-4 py-4 w-10">
+                <input
                     ref="selectAllCheckbox"
                     type="checkbox"
                     class="w-4 h-4 rounded border-slate-300"
                     :checked="allVisibleSelected"
                     :disabled="filteredSubscribers.length === 0"
                     @change="toggleSelectAllVisible"
-                  >
-                </th>
-                <th class="px-6 py-4">ID</th>
-                <th class="px-6 py-4">Email</th>
-                <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4">Created</th>
-                <th class="px-6 py-4 text-right">Actions</th>
-              </tr>
+                >
+              </th>
+              <th class="px-6 py-4">ID</th>
+              <th class="px-6 py-4">Email</th>
+              <th class="px-6 py-4">Status</th>
+              <th class="px-6 py-4">Created</th>
+              <th class="px-6 py-4 text-right">Actions</th>
+            </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
-              <tr v-if="loading">
-                <td colspan="6" class="px-6 py-8 text-center text-slate-500">Loading...</td>
-              </tr>
+            <tr v-if="loading">
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500">Loading...</td>
+            </tr>
 
-              <tr v-else-if="errorMessage">
-                <td colspan="6" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
-              </tr>
+            <tr v-else-if="errorMessage">
+              <td colspan="6" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
+            </tr>
 
-              <tr
+            <tr
                 v-for="subscriber in filteredSubscribers"
                 v-else
                 :key="subscriber.id"
                 class="hover:bg-slate-50 transition-colors"
-              >
-                <td class="px-4 py-4">
-                  <input
+            >
+              <td class="px-4 py-4">
+                <input
                     v-model="selectedIds"
                     type="checkbox"
                     class="w-4 h-4 rounded border-slate-300"
                     :value="subscriber.id"
-                  >
-                </td>
-                <td class="px-6 py-4 text-slate-600">{{ subscriber.id }}</td>
-                <td class="px-6 py-4 font-mono text-slate-900">{{ subscriber.email }}</td>
-                <td class="px-6 py-4">
+                >
+              </td>
+              <td class="px-6 py-4 text-slate-600">{{ subscriber.id }}</td>
+              <td class="px-6 py-4 font-mono text-slate-900">{{ subscriber.email }}</td>
+              <td class="px-6 py-4">
                   <span
-                    class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                      class="px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
                   >
                     {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
                   </span>
-                </td>
-                <td class="px-6 py-4 text-slate-600">{{ formatDate(subscriber.createdAt) }}</td>
-                <td class="px-6 py-4 text-right">
-                  <button
+              </td>
+              <td class="px-6 py-4 text-slate-600">{{ formatDate(subscriber.createdAt) }}</td>
+              <td class="px-6 py-4 text-right">
+                <button
                     type="button"
                     class="px-3 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
                     :disabled="actionLoading"
                     @click="deleteSingleSubscriber(subscriber)"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
 
-              <tr v-if="!loading && !errorMessage && filteredSubscribers.length === 0">
-                <td colspan="6" class="px-6 py-8 text-center text-slate-500">No subscribers for this filter.</td>
-              </tr>
+            <tr v-if="!loading && !errorMessage && filteredSubscribers.length === 0">
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500">No subscribers for this filter.</td>
+            </tr>
             </tbody>
           </table>
 
@@ -169,44 +166,44 @@
             <div class="p-4 border-b border-slate-100" v-if="!loading && !errorMessage && filteredSubscribers.length">
               <label class="inline-flex items-center gap-2 text-sm text-slate-700">
                 <input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-slate-300"
-                  :checked="allVisibleSelected"
-                  @change="toggleSelectAllVisible"
+                    type="checkbox"
+                    class="w-4 h-4 rounded border-slate-300"
+                    :checked="allVisibleSelected"
+                    @change="toggleSelectAllVisible"
                 >
                 Select all visible
               </label>
             </div>
 
             <div
-              v-for="subscriber in filteredSubscribers"
-              :key="`mobile-${subscriber.id}`"
-              class="p-4"
+                v-for="subscriber in filteredSubscribers"
+                :key="`mobile-${subscriber.id}`"
+                class="p-4"
             >
               <div class="flex items-start gap-3">
                 <input
-                  v-model="selectedIds"
-                  type="checkbox"
-                  class="mt-1 w-4 h-4 rounded border-slate-300"
-                  :value="subscriber.id"
+                    v-model="selectedIds"
+                    type="checkbox"
+                    class="mt-1 w-4 h-4 rounded border-slate-300"
+                    :value="subscriber.id"
                 >
 
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-3">
                     <p class="text-sm font-medium text-slate-900 truncate">{{ subscriber.email }}</p>
                     <span
-                      class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                      :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                        class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+                        :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
                     >
                       {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
                     </span>
                   </div>
-                  <p class="mt-2 text-xs text-slate-500">#{{ subscriber.id }} · {{ formatDate(subscriber.createdAt) }}</p>
+                  <p class="mt-2 text-xs text-slate-500">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
                   <button
-                    type="button"
-                    class="mt-3 px-3 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
-                    :disabled="actionLoading"
-                    @click="deleteSingleSubscriber(subscriber)"
+                      type="button"
+                      class="mt-3 px-3 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
+                      :disabled="actionLoading"
+                      @click="deleteSingleSubscriber(subscriber)"
                   >
                     Delete
                   </button>
@@ -215,30 +212,31 @@
             </div>
 
             <div
-              v-if="!loading && !errorMessage && filteredSubscribers.length === 0"
-              class="px-4 py-8 text-center text-slate-500 text-sm"
+                v-if="!loading && !errorMessage && filteredSubscribers.length === 0"
+                class="px-4 py-8 text-center text-slate-500 text-sm"
             >
               No subscribers for this filter.
             </div>
           </div>
         </div>
 
-        <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
+        <div
+            class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
           <span class="text-slate-500">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
           <div class="flex gap-2 w-full sm:w-auto">
             <button
-              type="button"
-              class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
-              :disabled="!canGoPrevious || loading || actionLoading"
-              @click="previousPage"
+                type="button"
+                class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                :disabled="!canGoPrevious || loading || actionLoading"
+                @click="previousPage"
             >
               Previous
             </button>
             <button
-              type="button"
-              class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
-              :disabled="!canGoNext || loading || actionLoading"
-              @click="nextPage"
+                type="button"
+                class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                :disabled="!canGoNext || loading || actionLoading"
+                @click="nextPage"
             >
               Next
             </button>
@@ -246,18 +244,18 @@
         </div>
       </div>
 
-      <ListSubscribersExportPanel :list-id="listId" :list-name="listName" />
+      <ListSubscribersExportPanel :list-id="listId" :list-name="listName"/>
 
     </div>
   </AdminLayout>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import {computed, onMounted, ref, watch, watchEffect} from 'vue'
+import {useRoute} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import ListSubscribersExportPanel from '../components/lists/ListSubscribersExportPanel.vue'
-import client, { subscriptionClient } from '../api'
+import client, {subscriptionClient} from '../api'
 
 const route = useRoute()
 const listId = computed(() => Number(route.params.listId))
@@ -265,7 +263,7 @@ const listName = ref(typeof route.query.listName === 'string' ? route.query.list
 
 const subscribers = ref([])
 const total = ref(0)
-const pageSize = ref(25)
+const pageSize = ref(10)
 const loading = ref(false)
 const actionLoading = ref(false)
 const errorMessage = ref('')
@@ -292,7 +290,7 @@ const filteredSubscribers = computed(() => {
 })
 
 const selectedSubscribers = computed(() => (
-  subscribers.value.filter((subscriber) => selectedIds.value.includes(subscriber.id))
+    subscribers.value.filter((subscriber) => selectedIds.value.includes(subscriber.id))
 ))
 
 const hasSelection = computed(() => selectedSubscribers.value.length > 0)
@@ -346,8 +344,8 @@ const toggleSelectAllVisible = (event) => {
 }
 
 const getSelectedEmails = () => selectedSubscribers.value
-  .map((subscriber) => subscriber.email)
-  .filter((email) => typeof email === 'string' && email.length > 0)
+    .map((subscriber) => subscriber.email)
+    .filter((email) => typeof email === 'string' && email.length > 0)
 
 const loadListMeta = async () => {
   try {
@@ -404,12 +402,14 @@ const fetchSubscribers = async (cursor = null) => {
     total.value = response.pagination?.total ?? subscribers.value.length
     nextCursor.value = response.pagination?.nextCursor ?? null
     clearSelection()
+    return true
   } catch (error) {
     console.error('Failed to load list subscribers:', error)
     errorMessage.value = 'Failed to load subscribers for this list.'
     subscribers.value = []
     nextCursor.value = null
     clearSelection()
+    return false
   } finally {
     loading.value = false
   }
@@ -422,7 +422,7 @@ const refreshCurrentPage = async () => {
 const deleteEmailsFromCurrentList = async (emails) => {
   if (emails.length === 0) return
   // todo: check why subscription client delete is not working
-  await client.delete(`lists/${listId.value}/subscribers`, { emails })
+  await client.delete(`lists/${listId.value}/subscribers`, {emails})
 }
 
 const deleteSingleSubscriber = async (subscriber) => {
@@ -504,14 +504,29 @@ const moveSelectedSubscribers = async () => {
   if (!confirmed) return
 
   actionLoading.value = true
+  let copied = false
+
   try {
     await subscriptionClient.createSubscriptions(emails, targetListId)
+    copied = true
+
     await deleteEmailsFromCurrentList(emails)
+
     actionMessage.value = `Moved ${emails.length} subscriber(s) to the selected list.`
+    selectedTargetListId.value = ''
     await refreshCurrentPage()
   } catch (error) {
     console.error('Failed to move selected subscribers:', error)
-    actionError.value = 'Failed to move selected subscribers.'
+
+    if (copied) {
+      actionError.value =
+          `Copied ${emails.length} subscriber(s) to the selected list, ` +
+          `but failed to remove them from the current list. ` +
+          `They may now exist in both lists.`
+      await refreshCurrentPage()
+    } else {
+      actionError.value = 'Failed to move selected subscribers.'
+    }
   } finally {
     actionLoading.value = false
   }
@@ -519,14 +534,22 @@ const moveSelectedSubscribers = async () => {
 
 const nextPage = async () => {
   if (nextCursor.value === null || loading.value || actionLoading.value) return
-  cursorHistory.value.push(nextCursor.value)
-  await fetchSubscribers(nextCursor.value)
+
+  const requestedCursor = nextCursor.value
+  const ok = await fetchSubscribers(requestedCursor)
+  if (ok) {
+    cursorHistory.value.push(requestedCursor)
+  }
 }
 
 const previousPage = async () => {
   if (cursorHistory.value.length <= 1 || loading.value || actionLoading.value) return
-  cursorHistory.value.pop()
-  await fetchSubscribers(getCurrentCursor())
+
+  const previousCursor = cursorHistory.value[cursorHistory.value.length - 2]
+  const ok = await fetchSubscribers(previousCursor)
+  if (ok) {
+    cursorHistory.value.pop()
+  }
 }
 
 onMounted(async () => {

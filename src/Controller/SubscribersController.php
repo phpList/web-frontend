@@ -29,7 +29,9 @@ class SubscribersController extends AbstractController
     #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {
-        if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
+        $accept = (string) $request->headers->get('Accept', '');
+        $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
+        if (! $wantsJson) {
             return $this->render('spa.html.twig', [
                 'page' => 'Subscribers',
                 'api_token' => $request->getSession()->get('auth_token'),
@@ -37,8 +39,7 @@ class SubscribersController extends AbstractController
             ]);
         }
 
-        $afterId = (int) $request->query->get('after_id');
-        $limit = max(1, (int) $request->query->get('limit', 10));
+        $afterId = $request->query->has('after_id') ? $request->query->getInt('after_id') : null;
 
         $filter = new SubscribersFilterRequest(
             isConfirmed: $request->query->has('confirmed') ? true :
@@ -49,7 +50,7 @@ class SubscribersController extends AbstractController
             findValue: $request->query->get('findValue'),
         );
 
-        $collection = $this->subscribersClient->getSubscribers($filter, $afterId, $limit);
+        $collection = $this->subscribersClient->getSubscribers($filter, $afterId, 10);
 
         $history = $request->getSession()->get('subscribers_history', []);
         if (!in_array($afterId, $history, true)) {
@@ -83,7 +84,7 @@ class SubscribersController extends AbstractController
                 'hasMore' => $collection->pagination->hasMore ,
                 'total' => $collection->pagination->total,
                 'prevId' => $prevId,
-                'isFirstPage' => $afterId === 0,
+                'isFirstPage' => $afterId === null,
             ],
         ];
 

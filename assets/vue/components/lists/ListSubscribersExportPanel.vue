@@ -119,9 +119,25 @@ import client, { subscriberAttributesClient } from '../../api'
 
 onMounted(async () => {
   try {
-    const queryParams = { limit: 5 };
-    const data = await client.get('attributes', queryParams)
-    const dynamicColumns = data.items.map(attr => ({
+    const allAttributes = []
+    let offset = 0
+    const limit = 100
+    let hasMore = true
+
+    while (hasMore) {
+      const data = await client.get('attributes', { limit, offset })
+      const items = Array.isArray(data?.items) ? data.items : []
+
+      allAttributes.push(...items)
+
+      if (items.length < limit) {
+        hasMore = false
+      } else {
+        offset += limit
+      }
+    }
+
+    const dynamicColumns = allAttributes.map(attr => ({
       value: attr.name,
       label: capitalizeFirst(attr.name)
     }))
@@ -131,7 +147,9 @@ onMounted(async () => {
       ...dynamicColumns
     ]
 
-    form.value.columns = columnOptions.value.map(c => c.value)
+    if (!form.value.columns?.length) {
+      form.value.columns = columnOptions.value.map(c => c.value)
+    }
   } catch (err) {
     console.error('Failed to load attribute definitions', err)
   }
@@ -186,7 +204,10 @@ const selectAllColumnsCheckbox = ref(null)
 const usesAnyDate = computed(() => form.value.dateType === 'any')
 
 const allColumnsSelected = computed(() => {
-  return form.value.columns.length === columnOptions.length
+  return (
+      columnOptions.value.length > 0 &&
+      form.value.columns.length === columnOptions.value.length
+  )
 })
 
 const someColumnsSelected = computed(() => {

@@ -6,59 +6,47 @@
       role="dialog"
       aria-modal="true"
   >
-    <div
-        class="fixed inset-0 bg-slate-900/50 transition-opacity"
-        aria-hidden="true"
-        @click="close"
-    ></div>
+    <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
 
-    <div
-        class="relative z-10 w-full overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:w-full"
-    >
-      <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
-        <div class="flex items-center justify-between">
-          <h3 id="add-subscribers-modal-title" class="text-lg font-medium leading-6 text-slate-900">
-            Add subscribers
-          </h3>
+    <div class="relative z-10 w-full overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:w-full">
+      <form class="mt-4 space-y-4" @submit.prevent="submitAddSubscribers">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+          <div class="flex items-center justify-between">
+            <h3 id="add-subscribers-modal-title" class="text-lg font-medium leading-6 text-slate-900">
+              Add subscribers
+            </h3>
 
-          <button
-              type="button"
-              class="text-slate-400 hover:text-slate-500"
-              @click="close"
-          >
-            <BaseIcon name="close" class="w-5 h-5" />
-          </button>
-        </div>
-
-        <form class="mt-4 space-y-4" @submit.prevent="submitAddSubscribers">
-          <div>
-            <label for="subscriber-emails" class="block text-sm font-medium text-slate-700">
-              Email addresses
-            </label>
-            <textarea
-                id="subscriber-emails"
-                v-model.trim="addSubsForm.emails"
-                rows="8"
-                placeholder="john@example.com&#10;jane@example.com&#10;team@example.com"
-                class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-            ></textarea>
-            <p class="mt-1 text-xs text-slate-500">
-              Enter one email per line, or separate multiple emails with commas.
-            </p>
+            <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
+              <BaseIcon name="close" class="w-5 h-5" />
+            </button>
           </div>
 
-          <p v-if="addSubsError" class="text-sm text-red-600">
-            {{ addSubsError }}
-          </p>
-        </form>
-      </div>
+            <div>
+              <label for="subscriber-emails" class="block text-sm font-medium text-slate-700">
+                Email addresses
+              </label>
+              <textarea
+                  id="subscriber-emails"
+                  v-model.trim="addSubsForm.emails"
+                  rows="8"
+                  placeholder="john@example.com&#10;jane@example.com&#10;team@example.com"
+                  class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              ></textarea>
+              <p class="mt-1 text-xs text-slate-500">
+                Enter one email per line, or separate multiple emails with commas.
+              </p>
+            </div>
 
-      <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+            <p v-if="addSubsError" class="text-sm text-red-600">
+              {{ addSubsError }}
+            </p>
+        </div>
+
+        <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
         <button
-            type="button"
+            type="submit"
             :disabled="addingSubscribers || !addSubsForm.emails.trim()"
             class="w-full inline-flex justify-center rounded-md border border-transparent bg-ext-wf1 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto sm:text-sm disabled:opacity-50"
-            @click="submitAddSubscribers"
         >
           {{ addingSubscribers ? 'Adding...' : 'Add subscribers' }}
         </button>
@@ -71,6 +59,7 @@
           Cancel
         </button>
       </div>
+      </form>
     </div>
   </div>
 </template>

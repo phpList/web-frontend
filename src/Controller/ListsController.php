@@ -21,7 +21,9 @@ class ListsController extends AbstractController
     #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {
-        if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
+        $accept = (string) $request->headers->get('Accept', '');
+        $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
+        if (! $wantsJson) {
             return $this->render('spa.html.twig', [
                 'page' => 'Lists',
                 'api_token' => $request->getSession()->get('auth_token'),

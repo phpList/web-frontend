@@ -92,7 +92,24 @@
           </td>
         </tr>
 
-        <tr v-if="mailingLists.length === 0">
+        <tr v-if="!isLoading && !loadError && mailingLists.length === 0">
+          <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+            No mailing lists found.
+          </td>
+        </tr>
+        <tr v-if="isLoading">
+          <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+            Loading mailing lists...
+          </td>
+        </tr>
+
+        <tr v-else-if="loadError">
+          <td colspan="4" class="px-6 py-8 text-center text-red-600">
+            {{ loadError }}
+          </td>
+        </tr>
+
+        <tr v-else-if="mailingLists.length === 0">
           <td colspan="4" class="px-6 py-8 text-center text-slate-500">
             No mailing lists found.
           </td>
@@ -164,7 +181,21 @@
         </div>
 
         <div
-            v-if="mailingLists.length === 0"
+            v-if="isLoading"
+            class="px-4 py-8 text-center text-slate-500 text-sm"
+        >
+          Loading mailing lists...
+        </div>
+
+        <div
+            v-else-if="loadError"
+            class="px-4 py-8 text-center text-red-600 text-sm"
+        >
+          {{ loadError }}
+        </div>
+
+        <div
+            v-else-if="mailingLists.length === 0"
             class="px-4 py-8 text-center text-slate-500 text-sm"
         >
           No mailing lists found.
@@ -201,20 +232,23 @@ import BaseIcon from '../base/BaseIcon.vue'
 import CreateListModal from './CreateListModal.vue'
 import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'
-
 import { listClient } from '../../api'
 
 const router = useRouter()
 
 const mailingLists = ref([])
+const isLoading = ref(false)
+const loadError = ref('')
 const isCreateModalOpen = ref(false)
-
 const selectedList = ref(null)
 const isEditModalOpen = ref(false)
 const isAddSubscribersModalOpen = ref(false)
 
 const fetchMailingLists = async () => {
   const url = new URL('/lists', window.location.origin)
+
+  isLoading.value = true
+  loadError.value = ''
 
   try {
     const response = await fetch(url, {
@@ -224,10 +258,27 @@ const fetchMailingLists = async () => {
       }
     })
 
+    const contentType = response.headers.get('content-type') || ''
+
     if (response.status === 401) {
-      const data = await response.json()
-      window.location.href = data.redirect
-      return
+      if (contentType.includes('application/json')) {
+        const data = await response.json()
+
+        if (data?.redirect) {
+          window.location.href = data.redirect
+          return
+        }
+      }
+
+      throw new Error('Authentication required. Please sign in again.')
+    }
+
+    if (!response.ok) {
+      throw new Error(`Failed to load mailing lists (${response.status}).`)
+    }
+
+    if (!contentType.includes('application/json')) {
+      throw new Error('Server returned an unexpected response format.')
     }
 
     const data = await response.json()
@@ -235,6 +286,9 @@ const fetchMailingLists = async () => {
   } catch (error) {
     console.error('Failed to fetch mailing lists:', error)
     mailingLists.value = []
+    loadError.value = error?.message || 'Failed to load mailing lists.'
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -295,6 +349,7 @@ const handleListUpdated = async () => {
 }
 
 const handleStartCampaign = (list) => emit('start-campaign', list)
+
 const handleViewMembers = (list) => {
   if (!list?.id) return
 

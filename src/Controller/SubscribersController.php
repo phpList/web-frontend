@@ -9,10 +9,12 @@ use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Request\Subscriber\ExportSubscriberRequest;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
+use PhpList\RestApiClient\Response\Subscribers\SubscriberCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/subscribers', name: 'subscriber_')]
@@ -66,7 +68,60 @@ class SubscribersController extends AbstractController
             $prevId = $history[$index - 1];
         }
 
-        $initialData = [
+        return $this->json($this->normalize($collection, $prevId, $afterId));
+    }
+
+    /**
+     * @SuppressWarnings("CyclomaticComplexity")
+     * @SuppressWarnings("NPathComplexity")
+     */
+    #[Route('/export', name: 'export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        $exportRequest = new ExportSubscriberRequest(
+            dateType: (string) $request->query->get('date_type', 'any'),
+            listId: $request->query->has('list_id') ? $request->query->getInt('list_id') : null,
+            dateFrom: $request->query->get('date_from') ?: null,
+            dateTo: $request->query->get('date_to') ?: null,
+            columns: array_values(array_filter($request->query->all('columns')))
+        );
+
+        $upstreamResponse = $this->subscribersClient->exportSubscribers($exportRequest);
+
+        $contentType = $upstreamResponse->getHeaderLine('Content-Type');
+        if ($contentType === '') {
+            $contentType = 'text/csv; charset=UTF-8';
+        }
+
+        $contentDisposition = $upstreamResponse->getHeaderLine('Content-Disposition');
+        if ($contentDisposition === '') {
+            $contentDisposition = sprintf(
+                'attachment; filename="subscribers_export_%s.csv"',
+                date('Y-m-d_H-i-s')
+            );
+        }
+
+        $body = $upstreamResponse->getBody();
+        $response = new StreamedResponse(
+            static function () use ($body): void {
+                if ($body->isSeekable()) {
+                    $body->rewind();
+                }
+                while (! $body->eof()) {
+                    echo $body->read(8192);
+                }
+            },
+            $upstreamResponse->getStatusCode()
+        );
+        $response->headers->set('Content-Type', $contentType);
+        $response->headers->set('Content-Disposition', $contentDisposition);
+
+        return $response;
+    }
+
+    private function normalize(SubscriberCollection $collection, ?int $prevId, ?int $afterId): array
+    {
+        return [
             'items' => array_map(static function (Subscriber $subscriber) {
                 return [
                     'id' => $subscriber->id,
@@ -87,51 +142,5 @@ class SubscribersController extends AbstractController
                 'isFirstPage' => $afterId === null,
             ],
         ];
-
-        return $this->json($initialData);
-    }
-
-    #[Route('/export', name: 'export', methods: ['GET'])]
-    public function export(Request $request): Response
-    {
-        $columns = array_values(
-            array_filter(
-                $request->query->all('columns'),
-                static fn (mixed $value): bool => is_string($value) && $value !== ''
-            )
-        );
-
-        $defaultRequest = new ExportSubscriberRequest();
-
-        $exportRequest = new ExportSubscriberRequest(
-            dateType: (string) $request->query->get('date_type', 'any'),
-            listId: $request->query->has('list_id') ? $request->query->getInt('list_id') : null,
-            dateFrom: $request->query->get('date_from') ?: null,
-            dateTo: $request->query->get('date_to') ?: null,
-            columns: $columns === [] ? $defaultRequest->columns : $columns
-        );
-
-        $upstreamResponse = $this->subscribersClient->exportSubscribers($exportRequest);
-
-        $content = (string) $upstreamResponse->getBody();
-
-        $contentType = $upstreamResponse->getHeaderLine('Content-Type');
-        if ($contentType === '') {
-            $contentType = 'text/csv; charset=UTF-8';
-        }
-
-        $contentDisposition = $upstreamResponse->getHeaderLine('Content-Disposition');
-        if ($contentDisposition === '') {
-            $contentDisposition = sprintf(
-                'attachment; filename="subscribers_export_%s.csv"',
-                date('Y-m-d_H-i-s')
-            );
-        }
-
-        $response = new Response($content);
-        $response->headers->set('Content-Type', $contentType);
-        $response->headers->set('Content-Disposition', $contentDisposition);
-
-        return $response;
     }
 }

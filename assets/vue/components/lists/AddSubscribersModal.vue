@@ -37,6 +37,15 @@
               </p>
             </div>
 
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                  v-model="addSubsForm.autoConfirm"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-blue-500"
+              />
+              Auto confirm subscribers
+            </label>
+
             <p v-if="addSubsError" class="text-sm text-red-600">
               {{ addSubsError }}
             </p>
@@ -82,12 +91,14 @@ const emit = defineEmits(['close', 'added'])
 const addingSubscribers = ref(false)
 const addSubsError = ref('')
 const addSubsForm = ref({
-  emails: ''
+  emails: '',
+  autoConfirm: false
 })
 
 const resetAddSubsForm = () => {
   addSubsForm.value = {
-    emails: ''
+    emails: '',
+    autoConfirm: false
   }
   addSubsError.value = ''
 }
@@ -142,7 +153,7 @@ const submitAddSubscribers = async () => {
   addSubsError.value = ''
 
   try {
-    await subscriptionClient.createSubscriptions(emails, props.list.id)
+    await subscriptionClient.createSubscriptions(emails, props.list.id, addSubsForm.value.autoConfirm)
     emit('added')
     emit('close')
   } catch (error) {

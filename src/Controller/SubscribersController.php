@@ -72,20 +72,25 @@ class SubscribersController extends AbstractController
         return $this->json($this->subscriberCollectionNormalizer->normalize($collection, $prevId, $afterId));
     }
 
+    /**
+     * @SuppressWarnings("CyclomaticComplexity")
+     */
     #[Route('/export', name: 'export', methods: ['GET'])]
     public function export(Request $request): Response
     {
         $exportRequest = $this->subscriberExportRequestFactory->fromQuery($request->query);
 
         $upstreamResponse = $this->subscribersClient->exportSubscribers($exportRequest);
+        $statusCode = $upstreamResponse->getStatusCode();
+        $isSuccessfulExport = $statusCode >= 200 && $statusCode < 300;
 
         $contentType = $upstreamResponse->getHeaderLine('Content-Type');
-        if ($contentType === '') {
+        if ($isSuccessfulExport && $contentType === '') {
             $contentType = 'text/csv; charset=UTF-8';
         }
 
         $contentDisposition = $upstreamResponse->getHeaderLine('Content-Disposition');
-        if ($contentDisposition === '') {
+        if ($isSuccessfulExport && $contentDisposition === '') {
             $contentDisposition = sprintf(
                 'attachment; filename="subscribers_export_%s.csv"',
                 date('Y-m-d_H-i-s')
@@ -102,10 +107,15 @@ class SubscribersController extends AbstractController
                     echo $body->read(8192);
                 }
             },
-            $upstreamResponse->getStatusCode()
+            $statusCode
         );
-        $response->headers->set('Content-Type', $contentType);
-        $response->headers->set('Content-Disposition', $contentDisposition);
+        if ($contentType !== '') {
+            $response->headers->set('Content-Type', $contentType);
+        }
+
+        if ($contentDisposition !== '') {
+            $response->headers->set('Content-Disposition', $contentDisposition);
+        }
 
         return $response;
     }

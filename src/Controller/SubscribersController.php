@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
-use DateTimeImmutable;
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
-use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
+use PhpList\WebFrontend\Service\SubscriberCollectionNormalizer;
+use PhpList\WebFrontend\Service\SubscriberExportRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/subscribers', name: 'subscriber_')]
 class SubscribersController extends AbstractController
 {
-    public function __construct(private readonly SubscribersClient $subscribersClient)
-    {
+    public function __construct(
+        private readonly SubscribersClient $subscribersClient,
+        private readonly SubscriberCollectionNormalizer $subscriberCollectionNormalizer,
+        private readonly SubscriberExportRequestFactory $subscriberExportRequestFactory
+    ) {
     }
 
     /**
@@ -28,7 +32,9 @@ class SubscribersController extends AbstractController
     #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {
-        if (! $request->isXmlHttpRequest() && $request->headers->get('Accept') !== 'application/json') {
+        $accept = (string) $request->headers->get('Accept', '');
+        $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
+        if (! $wantsJson) {
             return $this->render('spa.html.twig', [
                 'page' => 'Subscribers',
                 'api_token' => $request->getSession()->get('auth_token'),
@@ -36,8 +42,7 @@ class SubscribersController extends AbstractController
             ]);
         }
 
-        $afterId = (int) $request->query->get('after_id');
-        $limit = max(1, (int) $request->query->get('limit', 10));
+        $afterId = $request->query->has('after_id') ? $request->query->getInt('after_id') : null;
 
         $filter = new SubscribersFilterRequest(
             isConfirmed: $request->query->has('confirmed') ? true :
@@ -48,7 +53,7 @@ class SubscribersController extends AbstractController
             findValue: $request->query->get('findValue'),
         );
 
-        $collection = $this->subscribersClient->getSubscribers($filter, $afterId, $limit);
+        $collection = $this->subscribersClient->getSubscribers($filter, $afterId, 10);
 
         $history = $request->getSession()->get('subscribers_history', []);
         if (!in_array($afterId, $history, true)) {
@@ -64,91 +69,53 @@ class SubscribersController extends AbstractController
             $prevId = $history[$index - 1];
         }
 
-        $initialData = [
-            'items' => array_map(static function (Subscriber $subscriber) {
-                return [
-                    'id' => $subscriber->id,
-                    'email' => $subscriber->email,
-                    'confirmed' => $subscriber->confirmed,
-                    'blacklisted' => $subscriber->blacklisted,
-                    'createdAt' => (new DateTimeImmutable($subscriber->createdAt))->format('Y-m-d H:i:s'),
-                    'uniqueId' => $subscriber->uniqueId,
-                    'listCount' => count($subscriber->subscribedLists),
-                ];
-            }, $collection->items ?? []),
-            'pagination' => [
-                'limit' => $collection->pagination->limit,
-                'afterId' => $collection->pagination->nextCursor,
-                'hasMore' => $collection->pagination->hasMore ,
-                'total' => $collection->pagination->total,
-                'prevId' => $prevId,
-                'isFirstPage' => $afterId === 0,
-            ],
-        ];
-
-        return $this->json($initialData);
+        return $this->json($this->subscriberCollectionNormalizer->normalize($collection, $prevId, $afterId));
     }
 
+    /**
+     * @SuppressWarnings("CyclomaticComplexity")
+     */
     #[Route('/export', name: 'export', methods: ['GET'])]
     public function export(Request $request): Response
     {
-        $filter = new SubscribersFilterRequest(
-            isConfirmed: $request->query->has('confirmed') ? true :
-                ($request->query->has('unconfirmed') ? false : null),
-            isBlacklisted: $request->query->has('blacklisted') ? true :
-                ($request->query->has('non-blacklisted') ? false : null),
-            findColumn: $request->query->get('findColumn'),
-            findValue: $request->query->get('findValue'),
-        );
+        $exportRequest = $this->subscriberExportRequestFactory->fromQuery($request->query);
 
-        $collection = $this->subscribersClient->getSubscribers($filter, 0, $request->query->getInt('limit'));
-        $exportData = $collection->items;
-        if (empty($exportData)) {
-            return new Response('No subscribers to export.', Response::HTTP_NOT_FOUND);
-        }
-        $handle = fopen('php://temp', 'r+');
+        $upstreamResponse = $this->subscribersClient->exportSubscribers($exportRequest);
+        $statusCode = $upstreamResponse->getStatusCode();
+        $isSuccessfulExport = $statusCode >= 200 && $statusCode < 300;
 
-        $headers = [
-            'id',
-            'email',
-            'createdAt',
-            'confirmed',
-            'blacklisted',
-            'bounceCount',
-            'uniqueId',
-            'htmlEmail',
-            'disabled',
-            'lists',
-        ];
-        fputcsv($handle, $headers);
-
-        foreach ($exportData as $data) {
-            $row = [
-                'id' => $data->id,
-                'email' => $data->email,
-                'createdAt' => (new DateTimeImmutable($data->createdAt))->format('Y-m-d H:i:s'),
-                'confirmed' => $data->confirmed,
-                'blacklisted' => $data->blacklisted,
-                'bounceCount' => $data->bounceCount,
-                'uniqueId' => $data->uniqueId,
-                'htmlEmail' => $data->htmlEmail,
-                'disabled' => $data->disabled,
-                'lists' => implode('|', array_map(fn($list) => $list['name'], $data->subscribedLists)),
-            ];
-
-            fputcsv($handle, $row);
+        $contentType = $upstreamResponse->getHeaderLine('Content-Type');
+        if ($isSuccessfulExport && $contentType === '') {
+            $contentType = 'text/csv; charset=UTF-8';
         }
 
-        rewind($handle);
-        $csvContent = stream_get_contents($handle);
-        fclose($handle);
+        $contentDisposition = $upstreamResponse->getHeaderLine('Content-Disposition');
+        if ($isSuccessfulExport && $contentDisposition === '') {
+            $contentDisposition = sprintf(
+                'attachment; filename="subscribers_export_%s.csv"',
+                date('Y-m-d_H-i-s')
+            );
+        }
 
-        $response = new Response($csvContent);
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set(
-            'Content-Disposition',
-            'attachment; filename="subscribers_export_' . date('Y-m-d_H-i-s') . '.csv"'
+        $body = $upstreamResponse->getBody();
+        $response = new StreamedResponse(
+            static function () use ($body): void {
+                if ($body->isSeekable()) {
+                    $body->rewind();
+                }
+                while (! $body->eof()) {
+                    echo $body->read(8192);
+                }
+            },
+            $statusCode
         );
+        if ($contentType !== '') {
+            $response->headers->set('Content-Type', $contentType);
+        }
+
+        if ($contentDisposition !== '') {
+            $response->headers->set('Content-Disposition', $contentDisposition);
+        }
 
         return $response;
     }

@@ -83,6 +83,8 @@
       </div>
     </div>
   </div>
+
+  <ListSubscribersExportPanel :directory-filter="currentFilter || 'all'"/>
 </template>
 
 <script setup>
@@ -94,6 +96,7 @@ import ImportResult from './ImportResult.vue'
 import {inject, onMounted, ref} from 'vue'
 import {subscriberFilters} from './subscriberFilters'
 import {subscribersClient} from '../../api'
+import ListSubscribersExportPanel from "../lists/ListSubscribersExportPanel.vue";
 
 const initialSubscribers = inject('subscribers', [])
 const initialPagination = inject('pagination', {
@@ -303,21 +306,4 @@ const handleFileChange = async (event) => {
   }
 }
 
-const exportSubscribers = () => {
-  const params = new URLSearchParams()
-  if (currentFilter.value && currentFilter.value !== 'all') {
-    params.set(currentFilter.value, 'true')
-  }
-
-  if (searchQuery.value && isAllowedSearchColumn(searchColumn.value)) {
-    params.set('findColumn', searchColumn.value)
-    params.set('findValue', searchQuery.value)
-  }
-
-  if (pagination.value.total > 0) {
-    params.set('limit', pagination.value.total)
-  }
-
-  window.location.href = `/subscribers/export?${params.toString()}`
-}
 </script>

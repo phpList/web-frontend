@@ -241,6 +241,10 @@ const toggleAllColumns = (event) => {
 }
 
 const exportSubscribers = () => {
+  if (form.value.columns.length === 0) {
+    exportError.value = 'Select at least one column.'
+    return
+  }
   if (!usesAnyDate.value && form.value.dateFrom && form.value.dateTo && form.value.dateFrom > form.value.dateTo) {
     exportError.value = 'Date From cannot be after Date To.'
     return

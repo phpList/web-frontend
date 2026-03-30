@@ -84,7 +84,7 @@
     </div>
   </div>
 
-  <ListSubscribersExportPanel/>
+  <ListSubscribersExportPanel :directory-filter="currentFilter || 'all'"/>
 </template>
 
 <script setup>
@@ -306,21 +306,4 @@ const handleFileChange = async (event) => {
   }
 }
 
-const exportSubscribers = () => {
-  const params = new URLSearchParams()
-  if (currentFilter.value && currentFilter.value !== 'all') {
-    params.set(currentFilter.value, 'true')
-  }
-
-  if (searchQuery.value && isAllowedSearchColumn(searchColumn.value)) {
-    params.set('findColumn', searchColumn.value)
-    params.set('findValue', searchQuery.value)
-  }
-
-  if (pagination.value.total > 0) {
-    params.set('limit', pagination.value.total)
-  }
-
-  window.location.href = `/subscribers/export?${params.toString()}`
-}
 </script>

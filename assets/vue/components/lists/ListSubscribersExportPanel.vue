@@ -163,7 +163,11 @@ const props = defineProps({
   listName: {
     type: String,
     default: ''
-  }
+  },
+  directoryFilter: {
+    type: String,
+    default: 'all'
+  },
 })
 
 const dateTypeOptions = [
@@ -254,6 +258,11 @@ const exportSubscribers = () => {
   if (props.listId) {
     params.set('list_id', String(props.listId))
   }
+
+  if (props.directoryFilter && props.directoryFilter !== 'all') {
+    params.set(props.directoryFilter, 'true')
+  }
+
   params.set('date_type', form.value.dateType)
 
   if (!usesAnyDate.value) {

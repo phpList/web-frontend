@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
-use DateTimeImmutable;
 use PhpList\RestApiClient\Endpoint\SubscribersClient;
-use PhpList\RestApiClient\Entity\Subscriber;
-use PhpList\RestApiClient\Request\Subscriber\ExportSubscriberRequest;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
-use PhpList\RestApiClient\Response\Subscribers\SubscriberCollection;
+use PhpList\WebFrontend\Service\SubscriberCollectionNormalizer;
+use PhpList\WebFrontend\Service\SubscriberExportRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,8 +18,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/subscribers', name: 'subscriber_')]
 class SubscribersController extends AbstractController
 {
-    public function __construct(private readonly SubscribersClient $subscribersClient)
-    {
+    public function __construct(
+        private readonly SubscribersClient $subscribersClient,
+        private readonly SubscriberCollectionNormalizer $subscriberCollectionNormalizer,
+        private readonly SubscriberExportRequestFactory $subscriberExportRequestFactory
+    ) {
     }
 
     /**
@@ -68,23 +69,13 @@ class SubscribersController extends AbstractController
             $prevId = $history[$index - 1];
         }
 
-        return $this->json($this->normalize($collection, $prevId, $afterId));
+        return $this->json($this->subscriberCollectionNormalizer->normalize($collection, $prevId, $afterId));
     }
 
-    /**
-     * @SuppressWarnings("CyclomaticComplexity")
-     * @SuppressWarnings("NPathComplexity")
-     */
     #[Route('/export', name: 'export', methods: ['GET'])]
     public function export(Request $request): Response
     {
-        $exportRequest = new ExportSubscriberRequest(
-            dateType: (string) $request->query->get('date_type', 'any'),
-            listId: $request->query->has('list_id') ? $request->query->getInt('list_id') : null,
-            dateFrom: $request->query->get('date_from') ?: null,
-            dateTo: $request->query->get('date_to') ?: null,
-            columns: array_values(array_filter($request->query->all('columns')))
-        );
+        $exportRequest = $this->subscriberExportRequestFactory->fromQuery($request->query);
 
         $upstreamResponse = $this->subscribersClient->exportSubscribers($exportRequest);
 
@@ -117,30 +108,5 @@ class SubscribersController extends AbstractController
         $response->headers->set('Content-Disposition', $contentDisposition);
 
         return $response;
-    }
-
-    private function normalize(SubscriberCollection $collection, ?int $prevId, ?int $afterId): array
-    {
-        return [
-            'items' => array_map(static function (Subscriber $subscriber) {
-                return [
-                    'id' => $subscriber->id,
-                    'email' => $subscriber->email,
-                    'confirmed' => $subscriber->confirmed,
-                    'blacklisted' => $subscriber->blacklisted,
-                    'createdAt' => (new DateTimeImmutable($subscriber->createdAt))->format('Y-m-d H:i:s'),
-                    'uniqueId' => $subscriber->uniqueId,
-                    'listCount' => count($subscriber->subscribedLists),
-                ];
-            }, $collection->items ?? []),
-            'pagination' => [
-                'limit' => $collection->pagination->limit,
-                'afterId' => $collection->pagination->nextCursor,
-                'hasMore' => $collection->pagination->hasMore ,
-                'total' => $collection->pagination->total,
-                'prevId' => $prevId,
-                'isFirstPage' => $afterId === null,
-            ],
-        ];
     }
 }

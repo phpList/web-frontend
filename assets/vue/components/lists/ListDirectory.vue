@@ -245,44 +245,12 @@ const isEditModalOpen = ref(false)
 const isAddSubscribersModalOpen = ref(false)
 
 const fetchMailingLists = async () => {
-  const url = new URL('/lists', window.location.origin)
-
   isLoading.value = true
   loadError.value = ''
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-
-    const contentType = response.headers.get('content-type') || ''
-
-    if (response.status === 401) {
-      if (contentType.includes('application/json')) {
-        const data = await response.json()
-
-        if (data?.redirect) {
-          window.location.href = data.redirect
-          return
-        }
-      }
-
-      throw new Error('Authentication required. Please sign in again.')
-    }
-
-    if (!response.ok) {
-      throw new Error(`Failed to load mailing lists (${response.status}).`)
-    }
-
-    if (!contentType.includes('application/json')) {
-      throw new Error('Server returned an unexpected response format.')
-    }
-
-    const data = await response.json()
-    mailingLists.value = Array.isArray(data?.items) ? data.items : []
+    const response = await listClient.getLists(0, 1000)
+    mailingLists.value = Array.isArray(response?.items) ? response.items : []
   } catch (error) {
     console.error('Failed to fetch mailing lists:', error)
     mailingLists.value = []

@@ -328,7 +328,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import apiClient, {campaignClient, listClient, listMessagesClient, statisticsClient} from '../../api'
+import { campaignClient, listClient, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 
 const pageSize = 5
@@ -538,7 +538,7 @@ const handleRequeue = async (campaignId) => {
   setActionFeedback(campaignId, 'Requeueing campaign...')
 
   try {
-    await apiClient.post(`campaigns/${campaignId}/send`)
+    await campaignClient.updateCampaignStatus(campaignId, 'requeued')
     setActionFeedback(campaignId, 'Campaign requeued.', 'success')
     await fetchCampaigns()
   } catch (error) {
@@ -559,8 +559,7 @@ const handleSuspend = async (campaignId) => {
   setActionFeedback(campaignId, 'Suspending campaign...')
 
   try {
-    const sourceCampaign = await campaignClient.getCampaign(campaignId)
-    await campaignClient.updateCampaign(campaignId, buildCampaignPayload(sourceCampaign, 'suspended'))
+    await campaignClient.updateCampaignStatus(campaignId, 'suspended')
     setActionFeedback(campaignId, 'Campaign suspended.', 'success')
     await fetchCampaigns()
   } catch (error) {
@@ -636,36 +635,9 @@ const handleCopyToDraft = async (campaignId) => {
   setActionFeedback(campaignId, 'Creating draft copy...')
 
   try {
-    const sourceCampaign = await campaignClient.getCampaign(campaignId)
-    const sourceListsResponse = await listMessagesClient.getListsByMessage(campaignId)
-    const sourceLists = Array.isArray(sourceListsResponse?.items) ? sourceListsResponse.items : []
-
-    const createdCampaign = await campaignClient.createCampaign(buildCampaignPayload(sourceCampaign, 'draft'))
-    const createdCampaignId = createdCampaign?.id
-    if (!createdCampaignId) {
-      throw new Error('Draft campaign was created without an id.')
-    }
-
-    let failedAssociations = 0
-    if (createdCampaignId && sourceLists.length > 0) {
-      const associationResults = await Promise.allSettled(
-        sourceLists
-          .filter((list) => list?.id)
-          .map((list) => listMessagesClient.associateMessageWithList(createdCampaignId, list.id))
-      )
-      failedAssociations = associationResults.filter((result) => result.status === 'rejected').length
-    }
-
-    if (failedAssociations > 0) {
-      setActionFeedback(
-        campaignId,
-        `Draft copy created (#${createdCampaignId}), but ${failedAssociations} list association(s) failed.`,
-        'info'
-      )
-    } else {
-      setActionFeedback(campaignId, `Draft copy created (#${createdCampaignId}).`, 'success')
-    }
+    await campaignClient.copyCampaign(campaignId)
     await fetchCampaigns()
+    setActionFeedback(campaignId, 'Created draft copy')
   } catch (error) {
     console.error(`Failed to copy campaign ${campaignId} to draft:`, error)
     if (isAuthenticationError(error)) {

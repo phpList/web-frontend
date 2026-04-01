@@ -67,6 +67,55 @@
             {{ getMessage(campaign?.messageSchedule) }}
           </p>
 
+          <div class="mt-6 border-t border-slate-200 pt-4">
+            <p class="mb-2 font-medium text-slate-900">
+              Resend campaign
+              <span class="ml-2 text-xs font-light text-slate-600">
+                Choose mailing lists
+              </span>
+            </p>
+
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div class="flex-1">
+                <div
+                    class="max-h-44 overflow-auto rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm"
+                >
+                  <label
+                      v-for="list in mailingLists"
+                      :key="list.id"
+                      :for="`mailing-list-${list.id}`"
+                      class="flex items-center gap-2 py-1"
+                  >
+                    <input
+                        :id="`mailing-list-${list.id}`"
+                        v-model="selectedMailingListIds"
+                        type="checkbox"
+                        :value="list.id"
+                        class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400"
+                    >
+                    <span>{{ list.name }}</span>
+                  </label>
+
+                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500">
+                    No mailing lists found.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                  type="button"
+                  class="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  :disabled="selectedMailingListIds.length === 0 || isResending"
+                  @click="handleResend"
+              >
+                {{ isResending ? 'Sending...' : 'Send to lists' }}
+              </button>
+            </div>
+
+            <p v-if="resendErrorMessage" class="mt-2 text-sm text-red-600">
+              {{ resendErrorMessage }}
+            </p>
+          </div>
         </div>
 
         <p v-else class="text-sm text-slate-500">
@@ -78,6 +127,9 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
+import { campaignClient } from "../../api";
+
 const props = defineProps({
   isViewModalOpen: {
     type: Boolean,
@@ -110,7 +162,29 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'resend'])
+
+const selectedMailingListIds = ref([])
+
+watch(
+    () => props.isViewModalOpen,
+    (isOpen) => {
+      if (isOpen) {
+        selectedMailingListIds.value = []
+      }
+    }
+)
+
+async function handleResend() {
+  if (!props.campaign?.id || selectedMailingListIds.value.length === 0) return
+
+  const listIds = selectedMailingListIds.value
+      .map((value) => Number(value))
+      .filter((value) => Number.isFinite(value))
+
+  await campaignClient.resendCampaign(props.campaign.id, listIds)
+  emit('close')
+}
 
 function getMessage(schedule) {
   const interval = schedule.requeueInterval ?? schedule.repeatInterval

@@ -62,7 +62,7 @@
               }}</pre>
           </div>
 
-          <p v-if="campaign?.messageSchedule.requeueInterval">
+          <p v-if="campaign?.messageSchedule?.requeueInterval">
             <span class="font-medium text-slate-900">Requeueing:</span>
             {{ getMessage(campaign?.messageSchedule) }}
           </p>
@@ -94,30 +94,43 @@ const props = defineProps({
   viewErrorMessage: {
     type: String,
     default: ''
+  },
+
+  mailingLists: {
+    type: Array,
+    default: () => []
+  },
+  isResending: {
+    type: Boolean,
+    default: false
+  },
+  resendErrorMessage: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['close'])
 
 function getMessage(schedule) {
-  const interval = schedule.requeueInterval ?? schedule.repeatInterval;
-  if (!interval) return 'Invalid interval';
+  const interval = schedule.requeueInterval ?? schedule.repeatInterval
+  if (!interval) return 'Invalid interval'
 
   const end = new Date(
       typeof schedule.repeatUntil === 'string'
           ? schedule.repeatUntil.replace(' ', 'T')
           : schedule.repeatUntil
-  );
+  )
 
-  if (isNaN(end)) return 'Invalid date';
+  if (isNaN(end)) return 'Invalid date'
 
-  const minutes = end.getMinutes();
-  const flooredMinutes = minutes - (minutes % interval);
+  const minutes = end.getMinutes()
+  const flooredMinutes = minutes - (minutes % interval)
 
-  const final = new Date(end);
-  final.setMinutes(flooredMinutes, 0, 0);
+  const final = new Date(end)
+  final.setMinutes(flooredMinutes, 0, 0)
 
-  return `every ${interval} minutes until ${final.toLocaleString()}`;
+  return `every ${interval} minutes until ${final.toLocaleString()}`
 }
 
 function formatDate(value) {

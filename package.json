@@ -19,7 +19,7 @@
     "webpack-notifier": "^1.15.0"
   },
   "dependencies": {
-    "@tatevikgr/rest-api-client": "^2.0.0",
+    "@tatevikgr/rest-api-client": "^2.0.1",
     "apexcharts": "^5.10.4",
     "vue": "^3.5.16",
     "vue-router": "4",

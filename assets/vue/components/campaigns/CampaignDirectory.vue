@@ -319,6 +319,7 @@
         :campaign="selectedCampaign"
         :is-view-loading="isViewLoading"
         :view-error-message="viewErrorMessage"
+        :mailing-lists="mailingLists"
         @close="closeViewModal"
     />
   </div>
@@ -327,7 +328,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import apiClient, { campaignClient, listMessagesClient, statisticsClient } from '../../api'
+import apiClient, {campaignClient, listClient, listMessagesClient, statisticsClient} from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 
 const pageSize = 5
@@ -341,6 +342,7 @@ const actionLoadingByCampaignId = ref({})
 const actionFeedbackByCampaignId = ref({})
 const isLoading = ref(false)
 const errorMessage = ref('')
+const mailingLists = ref([])
 
 const allowedStatuses = ['all', 'sent', 'active', 'draft']
 
@@ -456,6 +458,18 @@ const getCampaignStatistics = (campaignId) => statisticsByCampaignId.value[campa
   bounces: 0,
   sent: 0,
   uniqueViews: 0,
+}
+
+const fetchMailingLists = async () => {
+  try {
+    const response = await listClient.getLists(0, 1000)
+    mailingLists.value = Array.isArray(response?.items) ? response.items : []
+  } catch (error) {
+    console.error('Failed to fetch mailing lists:', error)
+    mailingLists.value = []
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const isListsLoading = (campaignId) => loadingListsByCampaignId.value[campaignId] === true
@@ -891,6 +905,7 @@ const fetchCampaigns = async () => {
 
 onMounted(() => {
   fetchCampaigns()
+  fetchMailingLists()
 })
 
 watch(totalPages, (pages) => {

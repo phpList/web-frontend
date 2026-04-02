@@ -6,7 +6,8 @@ import {
     StatisticsClient,
     SubscribersClient,
     SubscriptionClient,
-    SubscriberAttributesClient
+    SubscriberAttributesClient,
+    TemplatesClient
 } from '@tatevikgr/rest-api-client';
 
 const appElement = document.getElementById('vue-app');
@@ -30,5 +31,6 @@ export const listMessagesClient = new ListMessagesClient(client);
 export const statisticsClient = new StatisticsClient(client);
 export const subscriptionClient = new SubscriptionClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
+export const templateClient = new TemplatesClient(client);
 
 export default client;

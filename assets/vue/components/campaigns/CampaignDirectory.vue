@@ -575,7 +575,7 @@ const handleSuspend = async (campaignId) => {
 }
 
 const handleEdit = async (campaignId) => {
-  await handleView(campaignId)
+  await router.push({ name: 'campaign-edit', params: { campaignId } })
 }
 
 const handleDelete = async (campaign) => {

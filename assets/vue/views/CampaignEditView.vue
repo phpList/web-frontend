@@ -270,7 +270,12 @@
                 placeholder="email1@example.com, email2@example.com"
               ></textarea>
 
-              <button type="button" class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+              <button
+                type="button"
+                class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                :disabled="isSendingTest"
+                @click="sendTestCampaign"
+              >
                 Send test
               </button>
             </div>
@@ -398,6 +403,7 @@ const currentStep = ref(1)
 const isLoading = ref(true)
 const loadError = ref('')
 const isSaving = ref(false)
+const isSendingTest = ref(false)
 const saveError = ref('')
 const saveErrors = ref([])
 const saveSuccess = ref('')
@@ -503,6 +509,12 @@ const normalizeListIds = (values) =>
   values
     .map((value) => Number(value))
     .filter((value) => Number.isFinite(value))
+
+const parseTestRecipients = (value) =>
+  String(value || '')
+    .split(',')
+    .map((email) => email.trim())
+    .filter(Boolean)
 
 const toLocalDateTimeInput = (dateValue) => {
   if (!dateValue) return ''
@@ -749,6 +761,37 @@ const saveCampaign = async () => {
     }
   } finally {
     isSaving.value = false
+  }
+}
+
+const sendTestCampaign = async () => {
+  if (isSendingTest.value) return
+
+  const recipients = parseTestRecipients(form.value.testRecipients)
+  if (recipients.length === 0) {
+    saveError.value = 'Please enter at least one test recipient email.'
+    saveErrors.value = []
+    saveSuccess.value = ''
+    return
+  }
+
+  isSendingTest.value = true
+  saveError.value = ''
+  saveErrors.value = []
+  saveSuccess.value = ''
+
+  try {
+    await campaignClient.testSendCampaign(campaignId.value, recipients)
+    saveSuccess.value = 'Test campaign sent successfully.'
+  } catch (error) {
+    if (isAuthenticationError(error)) {
+      window.location.href = '/login'
+      return
+    }
+    saveError.value = error?.message || 'Failed to send test campaign.'
+    saveErrors.value = []
+  } finally {
+    isSendingTest.value = false
   }
 }
 

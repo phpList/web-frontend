@@ -328,7 +328,13 @@
         <div class="border-t border-slate-200 px-4 py-4 sm:px-6">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="text-sm">
-              <p v-if="saveError" class="text-red-600">{{ saveError }}</p>
+              <div v-if="saveErrors.length" class="text-red-600">
+                <p class="font-medium">Please fix the following fields:</p>
+                <ul class="mt-1 list-disc pl-5 space-y-1">
+                  <li v-for="errorItem in saveErrors" :key="errorItem">{{ errorItem }}</li>
+                </ul>
+              </div>
+              <p v-else-if="saveError" class="text-red-600 whitespace-pre-line">{{ saveError }}</p>
               <p v-else-if="saveSuccess" class="text-emerald-700">{{ saveSuccess }}</p>
             </div>
 
@@ -369,11 +375,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import {computed, onMounted, ref, watch} from 'vue'
+import {RouterLink, useRoute, useRouter} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
-import { campaignClient, listClient, listMessagesClient, templateClient } from '../api'
+import {campaignClient, listClient, listMessagesClient, templateClient} from '../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -393,6 +399,7 @@ const isLoading = ref(true)
 const loadError = ref('')
 const isSaving = ref(false)
 const saveError = ref('')
+const saveErrors = ref([])
 const saveSuccess = ref('')
 
 const campaign = ref(null)
@@ -452,6 +459,45 @@ const warnings = computed(() => {
 })
 
 const isAuthenticationError = (error) => error?.name === 'AuthenticationException' || error?.status === 401
+
+const validationFieldLabels = {
+  'format.sendFormat': 'Send format',
+  'schedule.repeatUntil': 'Stop sending after',
+  'schedule.requeueUntil': 'Requeue until',
+  'schedule.embargo': 'Embargo until'
+}
+
+const normalizeFieldName = (fieldPath = '') => {
+  if (validationFieldLabels[fieldPath]) return validationFieldLabels[fieldPath]
+
+  const fallback = String(fieldPath)
+    .split('.')
+    .pop()
+    ?.replace(/\[\d+]/g, '')
+    ?.replace(/_/g, ' ')
+    ?.replace(/([a-z])([A-Z])/g, '$1 $2')
+    ?.trim()
+
+  if (!fallback) return 'Field'
+  return fallback.charAt(0).toUpperCase() + fallback.slice(1)
+}
+
+const formatValidationErrors = (error) => {
+  const responseData = error?.responseData
+  const fromObject = []
+
+  if (responseData && typeof responseData === 'object' && !Array.isArray(responseData)) {
+    Object.entries(responseData).forEach(([field, rawMessage]) => {
+      if (!rawMessage) return
+      const text = Array.isArray(rawMessage) ? rawMessage.join(' ') : String(rawMessage)
+      fromObject.push(`${normalizeFieldName(field)}: ${text}`)
+    })
+  }
+
+  if (fromObject.length > 0) return [...new Set(fromObject)]
+  console.log('Failed to format validation errors:', error)
+  return []
+}
 
 const normalizeListIds = (values) =>
   values
@@ -592,7 +638,6 @@ const buildCampaignPayload = () => {
     format: {
       html_formated: Boolean(form.value.htmlFormated),
       send_format: form.value.sendFormat || 'html',
-      format_options: [form.value.sendFormat || 'html']
     },
     metadata: {
       status: metadata.status || 'draft'
@@ -671,6 +716,7 @@ const saveCampaign = async () => {
 
   if (form.value.composeMode === 'webpage' && !form.value.webpageUrl.trim()) {
     saveError.value = 'Webpage URL is required when "Send a webpage" is selected.'
+    saveErrors.value = []
     saveSuccess.value = ''
     currentStep.value = 1
     return
@@ -678,23 +724,29 @@ const saveCampaign = async () => {
 
   isSaving.value = true
   saveError.value = ''
+  saveErrors.value = []
   saveSuccess.value = ''
 
   try {
     const payload = buildCampaignPayload()
-    const updatedCampaign = await campaignClient.updateCampaign(campaignId.value, payload)
-    campaign.value = updatedCampaign
+    campaign.value = await campaignClient.updateCampaign(campaignId.value, payload)
 
     await syncLists()
 
     saveSuccess.value = 'Campaign saved successfully.'
   } catch (error) {
-    console.error(`Failed to save campaign ${campaignId.value}:`, error)
     if (isAuthenticationError(error)) {
       window.location.href = '/login'
       return
     }
-    saveError.value = error?.message || 'Failed to save campaign.'
+    const formattedErrors = formatValidationErrors(error)
+    if (formattedErrors.length > 0) {
+      saveErrors.value = formattedErrors
+      saveError.value = ''
+    } else {
+      saveError.value = error?.message || 'Failed to save campaign.'
+      saveErrors.value = []
+    }
   } finally {
     isSaving.value = false
   }

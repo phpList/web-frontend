@@ -429,7 +429,6 @@ const form = ref({
   composeMode: 'compose',
   webpageUrl: '',
   composeHtml: '',
-  composeText: '',
   footer: '',
   fromField: '',
   toField: '',
@@ -457,7 +456,7 @@ const warnings = computed(() => {
     list.push('Webpage URL is required for "Send a webpage" mode.')
   }
 
-  if (form.value.composeMode === 'compose' && !form.value.composeHtml.trim() && !form.value.composeText.trim()) {
+  if (form.value.composeMode === 'compose' && !form.value.composeHtml.trim()) {
     list.push('Compose message mode requires HTML or text content.')
   }
 
@@ -573,8 +572,7 @@ const fillForm = (campaignValue) => {
     subject: content.subject || '',
     composeMode,
     webpageUrl: webpageUrl || '',
-    composeHtml: content.text || '',
-    composeText: content.textMessage || '',
+    composeHtml: content.textMessage || '',
     footer: content.footer || '',
     fromField: options.fromField || '',
     toField: options.toField || '',
@@ -638,13 +636,11 @@ const buildCampaignPayload = () => {
 
   const urlToken = `[URL:${form.value.webpageUrl.trim()}]`
   const contentText = form.value.composeMode === 'webpage' ? urlToken : form.value.composeHtml
-  const contentTextMessage = form.value.composeMode === 'webpage' ? urlToken : form.value.composeText
 
   const payload = {
     content: {
       subject: form.value.subject,
       text: contentText,
-      text_message: contentTextMessage,
       footer: form.value.footer
     },
     format: {

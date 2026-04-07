@@ -788,7 +788,8 @@ const sendTestCampaign = async () => {
       window.location.href = '/login'
       return
     }
-    saveError.value = error?.message || 'Failed to send test campaign.'
+    console.error('Failed to send test campaign:', error.message)
+    saveError.value = error?.message.slice(0, 100) || 'Failed to send test campaign.'
     saveErrors.value = []
   } finally {
     isSendingTest.value = false

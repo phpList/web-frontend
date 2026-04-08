@@ -33,7 +33,15 @@ import {
   BlockQuote,
   Table,
   TableToolbar,
-  HorizontalLine
+  HorizontalLine,
+
+  Image,
+  ImageToolbar,
+  ImageCaption,
+  ImageStyle,
+  ImageResize,
+  AutoImage,
+  PictureEditing
 } from 'ckeditor5'
 
 import 'ckeditor5/ckeditor5.css'
@@ -81,7 +89,14 @@ const editorConfig = {
     BlockQuote,
     Table,
     TableToolbar,
-    HorizontalLine
+    HorizontalLine,
+    Image,
+    ImageToolbar,
+    ImageCaption,
+    ImageStyle,
+    ImageResize,
+    AutoImage,
+    PictureEditing
   ],
   toolbar: [
     'undo',
@@ -100,9 +115,18 @@ const editorConfig = {
     'insertTable',
     '|',
     'horizontalLine'
-  ]
+  ],
+  image: {
+    toolbar: [
+      'imageStyle:inline',
+      'imageStyle:block',
+      'imageStyle:side',
+      '|',
+      'toggleImageCaption',
+      'imageTextAlternative'
+    ]
+  }
 }
-
 </script>
 
 <style scoped>

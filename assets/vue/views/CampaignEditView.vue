@@ -475,7 +475,7 @@ const warnings = computed(() => {
 })
 
 const hasConfirmationUrlToken = computed(() =>
-  String(form.value.composeHtml || '').includes('[CONFIRMATIONURL]')
+  String(form.value.composeHtml || '').includes('[CONFIRMATIONURL]') // todo: check if needed
 )
 
 const canQueueCampaign = computed(() =>
@@ -591,7 +591,7 @@ const fillForm = (campaignValue) => {
     subject: content.subject || '',
     composeMode,
     webpageUrl: webpageUrl || '',
-    composeHtml: content.textMessage || '',
+    composeHtml: format.htmlFormated ? content.text : content.textMessage || content.text || '',
     footer: content.footer || '',
     fromField: options.fromField || '',
     toField: options.toField || '',

@@ -366,10 +366,20 @@
               <button
                 type="button"
                 class="rounded-md border border-slate-900 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-                :disabled="isSaving"
-                @click="saveCampaign"
+                :disabled="isSaving || isQueueing"
+                @click="saveAndContinueEditing"
               >
                 {{ isSaving ? 'Saving...' : 'Save and continue editing' }}
+              </button>
+
+              <button
+                v-if="canQueueCampaign"
+                type="button"
+                class="rounded-md border border-emerald-700 bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50"
+                :disabled="isSaving || isQueueing"
+                @click="queueCampaignToSend"
+              >
+                {{ isQueueing ? 'Queueing...' : 'Place campaign in a queue to send' }}
               </button>
             </div>
           </div>
@@ -404,6 +414,7 @@ const isLoading = ref(true)
 const loadError = ref('')
 const isSaving = ref(false)
 const isSendingTest = ref(false)
+const isQueueing = ref(false)
 const saveError = ref('')
 const saveErrors = ref([])
 const saveSuccess = ref('')
@@ -462,6 +473,14 @@ const warnings = computed(() => {
 
   return list
 })
+
+const hasConfirmationUrlToken = computed(() =>
+  String(form.value.composeHtml || '').includes('[CONFIRMATIONURL]')
+)
+
+const canQueueCampaign = computed(() =>
+    warnings.value.length === 0 && hasConfirmationUrlToken.value && campaign.value.messageMetadata.status !== 'submitted'
+)
 
 const isAuthenticationError = (error) => error?.name === 'AuthenticationException' || error?.status === 401
 
@@ -719,7 +738,7 @@ const syncLists = async () => {
   associatedListIds.value = [...nextIds]
 }
 
-const saveCampaign = async () => {
+const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
   if (isSaving.value) return
 
   if (form.value.composeMode === 'webpage' && !form.value.webpageUrl.trim()) {
@@ -734,6 +753,7 @@ const saveCampaign = async () => {
   saveError.value = ''
   saveErrors.value = []
   saveSuccess.value = ''
+  let isSaved = false
 
   try {
     const payload = buildCampaignPayload()
@@ -742,10 +762,11 @@ const saveCampaign = async () => {
     await syncLists()
 
     saveSuccess.value = 'Campaign saved successfully.'
+    isSaved = true
   } catch (error) {
     if (isAuthenticationError(error)) {
       window.location.href = '/login'
-      return
+      return false
     }
     const formattedErrors = formatValidationErrors(error)
     if (formattedErrors.length > 0) {
@@ -757,6 +778,43 @@ const saveCampaign = async () => {
     }
   } finally {
     isSaving.value = false
+  }
+
+  if (isSaved && advanceAfterSave && currentStep.value < steps.length) {
+    currentStep.value += 1
+  }
+
+  return isSaved
+}
+
+const saveAndContinueEditing = async () => {
+  await saveCampaign({ advanceAfterSave: true })
+}
+
+const queueCampaignToSend = async () => {
+  if (isQueueing.value || isSaving.value || !hasConfirmationUrlToken.value) return
+
+  isQueueing.value = true
+  saveError.value = ''
+  saveErrors.value = []
+  saveSuccess.value = ''
+
+  try {
+    const isSaved = await saveCampaign()
+    if (!isSaved) return
+
+    await campaignClient.updateCampaignStatus(campaignId.value, 'submitted')
+    saveSuccess.value = 'Campaign placed in a queue to send.'
+  } catch (error) {
+    if (isAuthenticationError(error)) {
+      window.location.href = '/login'
+      return
+    }
+
+    saveError.value = error?.message || 'Failed to place campaign in queue.'
+    saveErrors.value = []
+  } finally {
+    isQueueing.value = false
   }
 }
 

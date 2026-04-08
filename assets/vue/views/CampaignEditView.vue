@@ -475,7 +475,7 @@ const warnings = computed(() => {
 })
 
 const hasConfirmationUrlToken = computed(() =>
-  String(form.value.composeHtml || '').includes('[CONFIRMATIONURL]') // todo: check if needed
+  String(form.value.composeHtml || '').includes('[CONFIRMATIONURL]') || form.value.sendFormat !== 'invite'
 )
 
 const canQueueCampaign = computed(() =>
@@ -721,14 +721,28 @@ const syncLists = async () => {
   const toAdd = nextIds.filter((id) => !currentSet.has(id))
   const toRemove = currentIds.filter((id) => !nextSet.has(id))
 
-  const operations = [
-    ...toAdd.map((listId) => listMessagesClient.associateMessageWithList(campaignId.value, listId)),
-    ...toRemove.map((listId) => listMessagesClient.dissociateMessageFromList(campaignId.value, listId))
-  ]
+  if (toAdd.length === 0 && toRemove.length === 0) return
 
-  if (operations.length === 0) return
+  const results = []
 
-  const results = await Promise.allSettled(operations)
+  for (const listId of toAdd) {
+    try {
+      const result = await listMessagesClient.associateMessageWithList(campaignId.value, listId)
+      results.push({ status: 'fulfilled', value: result })
+    } catch (error) {
+      results.push({ status: 'rejected', reason: error, type: 'add', listId })
+    }
+  }
+
+  for (const listId of toRemove) {
+    try {
+      const result = await listMessagesClient.dissociateMessageFromList(campaignId.value, listId)
+      results.push({ status: 'fulfilled', value: result })
+    } catch (error) {
+      results.push({ status: 'rejected', reason: error, type: 'remove', listId })
+    }
+  }
+
   const failedOperations = results.filter((result) => result.status === 'rejected')
 
   if (failedOperations.length > 0) {
@@ -811,8 +825,14 @@ const queueCampaignToSend = async () => {
       return
     }
 
-    saveError.value = error?.message || 'Failed to place campaign in queue.'
-    saveErrors.value = []
+    const formattedErrors = formatValidationErrors(error)
+    if (formattedErrors.length > 0) {
+      saveErrors.value = formattedErrors
+      saveError.value = ''
+    } else {
+      saveError.value = error?.message || 'Failed to place campaign in queue.'
+      saveErrors.value = []
+    }
   } finally {
     isQueueing.value = false
   }

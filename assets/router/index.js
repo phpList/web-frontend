@@ -13,6 +13,7 @@ export const router = createRouter({
         { path: '/subscribers', name: 'subscribers', component: SubscribersView, meta: { title: 'Subscribers' } },
         { path: '/lists', name: 'lists', component: ListsView, meta: { title: 'Lists' } },
         { path: '/campaigns', name: 'campaigns', component: CampaignsView, meta: { title: 'Campaigns' } },
+        { path: '/campaigns/create', name: 'campaign-create', component: CampaignEditView, meta: { title: 'Create Campaign' } },
         { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: CampaignEditView, meta: { title: 'Edit Campaign' } },
         { path: '/lists/:listId/subscribers', name: 'list-subscribers', component: ListSubscribersView, meta: { title: 'List Subscribers' } },
         { path: '/:pathMatch(.*)*', redirect: '/' },

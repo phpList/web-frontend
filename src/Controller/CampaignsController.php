@@ -22,6 +22,16 @@ class CampaignsController extends AbstractController
         ]);
     }
 
+    #[Route('/create', name: 'create', methods: ['GET'])]
+    public function create(Request $request): Response
+    {
+        return $this->render('spa.html.twig', [
+            'page' => 'Create Campaign',
+            'api_token' => $request->getSession()->get('auth_token'),
+            'api_base_url' => $this->getParameter('api_base_url'),
+        ]);
+    }
+
     #[Route('/{campaignId}/edit', name: 'edit', methods: ['GET'])]
     public function edit(Request $request, int $campaignId): Response
     {

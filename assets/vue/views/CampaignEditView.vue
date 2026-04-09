@@ -5,7 +5,7 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p class="text-xs uppercase tracking-wide text-slate-500">Campaign</p>
-            <h2 class="text-xl font-bold text-slate-900">Edit Campaign #{{ campaignId }}</h2>
+            <h2 class="text-xl font-bold text-slate-900">{{ pageTitle }}</h2>
           </div>
 
           <RouterLink
@@ -408,7 +408,10 @@ const steps = [
   { id: 6, label: 'Finish' },
 ]
 
-const campaignId = computed(() => Number(route.params.campaignId))
+const campaignIdFromRoute = computed(() => Number(route.params.campaignId))
+const isCreateMode = computed(() => route.name === 'campaign-create')
+const activeCampaignId = computed(() => Number(campaign.value?.id) || campaignIdFromRoute.value)
+const pageTitle = computed(() => isCreateMode.value ? 'Create Campaign' : `Edit Campaign #${campaignIdFromRoute.value}`)
 const currentStep = ref(1)
 const isLoading = ref(true)
 const loadError = ref('')
@@ -435,7 +438,7 @@ const stepSlugById = {
   6: 'finish'
 }
 
-const form = ref({
+const defaultFormState = () => ({
   subject: '',
   composeMode: 'compose',
   webpageUrl: '',
@@ -455,6 +458,8 @@ const form = ref({
   requeueInterval: '',
   requeueUntil: ''
 })
+
+const form = ref(defaultFormState())
 
 const warnings = computed(() => {
   const list = []
@@ -479,7 +484,11 @@ const hasConfirmationUrlToken = computed(() =>
 )
 
 const canQueueCampaign = computed(() =>
-    warnings.value.length === 0 && hasConfirmationUrlToken.value && campaign.value.messageMetadata.status !== 'submitted'
+    warnings.value.length === 0 &&
+    hasConfirmationUrlToken.value &&
+    campaign.value?.messageMetadata?.status !== 'submitted' &&
+    Number.isFinite(activeCampaignId.value) &&
+    activeCampaignId.value > 0
 )
 
 const isAuthenticationError = (error) => error?.name === 'AuthenticationException' || error?.status === 401
@@ -598,7 +607,7 @@ const fillForm = (campaignValue) => {
     replyTo: options.replyTo || '',
     userSelection: options.userSelection || '',
     templateId: campaignValue?.template?.id ? String(campaignValue.template.id) : '',
-    sendFormat: format.sendFormat.toLowerCase() || 'html',
+    sendFormat: String(format.sendFormat || 'html').toLowerCase(),
     htmlFormated: format.htmlFormated !== null && format.htmlFormated !== undefined ? Boolean(format.htmlFormated) : true,
     testRecipients: '',
     embargo: toLocalDateTimeInput(schedule.embargo),
@@ -610,20 +619,37 @@ const fillForm = (campaignValue) => {
 }
 
 const loadCampaignData = async () => {
-  if (!Number.isFinite(campaignId.value) || campaignId.value <= 0) {
-    loadError.value = 'Invalid campaign ID.'
-    isLoading.value = false
-    return
-  }
-
   isLoading.value = true
   loadError.value = ''
 
   try {
+    if (isCreateMode.value) {
+      const listResponse = await listClient.getLists(0, 1000)
+
+      campaign.value = {
+        messageMetadata: { status: 'draft' },
+        messageContent: {},
+        messageOptions: {},
+        messageFormat: {},
+        messageSchedule: {}
+      }
+      form.value = defaultFormState()
+      mailingLists.value = Array.isArray(listResponse?.items) ? listResponse.items : []
+      associatedListIds.value = []
+      selectedListIds.value = []
+      composeHtmlCache.value = ''
+      return
+    }
+
+    if (!Number.isFinite(campaignIdFromRoute.value) || campaignIdFromRoute.value <= 0) {
+      loadError.value = 'Invalid campaign ID.'
+      return
+    }
+
     const [campaignResponse, listResponse, associatedListResponse] = await Promise.all([
-      campaignClient.getCampaign(campaignId.value),
+      campaignClient.getCampaign(campaignIdFromRoute.value),
       listClient.getLists(0, 1000),
-      listMessagesClient.getListsByMessage(campaignId.value)
+      listMessagesClient.getListsByMessage(campaignIdFromRoute.value)
     ])
 
     campaign.value = campaignResponse
@@ -638,7 +664,7 @@ const loadCampaignData = async () => {
     associatedListIds.value = linkedIds
     selectedListIds.value = [...linkedIds]
   } catch (error) {
-    console.error(`Failed to load campaign ${campaignId.value} for editing:`, error)
+    console.error('Failed to load campaign data for editing:', error)
     if (isAuthenticationError(error)) {
       window.location.href = '/login'
       return
@@ -712,6 +738,11 @@ const buildCampaignPayload = () => {
 }
 
 const syncLists = async () => {
+  const currentCampaignId = activeCampaignId.value
+  if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
+    throw new Error('Campaign must be saved before updating list associations.')
+  }
+
   const nextIds = normalizeListIds(selectedListIds.value)
   const currentIds = normalizeListIds(associatedListIds.value)
 
@@ -727,7 +758,7 @@ const syncLists = async () => {
 
   for (const listId of toAdd) {
     try {
-      const result = await listMessagesClient.associateMessageWithList(campaignId.value, listId)
+      const result = await listMessagesClient.associateMessageWithList(currentCampaignId, listId)
       results.push({ status: 'fulfilled', value: result })
     } catch (error) {
       results.push({ status: 'rejected', reason: error, type: 'add', listId })
@@ -736,7 +767,7 @@ const syncLists = async () => {
 
   for (const listId of toRemove) {
     try {
-      const result = await listMessagesClient.dissociateMessageFromList(campaignId.value, listId)
+      const result = await listMessagesClient.dissociateMessageFromList(currentCampaignId, listId)
       results.push({ status: 'fulfilled', value: result })
     } catch (error) {
       results.push({ status: 'rejected', reason: error, type: 'remove', listId })
@@ -771,7 +802,22 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
 
   try {
     const payload = buildCampaignPayload()
-    campaign.value = await campaignClient.updateCampaign(campaignId.value, payload)
+    const currentCampaignId = activeCampaignId.value
+
+    if (Number.isFinite(currentCampaignId) && currentCampaignId > 0) {
+      campaign.value = await campaignClient.updateCampaign(currentCampaignId, payload)
+    } else {
+      campaign.value = await campaignClient.createCampaign(payload)
+
+      const createdCampaignId = Number(campaign.value?.id)
+      if (Number.isFinite(createdCampaignId) && createdCampaignId > 0) {
+        await router.replace({
+          name: 'campaign-edit',
+          params: { campaignId: createdCampaignId },
+          query: route.query
+        }).catch(() => {})
+      }
+    }
 
     await syncLists()
 
@@ -817,7 +863,12 @@ const queueCampaignToSend = async () => {
     const isSaved = await saveCampaign()
     if (!isSaved) return
 
-    await campaignClient.updateCampaignStatus(campaignId.value, 'submitted')
+    const currentCampaignId = activeCampaignId.value
+    if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
+      throw new Error('Campaign must be saved before queueing.')
+    }
+
+    await campaignClient.updateCampaignStatus(currentCampaignId, 'submitted')
     saveSuccess.value = 'Campaign placed in a queue to send.'
   } catch (error) {
     if (isAuthenticationError(error)) {
@@ -855,7 +906,15 @@ const sendTestCampaign = async () => {
   saveSuccess.value = ''
 
   try {
-    await campaignClient.testSendCampaign(campaignId.value, recipients)
+    const currentCampaignId = activeCampaignId.value
+    if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
+      saveError.value = 'Save the campaign before sending a test.'
+      saveErrors.value = []
+      saveSuccess.value = ''
+      return
+    }
+
+    await campaignClient.testSendCampaign(currentCampaignId, recipients)
     saveSuccess.value = 'Test campaign sent successfully.'
   } catch (error) {
     if (isAuthenticationError(error)) {
@@ -894,6 +953,14 @@ const previousStep = () => {
 const nextStep = () => {
   if (currentStep.value < steps.length) currentStep.value += 1
 }
+
+watch(
+  () => [route.name, route.params.campaignId],
+  () => {
+    loadCampaignData()
+  },
+  { immediate: true }
+)
 
 watch(
   () => route.query.section,
@@ -944,7 +1011,6 @@ watch(
 )
 
 onMounted(() => {
-  loadCampaignData()
   loadTemplates()
 })
 </script>

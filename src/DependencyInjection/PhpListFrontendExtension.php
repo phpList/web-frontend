@@ -8,10 +8,11 @@ use Exception;
 use InvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class PhpListFrontendExtension extends Extension
+class PhpListFrontendExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * Loads a specific configuration.
@@ -29,5 +30,14 @@ class PhpListFrontendExtension extends Extension
         $configs;
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.yml');
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $container->prependExtensionConfig('twig', [
+            'paths' => [
+                __DIR__ . '/../../templates' => 'PhpListFrontend',
+            ],
+        ]);
     }
 }

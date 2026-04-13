@@ -24,7 +24,7 @@ class ListsController extends AbstractController
         $accept = (string) $request->headers->get('Accept', '');
         $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
         if (! $wantsJson) {
-            return $this->render('spa.html.twig', [
+            return $this->render('@PhpListFrontend/spa.html.twig', [
                 'page' => 'Lists',
                 'api_token' => $request->getSession()->get('auth_token'),
                 'api_base_url' => $this->getParameter('api_base_url'),
@@ -38,7 +38,7 @@ class ListsController extends AbstractController
     #[Route('/{listId}/subscribers', name: 'list_subscribers', methods: ['GET'])]
     public function view(Request $request, int $listId): JsonResponse|Response
     {
-        return $this->render('spa.html.twig', [
+        return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'List Subscribers',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),

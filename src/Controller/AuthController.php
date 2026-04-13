@@ -38,7 +38,7 @@ class AuthController extends AbstractController
             $password = (string) $request->request->get('password', '');
 
             if ($username === '' || $password === '') {
-                return $this->render('auth/login.html.twig', [
+                return $this->render('@PhpListFrontend/auth/login.html.twig', [
                     'error' => 'Username and password are required.',
                 ]);
             }
@@ -57,7 +57,7 @@ class AuthController extends AbstractController
             }
         }
 
-        return $this->render('auth/login.html.twig', [
+        return $this->render('@PhpListFrontend/auth/login.html.twig', [
             'error' => $error,
         ]);
     }

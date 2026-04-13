@@ -35,7 +35,7 @@ class SubscribersController extends AbstractController
         $accept = (string) $request->headers->get('Accept', '');
         $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
         if (! $wantsJson) {
-            return $this->render('spa.html.twig', [
+            return $this->render('@PhpListFrontend/spa.html.twig', [
                 'page' => 'Subscribers',
                 'api_token' => $request->getSession()->get('auth_token'),
                 'api_base_url' => $this->getParameter('api_base_url'),

@@ -4,21 +4,17 @@
     <meta charset="UTF-8">
     <title>{% block title %}phpList{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-{#    <script src="https://cdn.tailwindcss.com"></script>#}
-    <link rel="stylesheet" href="{{ asset('build/app.css') }}">
-    {# Add your own custom CSS later if needed #}
-    {{ encore_entry_link_tags('styles') }}
+    <link rel="stylesheet" href="{{ asset('build/app.css', 'phplist_web_frontend') }}">
+    <link rel="stylesheet" href="{{ asset('build/styles.css', 'phplist_web_frontend') }}">
 
     {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
+        <script src="{{ asset('build/runtime.js', 'phplist_web_frontend') }}" defer></script>
+        <script src="{{ asset('build/app.js', 'phplist_web_frontend') }}" defer></script>
     {% endblock %}
 </head>
 <body>
 <main class="">
     {% block body %}{% endblock %}
 </main>
-
-<script src="{{ asset('build/runtime.js') }}"></script>
-<script src="{{ asset('build/app.js') }}"></script>
 </body>
 </html>

@@ -14,6 +14,9 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class PhpListFrontendExtension extends Extension implements PrependExtensionInterface
 {
+    private const TWIG_NAMESPACE = 'PhpListFrontend';
+    private const ASSET_PACKAGE_NAME = 'phplist_web_frontend';
+
     /**
      * Loads a specific configuration.
      *
@@ -28,16 +31,33 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
     {
         // @phpstan-ignore-next-line
         $configs;
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loader = new YamlFileLoader($container, new FileLocator($this->getBundlePath() . '/config'));
         $loader->load('services.yml');
     }
 
     public function prepend(ContainerBuilder $container): void
     {
+        $bundlePath = $this->getBundlePath();
+
         $container->prependExtensionConfig('twig', [
             'paths' => [
-                __DIR__ . '/../../templates' => 'PhpListFrontend',
+                $bundlePath . '/templates' => self::TWIG_NAMESPACE,
             ],
         ]);
+
+        $container->prependExtensionConfig('framework', [
+            'assets' => [
+                'packages' => [
+                    self::ASSET_PACKAGE_NAME => [
+                        'base_path' => '/',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    private function getBundlePath(): string
+    {
+        return dirname(__DIR__, 2);
     }
 }

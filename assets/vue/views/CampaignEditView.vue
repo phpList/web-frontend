@@ -394,7 +394,7 @@ import {computed, onMounted, ref, watch} from 'vue'
 import {RouterLink, useRoute, useRouter} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
-import {campaignClient, listClient, listMessagesClient, templateClient} from '../api'
+import {campaignClient, fetchAllLists, listMessagesClient, templateClient} from '../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -624,7 +624,7 @@ const loadCampaignData = async () => {
 
   try {
     if (isCreateMode.value) {
-      const listResponse = await listClient.getLists(0, 1000)
+      const mailingListsResponse = await fetchAllLists()
 
       campaign.value = {
         messageMetadata: { status: 'draft' },
@@ -634,7 +634,7 @@ const loadCampaignData = async () => {
         messageSchedule: {}
       }
       form.value = defaultFormState()
-      mailingLists.value = Array.isArray(listResponse?.items) ? listResponse.items : []
+      mailingLists.value = mailingListsResponse
       associatedListIds.value = []
       selectedListIds.value = []
       composeHtmlCache.value = ''
@@ -646,16 +646,16 @@ const loadCampaignData = async () => {
       return
     }
 
-    const [campaignResponse, listResponse, associatedListResponse] = await Promise.all([
+    const [campaignResponse, mailingListsResponse, associatedListResponse] = await Promise.all([
       campaignClient.getCampaign(campaignIdFromRoute.value),
-      listClient.getLists(0, 1000),
+      fetchAllLists(),
       listMessagesClient.getListsByMessage(campaignIdFromRoute.value)
     ])
 
     campaign.value = campaignResponse
     fillForm(campaignResponse)
 
-    mailingLists.value = Array.isArray(listResponse?.items) ? listResponse.items : []
+    mailingLists.value = mailingListsResponse
 
     const linkedIds = Array.isArray(associatedListResponse?.items)
       ? associatedListResponse.items.map((list) => Number(list.id)).filter((id) => Number.isFinite(id))
@@ -806,8 +806,10 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
 
     if (Number.isFinite(currentCampaignId) && currentCampaignId > 0) {
       campaign.value = await campaignClient.updateCampaign(currentCampaignId, payload)
+      await syncLists()
     } else {
       campaign.value = await campaignClient.createCampaign(payload)
+      await syncLists()
 
       const createdCampaignId = Number(campaign.value?.id)
       if (Number.isFinite(createdCampaignId) && createdCampaignId > 0) {
@@ -818,8 +820,6 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
         }).catch(() => {})
       }
     }
-
-    await syncLists()
 
     saveSuccess.value = 'Campaign saved successfully.'
     isSaved = true
@@ -870,6 +870,13 @@ const queueCampaignToSend = async () => {
 
     await campaignClient.updateCampaignStatus(currentCampaignId, 'submitted')
     saveSuccess.value = 'Campaign placed in a queue to send.'
+    campaign.value = {
+      ...campaign.value,
+      messageMetadata: {
+        ...(campaign.value?.messageMetadata || {}),
+        status: 'submitted'
+      }
+    }
   } catch (error) {
     if (isAuthenticationError(error)) {
       window.location.href = '/login'
@@ -906,6 +913,8 @@ const sendTestCampaign = async () => {
   saveSuccess.value = ''
 
   try {
+    const isSaved = await saveCampaign()
+    if (!isSaved) return
     const currentCampaignId = activeCampaignId.value
     if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
       saveError.value = 'Save the campaign before sending a test.'
@@ -921,8 +930,8 @@ const sendTestCampaign = async () => {
       window.location.href = '/login'
       return
     }
-    console.error('Failed to send test campaign:', error.message)
-    saveError.value = error?.message.slice(0, 100) || 'Failed to send test campaign.'
+    console.error('Failed to send test campaign:', error?.message ?? error)
+    saveError.value = error?.message?.slice(0, 100) || 'Failed to send test campaign.'
     saveErrors.value = []
   } finally {
     isSendingTest.value = false

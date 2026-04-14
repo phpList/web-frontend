@@ -128,7 +128,6 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { campaignClient } from "../../api";
 
 const props = defineProps({
   isViewModalOpen: {
@@ -175,15 +174,14 @@ watch(
     }
 )
 
-async function handleResend() {
+function handleResend() {
   if (!props.campaign?.id || selectedMailingListIds.value.length === 0) return
 
   const listIds = selectedMailingListIds.value
       .map((value) => Number(value))
       .filter((value) => Number.isFinite(value))
 
-  await campaignClient.resendCampaign(props.campaign.id, listIds)
-  emit('close')
+  emit('resend', listIds)
 }
 
 function getMessage(schedule) {

@@ -33,4 +33,26 @@ export const subscriptionClient = new SubscriptionClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
 export const templateClient = new TemplatesClient(client);
 
+export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const lists = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const response = await listClient.getLists(afterId, limit);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        lists.push(...items);
+
+        const hasMore = response?.pagination?.hasMore === true;
+        const nextCursor = response?.pagination?.nextCursor;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    return lists;
+};
+
 export default client;

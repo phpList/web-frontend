@@ -249,7 +249,7 @@
               Requeue
             </button>
             <button
-              v-if="campaign.statusKey === 'set'"
+              v-if="campaign.statusKey === 'sent'"
               type="button"
               class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
@@ -320,7 +320,10 @@
         :is-view-loading="isViewLoading"
         :view-error-message="viewErrorMessage"
         :mailing-lists="mailingLists"
+        :is-resending="isResending"
+        :resend-error-message="resendErrorMessage"
         @close="closeViewModal"
+        @resend="handleResend"
     />
   </div>
 </template>
@@ -328,7 +331,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { campaignClient, listClient, listMessagesClient, statisticsClient } from '../../api'
+import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 
 const pageSize = 5
@@ -353,7 +356,7 @@ const parseStatusQuery = (statusQuery) => {
 
 const parsePageQuery = (pageQuery) => {
   const queryValue = Array.isArray(pageQuery) ? pageQuery[0] : pageQuery
-  const page = Number.parseInt(String(queryValue ?? ''), pageSize)
+  const page = Number.parseInt(String(queryValue ?? ''), 10)
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
@@ -382,6 +385,8 @@ const isViewModalOpen = ref(false)
 const isViewLoading = ref(false)
 const selectedCampaign = ref(null)
 const viewErrorMessage = ref('')
+const isResending = ref(false)
+const resendErrorMessage = ref('')
 
 const filterOptions = [
   { id: 'all', label: 'All' },
@@ -462,13 +467,10 @@ const getCampaignStatistics = (campaignId) => statisticsByCampaignId.value[campa
 
 const fetchMailingLists = async () => {
   try {
-    const response = await listClient.getLists(0, 1000)
-    mailingLists.value = Array.isArray(response?.items) ? response.items : []
+    mailingLists.value = await fetchAllLists()
   } catch (error) {
     console.error('Failed to fetch mailing lists:', error)
     mailingLists.value = []
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -606,6 +608,8 @@ const handleView = async (campaignId) => {
   isViewModalOpen.value = true
   isViewLoading.value = true
   viewErrorMessage.value = ''
+  isResending.value = false
+  resendErrorMessage.value = ''
   selectedCampaign.value = null
 
   try {
@@ -626,7 +630,37 @@ const closeViewModal = () => {
   isViewModalOpen.value = false
   isViewLoading.value = false
   viewErrorMessage.value = ''
+  isResending.value = false
+  resendErrorMessage.value = ''
   selectedCampaign.value = null
+}
+
+const handleResend = async (listIds) => {
+  const campaignId = selectedCampaign.value?.id
+  if (!campaignId || !Array.isArray(listIds) || listIds.length === 0 || isResending.value) return
+
+  const normalizedListIds = listIds
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value))
+
+  if (normalizedListIds.length === 0) return
+
+  isResending.value = true
+  resendErrorMessage.value = ''
+
+  try {
+    await campaignClient.resendCampaign(campaignId, normalizedListIds)
+    closeViewModal()
+  } catch (error) {
+    console.error(`Failed to resend campaign ${campaignId}:`, error)
+    if (isAuthenticationError(error)) {
+      window.location.href = '/login'
+      return
+    }
+    resendErrorMessage.value = error?.message || 'Failed to resend campaign.'
+  } finally {
+    isResending.value = false
+  }
 }
 
 const handleCopyToDraft = async (campaignId) => {

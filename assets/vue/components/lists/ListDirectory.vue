@@ -232,7 +232,7 @@ import BaseIcon from '../base/BaseIcon.vue'
 import CreateListModal from './CreateListModal.vue'
 import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'
-import { listClient } from '../../api'
+import { fetchAllLists, listClient } from '../../api'
 
 const router = useRouter()
 
@@ -249,8 +249,7 @@ const fetchMailingLists = async () => {
   loadError.value = ''
 
   try {
-    const response = await listClient.getLists(0, 1000)
-    mailingLists.value = Array.isArray(response?.items) ? response.items : []
+    mailingLists.value = await fetchAllLists()
   } catch (error) {
     console.error('Failed to fetch mailing lists:', error)
     mailingLists.value = []

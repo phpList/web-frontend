@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 
 import {
@@ -74,7 +74,8 @@ const localValue = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-const fieldId = props.id || `ckeditor-${crypto.randomUUID()}`
+const generatedId = useId()
+const fieldId = computed(() => props.id || `ckeditor-${generatedId}`)
 
 const editorConfig = {
   licenseKey: 'GPL',

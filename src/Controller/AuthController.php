@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Controller;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
-    public function __construct(private readonly AuthClient $authClient)
-    {
+    public function __construct(
+        private readonly AuthClient $authClient,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
@@ -78,6 +81,8 @@ class AuthController extends AbstractController
         try {
             $user = $this->authClient->getSessionUser();
         } catch (Exception | GuzzleException $e) {
+            $this->logger->error('Unable to load current user: ' . $e->getMessage());
+
             return new JsonResponse(
                 ['error' => 'Unable to load current user.'],
                 Response::HTTP_SERVICE_UNAVAILABLE

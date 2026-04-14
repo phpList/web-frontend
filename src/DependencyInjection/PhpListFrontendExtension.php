@@ -54,6 +54,32 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
                 ],
             ],
         ]);
+
+        $container->prependExtensionConfig('security', [
+            'providers' => [
+                'in_memory' => ['memory' => null],
+            ],
+            'firewalls' => [
+                'api' => [
+                    'pattern' => '^/api/v2',
+                    'security' => false,
+                ],
+                'main' => [
+                    'lazy' => true,
+                    'provider' => 'in_memory',
+                    'pattern' => '^/',
+                    'custom_authenticators' => [
+                        'PhpList\\WebFrontend\\Security\\SessionAuthenticator',
+                    ],
+                    'entry_point' => 'PhpList\\WebFrontend\\Security\\SessionAuthenticator',
+                ],
+            ],
+            'access_control' => [
+                ['path' => '^/login', 'roles' => 'PUBLIC_ACCESS'],
+                ['path' => '^/api/v2', 'roles' => 'PUBLIC_ACCESS'],
+                ['path' => '^/', 'roles' => 'ROLE_ADMIN'],
+            ],
+        ]);
     }
 
     private function getBundlePath(): string

@@ -54,7 +54,7 @@ class AuthController extends AbstractController
 
                 return $this->redirectToRoute('home');
             } catch (Exception $e) {
-                $error = 'Invalid credentials or server error: ' . $e->getMessage();
+                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
             }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpList\WebFrontend\Tests\Integration\Auth;
+namespace PhpList\WebFrontend\Tests\Integration\Controller;
 
 use PHPUnitRetry\RetryAnnotationTrait;
 use PHPUnitRetry\RetryTrait;
@@ -13,7 +13,7 @@ use Symfony\Component\Panther\PantherTestCase;
  * @retryIfException Facebook\WebDriver\Exception\NoSuchWindowException
  * @retryDelaySeconds 10
  */
-class LoginTest extends PantherTestCase
+class AuthControllerTest extends PantherTestCase
 {
     use RetryAnnotationTrait;
     use RetryTrait;

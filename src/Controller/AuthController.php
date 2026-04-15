@@ -51,6 +51,7 @@ class AuthController extends AbstractController
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['expiry_date']);
                 $request->getSession()->set('auth_id', (int) $authData['id']);
+                $request->getSession()->save();
 
                 return $this->redirectToRoute('home');
             } catch (Exception $e) {

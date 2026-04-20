@@ -188,10 +188,11 @@ function getMessage(schedule) {
   const interval = schedule.requeueInterval ?? schedule.repeatInterval
   if (!interval) return 'Invalid interval'
 
+  const untilValue = schedule.requeueUntil ?? schedule.repeatUntil
   const end = new Date(
-      typeof schedule.repeatUntil === 'string'
-          ? schedule.repeatUntil.replace(' ', 'T')
-          : schedule.repeatUntil
+      typeof untilValue === 'string'
+          ? untilValue.replace(' ', 'T')
+          : untilValue
   )
 
   if (isNaN(end)) return 'Invalid date'

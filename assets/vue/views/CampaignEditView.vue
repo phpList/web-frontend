@@ -777,6 +777,10 @@ const syncLists = async () => {
   const failedOperations = results.filter((result) => result.status === 'rejected')
 
   if (failedOperations.length > 0) {
+    const latestAssociations = await listMessagesClient.getListsByMessage(currentCampaignId)
+    associatedListIds.value = Array.isArray(latestAssociations?.items)
+      ? latestAssociations.items.map((list) => Number(list.id)).filter((id) => Number.isFinite(id))
+      : [...associatedListIds.value]
     throw new Error(`Failed to update ${failedOperations.length} list association(s).`)
   }
 
@@ -974,8 +978,8 @@ watch(
 watch(
   () => route.query.section,
   (sectionValue) => {
-    const nextStepValue = resolveStepFromRouteValue(sectionValue)
-    if (nextStepValue && nextStepValue !== currentStep.value) {
+    const nextStepValue = resolveStepFromRouteValue(sectionValue) ?? 1
+    if (nextStepValue !== currentStep.value) {
       currentStep.value = nextStepValue
     }
   },

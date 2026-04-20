@@ -10,6 +10,7 @@ use PhpList\RestApiClient\Endpoint\AuthClient;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,7 +28,7 @@ class AuthControllerTest extends TestCase
         $this->authClient = $this->createMock(AuthClient::class);
 
         $this->controller = $this->getMockBuilder(AuthController::class)
-            ->setConstructorArgs([$this->authClient])
+            ->setConstructorArgs([$this->authClient, $this->createMock(LoggerInterface::class)])
             ->onlyMethods(['render', 'redirectToRoute', 'generateUrl'])
             ->getMock();
 
@@ -163,7 +164,7 @@ class AuthControllerTest extends TestCase
 
         $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString(
-            'Invalid credentials or server error: Invalid credentials',
+            'Invalid credentials',
             $response->getContent(),
         );
     }

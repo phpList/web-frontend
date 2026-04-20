@@ -93,9 +93,9 @@ import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
 import SubscriberModal from './SubscriberModal.vue'
 import ImportResult from './ImportResult.vue'
-import {inject, onMounted, ref} from 'vue'
-import {subscriberFilters} from './subscriberFilters'
-import {subscribersClient} from '../../api'
+import { inject, onMounted, ref } from 'vue'
+import { subscriberFilters } from './subscriberFilters'
+import { subscribersClient } from '../../api'
 import ListSubscribersExportPanel from "../lists/ListSubscribersExportPanel.vue";
 
 const initialSubscribers = inject('subscribers', [])

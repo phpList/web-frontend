@@ -51,7 +51,7 @@
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/security-bundle": "^6.4",
-        "tatevikgr/rest-api-client": "dev-main"
+        "tatevikgr/rest-api-client": "dev-dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",

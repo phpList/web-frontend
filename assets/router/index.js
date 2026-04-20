@@ -3,6 +3,8 @@ import DashboardView from '../vue/views/DashboardView.vue'
 import SubscribersView from '../vue/views/SubscribersView.vue'
 import ListsView from '../vue/views/ListsView.vue'
 import ListSubscribersView from '../vue/views/ListSubscribersView.vue'
+import CampaignsView from '../vue/views/CampaignsView.vue'
+import CampaignEditView from '../vue/views/CampaignEditView.vue'
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -10,6 +12,9 @@ export const router = createRouter({
         { path: '/', name: 'dashboard', component: DashboardView, meta: { title: 'Dashboard' } },
         { path: '/subscribers', name: 'subscribers', component: SubscribersView, meta: { title: 'Subscribers' } },
         { path: '/lists', name: 'lists', component: ListsView, meta: { title: 'Lists' } },
+        { path: '/campaigns', name: 'campaigns', component: CampaignsView, meta: { title: 'Campaigns' } },
+        { path: '/campaigns/create', name: 'campaign-create', component: CampaignEditView, meta: { title: 'Create Campaign' } },
+        { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: CampaignEditView, meta: { title: 'Edit Campaign' } },
         { path: '/lists/:listId/subscribers', name: 'list-subscribers', component: ListSubscribersView, meta: { title: 'List Subscribers' } },
         { path: '/:pathMatch(.*)*', redirect: '/' },
     ],

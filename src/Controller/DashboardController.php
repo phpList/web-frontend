@@ -40,7 +40,7 @@ class DashboardController extends AbstractController
             $chartClicks[] = $point->clicks;
         }
 
-        return $this->render('spa.html.twig', [
+        return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Dashboard',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),

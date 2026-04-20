@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Controller;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
-    public function __construct(private readonly AuthClient $authClient)
-    {
+    public function __construct(
+        private readonly AuthClient $authClient,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
@@ -38,7 +41,7 @@ class AuthController extends AbstractController
             $password = (string) $request->request->get('password', '');
 
             if ($username === '' || $password === '') {
-                return $this->render('auth/login.html.twig', [
+                return $this->render('@PhpListFrontend/auth/login.html.twig', [
                     'error' => 'Username and password are required.',
                 ]);
             }
@@ -48,16 +51,17 @@ class AuthController extends AbstractController
                 $request->getSession()->set('auth_token', $authData['key']);
                 $request->getSession()->set('auth_expiry_date', $authData['expiry_date']);
                 $request->getSession()->set('auth_id', (int) $authData['id']);
+                $request->getSession()->save();
 
                 return $this->redirectToRoute('home');
             } catch (Exception $e) {
-                $error = 'Invalid credentials or server error: ' . $e->getMessage();
+                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
             }
         }
 
-        return $this->render('auth/login.html.twig', [
+        return $this->render('@PhpListFrontend/auth/login.html.twig', [
             'error' => $error,
         ]);
     }
@@ -78,6 +82,8 @@ class AuthController extends AbstractController
         try {
             $user = $this->authClient->getSessionUser();
         } catch (Exception | GuzzleException $e) {
+            $this->logger->error('Unable to load current user: ' . $e->getMessage());
+
             return new JsonResponse(
                 ['error' => 'Unable to load current user.'],
                 Response::HTTP_SERVICE_UNAVAILABLE

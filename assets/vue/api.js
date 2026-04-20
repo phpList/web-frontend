@@ -1,4 +1,14 @@
-import {Client, ListClient, SubscribersClient, SubscriptionClient, SubscriberAttributesClient} from '@tatevikgr/rest-api-client';
+import {
+    CampaignClient,
+    Client,
+    ListMessagesClient,
+    ListClient,
+    StatisticsClient,
+    SubscribersClient,
+    SubscriptionClient,
+    SubscriberAttributesClient,
+    TemplatesClient
+} from '@tatevikgr/rest-api-client';
 
 const appElement = document.getElementById('vue-app');
 const apiToken = appElement?.dataset.apiToken;
@@ -16,7 +26,33 @@ if (apiToken) {
 
 export const subscribersClient = new SubscribersClient(client);
 export const listClient = new ListClient(client);
+export const campaignClient = new CampaignClient(client);
+export const listMessagesClient = new ListMessagesClient(client);
+export const statisticsClient = new StatisticsClient(client);
 export const subscriptionClient = new SubscriptionClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
+export const templateClient = new TemplatesClient(client);
+
+export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const lists = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const response = await listClient.getLists(afterId, limit);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        lists.push(...items);
+
+        const hasMore = response?.pagination?.hasMore === true;
+        const nextCursor = response?.pagination?.nextCursor;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    return lists;
+};
 
 export default client;

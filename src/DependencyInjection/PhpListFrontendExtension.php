@@ -8,11 +8,15 @@ use Exception;
 use InvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class PhpListFrontendExtension extends Extension
+class PhpListFrontendExtension extends Extension implements PrependExtensionInterface
 {
+    private const TWIG_NAMESPACE = 'PhpListFrontend';
+    private const ASSET_PACKAGE_NAME = 'phplist_web_frontend';
+
     /**
      * Loads a specific configuration.
      *
@@ -27,7 +31,59 @@ class PhpListFrontendExtension extends Extension
     {
         // @phpstan-ignore-next-line
         $configs;
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loader = new YamlFileLoader($container, new FileLocator($this->getBundlePath() . '/config'));
         $loader->load('services.yml');
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $bundlePath = $this->getBundlePath();
+
+        $container->prependExtensionConfig('twig', [
+            'paths' => [
+                $bundlePath . '/templates' => self::TWIG_NAMESPACE,
+            ],
+        ]);
+
+        $container->prependExtensionConfig('framework', [
+            'assets' => [
+                'packages' => [
+                    self::ASSET_PACKAGE_NAME => [
+                        'base_path' => '/',
+                    ],
+                ],
+            ],
+        ]);
+
+//        $container->prependExtensionConfig('security', [
+//            'providers' => [
+//                'in_memory' => ['memory' => null],
+//            ],
+//            'firewalls' => [
+//                'api' => [
+//                    'pattern' => '^/api/v2',
+//                    'security' => false,
+//                ],
+//                'main' => [
+//                    'lazy' => true,
+//                    'provider' => 'in_memory',
+//                    'pattern' => '^/',
+//                    'custom_authenticators' => [
+//                        'PhpList\\WebFrontend\\Security\\SessionAuthenticator',
+//                    ],
+//                    'entry_point' => 'PhpList\\WebFrontend\\Security\\SessionAuthenticator',
+//                ],
+//            ],
+//            'access_control' => [
+//                ['path' => '^/login', 'roles' => 'PUBLIC_ACCESS'],
+//                ['path' => '^/api/v2', 'roles' => 'PUBLIC_ACCESS'],
+//                ['path' => '^/', 'roles' => 'ROLE_ADMIN'],
+//            ],
+//        ]);
+    }
+
+    private function getBundlePath(): string
+    {
+        return dirname(__DIR__, 2);
     }
 }

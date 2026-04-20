@@ -19,7 +19,6 @@ security:
       entry_point: PhpList\WebFrontend\Security\SessionAuthenticator
 
   access_control:
-    - { path: ^/login, roles: PUBLIC_ACCESS }
-    - { path: ^/api/v2, roles: PUBLIC_ACCESS }
+    - { path: ^/(?:app(?:_test)?\.php/)?login(?:/|$), roles: PUBLIC_ACCESS }
+    - { path: ^/(?:app(?:_test)?\.php/)?api/v2(?:/|$), roles: PUBLIC_ACCESS }
     - { path: ^/, roles: ROLE_ADMIN }
-

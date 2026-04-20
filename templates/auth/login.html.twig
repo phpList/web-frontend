@@ -1,5 +1,5 @@
 {# templates/security/login.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends '@PhpListFrontend/base.html.twig' %}
 
 {% block title %}phpList - Login{% endblock %}
 
@@ -7,7 +7,7 @@
     <div class="bg-gray-200">
         <div class="min-h-screen flex flex-col items-center justify-center">
             <div class="flex items-center mb-6">
-                <img src="{{ asset('/favicon-48.png') }}" alt="phpList icon" width="40" height="40" class="mr-2"/>
+                <img src="{{ asset('favicon-48.png', 'phplist_web_frontend') }}" alt="phpList icon" width="40" height="40" class="mr-2"/>
                 <h1 class="text-xl font-bold mb-0">
                     phpList <span class="text-ext-wf1">4</span>
                 </h1>

@@ -15,8 +15,9 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-class SessionAuthenticator extends AbstractAuthenticator
+class SessionAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
     {
@@ -24,12 +25,17 @@ class SessionAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
-        $path = $request->getPathInfo();
-        if (str_starts_with($path, '/login')) {
+        $path = $this->normalizePath($request->getPathInfo());
+        if ($path === '/login' || str_starts_with($path, '/login/')) {
             return false;
         }
 
         return true;
+    }
+
+    private function normalizePath(string $path): string
+    {
+        return (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
     }
 
     public function authenticate(Request $request): Passport

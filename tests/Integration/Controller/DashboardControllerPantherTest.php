@@ -9,9 +9,9 @@ use PHPUnitRetry\RetryTrait;
 use Symfony\Component\Panther\PantherTestCase;
 
 /**
- * @retryAttempts 3
+ * @retryAttempts 1
  * @retryIfException Facebook\WebDriver\Exception\NoSuchWindowException
- * @retryDelaySeconds 10
+ * @retryDelaySeconds 5
  */
 class DashboardControllerPantherTest extends PantherTestCase
 {
@@ -22,17 +22,19 @@ class DashboardControllerPantherTest extends PantherTestCase
     {
         $client = static::createPantherClient([
             'browser' => static::CHROME,
-            'external_base_uri' => 'http://frontend.phplist.local/',
+            'connection_timeout_in_ms' => 20000,
         ], [], [
             '--window-size=1400,1000',
-            '--auto-open-devtools-for-tabs',
         ]);
         $client->request('GET', '/login');
+        $client->takeScreenshot('var/screenshots/login-page.png');
+        $client->waitFor('form');
 
-        $client->submitForm('Sign In', [
+        $form = $client->getCrawler()->filter('button[type="submit"]')->form([
             'username' => 'admin',
             'password' => 'admin',
         ]);
+        $client->submit($form);
 
         $client->waitFor('#vue-app');
 

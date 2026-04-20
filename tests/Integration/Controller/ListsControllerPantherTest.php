@@ -9,9 +9,9 @@ use PHPUnitRetry\RetryTrait;
 use Symfony\Component\Panther\PantherTestCase;
 
 /**
- * @retryAttempts 5
+ * @retryAttempts 1
  * @retryIfException Facebook\WebDriver\Exception\NoSuchWindowException
- * @retryDelaySeconds 10
+ * @retryDelaySeconds 5
  */
 class ListsControllerPantherTest extends PantherTestCase
 {

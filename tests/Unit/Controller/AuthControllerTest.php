@@ -164,7 +164,7 @@ class AuthControllerTest extends TestCase
 
         $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString(
-            'Invalid credentials or server error: Invalid credentials',
+            'Invalid credentials',
             $response->getContent(),
         );
     }

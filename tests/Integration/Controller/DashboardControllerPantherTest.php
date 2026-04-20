@@ -26,6 +26,7 @@ class DashboardControllerPantherTest extends PantherTestCase
         ], [], [
             '--window-size=1400,1000',
         ]);
+        $client->getCookieJar()->clear();
         $client->request('GET', '/login');
         $client->takeScreenshot('var/screenshots/login-page.png');
         $client->waitFor('form');

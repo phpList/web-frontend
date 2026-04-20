@@ -34,6 +34,12 @@ class SessionAuthenticatorTest extends TestCase
 
         $request = Request::create('/login/check');
         $this->assertFalse($this->authenticator->supports($request));
+
+        $request = Request::create('/app_test.php/login');
+        $this->assertFalse($this->authenticator->supports($request));
+
+        $request = Request::create('/app.php/login/check');
+        $this->assertFalse($this->authenticator->supports($request));
     }
 
     public function testSupportsReturnsTrueForOtherPaths(): void

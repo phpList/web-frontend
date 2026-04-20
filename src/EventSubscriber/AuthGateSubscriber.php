@@ -62,7 +62,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
     private function isPublicPath(Request $request): bool
     {
-        $path = $request->getPathInfo();
+        $path = $this->normalizePath($request->getPathInfo());
 
         // Public login route
         if ($path === '/login' || str_starts_with($path, '/login')) {
@@ -82,5 +82,10 @@ class AuthGateSubscriber implements EventSubscriberInterface
         }
 
         return false;
+    }
+
+    private function normalizePath(string $path): string
+    {
+        return (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
     }
 }

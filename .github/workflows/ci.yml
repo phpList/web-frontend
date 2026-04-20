@@ -9,6 +9,8 @@ jobs:
       DB_USERNAME: root
       DB_PASSWORD: phplist
       BROADCAST_DRIVER: log
+      API_BASE_URL: http://api.phplist.local/
+      REST_API_BASE_URL: http://api.phplist.local/api/v2
     services:
       mysql:
         image: mysql:5.7
@@ -59,9 +61,14 @@ jobs:
           sudo apt install socat
       - name: Set Panther to use Chrome
         run: |
+          mkdir -p var/log/ci-debug var/screenshots
+          echo "API_BASE_URL=${API_BASE_URL}" >> .env.test
+          echo "REST_API_BASE_URL=${REST_API_BASE_URL}" >> .env.test
           echo "PANTHER_NO_HEADLESS=0" >> .env.test
           echo "PANTHER_CHROME_BINARY=/usr/bin/google-chrome" >> .env.test
           echo "PANTHER_ERROR_SCREENSHOT_DIR=./var/screenshots" >> .env.test
+      - name: Show effective test env
+        run: cat .env.test
 
       - name: Verify MySQL connection on host
         run: mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }} -e "SHOW DATABASES"
@@ -95,11 +102,74 @@ jobs:
       - name: Install Prism
         run: npm install -g @stoplight/prism-cli
       - name: Start Prism Mock Server
-        run: prism mock ./openapi.json &
+        run: |
+          prism mock --host 127.0.0.1 --port 4010 ./openapi.json > var/log/ci-debug/prism.log 2>&1 &
+          echo $! > var/log/ci-debug/prism.pid
       - name: Add local hostname
         run: echo "127.0.0.1 api.phplist.local" | sudo tee -a /etc/hosts
       - name: Proxy port 80 to 4010
-        run: sudo socat TCP-LISTEN:80,fork TCP:127.0.0.1:4010 &
+        run: |
+          sudo socat -d -d TCP-LISTEN:80,reuseaddr,fork TCP:127.0.0.1:4010 2> var/log/ci-debug/socat.log &
+          echo $! > var/log/ci-debug/socat.pid
+      - name: Wait for Prism and proxy
+        run: |
+          set -euo pipefail
+          prism_ready=0
+          for i in $(seq 1 30); do
+            if curl -sS -o /tmp/prism-health-body.txt -w "%{http_code}" \
+              -H 'Content-Type: application/json' \
+              -X POST http://127.0.0.1:4010/api/v2/sessions \
+              --data '{"login_name":"healthcheck","password":"healthcheck"}' > /tmp/prism-health-code.txt; then
+              code=$(cat /tmp/prism-health-code.txt)
+              if [ "$code" != "000" ]; then
+                echo "Prism is reachable on 127.0.0.1:4010 with HTTP ${code}"
+                prism_ready=1
+                break
+              fi
+            fi
+            sleep 1
+          done
+          if [ "$prism_ready" -ne 1 ]; then
+            echo "Prism did not become reachable in time."
+            exit 1
+          fi
+
+          proxy_ready=0
+          for i in $(seq 1 30); do
+            if curl -sS -o /tmp/proxy-health-body.txt -w "%{http_code}" \
+              -H 'Content-Type: application/json' \
+              -X POST http://api.phplist.local/api/v2/sessions \
+              --data '{"login_name":"healthcheck","password":"healthcheck"}' > /tmp/proxy-health-code.txt; then
+              code=$(cat /tmp/proxy-health-code.txt)
+              if [ "$code" != "000" ]; then
+                echo "Proxy is reachable on api.phplist.local with HTTP ${code}"
+                proxy_ready=1
+                break
+              fi
+            fi
+            sleep 1
+          done
+          if [ "$proxy_ready" -ne 1 ]; then
+            echo "Proxy did not become reachable in time."
+            exit 1
+          fi
+      - name: Probe mocked login endpoint
+        run: |
+          set -euo pipefail
+          curl -sS -D var/log/ci-debug/mock-login.headers -o var/log/ci-debug/mock-login.body \
+            -H 'Content-Type: application/json' \
+            -X POST http://api.phplist.local/api/v2/sessions \
+            --data '{"login_name":"admin","password":"admin"}'
+          echo "Mock login response headers:"
+          cat var/log/ci-debug/mock-login.headers
+          echo "Mock login response body:"
+          cat var/log/ci-debug/mock-login.body
+      - name: Tail Prism and socat logs before tests
+        run: |
+          echo "=== Prism log (tail) ==="
+          tail -n 200 var/log/ci-debug/prism.log || true
+          echo "=== socat log (tail) ==="
+          tail -n 200 var/log/ci-debug/socat.log || true
 
       - name: Run tests with phpunit
         env:
@@ -115,3 +185,11 @@ jobs:
         with:
           name: panther-screenshots
           path: var/screenshots
+      - name: Upload CI debug logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-debug-logs
+          path: |
+            var/log/ci-debug
+            var/log

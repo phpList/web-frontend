@@ -25,12 +25,17 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function supports(Request $request): ?bool
     {
-        $path = $request->getPathInfo();
-        if (str_starts_with($path, '/login')) {
+        $path = $this->normalizePath($request->getPathInfo());
+        if ($path === '/login' || str_starts_with($path, '/login/')) {
             return false;
         }
 
         return true;
+    }
+
+    private function normalizePath(string $path): string
+    {
+        return (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
     }
 
     public function authenticate(Request $request): Passport

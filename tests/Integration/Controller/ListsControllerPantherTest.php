@@ -41,8 +41,8 @@ class ListsControllerPantherTest extends PantherTestCase
     public function protectedListRoutesProvider(): array
     {
         return [
-            'lists index route' => ['/app_test.php/lists/'],
-            'list subscribers route' => ['/app_test.php/lists/11/subscribers'],
+            'lists index route' => ['/lists/'],
+            'list subscribers route' => ['/lists/11/subscribers'],
         ];
     }
 }

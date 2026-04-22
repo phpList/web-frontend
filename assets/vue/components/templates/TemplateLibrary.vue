@@ -76,6 +76,7 @@
                 class="px-3 py-2 border border-slate-200 rounded-lg hover:bg-red-50 transition-colors"
                 type="button"
                 aria-label="Delete template"
+                @click="deleteTemplate(templateItem.id)"
               >
                 <BaseIcon name="delete" />
               </button>
@@ -221,7 +222,19 @@ const loadTemplates = async () => {
 
   try {
     const response = await templateClient.getTemplates(0, 1000)
-    templates.value = Array.isArray(response?.items) ? response.items : []
+
+    const items = Array.isArray(response?.items) ? response.items : []
+
+    templates.value = items.sort((a, b) => {
+      const aOrder = a.listOrder ?? Number.MAX_SAFE_INTEGER
+      const bOrder = b.listOrder ?? Number.MAX_SAFE_INTEGER
+
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder
+      }
+
+      return (a.name ?? '').localeCompare(b.name ?? '')
+    })
   } catch (error) {
     console.error('Failed to load templates:', error)
     errorMessage.value = 'Failed to load templates.'
@@ -236,6 +249,19 @@ const goToEditTemplate = (templateId) => {
 
 const goToCreateTemplate = () => {
   router.push('/templates/create')
+}
+
+const deleteTemplate = async (templateId) => {
+  if (!confirm('Are you sure you want to delete this template?')) {
+    return
+  }
+
+  try {
+    await templateClient.deleteTemplate(templateId)
+    templates.value = templates.value.filter((template) => template.id !== templateId)
+  } catch (error) {
+    console.error('Failed to delete template:', error)
+  }
 }
 
 const selectedDefaultTemplateDescription = computed(() => {

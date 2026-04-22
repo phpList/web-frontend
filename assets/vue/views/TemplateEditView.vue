@@ -238,7 +238,7 @@ const saveTemplate = async () => {
   saveSuccess.value = ''
 
   try {
-    const request = new Requests.CreateTemplateRequest(
+    const request = new Requests.TemplateRequest(
       form.value.title,
       form.value.content,
       form.value.text,

@@ -1,21 +1,32 @@
 <template>
   <AdminLayout>
-    <section class="max-w-3xl bg-white rounded-xl border border-slate-200 shadow-sm">
-      <header class="p-6 border-b border-slate-200">
-        <h1 class="text-xl font-bold text-slate-900">Edit Template</h1>
-      </header>
-
-      <div class="p-6">
-        <div v-if="isLoading" class="py-8 text-center text-slate-500">
-          Loading template...
-        </div>
-
-        <div v-else class="space-y-6">
-          <div v-if="loadError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {{ loadError }}
+    <div class="space-y-6 animate-in fade-in duration-300">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-wide text-slate-500">Template</p>
+            <h2 class="text-xl font-bold text-slate-900">{{ pageTitle }}</h2>
           </div>
 
-          <form v-else class="space-y-6" @submit.prevent="saveTemplate">
+          <RouterLink
+            to="/templates"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Back to Templates
+          </RouterLink>
+        </div>
+      </div>
+
+      <div v-if="isLoading" class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+        Loading template...
+      </div>
+
+      <div v-else-if="loadError" class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-600 shadow-sm">
+        {{ loadError }}
+      </div>
+
+      <section v-else class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8">
+        <form class="space-y-6" @submit.prevent="saveTemplate">
             <div class="space-y-2">
               <label for="template-title" class="block text-sm font-medium text-slate-700">Title</label>
               <input
@@ -114,25 +125,25 @@
                 class="px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 :disabled="isSaving"
               >
-                {{ isSaving ? 'Saving...' : 'Save' }}
+                {{ saveButtonLabel }}
               </button>
             </div>
-          </form>
-        </div>
-      </div>
-    </section>
+        </form>
+      </section>
+    </div>
   </AdminLayout>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
 import { templateClient } from '../api'
 import { Requests } from "@tatevikgr/rest-api-client";
 
 const route = useRoute()
+const router = useRouter()
 
 const isLoading = ref(false)
 const loadError = ref('')
@@ -149,11 +160,29 @@ const form = ref({
   checkExternalImages: false
 })
 
-const templateId = computed(() => route.params.templateId)
+const isCreateMode = computed(() => route.name === 'template-create')
+const templateId = computed(() => Number(route.params.templateId))
+const pageTitle = computed(() => isCreateMode.value ? 'Create Template' : `Edit Template #${templateId.value}`)
+const saveButtonLabel = computed(() => {
+  if (isSaving.value) {
+    return isCreateMode.value ? 'Creating...' : 'Saving...'
+  }
+
+  return isCreateMode.value ? 'Create' : 'Save'
+})
 
 const loadTemplate = async () => {
-  if (!templateId.value) {
-    loadError.value = 'Template ID is missing.'
+  if (isCreateMode.value) {
+    form.value.title = ''
+    form.value.content = ''
+    form.value.text = ''
+    form.value.file = null
+    loadError.value = ''
+    return
+  }
+
+  if (!Number.isFinite(templateId.value) || templateId.value <= 0) {
+    loadError.value = 'Template ID is invalid.'
     return
   }
 
@@ -194,8 +223,8 @@ const handleFileChange = (event) => {
 }
 
 const saveTemplate = async () => {
-  if (!templateId.value) {
-    saveError.value = 'Template ID is missing.'
+  if (!isCreateMode.value && (!Number.isFinite(templateId.value) || templateId.value <= 0)) {
+    saveError.value = 'Template ID is invalid.'
     return
   }
 
@@ -218,6 +247,18 @@ const saveTemplate = async () => {
       form.value.checkImages,
       form.value.checkExternalImages,
     )
+    if (isCreateMode.value) {
+      const createdTemplate = await templateClient.createTemplate(request)
+      const createdTemplateId = Number(createdTemplate?.id)
+
+      saveSuccess.value = 'Template created successfully.'
+
+      if (Number.isFinite(createdTemplateId) && createdTemplateId > 0) {
+        await router.replace(`/templates/${createdTemplateId}/edit`)
+      }
+      return
+    }
+
     await templateClient.updateTemplate(request, templateId.value)
 
     saveSuccess.value = 'Template updated successfully.'

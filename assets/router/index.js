@@ -16,6 +16,7 @@ export const router = createRouter({
         { path: '/lists', name: 'lists', component: ListsView, meta: { title: 'Lists' } },
         { path: '/campaigns', name: 'campaigns', component: CampaignsView, meta: { title: 'Campaigns' } },
         { path: '/templates', name: 'templates', component: TemplatesView, meta: { title: 'Templates' } },
+        { path: '/templates/create', name: 'template-create', component: TemplateEditView, meta: { title: 'Create Template' } },
         { path: '/templates/:templateId/edit', name: 'template-edit', component: TemplateEditView, meta: { title: 'Edit Template' } },
         { path: '/campaigns/create', name: 'campaign-create', component: CampaignEditView, meta: { title: 'Create Campaign' } },
         { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: CampaignEditView, meta: { title: 'Edit Campaign' } },

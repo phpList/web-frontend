@@ -22,6 +22,16 @@ class TemplatesController extends AbstractController
         ]);
     }
 
+    #[Route('/create', name: 'create', methods: ['GET'])]
+    public function create(Request $request): Response
+    {
+        return $this->render('@PhpListFrontend/spa.html.twig', [
+            'page' => 'Create Template',
+            'api_token' => $request->getSession()->get('auth_token'),
+            'api_base_url' => $this->getParameter('api_base_url'),
+        ]);
+    }
+
     #[Route('/{templateId}/edit', name: 'edit', methods: ['GET'])]
     public function edit(Request $request, int $templateId): Response
     {

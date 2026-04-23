@@ -27,16 +27,31 @@
 
       <section v-else class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8">
         <form class="space-y-6" @submit.prevent="saveTemplate">
-            <div class="space-y-2">
-              <label for="template-title" class="block text-sm font-medium text-slate-700">Title</label>
-              <input
-                id="template-title"
-                v-model.trim="form.title"
-                type="text"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
-                placeholder="Enter template title"
-                required
-              >
+            <div class="grid gap-6 lg:grid-cols-2">
+              <div class="space-y-2">
+                <label for="template-title" class="block text-sm font-medium text-slate-700">Title</label>
+                <input
+                  id="template-title"
+                  v-model.trim="form.title"
+                  type="text"
+                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                  placeholder="Enter template title"
+                  required
+                >
+              </div>
+
+              <div class="space-y-2">
+                <label for="template-list-order" class="block text-sm font-medium text-slate-700">List order</label>
+                <input
+                  id="template-list-order"
+                  v-model.trim="form.listOrder"
+                  type="number"
+                  min="0"
+                  step="1"
+                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                  placeholder="Optional (e.g. 10)"
+                >
+              </div>
             </div>
 
             <CkEditorField
@@ -152,6 +167,7 @@ const saveError = ref('')
 const saveSuccess = ref('')
 const form = ref({
   title: '',
+  listOrder: '',
   content: '',
   text: '',
   file: null,
@@ -174,6 +190,7 @@ const saveButtonLabel = computed(() => {
 const loadTemplate = async () => {
   if (isCreateMode.value) {
     form.value.title = ''
+    form.value.listOrder = ''
     form.value.content = ''
     form.value.text = ''
     form.value.file = null
@@ -192,6 +209,9 @@ const loadTemplate = async () => {
   try {
     const template = await templateClient.getTemplate(templateId.value)
     form.value.title = template?.title || ''
+    form.value.listOrder = template?.listOrder !== null && template?.listOrder !== undefined
+      ? String(template.listOrder)
+      : ''
     form.value.content = template?.content || ''
     form.value.text = template?.text || ''
     form.value.file = null
@@ -238,6 +258,15 @@ const saveTemplate = async () => {
   saveSuccess.value = ''
 
   try {
+    const normalizedListOrder = form.value.listOrder === ''
+      ? null
+      : Number(form.value.listOrder)
+
+    if (normalizedListOrder !== null && (!Number.isInteger(normalizedListOrder) || normalizedListOrder < 0)) {
+      saveError.value = 'List order must be a non-negative integer.'
+      return
+    }
+
     const request = new Requests.TemplateRequest(
       form.value.title,
       form.value.content,
@@ -246,6 +275,7 @@ const saveTemplate = async () => {
       form.value.checkLinks,
       form.value.checkImages,
       form.value.checkExternalImages,
+      normalizedListOrder,
     )
     if (isCreateMode.value) {
       const createdTemplate = await templateClient.createTemplate(request)

@@ -9,7 +9,7 @@
           <th class="px-6 py-4">Status</th>
           <th class="px-6 py-4 text-right">Lists</th>
           <th class="px-6 py-4">Created</th>
-          <th class="px-6 py-4 w-10"></th>
+          <th class="px-6 py-4 text-right">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200">
@@ -48,10 +48,12 @@
           </td>
           <td class="px-6 py-4 text-right">
             <button
-              class="text-slate-400 hover:text-slate-600"
+              type="button"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               @click="emit('view', subscriber.id)"
             >
-              <BaseIcon name="eye" class="w-4 h-4" />
+              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+              View
             </button>
           </td>
         </tr>
@@ -69,13 +71,7 @@
           <span class="font-medium text-slate-900 truncate max-w-[180px]">
             {{ subscriber.email.split('@')[0] }}
           </span>
-          <div class="flex gap-2">
-            <button
-                class="text-slate-400 hover:text-slate-600 mr-2"
-                @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-4 h-4" />
-            </button>
+          <div class="flex items-center gap-2">
             <span
               class="px-2.5 py-0.5 rounded-full text-xs font-medium"
               :class="subscriber.confirmed ? statusClasses.active : statusClasses.unconfirmed"
@@ -88,6 +84,14 @@
             >
               blacklisted
             </span>
+            <button
+                type="button"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                @click="emit('view', subscriber.id)"
+            >
+              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+              View
+            </button>
           </div>
         </div>
         <div class="flex flex-col gap-1">

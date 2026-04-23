@@ -90,54 +90,60 @@
               <button
                 v-if="campaign.statusKey === 'draft'"
                 type="button"
-                class="px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-md hover:bg-rose-100 disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleDelete(campaign)"
               >
+                <BaseIcon name="delete" class="w-3.5 h-3.5" />
                 Delete
               </button>
               <button
                 v-else-if="campaign.statusKey === 'active'"
                 type="button"
-                class="px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-md hover:bg-rose-100 disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleSuspend(campaign.id)"
               >
+                <BaseIcon name="pause" class="w-3.5 h-3.5" />
                 Suspend
               </button>
               <button
                 v-else
                 type="button"
-                class="px-2.5 py-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-md hover:bg-amber-100 disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleRequeue(campaign.id)"
               >
+                <BaseIcon name="start" class="w-3.5 h-3.5" />
                 Requeue
               </button>
               <button
                 v-if="campaign.statusKey === 'sent'"
                 type="button"
-                class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleCopyToDraft(campaign.id)"
               >
+                <BaseIcon name="copy" class="w-3.5 h-3.5" />
                 Copy to draft
               </button>
               <button
                   v-if="campaign.statusKey === 'draft'"
                   type="button"
-                  class="px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md hover:bg-emerald-100 disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleEdit(campaign.id)"
               >
+                <BaseIcon name="edit" class="w-3.5 h-3.5" />
                 Edit
               </button>
               <button
                   type="button"
-                  class="px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleView(campaign.id)"
               >
+                <BaseIcon name="eye" class="w-3.5 h-3.5" />
                 View
               </button>
             </div>
@@ -224,54 +230,60 @@
             <button
               v-if="campaign.statusKey === 'draft'"
               type="button"
-              class="px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-md hover:bg-rose-100 disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleDelete(campaign)"
             >
+              <BaseIcon name="delete" class="w-3.5 h-3.5" />
               Delete
             </button>
             <button
               v-else-if="campaign.statusKey === 'active'"
               type="button"
-              class="px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-md hover:bg-rose-100 disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleSuspend(campaign.id)"
             >
+              <BaseIcon name="pause" class="w-3.5 h-3.5" />
               Suspend
             </button>
             <button
               v-else
               type="button"
-              class="px-2.5 py-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-md hover:bg-amber-100 disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleRequeue(campaign.id)"
             >
+              <BaseIcon name="start" class="w-3.5 h-3.5" />
               Requeue
             </button>
             <button
               v-if="campaign.statusKey === 'sent'"
               type="button"
-              class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleCopyToDraft(campaign.id)"
             >
+              <BaseIcon name="copy" class="w-3.5 h-3.5" />
               Copy to draft
             </button>
             <button
                 v-if="campaign.statusKey === 'draft'"
                 type="button"
-                class="px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md hover:bg-emerald-100 disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
+              <BaseIcon name="edit" class="w-3.5 h-3.5" />
               Edit
             </button>
             <button
                 type="button"
-                class="px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
+              <BaseIcon name="eye" class="w-3.5 h-3.5" />
               View
             </button>
           </div>
@@ -333,6 +345,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
+import BaseIcon from '../base/BaseIcon.vue'
 
 const pageSize = 5
 const route = useRoute()

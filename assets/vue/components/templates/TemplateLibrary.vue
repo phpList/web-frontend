@@ -59,26 +59,27 @@
 
             <div class="flex justify-between items-center text-xs text-slate-400">
               <span>ID {{ templateItem.id }}</span>
-              <span>Order {{ templateItem.order ?? '-' }}</span>
+              <span>Order {{ templateItem.listOrder ?? '-' }}</span>
             </div>
 
-            <div class="mt-4 flex gap-2">
+            <div class="mt-4 grid grid-cols-2 gap-2">
               <button
-                class="flex-1 px-3 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm rounded-lg transition-colors flex items-center justify-center gap-1"
-                type="button"
-                @click="goToEditTemplate(templateItem.id)"
+                  class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  type="button"
+                  @click="goToEditTemplate(templateItem.id)"
               >
-                <BaseIcon name="edit" />
+                <BaseIcon name="edit" class="w-3.5 h-3.5" />
                 Edit
               </button>
 
               <button
-                class="px-3 py-2 border border-slate-200 rounded-lg hover:bg-red-50 transition-colors"
+                class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
                 type="button"
                 aria-label="Delete template"
                 @click="deleteTemplate(templateItem.id)"
               >
-                <BaseIcon name="delete" />
+                <BaseIcon name="delete" class="w-3.5 h-3.5" />
+                Delete
               </button>
             </div>
           </div>

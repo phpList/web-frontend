@@ -16,7 +16,7 @@ class TemplatesController extends AbstractController
     public function index(Request $request): Response
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
-            'page' => 'Campaigns',
+            'page' => 'Templates',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),
         ]);

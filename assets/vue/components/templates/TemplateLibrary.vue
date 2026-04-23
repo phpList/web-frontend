@@ -192,10 +192,10 @@ const isCreatingFromDefault = ref(false)
 const createFromDefaultError = ref('')
 
 const getTemplateImage = (templateItem) => {
-  const images = templateItem?.images
-  if (!images) return '';
+  const image = Array.isArray(templateItem?.images) ? templateItem.images[0] : null
+  if (!image?.mimetype || !image?.data) return ''
 
-  return `data:${images[0].mimetype};base64,${images[0].data}`;
+  return `data:${image.mimetype};base64,${image.data}`;
 }
 
 const getTemplateType = (templateItem) => {

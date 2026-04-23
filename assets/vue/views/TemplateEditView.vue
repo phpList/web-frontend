@@ -150,7 +150,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
@@ -229,12 +229,10 @@ const populateTextFromContent = () => {
     return
   }
 
-  form.value.text = form.value.content
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(form.value.content, 'text/html')
+  doc.querySelectorAll('script, style').forEach((element) => element.remove())
+  form.value.text = (doc.body.textContent || '').replace(/\s+/g, ' ')
 }
 
 const handleFileChange = (event) => {
@@ -300,7 +298,11 @@ const saveTemplate = async () => {
   }
 }
 
-onMounted(() => {
-  loadTemplate()
-})
+watch(
+    [isCreateMode, templateId],
+    () => {
+      loadTemplate()
+    },
+    { immediate: true }
+)
 </script>

@@ -55,4 +55,33 @@ export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
     return lists;
 };
 
+export const fetchAllBounces = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const bounces = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const query = { limit };
+        if (afterId !== null) {
+            query.after_id = afterId;
+        }
+
+        const response = await client.get('bounces', query);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        bounces.push(...items);
+
+        const pagination = response?.pagination ?? {};
+        const hasMore = pagination.hasMore === true || pagination.has_more === true;
+        const nextCursor = pagination.nextCursor ?? pagination.next_cursor ?? null;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    bounces.sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0));
+    return bounces;
+};
+
 export default client;

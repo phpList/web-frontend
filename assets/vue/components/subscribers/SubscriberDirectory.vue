@@ -2,7 +2,7 @@
   <div class="bg-white rounded-xl border border-slate-200  shadow-sm overflow-hidden">
     <div class="p-4 sm:p-6 border-b border-slate-200 ">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <h2 class="text-xl font-bold text-slate-900 ">Subscriber Directory</h2>
+        <h2 class="text-xl font-bold text-slate-900 ">Subscribers</h2>
         <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
           <div class="flex gap-2 flex-1 sm:w-[400px]">
             <div class="relative flex-1">

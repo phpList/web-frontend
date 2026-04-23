@@ -42,10 +42,11 @@
               <span class="text-sm text-slate-600">Selected: {{ selectedSubscribers.length }}</span>
               <button
                   type="button"
-                  class="px-3 py-2 text-xs font-medium rounded-lg border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                   :disabled="!hasSelection || actionLoading"
                   @click="deleteSelectedSubscribers"
               >
+                <BaseIcon name="delete" class="w-3.5 h-3.5" />
                 Delete Selected
               </button>
             </div>
@@ -64,19 +65,21 @@
 
               <button
                   type="button"
-                  class="px-3 py-2 text-xs font-medium rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-50"
                   :disabled="!hasSelection || !selectedTargetListId || actionLoading"
                   @click="copySelectedSubscribers"
               >
+                <BaseIcon name="copy" class="w-3.5 h-3.5" />
                 Copy Selected
               </button>
 
               <button
                   type="button"
-                  class="px-3 py-2 text-xs font-medium rounded-lg border border-amber-200 text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
                   :disabled="!hasSelection || !selectedTargetListId || actionLoading"
                   @click="moveSelectedSubscribers"
               >
+                <BaseIcon name="start" class="w-3.5 h-3.5" />
                 Move Selected
               </button>
             </div>
@@ -144,10 +147,11 @@
               <td class="px-6 py-4 text-right">
                 <button
                     type="button"
-                    class="px-3 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                     :disabled="actionLoading"
                     @click="deleteSingleSubscriber(subscriber)"
                 >
+                  <BaseIcon name="delete" class="w-3.5 h-3.5" />
                   Delete
                 </button>
               </td>
@@ -201,10 +205,11 @@
                   <p class="mt-2 text-xs text-slate-500">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
                   <button
                       type="button"
-                      class="mt-3 px-3 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
+                      class="mt-3 inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                       :disabled="actionLoading"
                       @click="deleteSingleSubscriber(subscriber)"
                   >
+                    <BaseIcon name="delete" class="w-3.5 h-3.5" />
                     Delete
                   </button>
                 </div>
@@ -255,6 +260,7 @@ import {computed, onMounted, ref, watch, watchEffect} from 'vue'
 import {useRoute} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import ListSubscribersExportPanel from '../components/lists/ListSubscribersExportPanel.vue'
+import BaseIcon from '../components/base/BaseIcon.vue'
 import client, {subscriptionClient} from '../api'
 
 const route = useRoute()

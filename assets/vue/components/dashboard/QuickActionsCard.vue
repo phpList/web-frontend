@@ -81,9 +81,9 @@
 import BaseCard from '../../components/base/BaseCard.vue'
 
 const quickActions = [
-  { id: 'campaign', label: 'New Campaign', href: '/campaigns' },
+  { id: 'campaign', label: 'New Campaign', href: '/campaigns/create' },
   { id: 'subscribers', label: 'Add Subscribers', href: '/subscribers' },
-  { id: 'import', label: 'Import List', href: '/subscribers' },
+  { id: 'import', label: 'Import List', href: '/lists' },
   { id: 'templates', label: 'Manage Templates', href: '/templates' },
 ]
 </script>

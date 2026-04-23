@@ -140,41 +140,46 @@
           <div class="grid grid-cols-2 gap-2">
             <button
                 type="button"
-                class="px-2.5 py-2 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
                 @click="handleDelete(list)"
             >
+              <BaseIcon name="delete" class="w-3.5 h-3.5" />
               Delete
             </button>
 
             <button
                 type="button"
-                class="px-2.5 py-2 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors"
                 @click="handleAddSubscriber(list)"
             >
+              <BaseIcon name="addUser" class="w-3.5 h-3.5" />
               Add Subscriber
             </button>
 
             <button
                 type="button"
-                class="px-2.5 py-2 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="handleEdit(list)"
             >
+              <BaseIcon name="edit" class="w-3.5 h-3.5" />
               Edit
             </button>
 
             <button
                 type="button"
-                class="px-2.5 py-2 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors"
                 @click="handleStartCampaign(list)"
             >
+              <BaseIcon name="plane" class="w-3.5 h-3.5" />
               Start Campaign
             </button>
 
             <button
                 type="button"
-                class="col-span-2 px-2.5 py-2 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="handleViewMembers(list)"
             >
+              <BaseIcon name="eye" class="w-3.5 h-3.5" />
               View Members
             </button>
           </div>

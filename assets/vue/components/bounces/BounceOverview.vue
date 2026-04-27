@@ -113,7 +113,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { fetchAllBounces } from '../../api'
+import { bouncesClient } from '../../api'
 
 const pageSize = 5
 const currentPage = ref(1)
@@ -208,8 +208,27 @@ const loadBounces = async () => {
   errorMessage.value = ''
 
   try {
-    allBounces.value = await fetchAllBounces({ limit: 100 })
-    console.log(allBounces.value)
+    const bounces = [];
+    let afterId = null;
+    const limit = 100;
+
+    for (let pageIndex = 0; pageIndex < 100; pageIndex += 1) {
+      const bounceResponse = await bouncesClient.list(afterId, limit);
+      const bounceItems = Array.isArray(bounceResponse?.items) ? bounceResponse.items : [];
+      bounces.push(...bounceItems);
+
+      const hasMore = bounceResponse?.pagination?.hasMore === true;
+      const nextCursor =  bounceResponse?.pagination?.nextCursor;
+
+      if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+        break;
+      }
+
+      afterId = nextCursor;
+    }
+
+    bounces.sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0));
+    allBounces.value = bounces;
   } catch (error) {
     errorMessage.value = error?.message ?? 'Failed to load recent bounces.'
     allBounces.value = []

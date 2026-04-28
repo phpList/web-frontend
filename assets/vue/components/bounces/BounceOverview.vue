@@ -1,8 +1,20 @@
 <template>
   <div class="space-y-6">
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+      <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h3 class="text-base font-semibold text-slate-900">Bounces</h3>
+        <div class="flex items-center gap-2">
+          <label class="text-sm text-slate-600" for="bounce-status-filter">Status</label>
+          <select
+            id="bounce-status-filter"
+            v-model="statusFilter"
+            class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+            :disabled="isLoading"
+          >
+            <option value="identified">Processed</option>
+            <option value="unidentified">Unidentified</option>
+          </select>
+        </div>
       </div>
 
       <div class="overflow-x-auto">
@@ -120,6 +132,7 @@ const currentPage = ref(1)
 const allBounces = ref([])
 const isLoading = ref(false)
 const errorMessage = ref('')
+const statusFilter = ref('identified')
 
 const formatDate = (dateValue) => {
   if (!dateValue) return 'No date'
@@ -203,32 +216,36 @@ const nextPage = () => {
   }
 }
 
+const selectedStatus = computed(() => (
+  statusFilter.value === 'unidentified' ? 'unidentified bounce' : 'identified-bounces'
+))
+
 const loadBounces = async () => {
   isLoading.value = true
   errorMessage.value = ''
 
   try {
-    const bounces = [];
-    let afterId = null;
-    const limit = 100;
+    const bounces = []
+    let afterId = null
+    const limit = 100
 
     for (let pageIndex = 0; pageIndex < 100; pageIndex += 1) {
-      const bounceResponse = await bouncesClient.list(afterId, limit);
-      const bounceItems = Array.isArray(bounceResponse?.items) ? bounceResponse.items : [];
-      bounces.push(...bounceItems);
+      const bounceResponse = await bouncesClient.list(afterId, limit, selectedStatus.value)
+      const bounceItems = Array.isArray(bounceResponse?.items) ? bounceResponse.items : []
+      bounces.push(...bounceItems)
 
-      const hasMore = bounceResponse?.pagination?.hasMore === true;
-      const nextCursor =  bounceResponse?.pagination?.nextCursor;
+      const hasMore = bounceResponse?.pagination?.hasMore === true
+      const nextCursor = bounceResponse?.pagination?.nextCursor
 
       if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
-        break;
+        break
       }
 
-      afterId = nextCursor;
+      afterId = nextCursor
     }
 
-    bounces.sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0));
-    allBounces.value = bounces;
+    bounces.sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0))
+    allBounces.value = bounces
   } catch (error) {
     errorMessage.value = error?.message ?? 'Failed to load recent bounces.'
     allBounces.value = []
@@ -241,6 +258,11 @@ watch(totalPages, (pages) => {
   if (currentPage.value > pages) {
     currentPage.value = pages
   }
+})
+
+watch(statusFilter, () => {
+  currentPage.value = 1
+  loadBounces()
 })
 
 onMounted(() => {

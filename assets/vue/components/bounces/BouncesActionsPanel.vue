@@ -13,7 +13,7 @@
 <!--      </div>-->
     </div>
 
-    <div class="flex gap-1.5 overflow-x-auto no-scrollbar bg-slate-100/80 p-1.5 rounded-xl">
+    <div class="flex flex-wrap gap-2">
       <button
         v-for="tab in tabs"
         :key="tab.id"
@@ -43,6 +43,10 @@
       <BounceRules />
     </template>
 
+    <template v-else-if="activeTab === 'per'">
+      <BouncePer />
+    </template>
+
     <template v-else>
       <div class="bg-white rounded-xl border border-slate-200 p-6">
         <h3 class="text-base font-semibold text-slate-900">{{ currentTabLabel }}</h3>
@@ -57,10 +61,12 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BounceOverview from './BounceOverview.vue'
 import BounceRules from './BounceRules.vue'
+import BouncePer from "./BouncePer.vue";
 
 const tabs = [
   { id: 'overview', label: 'Overview' },
   { id: 'rules', label: 'Rules' },
+  { id: 'per', label: 'Per List/Campaign' },
   { id: 'processing', label: 'Processing' },
   // { id: 'per_list', label: 'Per List' },
   // { id: 'per_campaign', label: 'Per Campaign' },

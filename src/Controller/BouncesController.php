@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
+use PhpList\Core\Domain\Messaging\Model\BounceAction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,16 @@ class BouncesController extends AbstractController
     #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): Response
     {
+        $bounceActions = [];
+        foreach (BounceAction::cases() as $case) {
+            $bounceActions[$case->name] = $case->value;
+        }
+
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Bounces',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),
+            'bounce_actions' => $bounceActions,
         ]);
     }
 }

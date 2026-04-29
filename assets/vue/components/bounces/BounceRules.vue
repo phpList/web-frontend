@@ -7,7 +7,11 @@
           Rules are evaluated top-to-bottom. Drag to reorder priority.
         </p>
       </div>
-      <button type="button" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+      <button
+        type="button"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+        @click="openCreateModal"
+      >
         New Rule
       </button>
     </div>
@@ -62,6 +66,109 @@
 <!--        <button type="button" class="hover:text-slate-700 transition-colors">Export Rules</button>-->
 <!--      </div>-->
     </div>
+
+    <div
+      v-if="isCreateModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0"
+      aria-labelledby="create-bounce-rule-modal-title"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="closeCreateModal"></div>
+
+      <form class="w-full sm:max-w-lg z-10" @submit.prevent="submitCreateRule">
+        <div class="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 id="create-bounce-rule-modal-title" class="text-lg leading-6 font-medium text-slate-900">
+                New Bounce Rule
+              </h3>
+              <button type="button" class="text-slate-400 hover:text-slate-500" :disabled="isCreatingRule" @click="closeCreateModal">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+
+            <div>
+              <label for="bounce-rule-regex" class="block text-sm font-medium text-slate-700">Regex</label>
+              <input
+                id="bounce-rule-regex"
+                v-model.trim="createForm.regex"
+                type="text"
+                required
+                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+            </div>
+
+            <div>
+              <label for="bounce-rule-comment" class="block text-sm font-medium text-slate-700">Comment (optional)</label>
+              <input
+                id="bounce-rule-comment"
+                v-model.trim="createForm.comment"
+                type="text"
+                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="bounce-rule-action" class="block text-sm font-medium text-slate-700">Action</label>
+                <select
+                  id="bounce-rule-action"
+                  v-model="createForm.action"
+                  class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option v-for="bounceAction in bounceActions" :key="bounceAction" :value="bounceAction">{{ bounceAction }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="bounce-rule-status" class="block text-sm font-medium text-slate-700">Status</label>
+                <select
+                  id="bounce-rule-status"
+                  v-model="createForm.status"
+                  class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="active">active</option>
+                  <option value="inactive">inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="bounce-rule-order" class="block text-sm font-medium text-slate-700">List Order (optional)</label>
+              <input
+                id="bounce-rule-order"
+                v-model="createForm.list_order"
+                type="number"
+                min="0"
+                step="1"
+                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+            </div>
+
+            <p v-if="createError" class="text-sm text-red-600">{{ createError }}</p>
+          </div>
+
+          <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+            <button
+              type="submit"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:w-auto sm:text-sm disabled:opacity-50"
+              :disabled="isCreatingRule"
+            >
+              {{ isCreatingRule ? 'Creating...' : 'Create Rule' }}
+            </button>
+            <button
+              type="button"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+              :disabled="isCreatingRule"
+              @click="closeCreateModal"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -70,13 +177,116 @@ import {onMounted, ref} from "vue";
 import { bouncesClient} from "../../api";
 
 const allBounceRules = ref([])
+const isCreateModalOpen = ref(false)
+const isCreatingRule = ref(false)
+const createError = ref('')
+const createForm = ref({
+  regex: '',
+  comment: '',
+  action: '',
+  status: 'active',
+  list_order: '',
+})
+
+const appElement = document.getElementById('vue-app')
+const parseBounceActions = () => {
+  const raw = appElement?.dataset.bounceActions
+  if (!raw) {
+    return {}
+  }
+
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
+}
+const bounceActions = parseBounceActions()
+
+const resetCreateForm = () => {
+  createForm.value = {
+    regex: '',
+    comment: '',
+    action: '',
+    status: 'active',
+    list_order: '',
+  }
+  createError.value = ''
+}
 
 const loadBounceRules = async () => {
-  const bounceRules = await bouncesClient.listRegex()
-  if (!bounceRules) {
-    console.error('Failed to fetch bounce rules')
+  try {
+    const bounceRules = await bouncesClient.listRegex()
+    allBounceRules.value = Array.isArray(bounceRules) ? bounceRules : []
+  } catch (error) {
+    if (error?.name === 'AuthenticationException' || error?.status === 401) {
+      window.location.href = '/login'
+      return
+    }
+    console.error('Failed to fetch bounce rules', error)
+    allBounceRules.value = []
   }
-  allBounceRules.value = bounceRules
+}
+
+const openCreateModal = () => {
+  resetCreateForm()
+  isCreateModalOpen.value = true
+}
+
+const closeCreateModal = () => {
+  if (isCreatingRule.value) {
+    return
+  }
+  isCreateModalOpen.value = false
+}
+
+const submitCreateRule = async () => {
+  if (isCreatingRule.value) {
+    return
+  }
+
+  const regex = createForm.value.regex.trim()
+  if (!regex) {
+    createError.value = 'Regex is required.'
+    return
+  }
+
+  const payload = { regex }
+
+  const comment = createForm.value.comment.trim()
+  if (comment) {
+    payload.comment = comment
+  }
+
+  if (createForm.value.action) {
+    payload.action = createForm.value.action
+  }
+
+  if (createForm.value.status) {
+    payload.status = createForm.value.status
+  }
+
+  if (createForm.value.list_order !== '') {
+    const parsedListOrder = Number(createForm.value.list_order)
+    if (!Number.isInteger(parsedListOrder) || parsedListOrder < 0) {
+      createError.value = 'List Order must be a whole number greater than or equal to 0.'
+      return
+    }
+    payload.list_order = parsedListOrder
+  }
+
+  isCreatingRule.value = true
+  createError.value = ''
+
+  try {
+    await bouncesClient.upsertRegex(payload)
+    isCreateModalOpen.value = false
+    await loadBounceRules()
+  } catch (error) {
+    createError.value = error?.message ?? 'Failed to create rule.'
+  } finally {
+    isCreatingRule.value = false
+  }
 }
 
 onMounted(() => {

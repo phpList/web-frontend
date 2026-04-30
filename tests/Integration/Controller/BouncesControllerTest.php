@@ -27,6 +27,7 @@ class BouncesControllerTest extends KernelTestCase
         self::bootKernel();
         /** @var BouncesController $controller */
         $controller = static::getContainer()->get(BouncesController::class);
+        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
 
         $request = Request::create('/bounces/');
         $session = new Session(new MockArraySessionStorage());
@@ -39,6 +40,6 @@ class BouncesControllerTest extends KernelTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString('<title>phpList - Bounces</title>', $content);
         self::assertStringContainsString('data-api-token="integration-token"', $content);
-        self::assertStringContainsString('data-api-base-url="http://api.phplist.local/"', $content);
+        self::assertStringContainsString(sprintf('data-api-base-url="%s"', $apiBaseUrl), $content);
     }
 }

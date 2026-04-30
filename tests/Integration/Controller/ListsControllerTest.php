@@ -31,6 +31,7 @@ class ListsControllerTest extends KernelTestCase
     public function testListsIndexRendersSpaForHtmlRequests(): void
     {
         self::bootKernel();
+        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
 
         $listClient = $this->createMock(ListClient::class);
         $listClient->expects(self::never())->method('getLists');
@@ -45,7 +46,7 @@ class ListsControllerTest extends KernelTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString('<title>phpList - Lists</title>', $content);
         self::assertStringContainsString('data-api-token="integration-token"', $content);
-        self::assertStringContainsString('data-api-base-url="http://api.phplist.local/"', $content);
+        self::assertStringContainsString(sprintf('data-api-base-url="%s"', $apiBaseUrl), $content);
     }
 
     public function testListsIndexReturnsJsonForJsonRequests(): void

@@ -262,13 +262,13 @@ const parseBounceActions = () => {
     return {}
   }
 }
-const bounceActions = parseBounceActions()
+const bounceActions = Object.values(parseBounceActions())
 
 const resetCreateForm = () => {
   createForm.value = {
     regex: '',
     comment: '',
-    action: '',
+    action: bounceActions[0] ?? '',
     status: 'active',
     list_order: '',
   }

@@ -98,7 +98,7 @@
 
       <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
         <div class="text-center sm:text-left">
-          Showing <span class="font-medium text-slate-900">{{ rangeStart }}</span>-<span class="font-medium text-slate-900">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900">{{ allBounces.length }}</span>
+          Page <span class="font-medium text-slate-900">{{ currentPage }}</span>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
           <button
@@ -129,7 +129,10 @@ import { bouncesClient } from '../../api'
 
 const pageSize = 5
 const currentPage = ref(1)
-const allBounces = ref([])
+const currentCursor = ref(null)
+const pageCursors = ref([null])
+const bounces = ref([])
+const hasMore = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
 const statusFilter = ref('identified')
@@ -169,99 +172,92 @@ const getStatusClass = (status) => {
 }
 
 const normalizedBounces = computed(() =>
-  allBounces.value.map((item) => ({
-    id: item.id,
-    formattedDate: formatDate(item.date),
-    email: item.subscriber_email ?? 'Unknown email',
-    subject: item.message_subject ?? 'No subject',
-    comment: item.comment ?? 'No comment',
-    status: item.status ?? 'unknown',
-    statusClass: getStatusClass(item.status),
-  }))
+    bounces.value.map((item) => ({
+      id: item.id,
+      formattedDate: formatDate(item.date),
+      email: item.subscriber_email ?? 'Unknown email',
+      subject: item.message_subject ?? 'No subject',
+      comment: item.comment ?? 'No comment',
+      status: item.status ?? 'unknown',
+      statusClass: getStatusClass(item.status),
+    }))
 )
 
-const totalPages = computed(() => {
-  const pages = Math.ceil(normalizedBounces.value.length / pageSize)
-  return Math.max(1, pages)
-})
-
-const paginatedBounces = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  const end = start + pageSize
-  return normalizedBounces.value.slice(start, end)
-})
-
 const canGoPrevious = computed(() => currentPage.value > 1)
-const canGoNext = computed(() => currentPage.value < totalPages.value)
+const canGoNext = computed(() => hasMore.value)
 
-const rangeStart = computed(() => {
-  if (allBounces.value.length === 0) return 0
-  return (currentPage.value - 1) * pageSize + 1
-})
-
-const rangeEnd = computed(() => {
-  if (allBounces.value.length === 0) return 0
-  return Math.min(currentPage.value * pageSize, allBounces.value.length)
-})
+const paginatedBounces = computed(() => normalizedBounces.value)
 
 const previousPage = () => {
-  if (canGoPrevious.value) {
-    currentPage.value -= 1
-  }
+  if (!canGoPrevious.value) return
+
+  currentPage.value -= 1
+  currentCursor.value = pageCursors.value[currentPage.value - 1] ?? null
+  loadBounces()
 }
 
 const nextPage = () => {
-  if (canGoNext.value) {
-    currentPage.value += 1
-  }
+  if (!canGoNext.value) return
+
+  currentPage.value += 1
+  currentCursor.value = pageCursors.value[currentPage.value - 1] ?? null
+  loadBounces()
 }
 
 const selectedStatus = computed(() => (
   statusFilter.value === 'unidentified' ? 'unidentified bounce' : 'identified-bounces'
 ))
 
+const latestRequestId = ref(0)
 const loadBounces = async () => {
+  const requestId = ++latestRequestId.value
   isLoading.value = true
   errorMessage.value = ''
 
   try {
-    const bounces = []
-    let afterId = null
-    const limit = 100
+    const response = await bouncesClient.list(
+        currentCursor.value,
+        pageSize,
+        selectedStatus.value
+    )
 
-    for (let pageIndex = 0; pageIndex < 100; pageIndex += 1) {
-      const bounceResponse = await bouncesClient.list(afterId, limit, selectedStatus.value)
-      const bounceItems = Array.isArray(bounceResponse?.items) ? bounceResponse.items : []
-      bounces.push(...bounceItems)
-
-      const hasMore = bounceResponse?.pagination?.hasMore === true
-      const nextCursor = bounceResponse?.pagination?.nextCursor
-
-      if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
-        break
-      }
-
-      afterId = nextCursor
+    if (requestId !== latestRequestId.value) {
+      return
     }
 
-    bounces.sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0))
-    allBounces.value = bounces
+    bounces.value = Array.isArray(response?.items) ? response.items : []
+    hasMore.value = response?.pagination?.hasMore === true
+
+    const nextCursor = response?.pagination?.nextCursor
+
+    if (
+        hasMore.value &&
+        Number.isFinite(nextCursor) &&
+        pageCursors.value[currentPage.value] === undefined
+    ) {
+      pageCursors.value[currentPage.value] = nextCursor
+    }
   } catch (error) {
-    errorMessage.value = error?.message ?? 'Failed to load recent bounces.'
-    allBounces.value = []
+    if (requestId !== latestRequestId.value) {
+      return
+    }
+
+    errorMessage.value = error?.message ?? 'Failed to load bounces.'
+    bounces.value = []
+    hasMore.value = false
   } finally {
-    isLoading.value = false
+    if (requestId === latestRequestId.value) {
+      isLoading.value = false
+    }
   }
 }
 
-watch(totalPages, (pages) => {
-  if (currentPage.value > pages) {
-    currentPage.value = pages
-  }
-})
-
 watch(statusFilter, () => {
   currentPage.value = 1
+  currentCursor.value = null
+  pageCursors.value = [null]
+  bounces.value = []
+  hasMore.value = false
   loadBounces()
 })
 

@@ -95,7 +95,7 @@ import SubscriberModal from './SubscriberModal.vue'
 import ImportResult from './ImportResult.vue'
 import { inject, onMounted, ref } from 'vue'
 import { subscriberFilters } from './subscriberFilters'
-import { subscribersClient } from '../../api'
+import { backendFetch, subscribersClient } from '../../api'
 import ListSubscribersExportPanel from "../lists/ListSubscribersExportPanel.vue";
 
 const initialSubscribers = inject('subscribers', [])
@@ -206,16 +206,10 @@ const fetchSubscribers = async (afterId = null) => {
   }
 
   try {
-    const response = await fetch(url, {
+    const response = await backendFetch(url, {
       headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
       signal
     })
-
-    if (response.status === 401) {
-      const data = await response.json()
-      window.location.href = data.redirect
-      return
-    }
 
     const data = await response.json()
 

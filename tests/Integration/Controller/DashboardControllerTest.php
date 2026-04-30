@@ -27,6 +27,7 @@ class DashboardControllerTest extends KernelTestCase
     public function testDashboardRendersSpaPayloadWithStats(): void
     {
         self::bootKernel();
+        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
@@ -47,7 +48,7 @@ class DashboardControllerTest extends KernelTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString('<title>phpList - Dashboard</title>', $content);
         self::assertStringContainsString('data-api-token="integration-token"', $content);
-        self::assertStringContainsString('data-api-base-url="http://api.phplist.local/"', $content);
+        self::assertStringContainsString(sprintf('data-api-base-url="%s"', $apiBaseUrl), $content);
         self::assertStringContainsString('data-dashboard-stats=', $content);
         self::assertStringContainsString('&quot;recent_campaigns&quot;', $content);
         self::assertStringContainsString('Weekly&#x20;Digest', $content);

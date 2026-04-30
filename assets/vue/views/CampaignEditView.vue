@@ -491,8 +491,6 @@ const canQueueCampaign = computed(() =>
     activeCampaignId.value > 0
 )
 
-const isAuthenticationError = (error) => error?.name === 'AuthenticationException' || error?.status === 401
-
 const validationFieldLabels = {
   'format.sendFormat': 'Send format',
   'schedule.repeatUntil': 'Stop sending after',
@@ -665,10 +663,6 @@ const loadCampaignData = async () => {
     selectedListIds.value = [...linkedIds]
   } catch (error) {
     console.error('Failed to load campaign data for editing:', error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     loadError.value = error?.message || 'Failed to load campaign data.'
   } finally {
     isLoading.value = false
@@ -828,10 +822,6 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
     saveSuccess.value = 'Campaign saved successfully.'
     isSaved = true
   } catch (error) {
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return false
-    }
     const formattedErrors = formatValidationErrors(error)
     if (formattedErrors.length > 0) {
       saveErrors.value = formattedErrors
@@ -882,11 +872,6 @@ const queueCampaignToSend = async () => {
       }
     }
   } catch (error) {
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
-
     const formattedErrors = formatValidationErrors(error)
     if (formattedErrors.length > 0) {
       saveErrors.value = formattedErrors
@@ -930,10 +915,6 @@ const sendTestCampaign = async () => {
     await campaignClient.testSendCampaign(currentCampaignId, recipients)
     saveSuccess.value = 'Test campaign sent successfully.'
   } catch (error) {
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     console.error('Failed to send test campaign:', error?.message ?? error)
     saveError.value = error?.message?.slice(0, 100) || 'Failed to send test campaign.'
     saveErrors.value = []

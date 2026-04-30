@@ -7,6 +7,7 @@ import CampaignsView from '../vue/views/CampaignsView.vue'
 import CampaignEditView from '../vue/views/CampaignEditView.vue'
 import TemplatesView from '../vue/views/TemplatesView.vue'
 import TemplateEditView from '../vue/views/TemplateEditView.vue'
+import BouncesView from '../vue/views/BouncesView.vue'
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -21,6 +22,7 @@ export const router = createRouter({
         { path: '/campaigns/create', name: 'campaign-create', component: CampaignEditView, meta: { title: 'Create Campaign' } },
         { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: CampaignEditView, meta: { title: 'Edit Campaign' } },
         { path: '/lists/:listId/subscribers', name: 'list-subscribers', component: ListSubscribersView, meta: { title: 'List Subscribers' } },
+        { path: '/bounces', name: 'bounces', component: BouncesView, meta: { title: 'Bounces' } },
         { path: '/:pathMatch(.*)*', redirect: '/' },
     ],
 });

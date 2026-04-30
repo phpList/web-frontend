@@ -17,3 +17,4 @@
 .env
 /node_modules
 /drivers/
+.codex

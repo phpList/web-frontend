@@ -7,8 +7,28 @@ import {
     SubscribersClient,
     SubscriptionClient,
     SubscriberAttributesClient,
-    TemplatesClient
+    TemplatesClient,
+    BouncesClient,
 } from '@tatevikgr/rest-api-client';
+
+const AUTHENTICATION_REDIRECT_PATH = '/login';
+let isAuthenticationRedirectInProgress = false;
+
+const isAuthenticationError = (error) =>
+    error?.name === 'AuthenticationException'
+    || error?.status === 401
+    || error?.response?.status === 401;
+
+const redirectToLogin = () => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+    if (window.location.pathname === AUTHENTICATION_REDIRECT_PATH || isAuthenticationRedirectInProgress) {
+        return;
+    }
+    isAuthenticationRedirectInProgress = true;
+    window.location.href = AUTHENTICATION_REDIRECT_PATH;
+};
 
 const appElement = document.getElementById('vue-app');
 const apiToken = appElement?.dataset.apiToken;
@@ -18,11 +38,25 @@ if (!apiBaseUrl) {
     console.error('API Base URL is not configured.');
 }
 
-const client = new Client(apiBaseUrl || '');
+const client = new Client(apiBaseUrl || '', {
+    onAuthenticationError: redirectToLogin,
+    onAuthorizationError: redirectToLogin,
+});
 
 if (apiToken) {
     client.setSessionId(apiToken);
 }
+
+client.axiosInstance?.interceptors?.response?.use(
+    (response) => response,
+    (error) => {
+        if (isAuthenticationError(error)) {
+            redirectToLogin();
+        }
+
+        return Promise.reject(error);
+    }
+);
 
 export const subscribersClient = new SubscribersClient(client);
 export const listClient = new ListClient(client);
@@ -32,6 +66,17 @@ export const statisticsClient = new StatisticsClient(client);
 export const subscriptionClient = new SubscriptionClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
 export const templateClient = new TemplatesClient(client);
+export const bouncesClient = new BouncesClient(client);
+
+export const backendFetch = async (input, init = undefined) => {
+    const response = await fetch(input, init);
+
+    if (response.status === 401) {
+        redirectToLogin();
+    }
+
+    return response;
+};
 
 export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
     const lists = [];

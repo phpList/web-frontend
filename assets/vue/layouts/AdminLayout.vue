@@ -120,7 +120,7 @@ import { useSidebar } from "../composables/useSidebar";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { RouterLink } from 'vue-router';
 import { Requests } from "@tatevikgr/rest-api-client";
-import { subscribersClient, campaignClient } from "../api";
+import { backendFetch, subscribersClient, campaignClient } from "../api";
 
 const { openSidebar } = useSidebar();
 
@@ -203,7 +203,7 @@ onMounted(async () => {
   document.addEventListener('click', closeSearchResultsOnOutsideClick);
 
   try {
-    const response = await fetch('/admin-about', {
+    const response = await backendFetch('/admin-about', {
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest'

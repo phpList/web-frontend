@@ -23,11 +23,9 @@ const redirectToLogin = () => {
     if (typeof window === 'undefined') {
         return;
     }
-
     if (window.location.pathname === AUTHENTICATION_REDIRECT_PATH || isAuthenticationRedirectInProgress) {
         return;
     }
-
     isAuthenticationRedirectInProgress = true;
     window.location.href = AUTHENTICATION_REDIRECT_PATH;
 };
@@ -40,7 +38,10 @@ if (!apiBaseUrl) {
     console.error('API Base URL is not configured.');
 }
 
-const client = new Client(apiBaseUrl || '');
+const client = new Client(apiBaseUrl || '', {
+    onAuthenticationError: redirectToLogin,
+    onAuthorizationError: redirectToLogin,
+});
 
 if (apiToken) {
     client.setSessionId(apiToken);

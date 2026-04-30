@@ -320,10 +320,6 @@ const loadBounceRules = async () => {
     const bounceRules = await bouncesClient.listRegex()
     allBounceRules.value = Array.isArray(bounceRules) ? bounceRules : []
   } catch (error) {
-    if (error?.name === 'AuthenticationException' || error?.status === 401) {
-      window.location.href = '/login'
-      return
-    }
     console.error('Failed to fetch bounce rules', error)
     allBounceRules.value = []
   }

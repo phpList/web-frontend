@@ -499,54 +499,6 @@ const setActionFeedback = (campaignId, message, type = 'info') => {
   actionFeedbackByCampaignId.value = { ...actionFeedbackByCampaignId.value, [campaignId]: { message, type } }
 }
 
-const isAuthenticationError = (error) => error?.name === 'AuthenticationException' || error?.status === 401
-
-const buildCampaignPayload = (campaign, status = 'draft') => {
-  const schedule = campaign?.messageSchedule || {}
-  const format = campaign?.messageFormat || {}
-  const options = campaign?.messageOptions || {}
-
-  const payload = {
-    content: {
-      subject: campaign?.messageContent?.subject || `Copy of campaign #${campaign.id}`,
-      text: campaign?.messageContent?.text || '',
-      text_message: campaign?.messageContent?.textMessage || '',
-      footer: campaign?.messageContent?.footer || ''
-    },
-    format: {
-      html_formated: Boolean(format?.htmlFormated),
-      send_format: format?.sendFormat || 'html',
-      format_options: Array.isArray(format?.formatOptions) && format.formatOptions.length > 0
-        ? format.formatOptions
-        : [format?.sendFormat || 'html']
-    },
-    metadata: {
-      status
-    },
-    schedule: {
-      embargo: schedule?.embargo || new Date().toISOString()
-    },
-    options: {
-      from_field: options?.fromField || '',
-      to_field: options?.toField || '',
-      reply_to: options?.replyTo || '',
-      user_selection: options?.userSelection || ''
-    }
-  }
-
-  if (campaign?.template?.id) payload.template_id = campaign.template.id
-  if (schedule?.repeatInterval !== null && schedule?.repeatInterval !== undefined) {
-    payload.schedule.repeat_interval = Number(schedule.repeatInterval)
-  }
-  if (schedule?.repeatUntil) payload.schedule.repeat_until = schedule.repeatUntil
-  if (schedule?.requeueInterval !== null && schedule?.requeueInterval !== undefined) {
-    payload.schedule.requeue_interval = Number(schedule.requeueInterval)
-  }
-  if (schedule?.requeueUntil) payload.schedule.requeue_until = schedule.requeueUntil
-
-  return payload
-}
-
 const handleRequeue = async (campaignId) => {
   if (isActionLoading(campaignId)) return
   setActionLoading(campaignId, true)
@@ -558,10 +510,6 @@ const handleRequeue = async (campaignId) => {
     await fetchCampaigns()
   } catch (error) {
     console.error(`Failed to requeue campaign ${campaignId}:`, error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     setActionFeedback(campaignId, error?.message || 'Failed to requeue campaign.', 'error')
   } finally {
     setActionLoading(campaignId, false)
@@ -579,10 +527,6 @@ const handleSuspend = async (campaignId) => {
     await fetchCampaigns()
   } catch (error) {
     console.error(`Failed to suspend campaign ${campaignId}:`, error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     setActionFeedback(campaignId, error?.message || 'Failed to suspend campaign.', 'error')
   } finally {
     setActionLoading(campaignId, false)
@@ -607,10 +551,6 @@ const handleDelete = async (campaign) => {
     await fetchCampaigns()
   } catch (error) {
     console.error(`Failed to delete campaign ${campaign.id}:`, error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     setActionFeedback(campaign.id, error?.message || 'Failed to delete campaign.', 'error')
   } finally {
     setActionLoading(campaign.id, false)
@@ -629,10 +569,6 @@ const handleView = async (campaignId) => {
     selectedCampaign.value = await campaignClient.getCampaign(campaignId)
   } catch (error) {
     console.error(`Failed to load campaign ${campaignId}:`, error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     viewErrorMessage.value = error?.message || 'Failed to load campaign.'
   } finally {
     isViewLoading.value = false
@@ -666,10 +602,6 @@ const handleResend = async (listIds) => {
     closeViewModal()
   } catch (error) {
     console.error(`Failed to resend campaign ${campaignId}:`, error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     resendErrorMessage.value = error?.message || 'Failed to resend campaign.'
   } finally {
     isResending.value = false
@@ -687,10 +619,6 @@ const handleCopyToDraft = async (campaignId) => {
     setActionFeedback(campaignId, 'Created draft copy')
   } catch (error) {
     console.error(`Failed to copy campaign ${campaignId} to draft:`, error)
-    if (isAuthenticationError(error)) {
-      window.location.href = '/login'
-      return
-    }
     setActionFeedback(campaignId, error?.message || 'Failed to create draft copy.', 'error')
   } finally {
     setActionLoading(campaignId, false)
@@ -911,10 +839,6 @@ const fetchCampaigns = async () => {
     allCampaigns.value = campaigns
   } catch (error) {
     console.error('Failed to load campaigns:', error)
-    if (error?.name === 'AuthenticationException' || error?.status === 401) {
-      window.location.href = '/login'
-      return
-    }
     errorMessage.value = 'Failed to load campaigns.'
     allCampaigns.value = []
   } finally {

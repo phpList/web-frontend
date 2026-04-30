@@ -19,6 +19,20 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class SessionAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
+    private const NOT_SUPPORTED_PATHS = [
+        '/login',
+        '/_profiler',
+        '/_wdt',
+        '/build/',
+        '/assets/',
+        '/css/',
+        '/js/',
+        '/images/',
+        '/img/',
+        '/favicon',
+        '/robots.txt',
+    ];
+
     public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
     {
     }
@@ -26,8 +40,10 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     public function supports(Request $request): ?bool
     {
         $path = $this->normalizePath($request->getPathInfo());
-        if ($path === '/login' || str_starts_with($path, '/login/')) {
-            return false;
+        foreach (self::NOT_SUPPORTED_PATHS as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                return false;
+            }
         }
 
         return true;

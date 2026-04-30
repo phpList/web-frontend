@@ -1333,6 +1333,270 @@
                 }
             }
         },
+        "/api/v2/bounces": {
+            "get": {
+                "tags": [
+                    "bounces"
+                ],
+                "summary": "Gets a list of all bounces.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a JSON list of all bounces.",
+                "operationId": "98e6f5ee3a2c8cb61009583a938b22cb",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "after_id",
+                        "in": "query",
+                        "description": "Last id (starting from 0)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 25,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Bounce status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "unidentified bounce",
+                            "maxLength": 100,
+                            "minLength": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BounceView"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/bounces/{bounceId}": {
+            "delete": {
+                "tags": [
+                    "bounces"
+                ],
+                "summary": "Delete a bounce by its id",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Delete a bounce by its id.",
+                "operationId": "52d0665c9ee3e8d0276cfe65e43866f4",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "bounceId",
+                        "in": "path",
+                        "description": "Bounce id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/bounces/by/campaign": {
+            "get": {
+                "tags": [
+                    "bounces"
+                ],
+                "summary": "Gets a list of bounce counts by campaign.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a JSON list of bounce counts by campaign.",
+                "operationId": "a2de96a367d951e9047630b863fbc756",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "message_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "subject": {
+                                                "type": "string",
+                                                "example": "System"
+                                            },
+                                            "total_bounces": {
+                                                "type": "integer",
+                                                "example": 3
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/bounces/by/subscriber": {
+            "get": {
+                "tags": [
+                    "bounces"
+                ],
+                "summary": "Gets a list of bounce counts by subscriber.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a JSON list of bounce counts by subscriber.",
+                "operationId": "e914619969016f6d3ec3da6b645b5ff3",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "subscriber_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "example@email.com"
+                                            },
+                                            "confirmed": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "blacklisted": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "total_bounces": {
+                                                "type": "integer",
+                                                "example": 3
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/bounces/regex": {
             "get": {
                 "tags": [
@@ -1382,9 +1646,9 @@
                 "tags": [
                     "bounces"
                 ],
-                "summary": "Create or update a bounce regex",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Creates a new bounce regex or updates an existing one (matched by regex hash).",
-                "operationId": "91f09d8583ea3629b39c328464961dd8",
+                "summary": "Create a bounce regex",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Creates a new bounce regex.",
+                "operationId": "97db4cfc72576a22e0bcd6215fd35e51",
                 "parameters": [
                     {
                         "name": "php-auth-pw",
@@ -1397,46 +1661,12 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Create or update a bounce regex rule.",
+                    "description": "Create bounce regex rule",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "regex"
-                                ],
-                                "properties": {
-                                    "regex": {
-                                        "type": "string",
-                                        "example": "/mailbox is full/i"
-                                    },
-                                    "action": {
-                                        "type": "string",
-                                        "example": "delete",
-                                        "nullable": true
-                                    },
-                                    "list_order": {
-                                        "type": "integer",
-                                        "example": 0,
-                                        "nullable": true
-                                    },
-                                    "admin": {
-                                        "type": "integer",
-                                        "example": 1,
-                                        "nullable": true
-                                    },
-                                    "comment": {
-                                        "type": "string",
-                                        "example": "Auto-generated",
-                                        "nullable": true
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "example": "active",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/BounceRegexRequest"
                             }
                         }
                     }
@@ -1475,14 +1705,14 @@
                 }
             }
         },
-        "/api/v2/bounces/regex/{regexHash}": {
+        "/api/v2/bounces/regex/{ruleId}": {
             "get": {
                 "tags": [
                     "bounces"
                 ],
-                "summary": "Get a bounce regex by its hash",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a bounce regex by its hash.",
-                "operationId": "be73154c156c45440b3b3f47513d8e86",
+                "summary": "Get a bounce regex by its ID",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a bounce regex by its ID.",
+                "operationId": "babc8c57b673d026ea5fc6100320d4a6",
                 "parameters": [
                     {
                         "name": "php-auth-pw",
@@ -1494,12 +1724,12 @@
                         }
                     },
                     {
-                        "name": "regexHash",
+                        "name": "ruleId",
                         "in": "path",
-                        "description": "Regex hash",
+                        "description": "Regex ID",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1536,13 +1766,13 @@
                     }
                 }
             },
-            "delete": {
+            "put": {
                 "tags": [
                     "bounces"
                 ],
-                "summary": "Delete a bounce regex by its hash",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Delete a bounce regex by its hash.",
-                "operationId": "47b3de553732c5de46647709a42d2ced",
+                "summary": "Update a bounce regex",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Updates an existing one.",
+                "operationId": "fefed1a3824116daedc42d65b0117230",
                 "parameters": [
                     {
                         "name": "php-auth-pw",
@@ -1554,7 +1784,88 @@
                         }
                     },
                     {
-                        "name": "regexHash",
+                        "name": "ruleId",
+                        "in": "path",
+                        "description": "regex rule ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update a bounce regex rule.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BounceRegexRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BounceRegex"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "bounces"
+                ],
+                "summary": "Delete a bounce regex by its id",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Delete a bounce regex by its id.",
+                "operationId": "afe7121aa9c6652066ba8ca4e2c07fba",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ruleId",
                         "in": "path",
                         "description": "Regex hash",
                         "required": true,
@@ -2932,7 +3243,7 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateTemplateRequest"
+                                "$ref": "#/components/schemas/UpdateTemplateRequest"
                             }
                         }
                     }
@@ -2967,6 +3278,126 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/templates/defaults": {
+            "get": {
+                "tags": [
+                    "templates"
+                ],
+                "summary": "Gets a list of all default templates.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a JSON list of all available default templates.",
+                "operationId": "bd28f733452097eca52a8f72549ffe92",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "key": {
+                                                "type": "string",
+                                                "example": "system"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "System"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Default system email"
+                                            },
+                                            "file": {
+                                                "type": "string",
+                                                "example": "system.html"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/templates/defaults/{key}": {
+            "post": {
+                "tags": [
+                    "templates"
+                ],
+                "summary": "Creates a template from a default template.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Creates a new template from a default template key.",
+                "operationId": "67e657e5c80cc0c88a4cc43a6eb55f99",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "description": "Default template key",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "system",
+                                "responsive"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Template"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -3029,6 +3460,71 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "templates"
+                ],
+                "summary": "Update template.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a JSON response of updated template.",
+                "operationId": "a73b9801869083ca7a9739aed68d1b92",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass session credentials",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTemplateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Template"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -6802,6 +7298,40 @@
                 },
                 "type": "object"
             },
+            "BounceRegexRequest": {
+                "required": [
+                    "regex",
+                    "action",
+                    "status"
+                ],
+                "properties": {
+                    "regex": {
+                        "type": "string",
+                        "example": "/mailbox is full/i"
+                    },
+                    "action": {
+                        "type": "string",
+                        "example": "delete",
+                        "nullable": false
+                    },
+                    "list_order": {
+                        "type": "integer",
+                        "example": 0,
+                        "nullable": true
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Auto-generated",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "active",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
             "CreateTemplateRequest": {
                 "required": [
                     "title"
@@ -6819,6 +7349,11 @@
                     "text": {
                         "type": "string",
                         "example": "[CONTENT]"
+                    },
+                    "list_order": {
+                        "type": "integer",
+                        "example": 10,
+                        "nullable": true
                     },
                     "file": {
                         "description": "Optional file upload for HTML content",
@@ -7034,6 +7569,95 @@
                             "user1@example.com",
                             "user2@example.com"
                         ]
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateTemplateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Newsletter Template"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "<html><body>[CONTENT]</body></html>",
+                        "nullable": true
+                    },
+                    "text": {
+                        "type": "string",
+                        "example": "[CONTENT]"
+                    },
+                    "list_order": {
+                        "type": "integer",
+                        "example": 10,
+                        "nullable": true
+                    },
+                    "file": {
+                        "description": "Optional file upload for HTML content",
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "check_links": {
+                        "description": "Check that all links have full URLs",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "check_images": {
+                        "description": "Check that all images have full URLs",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "check_external_images": {
+                        "description": "Check that all external images exist",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "BounceView": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "not processed",
+                        "nullable": true
+                    },
+                    "date": {
+                        "type": "string",
+                        "example": "2023-01-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "message_id": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "message_subject": {
+                        "type": "string",
+                        "example": "Newsletter",
+                        "nullable": true
+                    },
+                    "subscriber_id": {
+                        "type": "integer",
+                        "example": 0,
+                        "nullable": true
+                    },
+                    "subscriber_email": {
+                        "type": "string",
+                        "example": "user@example.com",
+                        "nullable": true
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Auto-generated rule",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7375,7 +7999,7 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "order": {
+                    "list_order": {
                         "type": "integer",
                         "nullable": true
                     },

@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Unit\Controller;
 
+use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,15 +20,15 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AuthControllerTest extends TestCase
 {
-    private AuthClient&MockObject $apiClient;
+    private AuthClient&MockObject $authClient;
     private AuthController $controller;
 
     protected function setUp(): void
     {
-        $this->apiClient = $this->createMock(AuthClient::class);
+        $this->authClient = $this->createMock(AuthClient::class);
 
         $this->controller = $this->getMockBuilder(AuthController::class)
-            ->setConstructorArgs([$this->apiClient])
+            ->setConstructorArgs([$this->authClient, $this->createMock(LoggerInterface::class)])
             ->onlyMethods(['render', 'redirectToRoute', 'generateUrl'])
             ->getMock();
 
@@ -105,12 +109,21 @@ class AuthControllerTest extends TestCase
                 ['login_error', false]
             ]);
 
-        $session->expects($this->exactly(2))
+        $expected = [
+            ['auth_token', 'test-token'],
+            ['auth_expiry_date', '2026-03-18T14:15:38+04:00'],
+            ['auth_id', 1],
+        ];
+
+        $index = 0;
+
+        $session->expects($this->exactly(3))
             ->method('set')
-            ->withConsecutive(
-                ['auth_token', 'test-token'],
-                ['auth_expiry_date', 'test-token']
-            );
+            ->willReturnCallback(function ($key, $value) use (&$expected, &$index) {
+                Assert::assertSame($expected[$index][0], $key);
+                Assert::assertSame($expected[$index][1], $value);
+                $index++;
+            });
 
         $request = Request::create('/login', 'POST', [
             'username' => 'testuser',
@@ -118,14 +131,14 @@ class AuthControllerTest extends TestCase
         ]);
         $request->setSession($session);
 
-        $this->apiClient->method('login')
+        $this->authClient->method('login')
             ->with('testuser', 'testpass')
-            ->willReturn(['key' => 'test-token']);
+            ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
 
         $response = $this->controller->login($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringContainsString('empty_start_page', $response->getTargetUrl());
+        $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
     }
 
     public function testLoginWithPostRequestFailure(): void
@@ -143,7 +156,7 @@ class AuthControllerTest extends TestCase
         ]);
         $request->setSession($session);
 
-        $this->apiClient->method('login')
+        $this->authClient->method('login')
             ->with('testuser', 'testpass')
             ->willThrowException(new RuntimeException('Invalid credentials'));
 
@@ -151,7 +164,7 @@ class AuthControllerTest extends TestCase
 
         $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString(
-            'Invalid credentials or server error: Invalid credentials',
+            'Invalid credentials',
             $response->getContent(),
         );
     }
@@ -172,15 +185,25 @@ class AuthControllerTest extends TestCase
         $response = $this->controller->login($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringContainsString('empty_start_page', $response->getTargetUrl());
+        $this->assertStringContainsString('/', $response->getTargetUrl());
     }
 
     public function testLogout(): void
     {
         $session = $this->createMock(SessionInterface::class);
-        $session->expects($this->once())
+        $expected = [
+            ['auth_token'],
+            ['auth_id'],
+        ];
+
+        $index = 0;
+
+        $session->expects($this->exactly(2))
             ->method('remove')
-            ->with('auth_token');
+            ->willReturnCallback(function ($key) use (&$expected, &$index) {
+                Assert::assertSame($expected[$index][0], $key);
+                $index++;
+            });
 
         $request = $this->createMock(Request::class);
         $request->method('getSession')
@@ -190,5 +213,30 @@ class AuthControllerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('login', $response->getTargetUrl());
+    }
+
+    public function testAbout(): void
+    {
+        $adminMock = $this->createMock(Administrator::class);
+        $adminMock->method('toArray')
+            ->willReturn([
+                'id' => 123,
+                'login_name' => 'testadmin',
+                'email' => 'admin@example.com',
+                'super_user' => true
+            ]);
+
+        $this->authClient->expects($this->once())
+            ->method('getSessionUser')
+            ->willReturn($adminMock);
+
+        $response = $this->controller->about();
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(
+            '{"id":123,"login_name":"testadmin","email":"admin@example.com","super_user":true}',
+            $response->getContent()
+        );
     }
 }

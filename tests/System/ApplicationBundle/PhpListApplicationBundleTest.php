@@ -35,13 +35,13 @@ class PhpListApplicationBundleTest extends TestCase
     public function testHomepageReturnsSuccess(): void
     {
         $this->startSymfonyServer();
-        $response = $this->httpClient->get('/api/v2', [
+        $response = $this->httpClient->get('/', [
             'base_uri' => $this->getBaseUrl(),
         ]);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString(
-            'This page has been intentionally left empty.',
+            'Access is restricted to authorised administrators only.',
             $response->getBody()->getContents()
         );
     }

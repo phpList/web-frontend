@@ -1,0 +1,24 @@
+security:
+  enable_authenticator_manager: true
+
+  providers:
+    # Minimal provider; authenticator builds the user from the session token
+    in_memory: { memory: null }
+
+  firewalls:
+    api:
+      pattern: ^/api/v2
+      security: false
+
+    main:
+      pattern: ^/
+      lazy: true
+      provider: in_memory
+      custom_authenticators:
+        - PhpList\WebFrontend\Security\SessionAuthenticator
+      entry_point: PhpList\WebFrontend\Security\SessionAuthenticator
+
+  access_control:
+    - { path: ^/(?:app(?:_test)?\.php/)?login(?:/|$), roles: PUBLIC_ACCESS }
+    - { path: ^/(?:app(?:_test)?\.php/)?api/v2(?:/|$), roles: PUBLIC_ACCESS }
+    - { path: ^/, roles: ROLE_ADMIN }

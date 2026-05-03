@@ -28,6 +28,14 @@ Please install this package via Composer from within the
 which also has more detailed installation instructions in the README.
 
 
+### When this module is installed as a dependency, publish bundle assets to the host application's `public/` directory:
+```bash
+php bin/console assets:install public --symlink --relative
+```
+
+This module serves its frontend files from `/`.
+
+
 ## Contributing to this package
 
 Please read the [contribution guide](.github/CONTRIBUTING.md) on how to

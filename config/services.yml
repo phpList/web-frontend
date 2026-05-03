@@ -1,7 +1,7 @@
 # config/services.yaml
 parameters:
   api_base_url: '%env(API_BASE_URL)%'
-  env(API_BASE_URL): 'http://api.phplist.local/api/v2/'
+  env(API_BASE_URL): 'http://api.phplist.local/'
 
 services:
   _defaults:
@@ -16,12 +16,6 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
 
-  PhpList\WebFrontend\Service\ApiClient:
-    arguments:
-      $baseUrl: '%api_base_url%'
-      #    calls:
-#      - setAuthToken: ['%session.auth_token%']
-
   PhpList\WebFrontend\Controller\:
     resource: '../src/Controller'
     public: true
@@ -33,6 +27,6 @@ services:
   PhpList\RestApiClient\Client:
     $baseUrl: '%api_base_url%'
 
-  PhpList\RestApiClient\Endpoint\AuthClient:
-    autoconfigure: true
-    autowire: true
+  PhpList\WebFrontend\EventListener\ApiSessionListener:
+    tags:
+      - { name: kernel.event_subscriber }

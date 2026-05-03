@@ -1,26 +1,13 @@
 <template>
-  <div>
-    <h2>Hello from Vue</h2>
-    <p>{{ message }}</p>
+  <div class="min-h-screen bg-[#F8FAFC] flex text-slate-900 font-sans">
+    <AppSidebar />
+
+    <div class="flex flex-col flex-1 min-h-screen">
+      <RouterView />
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
-  data() {
-    return {
-      message: 'This is a reusable component!'
-    }
-  },
-  created() {
-    console.log('App component created');
-  },
-  mounted() {
-    console.log('App component mounted');
-  },
-  updated() {
-    console.log('App component updated');
-  }
-}
+<script setup>
+import AppSidebar from './components/sidebar/AppSidebar.vue'
 </script>

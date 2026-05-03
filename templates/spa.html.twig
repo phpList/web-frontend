@@ -1,0 +1,12 @@
+{% extends '@PhpListFrontend/base.html.twig' %}
+
+{% block title %}phpList - {{ page }}{% endblock %}
+
+{% block body %}
+    <div id="vue-app"
+         data-api-token="{{ api_token|default('') }}"
+         data-api-base-url="{{ api_base_url|default('') }}"
+         data-dashboard-stats="{{ dashboard_stats|default({})|json_encode|e('html_attr') }}"
+         data-bounce-actions="{{ bounce_actions|default({})|json_encode|e('html_attr') }}">
+    </div>
+{% endblock %}

@@ -4,6 +4,7 @@ import {
     ListMessagesClient,
     ListClient,
     StatisticsClient,
+    SubscribePagesClient,
     SubscribersClient,
     SubscriptionClient,
     SubscriberAttributesClient,
@@ -64,6 +65,7 @@ export const campaignClient = new CampaignClient(client);
 export const listMessagesClient = new ListMessagesClient(client);
 export const statisticsClient = new StatisticsClient(client);
 export const subscriptionClient = new SubscriptionClient(client);
+export const subscribePagesClient = new SubscribePagesClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
 export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);

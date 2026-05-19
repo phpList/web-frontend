@@ -9,6 +9,7 @@ import TemplatesView from '../vue/views/TemplatesView.vue'
 import TemplateEditView from '../vue/views/TemplateEditView.vue'
 import BouncesView from '../vue/views/BouncesView.vue'
 import PublicPagesView from '../vue/views/PublicPagesView.vue'
+import PublicPageEditView from '../vue/views/PublicPageEditView.vue'
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -25,6 +26,8 @@ export const router = createRouter({
         { path: '/lists/:listId/subscribers', name: 'list-subscribers', component: ListSubscribersView, meta: { title: 'List Subscribers' } },
         { path: '/bounces', name: 'bounces', component: BouncesView, meta: { title: 'Bounces' } },
         { path: '/public', name: 'public-pages', component: PublicPagesView, meta: { title: 'Public Pages' } },
+        { path: '/public/create', name: 'public-page-create', component: PublicPageEditView, meta: { title: 'Create Public Page' } },
+        { path: '/public/:pageId/edit', name: 'public-page-edit', component: PublicPageEditView, meta: { title: 'Edit Public Page' } },
         { path: '/:pathMatch(.*)*', redirect: '/' },
     ],
 });

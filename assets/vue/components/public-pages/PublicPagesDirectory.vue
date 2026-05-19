@@ -239,6 +239,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseIcon from '../base/BaseIcon.vue'
 import apiClient, { subscribePagesClient } from '../../api'
@@ -246,6 +247,7 @@ import apiClient, { subscribePagesClient } from '../../api'
 const MAX_PROBED_PAGES = 50
 const PROBE_CHUNK_SIZE = 10
 
+const router = useRouter()
 const subscribePages = ref([])
 const isLoading = ref(false)
 const loadError = ref('')
@@ -380,52 +382,11 @@ const withRowTask = async (id, task) => {
 }
 
 const handleCreatePage = async () => {
-  const title = window.prompt('Enter title for the new subscribe page:')
-  if (title === null) {
-    return
-  }
-
-  const trimmedTitle = title.trim()
-  if (!trimmedTitle) {
-    window.alert('Title cannot be empty.')
-    return
-  }
-
-  try {
-    await subscribePagesClient.createSubscribePage(
-      new Requests.CreateSubscribePageRequest(trimmedTitle, true)
-    )
-    await loadSubscribePages()
-  } catch (error) {
-    console.error('Failed to create subscribe page:', error)
-    window.alert(error?.message || 'Failed to create subscribe page.')
-  }
+  await router.push({ name: 'public-page-create' })
 }
 
 const handleEdit = async (page) => {
-  const nextTitle = window.prompt('Edit subscribe page title:', page.title || '')
-  if (nextTitle === null) {
-    return
-  }
-
-  const trimmedTitle = nextTitle.trim()
-  if (!trimmedTitle) {
-    window.alert('Title cannot be empty.')
-    return
-  }
-
-  await withRowTask(page.id, async () => {
-    try {
-      await subscribePagesClient.updateSubscribePage(
-        page.id,
-        new Requests.UpdateSubscribePageRequest(trimmedTitle, page.active)
-      )
-      await loadSubscribePages()
-    } catch (error) {
-      console.error('Failed to update subscribe page:', error)
-      window.alert(error?.message || 'Failed to update subscribe page.')
-    }
-  })
+  await router.push({ name: 'public-page-edit', params: { pageId: page.id } })
 }
 
 const handleDelete = async (page) => {

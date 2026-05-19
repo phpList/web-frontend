@@ -1,4 +1,5 @@
 import {
+    AdminClient,
     CampaignClient,
     Client,
     ListMessagesClient,
@@ -60,6 +61,7 @@ client.axiosInstance?.interceptors?.response?.use(
 );
 
 export const subscribersClient = new SubscribersClient(client);
+export const adminClient = new AdminClient(client);
 export const listClient = new ListClient(client);
 export const campaignClient = new CampaignClient(client);
 export const listMessagesClient = new ListMessagesClient(client);
@@ -100,6 +102,50 @@ export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
     }
 
     return lists;
+};
+
+export const fetchAllAdmins = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const admins = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const response = await adminClient.getAdministrators(afterId, limit);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        admins.push(...items);
+
+        const hasMore = response?.pagination?.hasMore === true;
+        const nextCursor = response?.pagination?.nextCursor;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    return admins;
+};
+
+export const fetchAllAttributeDefinitions = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const attributes = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const response = await subscriberAttributesClient.getAttributeDefinitions(afterId, limit);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        attributes.push(...items);
+
+        const hasMore = response?.pagination?.hasMore === true;
+        const nextCursor = response?.pagination?.nextCursor;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    return attributes;
 };
 
 export default client;

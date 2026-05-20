@@ -291,7 +291,8 @@ import apiClient, {
   fetchAllAdmins,
   fetchAllAttributeDefinitions,
   fetchAllLists,
-  subscribePagesClient
+  subscribePagesClient,
+  backendFetch
 } from '../../api'
 
 const route = useRoute()
@@ -340,14 +341,30 @@ const form = ref({
   ownerId: ''
 })
 
-const DEFAULT_LANGUAGE_OPTIONS = ['english.inc', 'francais.inc', 'deutsch.inc', 'espanol.inc', 'italiano.inc', 'russian.inc']
+const defaultLanguageOptions = ref(['english.inc'])
+
+const loadDefaultLanguageOptions = async () => {
+  try {
+    const resp = await backendFetch('/_internal/languages')
+    console.log('Default language options:', resp)
+    if (resp && resp.ok) {
+      const items = await resp.json()
+      if (Array.isArray(items) && items.length > 0) {
+        defaultLanguageOptions.value = items
+      }
+    }
+  } catch (error) {
+    // keep default hardcoded list on error
+    console.error('Failed to load default language options:', error)
+  }
+}
 
 const languageOptions = computed(() => {
   const current = form.value.languageFile?.trim()
-  if (!current || DEFAULT_LANGUAGE_OPTIONS.includes(current)) {
-    return DEFAULT_LANGUAGE_OPTIONS
+  if (!current || defaultLanguageOptions.value.includes(current)) {
+    return defaultLanguageOptions.value
   }
-  return [current, ...DEFAULT_LANGUAGE_OPTIONS]
+  return [current, ...defaultLanguageOptions.value]
 })
 
 const publicLists = computed(() => lists.value.filter((list) => list.public === true))
@@ -502,6 +519,8 @@ const loadInitialData = async () => {
   isLoading.value = true
 
   try {
+    // fetch language options from vendor package (exposed via internal controller)
+    await loadDefaultLanguageOptions()
     const [fetchedAdmins, fetchedLists, fetchedAttributes] = await Promise.all([
       fetchAllAdmins(),
       fetchAllLists(),

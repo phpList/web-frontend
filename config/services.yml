@@ -30,3 +30,9 @@ services:
   PhpList\WebFrontend\EventListener\ApiSessionListener:
     tags:
       - { name: kernel.event_subscriber }
+
+  PhpList\WebFrontend\Service\PhpListTranslationLoader:
+    arguments:
+      $projectDir: '%kernel.project_dir%'
+    tags:
+      - { name: translation.loader, alias: phplist }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
+use PhpList\Core\Core\ApplicationStructure;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +16,8 @@ class InternalController extends AbstractController
     #[Route('/languages', name: 'languages', methods: ['GET'])]
     public function languages(Request $request): JsonResponse
     {
-        $projectDir = $this->getParameter('kernel.project_dir');
-        $langDir = $projectDir . '/vendor/phplist/phplist-lan-texts';
+        $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
+        $langDir = $applicationRoot . '/public/lists/texts';
 
         $files = [];
         if (is_dir($langDir)) {

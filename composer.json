@@ -96,13 +96,18 @@
             "PhpList\\Core\\Composer\\ScriptHandler::createParametersConfiguration",
             "PhpList\\Core\\Composer\\ScriptHandler::clearAllCaches"
         ],
+        "publish-phplist-texts": [
+            "@php bin/console web-frontend:publish-phplist-texts"
+        ],
         "post-install-cmd": [
             "@create-directories",
-            "@update-configuration"
+            "@update-configuration",
+            "@publish-phplist-texts"
         ],
         "post-update-cmd": [
             "@create-directories",
-            "@update-configuration"
+            "@update-configuration",
+            "@publish-phplist-texts"
         ]
     },
     "extra": {

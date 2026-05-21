@@ -244,8 +244,6 @@ import { Requests } from '@tatevikgr/rest-api-client'
 import BaseIcon from '../base/BaseIcon.vue'
 import apiClient, { subscribePagesClient } from '../../api'
 
-const MAX_PROBED_PAGES = 50
-const PROBE_CHUNK_SIZE = 10
 
 const router = useRouter()
 const subscribePages = ref([])
@@ -315,33 +313,30 @@ const mapSubscribePage = async (page) => {
   }
 }
 
-const fetchSubscribePages = async () => {
-  const discoveredPages = []
+const fetchSubscribePages = async ({ limit = 100, maxPages = 100 } = {}) => {
+  const pages = []
+  let afterId = null
 
-  for (let startId = 1; startId <= MAX_PROBED_PAGES; startId += PROBE_CHUNK_SIZE) {
-    const ids = Array.from(
-      { length: Math.min(PROBE_CHUNK_SIZE, MAX_PROBED_PAGES - startId + 1) },
-      (_, index) => startId + index
-    )
+  for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+    // The SubscribePagesClient does not expose a paginated "getSubscribePages" helper.
+    // Use the generic API client to fetch the list endpoint instead.
+    const response = await apiClient.get('subscribe-pages', { params: { afterId, limit } })
+    const items = Array.isArray(response?.items) ? response.items : []
 
-    const chunkResults = await Promise.all(
-      ids.map(async (id) => {
-        try {
-          const page = await subscribePagesClient.getSubscribePage(id)
-          return await mapSubscribePage(page)
-        } catch (error) {
-          if (isNotFoundError(error)) {
-            return null
-          }
-          throw error
-        }
-      })
-    )
+    const mappedItems = await Promise.all(items.map((page) => mapSubscribePage(page)))
+    pages.push(...mappedItems)
 
-    discoveredPages.push(...chunkResults.filter(Boolean))
+    const hasMore = response?.pagination?.hasMore === true
+    const nextCursor = response?.pagination?.nextCursor
+
+    if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+      break
+    }
+
+    afterId = nextCursor
   }
 
-  return discoveredPages.sort((a, b) => a.id - b.id)
+  return pages.sort((a, b) => a.id - b.id)
 }
 
 const loadSubscribePages = async () => {

@@ -62,7 +62,7 @@
 
             <label class="space-y-1">
               <span class="text-sm font-medium text-slate-700">Text for button</span>
-              <input v-model="form.buttonText" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              <input v-model="form.button" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
             </label>
 
             <label class="space-y-1 md:col-span-2">
@@ -325,7 +325,7 @@ const form = ref({
   footerText: '',
   thankYouPageText: '',
   ajaxSuccessText: '',
-  buttonText: '',
+  button: '',
   htmlEmailChoice: '1',
   displayEmailConfirmationField: '0',
   displayListCategories: '1',
@@ -346,7 +346,6 @@ const defaultLanguageOptions = ref(['english.inc'])
 const loadDefaultLanguageOptions = async () => {
   try {
     const resp = await backendFetch('/_internal/languages')
-    console.log('Default language options:', resp)
     if (resp && resp.ok) {
       const items = await resp.json()
       if (Array.isArray(items) && items.length > 0) {
@@ -479,19 +478,24 @@ const loadPageDataMap = async (id) => {
 
 const applyLoadedDataToForm = (page = null) => {
   form.value.title = page?.title || ''
-  form.value.languageFile = getDataValue('language_file', 'english.inc')
-  form.value.introText = getDataValue('intro', '')
-  form.value.headerText = getDataValue('header', '')
+  form.value.ajaxSuccessText = getDataValue('ajax_subscribeconfirmation', '')
+  form.value.attributes = getDataValue('attributes', '')
+  form.value.button = getDataValue('button', '')
+  form.value.emailDoubleEntry = parseBoolean(getDataValue('emaildoubleentry', false))
   form.value.footerText = getDataValue('footer', '')
-  form.value.thankYouPageText = getDataValue('thankyou', '')
-  form.value.ajaxSuccessText = getDataValue('ajax_success', '')
-  form.value.buttonText = getDataValue('button_text', '')
+  form.value.headerText = getDataValue('header', '')
+  form.value.htmlChoice = getDataValue('htmlchoice', '')
+  form.value.introText = getDataValue('intro', '')
+  form.value.languageFile = getDataValue('language_file', 'english.inc')
+  form.value.selectedListIds = parseIdArray(getDataValue('lists', ''))
+  form.value.preselectedListIds = parseIdArray(getDataValue('preselectelist', ''))
+  form.value.displayListCategories = parseBoolean(getDataValue('showcategories', '1'), true) ? '1' : '0'
+  form.value.thankYouPageText = getDataValue('thankyoupage', '')
+  form.value.title = getDataValue('title', '')
+
   form.value.htmlEmailChoice = parseBoolean(getDataValue('html_email_choice', '1'), true) ? '1' : '0'
   form.value.displayEmailConfirmationField = parseBoolean(getDataValue('email_confirmation_field', '0')) ? '1' : '0'
-  form.value.displayListCategories = parseBoolean(getDataValue('display_list_categories', '1'), true) ? '1' : '0'
   form.value.noPreselectAnyList = parseBoolean(getDataValue('no_preselect_any_list', '0'))
-  form.value.selectedListIds = parseIdArray(getDataValue('offered_list_ids', ''))
-  form.value.preselectedListIds = parseIdArray(getDataValue('preselected_list_ids', ''))
   form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
   form.value.subscribeMessage = getDataValue('tx_subscribe_message', '')
   form.value.confirmedSubject = getDataValue('tx_confirm_subject', '')
@@ -568,19 +572,20 @@ const saveDataItem = async (id, name, value) => {
 
 const persistDataItems = async (id) => {
   const payload = [
+    ['title', form.value.title],
     ['language_file', form.value.languageFile],
     ['intro', form.value.introText],
     ['header', form.value.headerText],
     ['footer', form.value.footerText],
-    ['thankyou', form.value.thankYouPageText],
-    ['ajax_success', form.value.ajaxSuccessText],
-    ['button_text', form.value.buttonText],
+    ['thankyoupage', form.value.thankYouPageText],
+    ['ajax_subscribeconfirmation', form.value.ajaxSuccessText],
+    ['button', form.value.button],
     ['html_email_choice', form.value.htmlEmailChoice],
     ['email_confirmation_field', form.value.displayEmailConfirmationField],
-    ['display_list_categories', form.value.displayListCategories],
+    ['showcategories', form.value.displayListCategories],
     ['no_preselect_any_list', form.value.noPreselectAnyList ? '1' : '0'],
-    ['offered_list_ids', serializeIdArray(form.value.selectedListIds)],
-    ['preselected_list_ids', serializeIdArray(form.value.noPreselectAnyList ? [] : form.value.preselectedListIds)],
+    ['lists', serializeIdArray(form.value.selectedListIds)],
+    ['preselectelist', serializeIdArray(form.value.noPreselectAnyList ? [] : form.value.preselectedListIds)],
     ['tx_subscribe_subject', form.value.subscribeSubject],
     ['tx_subscribe_message', form.value.subscribeMessage],
     ['tx_confirm_subject', form.value.confirmedSubject],

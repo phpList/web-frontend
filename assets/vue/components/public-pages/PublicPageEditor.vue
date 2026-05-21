@@ -91,14 +91,30 @@
             </label>
 
             <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700">HTML Email choice</legend>
+              <legend class="text-sm font-medium text-slate-700">HTML email choice</legend>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlEmailChoice" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Yes
+                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Don't offer choice, default to text
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlEmailChoice" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                No
+                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Don't offer choice, default to HTML
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Offer checkbox for text
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Offer checkbox for HTML
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Radio buttons, default to text
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Radio buttons, default to HTML
               </label>
             </fieldset>
 
@@ -316,6 +332,7 @@ const steps = [
 ]
 const attributeConfig = ref({})
 const dataMap = ref({})
+const legacyHtmlChoiceOptions = new Set(['textonly', 'htmlonly', 'checkfortext', 'checkforhtml', 'radiotext', 'radiohtml'])
 
 const form = ref({
   title: '',
@@ -326,7 +343,7 @@ const form = ref({
   thankYouPageText: '',
   ajaxSuccessText: '',
   button: '',
-  htmlEmailChoice: '1',
+  htmlChoice: 'checkforhtml',
   displayEmailConfirmationField: '0',
   displayListCategories: '1',
   noPreselectAnyList: false,
@@ -484,7 +501,10 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.emailDoubleEntry = parseBoolean(getDataValue('emaildoubleentry', false))
   form.value.footerText = getDataValue('footer', '')
   form.value.headerText = getDataValue('header', '')
-  form.value.htmlChoice = getDataValue('htmlchoice', '')
+  const legacyHtmlChoice = getDataValue('htmlchoice', '').trim().toLowerCase()
+  form.value.htmlChoice = legacyHtmlChoiceOptions.has(legacyHtmlChoice)
+    ? legacyHtmlChoice
+    : (parseBoolean(getDataValue('html_email_choice', '1'), true) ? 'checkforhtml' : 'textonly')
   form.value.introText = getDataValue('intro', '')
   form.value.languageFile = getDataValue('language_file', 'english.inc')
   form.value.selectedListIds = parseIdArray(getDataValue('lists', ''))
@@ -493,7 +513,6 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.thankYouPageText = getDataValue('thankyoupage', '')
   form.value.title = getDataValue('title', '')
 
-  form.value.htmlEmailChoice = parseBoolean(getDataValue('html_email_choice', '1'), true) ? '1' : '0'
   form.value.displayEmailConfirmationField = parseBoolean(getDataValue('email_confirmation_field', '0')) ? '1' : '0'
   form.value.noPreselectAnyList = parseBoolean(getDataValue('no_preselect_any_list', '0'))
   form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
@@ -580,7 +599,7 @@ const persistDataItems = async (id) => {
     ['thankyoupage', form.value.thankYouPageText],
     ['ajax_subscribeconfirmation', form.value.ajaxSuccessText],
     ['button', form.value.button],
-    ['html_email_choice', form.value.htmlEmailChoice],
+    ['htmlchoice', form.value.htmlChoice],
     ['email_confirmation_field', form.value.displayEmailConfirmationField],
     ['showcategories', form.value.displayListCategories],
     ['no_preselect_any_list', form.value.noPreselectAnyList ? '1' : '0'],

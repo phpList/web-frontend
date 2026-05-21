@@ -498,7 +498,6 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.ajaxSuccessText = getDataValue('ajax_subscribeconfirmation', '')
   form.value.attributes = getDataValue('attributes', '')
   form.value.button = getDataValue('button', '')
-  form.value.emailDoubleEntry = parseBoolean(getDataValue('emaildoubleentry', false))
   form.value.footerText = getDataValue('footer', '')
   form.value.headerText = getDataValue('header', '')
   const legacyHtmlChoice = getDataValue('htmlchoice', '').trim().toLowerCase()
@@ -513,7 +512,7 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.thankYouPageText = getDataValue('thankyoupage', '')
   form.value.title = getDataValue('title', '')
 
-  form.value.displayEmailConfirmationField = parseBoolean(getDataValue('email_confirmation_field', '0')) ? '1' : '0'
+  form.value.displayEmailConfirmationField = parseBoolean(getDataValue('emaildoubleentry', '0')) ? '1' : '0'
   form.value.noPreselectAnyList = parseBoolean(getDataValue('no_preselect_any_list', '0'))
   form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
   form.value.subscribeMessage = getDataValue('tx_subscribe_message', '')
@@ -611,7 +610,8 @@ const persistDataItems = async (id) => {
     ['tx_confirm_message', form.value.confirmedMessage],
     ['tx_unsubscribe_subject', form.value.unsubscribeSubject],
     ['tx_unsubscribe_message', form.value.unsubscribeMessage],
-    ['owner_id', form.value.ownerId]
+    ['owner_id', form.value.ownerId],
+    ['emaildoubleentry', form.value.displayEmailConfirmationField ? 'Yes' : 'No'],
   ]
 
   attributes.value.forEach((attribute) => {

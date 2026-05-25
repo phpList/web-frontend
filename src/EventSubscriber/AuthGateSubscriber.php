@@ -55,7 +55,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
         $session = $request->getSession();
         if (!$session->has('auth_token')) {
-            $loginUrl = $this->urlGenerator->generate('login');
+            $loginUrl = $this->buildLoginUrl($request);
             $event->setResponse(new RedirectResponse($loginUrl));
         }
     }
@@ -87,5 +87,33 @@ class AuthGateSubscriber implements EventSubscriberInterface
     private function normalizePath(string $path): string
     {
         return (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
+    }
+
+    private function buildLoginUrl(Request $request): string
+    {
+        $loginUrl = $this->urlGenerator->generate('login');
+        $redirectTarget = $request->getRequestUri();
+
+        if (!$this->isSafeRedirectTarget($redirectTarget)) {
+            return $loginUrl;
+        }
+
+        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
+    }
+
+    private function isSafeRedirectTarget(string $target): bool
+    {
+        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
+            return false;
+        }
+
+        $path = parse_url($target, PHP_URL_PATH);
+        if (!is_string($path)) {
+            return false;
+        }
+
+        $normalizedPath = $this->normalizePath($path);
+
+        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

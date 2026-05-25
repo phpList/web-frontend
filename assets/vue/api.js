@@ -29,7 +29,9 @@ const redirectToLogin = () => {
         return;
     }
     isAuthenticationRedirectInProgress = true;
-    window.location.href = AUTHENTICATION_REDIRECT_PATH;
+    const redirectTarget = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const search = new URLSearchParams({ redirect: redirectTarget }).toString();
+    window.location.href = `${AUTHENTICATION_REDIRECT_PATH}?${search}`;
 };
 
 const appElement = document.getElementById('vue-app');

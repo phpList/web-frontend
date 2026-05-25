@@ -85,7 +85,34 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        $loginUrl = $this->urlGenerator->generate('login');
+        $loginUrl = $this->buildLoginUrl($request->getRequestUri());
         return new RedirectResponse($loginUrl);
+    }
+
+    private function buildLoginUrl(string $redirectTarget): string
+    {
+        $loginUrl = $this->urlGenerator->generate('login');
+
+        if (!$this->isSafeRedirectTarget($redirectTarget)) {
+            return $loginUrl;
+        }
+
+        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
+    }
+
+    private function isSafeRedirectTarget(string $target): bool
+    {
+        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
+            return false;
+        }
+
+        $path = parse_url($target, PHP_URL_PATH);
+        if (!is_string($path)) {
+            return false;
+        }
+
+        $normalizedPath = $this->normalizePath($path);
+
+        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

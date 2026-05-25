@@ -312,7 +312,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {
   backendFetch,
@@ -397,7 +397,17 @@ const languageOptions = computed(() => {
 const publicLists = computed(() => lists.value.filter((list) => list.public === true))
 
 const goToStep = (stepId) => {
+  if (stepId < 1 || stepId > steps.length) return
   currentStep.value = stepId
+}
+
+const resolveStepFromQuery = (stepValue) => {
+  const rawValue = Array.isArray(stepValue) ? stepValue[0] : stepValue
+  const parsedValue = Number(rawValue)
+  if (!Number.isInteger(parsedValue) || parsedValue < 1 || parsedValue > steps.length) {
+    return null
+  }
+  return parsedValue
 }
 
 const parseBoolean = (value, fallback = false) => {
@@ -666,7 +676,14 @@ const savePage = async () => {
     await persistDataItems(savedId)
 
     if (!isEditMode.value) {
-      await router.replace({ name: 'public-page-edit', params: { pageId: savedId } })
+      await router.replace({
+        name: 'public-page-edit',
+        params: { pageId: savedId },
+        query: {
+          ...route.query,
+          step: String(currentStep.value)
+        }
+      })
     }
 
     window.alert('Public page saved.')
@@ -684,5 +701,28 @@ const goBack = () => {
 
 onMounted(() => {
   loadInitialData()
+})
+
+watch(
+  () => route.query.step,
+  (stepValue) => {
+    const nextStep = resolveStepFromQuery(stepValue) ?? 1
+    if (nextStep !== currentStep.value) {
+      currentStep.value = nextStep
+    }
+  },
+  { immediate: true }
+)
+
+watch(currentStep, (stepValue) => {
+  const stepQuery = String(stepValue)
+  if (route.query.step === stepQuery) return
+
+  router.replace({
+    query: {
+      ...route.query,
+      step: stepQuery
+    }
+  }).catch(() => {})
 })
 </script>

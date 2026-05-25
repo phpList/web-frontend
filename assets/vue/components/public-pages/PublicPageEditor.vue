@@ -97,11 +97,11 @@
           <fieldset class="space-y-2">
             <legend class="text-sm font-medium text-slate-700">Display list categories</legend>
             <label class="flex items-center gap-2 text-sm text-slate-700">
-              <input v-model="form.displayListCategories" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+              <input v-model="form.displayListCategories" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
               Do not show list categories
             </label>
             <label class="flex items-center gap-2 text-sm text-slate-700">
-              <input v-model="form.displayListCategories" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+              <input v-model="form.displayListCategories" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
               Display lists in labelled categories
             </label>
           </fieldset>
@@ -110,7 +110,7 @@
             <input
               :checked="form.noPreselectAnyList"
               type="checkbox"
-              class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+              class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
               @change="toggleNoPreselectAnyList($event)"
             >
             Do not preselect any list
@@ -127,7 +127,7 @@
                   <input
                     :checked="form.selectedListIds.includes(list.id)"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                     @change="toggleListSelection(list.id, $event)"
                   >
                   {{ list.name || `List #${list.id}` }}
@@ -136,7 +136,7 @@
                   <input
                     :checked="form.preselectedListId === list.id"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                     :disabled="!form.selectedListIds.includes(list.id)"
                     @change="toggleListPreselection(list.id, $event)"
                   >
@@ -194,7 +194,7 @@
                   <input
                     :checked="attributeState(attribute.id).required"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                    class="h-4 w-4 rounded border-slate-300 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
                     @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
                   >
                   Is this attribute required?
@@ -203,7 +203,7 @@
                   <input
                     :checked="attributeState(attribute.id).use"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                    class="h-4 w-4 rounded border-slate-300 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
                     @change="updateAttributeState(attribute.id, 'use', $event.target.checked)"
                   >
                   Use this attribute in the page
@@ -259,27 +259,27 @@
             <fieldset class="space-y-2">
               <legend class="text-sm font-medium text-slate-700">HTML email choice</legend>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Don't offer choice, default to text
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Don't offer choice, default to HTML
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Offer checkbox for text
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Offer checkbox for HTML
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Radio buttons, default to text
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Radio buttons, default to HTML
               </label>
             </fieldset>
@@ -287,17 +287,17 @@
             <fieldset class="space-y-2">
               <legend class="text-sm font-medium text-slate-700">Display email address confirmation field</legend>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Yes
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 No
               </label>
             </fieldset>
           </div>
 
-          <h2 class="text-lg font-semibold text-slate-900">Owner</h2>
+          <h2 class="text-sm font-medium text-slate-700">Owner</h2>
           <label class="space-y-1 block">
             <span class="text-sm font-medium text-slate-700">Select admin</span>
             <select v-model="form.ownerId" class="w-full md:max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
@@ -341,7 +341,7 @@ const steps = [
   { id: 2, label: 'Lists' },
   { id: 3, label: 'Attributes' },
   { id: 4, label: 'Messages' },
-  { id: 5, label: 'Owner' }
+  { id: 5, label: 'Email Settings' }
 ]
 const attributeConfig = ref({})
 const dataMap = ref({})
@@ -368,6 +368,7 @@ const form = ref({
   confirmedMessage: '',
   unsubscribeSubject: '',
   unsubscribeMessage: '',
+  // todo: update the rest-api to set owner from request
   ownerId: ''
 })
 

@@ -41,7 +41,7 @@
               <input
                   v-model="addSubsForm.autoConfirm"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-blue-500"
+                  class="h-4 w-4 rounded border-slate-300 text-ext-wf1 accent-ext-wf1"
               />
               Auto confirm subscribers
             </label>

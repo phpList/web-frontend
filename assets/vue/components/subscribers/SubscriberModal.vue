@@ -39,7 +39,7 @@
                       id="confirmed"
                       v-model="formData.confirmed"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="confirmed" class="ml-2 block text-sm text-slate-900">
                       Confirmed
@@ -51,7 +51,7 @@
                       id="blacklisted"
                       v-model="formData.blacklisted"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="blacklisted" class="ml-2 block text-sm text-slate-900">
                       Blacklisted
@@ -63,7 +63,7 @@
                       id="htmlEmail"
                       v-model="formData.htmlEmail"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="htmlEmail" class="ml-2 block text-sm text-slate-900">
                       HTML Email
@@ -75,7 +75,7 @@
                       id="disabled"
                       v-model="formData.disabled"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="disabled" class="ml-2 block text-sm text-slate-900">
                       Disabled

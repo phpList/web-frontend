@@ -49,7 +49,7 @@
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  class="w-4 h-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                  class="w-4 h-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                   :checked="page.active"
                   :disabled="isRowBusy(page.id)"
                   @change="handleToggleActive(page, $event)"
@@ -144,7 +144,7 @@
             <label class="inline-flex items-center gap-2 text-xs text-slate-700">
               <input
                 type="checkbox"
-                class="w-4 h-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                class="w-4 h-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                 :checked="page.active"
                 :disabled="isRowBusy(page.id)"
                 @change="handleToggleActive(page, $event)"

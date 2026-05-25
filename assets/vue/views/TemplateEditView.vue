@@ -98,7 +98,7 @@
                   <input
                     v-model="form.checkLinks"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                   >
                   Check that all links have a full URL
                 </label>
@@ -106,7 +106,7 @@
                   <input
                     v-model="form.checkImages"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                   >
                   Check that all images have a full URL
                 </label>
@@ -114,7 +114,7 @@
                   <input
                     v-model="form.checkExternalImages"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                   >
                   Check that all external images exist
                 </label>

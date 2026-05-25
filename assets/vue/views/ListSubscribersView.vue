@@ -97,7 +97,7 @@
                 <input
                     ref="selectAllCheckbox"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300"
+                    class="w-4 h-4 rounded border-slate-300 accent-ext-wf1"
                     :checked="allVisibleSelected"
                     :disabled="filteredSubscribers.length === 0"
                     @change="toggleSelectAllVisible"
@@ -129,7 +129,7 @@
                 <input
                     v-model="selectedIds"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300"
+                    class="w-4 h-4 rounded border-slate-300 accent-ext-wf1"
                     :value="subscriber.id"
                 >
               </td>
@@ -171,7 +171,7 @@
               <label class="inline-flex items-center gap-2 text-sm text-slate-700">
                 <input
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300"
+                    class="w-4 h-4 rounded border-slate-300 accent-ext-wf1"
                     :checked="allVisibleSelected"
                     @change="toggleSelectAllVisible"
                 >
@@ -188,7 +188,7 @@
                 <input
                     v-model="selectedIds"
                     type="checkbox"
-                    class="mt-1 w-4 h-4 rounded border-slate-300"
+                    class="mt-1 w-4 h-4 rounded border-slate-300 accent-ext-wf1"
                     :value="subscriber.id"
                 >
 

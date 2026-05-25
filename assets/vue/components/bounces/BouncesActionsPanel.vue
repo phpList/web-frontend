@@ -20,7 +20,7 @@
         type="button"
         class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-shrink-0"
         :class="activeTab === tab.id
-          ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+          ? 'bg-white text-slate-900 shadow-sm border border-slate-300'
           : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'"
         @click="setActiveTab(tab.id)"
       >

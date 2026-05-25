@@ -49,7 +49,7 @@
           <td class="px-6 py-4 text-right">
             <button
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
               @click="emit('view', subscriber.id)"
             >
               <BaseIcon name="eye" class="w-3.5 h-3.5" />
@@ -86,7 +86,7 @@
             </span>
             <button
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="emit('view', subscriber.id)"
             >
               <BaseIcon name="eye" class="w-3.5 h-3.5" />

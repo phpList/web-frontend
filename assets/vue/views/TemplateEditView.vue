@@ -65,7 +65,7 @@
                 <label for="template-text" class="block text-sm font-medium text-slate-700">Text version</label>
                 <button
                   type="button"
-                  class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 text-xs text-slate-700 transition-colors"
+                  class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 text-xs text-slate-700 transition-colors"
                   @click="populateTextFromContent"
                 >
                   Use HTML as plain text

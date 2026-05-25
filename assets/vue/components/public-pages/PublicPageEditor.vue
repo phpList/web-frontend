@@ -7,7 +7,7 @@
       <div class="flex gap-2">
         <button
           type="button"
-          class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors"
+          class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors"
           @click="goBack"
         >
           Back

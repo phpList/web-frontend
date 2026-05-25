@@ -166,7 +166,7 @@
 
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-60"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-60"
               :disabled="isRowBusy(page.id)"
               @click="handleEdit(page)"
             >

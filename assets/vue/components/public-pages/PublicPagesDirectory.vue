@@ -33,7 +33,7 @@
           <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-6 py-4 text-slate-600">{{ page.id }}</td>
             <td class="px-6 py-4 font-medium text-slate-900">{{ page.title || `Subscribe page #${page.id}` }}</td>
-            <td class="px-6 py-4 text-slate-700">{{ page.ownerName }}</td>
+            <td class="px-6 py-4 text-slate-700">{{ page.owner.loginName }}</td>
             <td class="px-6 py-4">
               <label class="inline-flex items-center cursor-pointer">
                 <input
@@ -56,49 +56,33 @@
                 >
               </label>
             </td>
-            <td class="px-6 py-4 text-right text-xs text-slate-400">
-              {{ isRowBusy(page.id) ? 'Updating...' : '' }}
-            </td>
-          </tr>
-          <tr class="bg-slate-50/60">
-            <td class="px-6 py-3"></td>
             <td colspan="5" class="px-6 py-3">
               <div class="flex flex-wrap items-center justify-end gap-2">
                 <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-60"
-                  :disabled="isRowBusy(page.id)"
-                  @click="handleResetStyling(page)"
-                >
-                  <BaseIcon name="repeat" class="w-3.5 h-3.5" />
-                  Reset Styling
-                </button>
-
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-60"
-                  :disabled="isRowBusy(page.id)"
-                  @click="handlePreview(page)"
+                    type="button"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-60"
+                    :disabled="isRowBusy(page.id)"
+                    @click="handlePreview(page)"
                 >
                   <BaseIcon name="eye" class="w-3.5 h-3.5" />
                   Preview
                 </button>
 
                 <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-60"
-                  :disabled="isRowBusy(page.id)"
-                  @click="handleEdit(page)"
+                    type="button"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-60"
+                    :disabled="isRowBusy(page.id)"
+                    @click="handleEdit(page)"
                 >
                   <BaseIcon name="edit" class="w-3.5 h-3.5" />
                   Edit
                 </button>
 
                 <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-60"
-                  :disabled="isRowBusy(page.id)"
-                  @click="handleDelete(page)"
+                    type="button"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-60"
+                    :disabled="isRowBusy(page.id)"
+                    @click="handleDelete(page)"
                 >
                   <BaseIcon name="delete" class="w-3.5 h-3.5" />
                   Delete
@@ -172,16 +156,6 @@
           <div class="grid grid-cols-2 gap-2">
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-60"
-              :disabled="isRowBusy(page.id)"
-              @click="handleResetStyling(page)"
-            >
-              <BaseIcon name="repeat" class="w-3.5 h-3.5" />
-              Reset
-            </button>
-
-            <button
-              type="button"
               class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-60"
               :disabled="isRowBusy(page.id)"
               @click="handlePreview(page)"
@@ -242,8 +216,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseIcon from '../base/BaseIcon.vue'
-import apiClient, { subscribePagesClient } from '../../api'
-
+import { subscribePagesClient } from '../../api'
 
 const router = useRouter()
 const subscribePages = ref([])
@@ -251,80 +224,14 @@ const isLoading = ref(false)
 const loadError = ref('')
 const rowBusyState = ref({})
 
-const isNotFoundError = (error) =>
-  error?.status === 404
-  || error?.response?.status === 404
-  || error?.name === 'NotFoundException'
-
-const isTruthyValue = (value) => {
-  if (typeof value === 'boolean') return value
-  if (typeof value === 'number') return value !== 0
-  if (typeof value !== 'string') return false
-  return ['1', 'true', 'yes', 'on'].includes(value.trim().toLowerCase())
-}
-
-const normalizeOwnerName = (owner) => {
-  if (!owner || typeof owner !== 'object') {
-    return 'Nobody'
-  }
-
-  return owner.loginName || owner.login_name || owner.fullName || owner.full_name || owner.email || owner.name || 'Nobody'
-}
-
-const getDefaultFlag = (items = []) => {
-  const defaultItem = items.find((item) =>
-    typeof item?.name === 'string'
-    && /(is_)?default(_page)?/i.test(item.name)
-  )
-
-  if (!defaultItem) {
-    return { isDefault: false, defaultFieldName: null }
-  }
-
-  return {
-    isDefault: isTruthyValue(defaultItem.data),
-    defaultFieldName: defaultItem.name
-  }
-}
-
-const getPageData = async (id) => {
-  try {
-    const response = await apiClient.get(`subscribe-pages/${id}/data`)
-    return Array.isArray(response) ? response : []
-  } catch (error) {
-    if (isNotFoundError(error)) {
-      return []
-    }
-    throw error
-  }
-}
-
-const mapSubscribePage = async (page) => {
-  const pageData = await getPageData(page.id)
-  const { isDefault, defaultFieldName } = getDefaultFlag(pageData)
-
-  return {
-    id: page.id,
-    title: page.title || '',
-    active: !!page.active,
-    ownerName: normalizeOwnerName(page.owner),
-    isDefault,
-    defaultFieldName
-  }
-}
-
 const fetchSubscribePages = async ({ limit = 100, maxPages = 100 } = {}) => {
   const pages = []
   let afterId = null
 
   for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
-    // The SubscribePagesClient does not expose a paginated "getSubscribePages" helper.
-    // Use the generic API client to fetch the list endpoint instead.
-    const response = await apiClient.get('subscribe-pages', { params: { afterId, limit } })
+    const response = await subscribePagesClient.getSubscribePages(afterId, limit)
     const items = Array.isArray(response?.items) ? response.items : []
-
-    const mappedItems = await Promise.all(items.map((page) => mapSubscribePage(page)))
-    pages.push(...mappedItems)
+    pages.push(...items)
 
     const hasMore = response?.pagination?.hasMore === true
     const nextCursor = response?.pagination?.nextCursor
@@ -362,10 +269,6 @@ const setRowBusy = (id, busy) => {
 }
 
 const isRowBusy = (id) => !!rowBusyState.value[id]
-
-const setPageDataItem = async (id, name, value) => {
-  await apiClient.put(`subscribe-pages/${id}/data`, { name, value })
-}
 
 const withRowTask = async (id, task) => {
   setRowBusy(id, true)
@@ -419,47 +322,8 @@ const handleToggleActive = async (page, event) => {
 }
 
 const handleSetDefault = async (targetPage) => {
-  const currentDefault = subscribePages.value.find((page) => page.isDefault)
-  const defaultFieldName = targetPage.defaultFieldName || currentDefault?.defaultFieldName || 'default'
-
   await withRowTask(targetPage.id, async () => {
-    try {
-      await setPageDataItem(targetPage.id, defaultFieldName, '1')
-
-      if (currentDefault && currentDefault.id !== targetPage.id) {
-        await setPageDataItem(currentDefault.id, currentDefault.defaultFieldName || defaultFieldName, '0')
-      }
-
-      await loadSubscribePages()
-    } catch (error) {
-      console.error('Failed to set default subscribe page:', error)
-      window.alert(error?.message || 'Failed to set default subscribe page.')
-    }
-  })
-}
-
-const handleResetStyling = async (page) => {
-  await withRowTask(page.id, async () => {
-    try {
-      const items = await getPageData(page.id)
-      const styleItems = items.filter((item) =>
-        typeof item?.name === 'string' && /(style|css)/i.test(item.name)
-      )
-
-      if (styleItems.length === 0) {
-        window.alert('No style overrides were found for this subscribe page.')
-        return
-      }
-
-      await Promise.all(
-        styleItems.map((item) => setPageDataItem(page.id, item.name, null))
-      )
-
-      window.alert('Styling was reset to default values.')
-    } catch (error) {
-      console.error('Failed to reset styling:', error)
-      window.alert(error?.message || 'Failed to reset styling.')
-    }
+    // todo: this should post/put to phplist_config defaultsubscribepage
   })
 }
 

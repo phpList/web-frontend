@@ -301,14 +301,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import apiClient, {
+import {computed, onMounted, ref} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {
+  backendFetch,
   fetchAllAdmins,
   fetchAllAttributeDefinitions,
   fetchAllLists,
-  subscribePagesClient,
-  backendFetch
+  subscribePagesClient
 } from '../../api'
 
 const route = useRoute()
@@ -486,7 +486,7 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.headerText = getDataValue('header', '')
   const legacyHtmlChoice = getDataValue('htmlchoice', '').trim().toLowerCase()
   form.value.htmlChoice = legacyHtmlChoiceOptions.has(legacyHtmlChoice)
-    ? legacyHtmlChoice
+    ? legacyHtmlChoice // todo: check if correct
     : (parseBoolean(getDataValue('html_email_choice', '1'), true) ? 'checkforhtml' : 'textonly')
   form.value.introText = getDataValue('intro', '')
   form.value.languageFile = getDataValue('language_file', 'english.inc')
@@ -498,33 +498,29 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.displayListCategories = parseBoolean(getDataValue('showcategories', '1'), true) ? '1' : '0'
   form.value.thankYouPageText = getDataValue('thankyoupage', '')
   form.value.title = getDataValue('title', '')
-
   form.value.displayEmailConfirmationField = parseBoolean(getDataValue('emaildoubleentry', '0')) ? '1' : '0'
-  form.value.noPreselectAnyList = parseBoolean(getDataValue('no_preselect_any_list', '0'))
-  if (form.value.noPreselectAnyList) {
-    form.value.preselectedListId = null
-  }
-  form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
-  form.value.subscribeMessage = getDataValue('tx_subscribe_message', '')
-  form.value.confirmedSubject = getDataValue('tx_confirm_subject', '')
-  form.value.confirmedMessage = getDataValue('tx_confirm_message', '')
-  form.value.unsubscribeSubject = getDataValue('tx_unsubscribe_subject', '')
-  form.value.unsubscribeMessage = getDataValue('tx_unsubscribe_message', '')
+
+  // form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
+  // form.value.subscribeMessage = getDataValue('tx_subscribe_message', '')
+  // form.value.confirmedSubject = getDataValue('tx_confirm_subject', '')
+  // form.value.confirmedMessage = getDataValue('tx_confirm_message', '')
+  // form.value.unsubscribeSubject = getDataValue('tx_unsubscribe_subject', '')
+  // form.value.unsubscribeMessage = getDataValue('tx_unsubscribe_message', '')
 
   const ownerIdFromPage = page?.owner?.id ? String(page.owner.id) : ''
   form.value.ownerId = getDataValue('owner_id', ownerIdFromPage)
 
-  const config = {}
-  attributes.value.forEach((attribute) => {
-    const id = attribute.id
-    config[id] = {
-      use: parseBoolean(getDataValue(`attribute_${id}_use`, '0')),
-      required: parseBoolean(getDataValue(`attribute_${id}_required`, '0')),
-      defaultValue: getDataValue(`attribute_${id}_default`, ''),
-      listOrder: getDataValue(`attribute_${id}_order`, '')
-    }
-  })
-  attributeConfig.value = config
+  // const config = {}
+  // attributes.value.forEach((attribute) => {
+  //   const id = attribute.id
+  //   config[id] = {
+  //     use: parseBoolean(getDataValue(`attribute_${id}_use`, '0')),
+  //     required: parseBoolean(getDataValue(`attribute_${id}_required`, '0')),
+  //     defaultValue: getDataValue(`attribute_${id}_default`, ''),
+  //     listOrder: getDataValue(`attribute_${id}_order`, '')
+  //   }
+  // })
+  // attributeConfig.value = config
 }
 
 const loadInitialData = async () => {
@@ -565,20 +561,7 @@ const serializeIdArray = (ids) => ids
   .sort((a, b) => a - b)
   .join(',')
 
-const toNullableValue = (value) => {
-  if (value === null || value === undefined) return null
-  const asString = String(value)
-  return asString.trim() === '' ? null : asString
-}
-
-const saveDataItem = async (id, name, value) => {
-  await apiClient.put(`subscribe-pages/${id}/data`, {
-    name,
-    value: toNullableValue(value)
-  })
-}
-
-const persistDataItems = async (id) => {
+const persistDataItems = async () => {
   const selectedListIds = serializeIdArray(form.value.selectedListIds)
   const selectedListSet = new Set(parseIdArray(selectedListIds))
   const candidatePreselectedId = form.value.noPreselectAnyList ? null : Number(form.value.preselectedListId)
@@ -586,7 +569,16 @@ const persistDataItems = async (id) => {
     ? String(candidatePreselectedId)
     : ''
 
-  const payload = [
+  // todo: check how it should be done with attributes
+  // attributes.value.forEach((attribute) => {
+  //   const state = attributeState(attribute.id)
+  //   payload.push([`attribute_${attribute.id}_use`, state.use ? '1' : '0'])
+  //   payload.push([`attribute_${attribute.id}_required`, state.required ? '1' : '0'])
+  //   payload.push([`attribute_${attribute.id}_default`, state.defaultValue || ''])
+  //   payload.push([`attribute_${attribute.id}_order`, state.listOrder || ''])
+  // })
+
+  return [
     ['title', form.value.title],
     ['language_file', form.value.languageFile],
     ['intro', form.value.introText],
@@ -596,33 +588,25 @@ const persistDataItems = async (id) => {
     ['ajax_subscribeconfirmation', form.value.ajaxSuccessText],
     ['button', form.value.button],
     ['htmlchoice', form.value.htmlChoice],
-    ['email_confirmation_field', form.value.displayEmailConfirmationField],
-    ['showcategories', form.value.displayListCategories],
-    ['no_preselect_any_list', form.value.noPreselectAnyList ? '1' : '0'],
+    ['emaildoubleentry', form.value.displayEmailConfirmationField ? 'yes' : 'no'],
+    ['showcategories', form.value.displayListCategories ? 'yes' : 'no'],
     ['lists', selectedListIds],
     ['preselectlist', normalizedPreselectedId],
-    ['tx_subscribe_subject', form.value.subscribeSubject],
-    ['tx_subscribe_message', form.value.subscribeMessage],
-    ['tx_confirm_subject', form.value.confirmedSubject],
-    ['tx_confirm_message', form.value.confirmedMessage],
-    ['tx_unsubscribe_subject', form.value.unsubscribeSubject],
-    ['tx_unsubscribe_message', form.value.unsubscribeMessage],
-    ['owner_id', form.value.ownerId],
-    ['emaildoubleentry', form.value.displayEmailConfirmationField ? 'Yes' : 'No'],
+    // ['tx_subscribe_subject', form.value.subscribeSubject],
+    // ['tx_subscribe_message', form.value.subscribeMessage],
+    // ['tx_confirm_subject', form.value.confirmedSubject],
+    // ['tx_confirm_message', form.value.confirmedMessage],
+    // ['tx_unsubscribe_subject', form.value.unsubscribeSubject],
+    // ['tx_unsubscribe_message', form.value.unsubscribeMessage],
   ]
-
-  attributes.value.forEach((attribute) => {
-    const state = attributeState(attribute.id)
-    payload.push([`attribute_${attribute.id}_use`, state.use ? '1' : '0'])
-    payload.push([`attribute_${attribute.id}_required`, state.required ? '1' : '0'])
-    payload.push([`attribute_${attribute.id}_default`, state.defaultValue || ''])
-    payload.push([`attribute_${attribute.id}_order`, state.listOrder || ''])
-  })
-
-  await Promise.all(payload.map(([name, value]) => saveDataItem(id, name, value)))
 }
 
 const savePage = async () => {
+  const dataItems = (await persistDataItems()).map(([key, value]) => ({
+    key,
+    value
+  }));
+
   const title = form.value.title.trim()
   if (!title) {
     window.alert('Title is required.')
@@ -635,16 +619,18 @@ const savePage = async () => {
     let savedPage
 
     if (isEditMode.value) {
-      savedPage = await apiClient.put(`subscribe-pages/${pageId.value}`, {
+      savedPage = await subscribePagesClient.updateSubscribePage(pageId.value, {
         title,
         active: true,
-        owner: ownerId
+        owner: ownerId,
+        data: dataItems
       })
     } else {
-      savedPage = await apiClient.post('subscribe-pages', {
+      savedPage = await subscribePagesClient.createSubscribePage({
         title,
         active: true,
-        owner: ownerId
+        owner: ownerId,
+        data: dataItems
       })
     }
 

@@ -122,7 +122,7 @@
             <div>
               <p class="text-xs uppercase tracking-wide text-slate-500">#{{ page.id }}</p>
               <p class="font-semibold text-slate-900">{{ page.title || `Subscribe page #${page.id}` }}</p>
-              <p class="text-xs text-slate-500 mt-1">Owner: {{ page.ownerName }}</p>
+              <p class="text-xs text-slate-500 mt-1">Owner: {{ page.owner.loginName }}</p>
             </div>
             <div class="text-xs text-slate-500">
               {{ isRowBusy(page.id) ? 'Updating...' : '' }}

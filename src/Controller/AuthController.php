@@ -45,6 +45,7 @@ class AuthController extends AbstractController
             if ($username === '' || $password === '') {
                 return $this->render('@PhpListFrontend/auth/login.html.twig', [
                     'error' => 'Username and password are required.',
+                    'redirect' => $redirectTarget,
                 ]);
             }
 

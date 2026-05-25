@@ -55,6 +55,8 @@ class UnauthorizedSubscriberTest extends TestCase
         $request = $this->createMock(Request::class);
         $request->method('hasSession')->willReturn(true);
         $request->method('getSession')->willReturn($session);
+        $request->method('isXmlHttpRequest')->willReturn(false);
+        $request->method('getRequestUri')->willReturn('/dashboard?range=30d');
 
         $kernel = $this->createMock(HttpKernelInterface::class);
         $event = new ExceptionEvent(
@@ -73,7 +75,7 @@ class UnauthorizedSubscriberTest extends TestCase
 
         $response = $event->getResponse();
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals($loginUrl, $response->getTargetUrl());
+        $this->assertEquals('/login?redirect=%2Fdashboard%3Frange%3D30d', $response->getTargetUrl());
     }
 
     public function testOnKernelExceptionWithOtherException(): void
@@ -106,6 +108,7 @@ class UnauthorizedSubscriberTest extends TestCase
         $request->method('hasSession')->willReturn(true);
         $request->method('getSession')->willReturn($session);
         $request->method('isXmlHttpRequest')->willReturn(true);
+        $request->method('getRequestUri')->willReturn('/campaigns/15?tab=stats');
 
         $kernel = $this->createMock(HttpKernelInterface::class);
         $event = new ExceptionEvent(
@@ -128,7 +131,7 @@ class UnauthorizedSubscriberTest extends TestCase
 
         $data = json_decode($response->getContent(), true);
         $this->assertEquals('session_expired', $data['error']);
-        $this->assertEquals($loginUrl, $data['redirect']);
+        $this->assertEquals('/login?redirect=%2Fcampaigns%2F15%3Ftab%3Dstats', $data['redirect']);
     }
 
     public function testOnKernelExceptionWithoutSession(): void
@@ -137,6 +140,8 @@ class UnauthorizedSubscriberTest extends TestCase
 
         $request = $this->createMock(Request::class);
         $request->method('hasSession')->willReturn(false);
+        $request->method('isXmlHttpRequest')->willReturn(false);
+        $request->method('getRequestUri')->willReturn('/lists/3/subscribers?page=2');
 
         $kernel = $this->createMock(HttpKernelInterface::class);
         $event = new ExceptionEvent(
@@ -155,6 +160,6 @@ class UnauthorizedSubscriberTest extends TestCase
 
         $response = $event->getResponse();
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals($loginUrl, $response->getTargetUrl());
+        $this->assertEquals('/login?redirect=%2Flists%2F3%2Fsubscribers%3Fpage%3D2', $response->getTargetUrl());
     }
 }

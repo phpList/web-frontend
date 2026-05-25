@@ -149,14 +149,56 @@
 
         <section v-else-if="currentStep === 3" class="space-y-4">
           <h2 class="text-lg font-semibold text-slate-900">Select the attributes to use</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:auto-rows-fr">
             <article
               v-for="attribute in attributes"
               :key="attribute.id"
-              class="rounded-lg border border-slate-200 p-4 space-y-3"
+              class="h-full rounded-lg border border-slate-200 p-4"
             >
-              <div class="flex items-center justify-between">
-                <p class="text-sm font-semibold text-slate-800">Attribute: {{ attribute.id }}</p>
+              <div class="flex h-full flex-col gap-3">
+                <div class="flex items-start justify-between gap-3">
+                  <p class="text-sm font-semibold text-slate-800">Attribute: {{ attribute.id }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div class="min-w-0">
+                    <p class="text-xs text-slate-500">Name</p>
+                    <p class="truncate text-sm text-slate-800" :title="attribute.name">{{ attribute.name }}</p>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-xs text-slate-500">Type</p>
+                    <p class="truncate text-sm text-slate-800" :title="attribute.type">{{ attribute.type }}</p>
+                  </div>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-slate-700">Default value</span>
+                    <input
+                      :value="attributeState(attribute.id).defaultValue"
+                      type="text"
+                      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                      @input="updateAttributeState(attribute.id, 'defaultValue', $event.target.value)"
+                    >
+                  </label>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-slate-700">Order of listing</span>
+                    <input
+                      :value="attributeState(attribute.id).listOrder"
+                      type="number"
+                      min="0"
+                      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                      @input="updateAttributeState(attribute.id, 'listOrder', $event.target.value)"
+                    >
+                  </label>
+                </div>
+
+                <label class="mt-auto flex items-center gap-2 pt-1 text-sm text-slate-700">
+                  <input
+                    :checked="attributeState(attribute.id).required"
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                    @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
+                  >
+                  Is this attribute required?
+                </label>
                 <label class="flex items-center gap-2 text-sm text-slate-700">
                   <input
                     :checked="attributeState(attribute.id).use"
@@ -167,46 +209,6 @@
                   Use this attribute in the page
                 </label>
               </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p class="text-xs text-slate-500">Name</p>
-                  <p class="text-sm text-slate-800">{{ attribute.name }}</p>
-                </div>
-                <div>
-                  <p class="text-xs text-slate-500">Type</p>
-                  <p class="text-sm text-slate-800">{{ attribute.type }}</p>
-                </div>
-                <label class="space-y-1">
-                  <span class="text-sm font-medium text-slate-700">Default value</span>
-                  <input
-                    :value="attributeState(attribute.id).defaultValue"
-                    type="text"
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
-                    @input="updateAttributeState(attribute.id, 'defaultValue', $event.target.value)"
-                  >
-                </label>
-                <label class="space-y-1">
-                  <span class="text-sm font-medium text-slate-700">Order of listing</span>
-                  <input
-                    :value="attributeState(attribute.id).listOrder"
-                    type="number"
-                    min="0"
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
-                    @input="updateAttributeState(attribute.id, 'listOrder', $event.target.value)"
-                  >
-                </label>
-              </div>
-
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input
-                  :checked="attributeState(attribute.id).required"
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
-                  @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
-                >
-                Is this attribute required?
-              </label>
             </article>
           </div>
         </section>

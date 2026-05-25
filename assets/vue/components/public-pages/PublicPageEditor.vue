@@ -89,46 +89,6 @@
               <span class="text-sm font-medium text-slate-700">Text for successful AJAX subscription</span>
               <textarea v-model="form.ajaxSuccessText" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
-
-            <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700">HTML email choice</legend>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Don't offer choice, default to text
-              </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Don't offer choice, default to HTML
-              </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Offer checkbox for text
-              </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Offer checkbox for HTML
-              </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Radio buttons, default to text
-              </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Radio buttons, default to HTML
-              </label>
-            </fieldset>
-
-            <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700">Display email address confirmation field</legend>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                Yes
-              </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
-                No
-              </label>
-            </fieldset>
           </div>
         </section>
 
@@ -189,106 +149,152 @@
 
         <section v-else-if="currentStep === 3" class="space-y-4">
           <h2 class="text-lg font-semibold text-slate-900">Select the attributes to use</h2>
-          <article
-            v-for="attribute in attributes"
-            :key="attribute.id"
-            class="rounded-lg border border-slate-200 p-4 space-y-3"
-          >
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-semibold text-slate-800">Attribute: {{ attribute.id }}</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <article
+              v-for="attribute in attributes"
+              :key="attribute.id"
+              class="rounded-lg border border-slate-200 p-4 space-y-3"
+            >
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold text-slate-800">Attribute: {{ attribute.id }}</p>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input
+                    :checked="attributeState(attribute.id).use"
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+                    @change="updateAttributeState(attribute.id, 'use', $event.target.checked)"
+                  >
+                  Use this attribute in the page
+                </label>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p class="text-xs text-slate-500">Name</p>
+                  <p class="text-sm text-slate-800">{{ attribute.name }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500">Type</p>
+                  <p class="text-sm text-slate-800">{{ attribute.type }}</p>
+                </div>
+                <label class="space-y-1">
+                  <span class="text-sm font-medium text-slate-700">Default value</span>
+                  <input
+                    :value="attributeState(attribute.id).defaultValue"
+                    type="text"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                    @input="updateAttributeState(attribute.id, 'defaultValue', $event.target.value)"
+                  >
+                </label>
+                <label class="space-y-1">
+                  <span class="text-sm font-medium text-slate-700">Order of listing</span>
+                  <input
+                    :value="attributeState(attribute.id).listOrder"
+                    type="number"
+                    min="0"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                    @input="updateAttributeState(attribute.id, 'listOrder', $event.target.value)"
+                  >
+                </label>
+              </div>
+
               <label class="flex items-center gap-2 text-sm text-slate-700">
                 <input
-                  :checked="attributeState(attribute.id).use"
+                  :checked="attributeState(attribute.id).required"
                   type="checkbox"
                   class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
-                  @change="updateAttributeState(attribute.id, 'use', $event.target.checked)"
+                  @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
                 >
-                Use this attribute in the page
+                Is this attribute required?
               </label>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p class="text-xs text-slate-500">Name</p>
-                <p class="text-sm text-slate-800">{{ attribute.name }}</p>
-              </div>
-              <div>
-                <p class="text-xs text-slate-500">Type</p>
-                <p class="text-sm text-slate-800">{{ attribute.type }}</p>
-              </div>
-              <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Default value</span>
-                <input
-                  :value="attributeState(attribute.id).defaultValue"
-                  type="text"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
-                  @input="updateAttributeState(attribute.id, 'defaultValue', $event.target.value)"
-                >
-              </label>
-              <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Order of listing</span>
-                <input
-                  :value="attributeState(attribute.id).listOrder"
-                  type="number"
-                  min="0"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
-                  @input="updateAttributeState(attribute.id, 'listOrder', $event.target.value)"
-                >
-              </label>
-            </div>
-
-            <label class="flex items-center gap-2 text-sm text-slate-700">
-              <input
-                :checked="attributeState(attribute.id).required"
-                type="checkbox"
-                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
-                @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
-              >
-              Is this attribute required?
-            </label>
-          </article>
+            </article>
+          </div>
         </section>
 
         <section v-else-if="currentStep === 4" class="space-y-6">
           <h2 class="text-lg font-semibold text-slate-900">Transaction messages</h2>
-          <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-slate-800">Message subscribers receive when they subscribe</h3>
-            <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Subject</span>
-              <input v-model="form.subscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
-            </label>
-            <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Message</span>
-              <textarea v-model="form.subscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
-            </label>
-          </div>
+          <div class="grid gap-6 lg:grid-cols-3">
+            <div class="space-y-3">
+              <h3 class="text-sm font-semibold text-slate-800">Message subscribers receive when they subscribe</h3>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700">Subject</span>
+                <input v-model="form.subscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              </label>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700">Message</span>
+                <textarea v-model="form.subscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              </label>
+            </div>
 
-          <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-slate-800">Message they receive when they confirm their subscription</h3>
-            <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Subject</span>
-              <input v-model="form.confirmedSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
-            </label>
-            <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Message</span>
-              <textarea v-model="form.confirmedMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
-            </label>
-          </div>
+            <div class="space-y-3">
+              <h3 class="text-sm font-semibold text-slate-800">Message they receive when they confirm their subscription</h3>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700">Subject</span>
+                <input v-model="form.confirmedSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              </label>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700">Message</span>
+                <textarea v-model="form.confirmedMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              </label>
+            </div>
 
-          <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-slate-800">Content of the message they receive when they unsubscribe</h3>
-            <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Subject</span>
-              <input v-model="form.unsubscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
-            </label>
-            <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Message</span>
-              <textarea v-model="form.unsubscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
-            </label>
+            <div class="space-y-3">
+              <h3 class="text-sm font-semibold text-slate-800">Content of the message they receive when they unsubscribe</h3>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700">Subject</span>
+                <input v-model="form.unsubscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              </label>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700">Message</span>
+                <textarea v-model="form.unsubscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              </label>
+            </div>
           </div>
         </section>
 
         <section v-else class="space-y-4">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <fieldset class="space-y-2">
+              <legend class="text-sm font-medium text-slate-700">HTML email choice</legend>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Don't offer choice, default to text
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Don't offer choice, default to HTML
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Offer checkbox for text
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Offer checkbox for HTML
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Radio buttons, default to text
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Radio buttons, default to HTML
+              </label>
+            </fieldset>
+
+            <fieldset class="space-y-2">
+              <legend class="text-sm font-medium text-slate-700">Display email address confirmation field</legend>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                Yes
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+                No
+              </label>
+            </fieldset>
+          </div>
+
           <h2 class="text-lg font-semibold text-slate-900">Owner</h2>
           <label class="space-y-1 block">
             <span class="text-sm font-medium text-slate-700">Select admin</span>

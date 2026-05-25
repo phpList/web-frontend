@@ -518,13 +518,12 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.thankYouPageText = getDataValue('thankyoupage', '')
   form.value.title = getDataValue('title', '')
   form.value.displayEmailConfirmationField = parseBoolean(getDataValue('emaildoubleentry', '0')) ? '1' : '0'
-
-  // form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
-  // form.value.subscribeMessage = getDataValue('tx_subscribe_message', '')
-  // form.value.confirmedSubject = getDataValue('tx_confirm_subject', '')
-  // form.value.confirmedMessage = getDataValue('tx_confirm_message', '')
-  // form.value.unsubscribeSubject = getDataValue('tx_unsubscribe_subject', '')
-  // form.value.unsubscribeMessage = getDataValue('tx_unsubscribe_message', '')
+  form.value.subscribeSubject = getDataValue('subscribesubject', '')
+  form.value.subscribeMessage = getDataValue('subscribemessage', '')
+  form.value.confirmedSubject = getDataValue('confirmationsubject', '')
+  form.value.confirmedMessage = getDataValue('confirmationmessage', '')
+  form.value.unsubscribeSubject = getDataValue('unsubscribesubject', '')
+  form.value.unsubscribeMessage = getDataValue('unsubscribemessage', '')
 
   const ownerIdFromPage = page?.owner?.id ? String(page.owner.id) : ''
   form.value.ownerId = getDataValue('owner_id', ownerIdFromPage)
@@ -611,12 +610,12 @@ const persistDataItems = async () => {
     ['showcategories', form.value.displayListCategories ? 'yes' : 'no'],
     ['lists', selectedListIds],
     ['preselectlist', normalizedPreselectedId],
-    // ['tx_subscribe_subject', form.value.subscribeSubject],
-    // ['tx_subscribe_message', form.value.subscribeMessage],
-    // ['tx_confirm_subject', form.value.confirmedSubject],
-    // ['tx_confirm_message', form.value.confirmedMessage],
-    // ['tx_unsubscribe_subject', form.value.unsubscribeSubject],
-    // ['tx_unsubscribe_message', form.value.unsubscribeMessage],
+    ['subscribesubject', form.value.subscribeSubject],
+    ['subscribemessage', form.value.subscribeMessage],
+    ['confirmationsubject', form.value.confirmedSubject],
+    ['confirmationmessage', form.value.confirmedMessage],
+    ['unsubscribesubject', form.value.unsubscribeSubject],
+    ['unsubscribemessage', form.value.unsubscribeMessage],
   ]
 }
 

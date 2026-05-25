@@ -147,7 +147,12 @@
           </fieldset>
 
           <label class="flex items-center gap-2 text-sm text-slate-700">
-            <input v-model="form.noPreselectAnyList" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2">
+            <input
+              :checked="form.noPreselectAnyList"
+              type="checkbox"
+              class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
+              @change="toggleNoPreselectAnyList($event)"
+            >
             Do not preselect any list
           </label>
 
@@ -172,7 +177,7 @@
                     :checked="form.preselectedListId === list.id"
                     type="checkbox"
                     class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
-                    :disabled="form.noPreselectAnyList || !form.selectedListIds.includes(list.id)"
+                    :disabled="!form.selectedListIds.includes(list.id)"
                     @change="toggleListPreselection(list.id, $event)"
                   >
                   Preselect
@@ -346,7 +351,7 @@ const form = ref({
   htmlChoice: 'checkforhtml',
   displayEmailConfirmationField: '0',
   displayListCategories: '1',
-  noPreselectAnyList: false,
+  noPreselectAnyList: true,
   selectedListIds: [],
   preselectedListId: null,
   subscribeSubject: '',
@@ -460,15 +465,28 @@ const toggleListSelection = (listId, event) => {
     selected.delete(listId)
     if (form.value.preselectedListId === listId) {
       form.value.preselectedListId = null
+      form.value.noPreselectAnyList = true
     }
   }
 
   form.value.selectedListIds = Array.from(selected).sort((a, b) => a - b)
 }
 
+const toggleNoPreselectAnyList = (event) => {
+  const checked = event?.target?.checked === true
+  if (checked) {
+    form.value.noPreselectAnyList = true
+    form.value.preselectedListId = null
+    return
+  }
+
+  form.value.noPreselectAnyList = form.value.preselectedListId === null
+}
+
 const toggleListPreselection = (listId, event) => {
   const checked = event?.target?.checked === true
   form.value.preselectedListId = checked ? listId : null
+  form.value.noPreselectAnyList = form.value.preselectedListId === null
 }
 
 const loadPageDataMap = (items) => {
@@ -495,6 +513,7 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.preselectedListId = loadedPreselectedId && form.value.selectedListIds.includes(loadedPreselectedId)
     ? loadedPreselectedId
     : null
+  form.value.noPreselectAnyList = form.value.preselectedListId === null
   form.value.displayListCategories = parseBoolean(getDataValue('showcategories', '1'), true) ? '1' : '0'
   form.value.thankYouPageText = getDataValue('thankyoupage', '')
   form.value.title = getDataValue('title', '')

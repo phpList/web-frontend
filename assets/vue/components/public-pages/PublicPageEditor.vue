@@ -169,7 +169,7 @@
                 </label>
                 <label class="flex items-center gap-2 text-sm text-slate-700">
                   <input
-                    :checked="form.preselectedListIds.includes(list.id)"
+                    :checked="form.preselectedListId === list.id"
                     type="checkbox"
                     class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2"
                     :disabled="form.noPreselectAnyList || !form.selectedListIds.includes(list.id)"
@@ -348,7 +348,7 @@ const form = ref({
   displayListCategories: '1',
   noPreselectAnyList: false,
   selectedListIds: [],
-  preselectedListIds: [],
+  preselectedListId: null,
   subscribeSubject: '',
   subscribeMessage: '',
   confirmedSubject: '',
@@ -453,41 +453,28 @@ const updateAttributeState = (attributeId, field, value) => {
 const toggleListSelection = (listId, event) => {
   const checked = event?.target?.checked === true
   const selected = new Set(form.value.selectedListIds)
-  const preselected = new Set(form.value.preselectedListIds)
 
   if (checked) {
     selected.add(listId)
   } else {
     selected.delete(listId)
-    preselected.delete(listId)
+    if (form.value.preselectedListId === listId) {
+      form.value.preselectedListId = null
+    }
   }
 
   form.value.selectedListIds = Array.from(selected).sort((a, b) => a - b)
-  form.value.preselectedListIds = Array.from(preselected).sort((a, b) => a - b)
 }
 
 const toggleListPreselection = (listId, event) => {
   const checked = event?.target?.checked === true
-  const preselected = new Set(form.value.preselectedListIds)
-
-  if (checked) {
-    preselected.add(listId)
-  } else {
-    preselected.delete(listId)
-  }
-
-  form.value.preselectedListIds = Array.from(preselected).sort((a, b) => a - b)
+  form.value.preselectedListId = checked ? listId : null
 }
 
 const loadPageDataMap = (items) => {
-  const map = {}
-  if (Array.isArray(items)) {
-    items.forEach((item) => {
-      map[item.key] = item.value
-    })
-  }
-
-  dataMap.value = map
+  dataMap.value = Object.fromEntries(
+      (items || []).map(({ key, value }) => [key, value])
+  )
 }
 
 const applyLoadedDataToForm = (page = null) => {
@@ -504,13 +491,19 @@ const applyLoadedDataToForm = (page = null) => {
   form.value.introText = getDataValue('intro', '')
   form.value.languageFile = getDataValue('language_file', 'english.inc')
   form.value.selectedListIds = parseIdArray(getDataValue('lists', ''))
-  form.value.preselectedListIds = parseIdArray(getDataValue('preselectelist', ''))
+  const loadedPreselectedId = Number(getDataValue('preselectlist', ''))
+  form.value.preselectedListId = loadedPreselectedId && form.value.selectedListIds.includes(loadedPreselectedId)
+    ? loadedPreselectedId
+    : null
   form.value.displayListCategories = parseBoolean(getDataValue('showcategories', '1'), true) ? '1' : '0'
   form.value.thankYouPageText = getDataValue('thankyoupage', '')
   form.value.title = getDataValue('title', '')
 
   form.value.displayEmailConfirmationField = parseBoolean(getDataValue('emaildoubleentry', '0')) ? '1' : '0'
   form.value.noPreselectAnyList = parseBoolean(getDataValue('no_preselect_any_list', '0'))
+  if (form.value.noPreselectAnyList) {
+    form.value.preselectedListId = null
+  }
   form.value.subscribeSubject = getDataValue('tx_subscribe_subject', '')
   form.value.subscribeMessage = getDataValue('tx_subscribe_message', '')
   form.value.confirmedSubject = getDataValue('tx_confirm_subject', '')
@@ -586,6 +579,13 @@ const saveDataItem = async (id, name, value) => {
 }
 
 const persistDataItems = async (id) => {
+  const selectedListIds = serializeIdArray(form.value.selectedListIds)
+  const selectedListSet = new Set(parseIdArray(selectedListIds))
+  const candidatePreselectedId = form.value.noPreselectAnyList ? null : Number(form.value.preselectedListId)
+  const normalizedPreselectedId = Number.isFinite(candidatePreselectedId) && selectedListSet.has(candidatePreselectedId)
+    ? String(candidatePreselectedId)
+    : ''
+
   const payload = [
     ['title', form.value.title],
     ['language_file', form.value.languageFile],
@@ -599,8 +599,8 @@ const persistDataItems = async (id) => {
     ['email_confirmation_field', form.value.displayEmailConfirmationField],
     ['showcategories', form.value.displayListCategories],
     ['no_preselect_any_list', form.value.noPreselectAnyList ? '1' : '0'],
-    ['lists', serializeIdArray(form.value.selectedListIds)],
-    ['preselectelist', serializeIdArray(form.value.noPreselectAnyList ? [] : form.value.preselectedListIds)],
+    ['lists', selectedListIds],
+    ['preselectlist', normalizedPreselectedId],
     ['tx_subscribe_subject', form.value.subscribeSubject],
     ['tx_subscribe_message', form.value.subscribeMessage],
     ['tx_confirm_subject', form.value.confirmedSubject],

@@ -479,14 +479,11 @@ const toggleListPreselection = (listId, event) => {
   form.value.preselectedListIds = Array.from(preselected).sort((a, b) => a - b)
 }
 
-const loadPageDataMap = async (id) => {
-  const items = await apiClient.get(`subscribe-pages/${id}/data`)
+const loadPageDataMap = (items) => {
   const map = {}
   if (Array.isArray(items)) {
     items.forEach((item) => {
-      if (typeof item?.name === 'string') {
-        map[item.name] = item.data
-      }
+      map[item.key] = item.value
     })
   }
 
@@ -555,7 +552,7 @@ const loadInitialData = async () => {
 
     if (isEditMode.value) {
       const page = await subscribePagesClient.getSubscribePage(pageId.value)
-      await loadPageDataMap(pageId.value)
+      loadPageDataMap(page?.data)
       applyLoadedDataToForm(page)
     } else {
       dataMap.value = {}

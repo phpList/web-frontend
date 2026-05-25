@@ -4839,6 +4839,21 @@
                                     "active": {
                                         "type": "boolean",
                                         "nullable": true
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -4981,6 +4996,21 @@
                                     "active": {
                                         "type": "boolean",
                                         "nullable": true
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -5051,174 +5081,6 @@
                 "responses": {
                     "204": {
                         "description": "No Content"
-                    },
-                    "403": {
-                        "description": "Failure",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/subscribe-pages/{id}/data": {
-            "get": {
-                "tags": [
-                    "subscriptions"
-                ],
-                "summary": "Get subscribe page data",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
-                "operationId": "ffe22f26936614a0e853e7c44e5a0fca",
-                "parameters": [
-                    {
-                        "name": "php-auth-pw",
-                        "in": "header",
-                        "description": "Session key obtained from login",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Subscribe page ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer"
-                                            },
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "data": {
-                                                "type": "string",
-                                                "nullable": true
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Failure",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "subscriptions"
-                ],
-                "summary": "Set subscribe page data item",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
-                "operationId": "a71571132947a19d862eac4baf7a98a7",
-                "parameters": [
-                    {
-                        "name": "php-auth-pw",
-                        "in": "header",
-                        "description": "Session key obtained from login",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Subscribe page ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "value": {
-                                        "type": "string",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "data": {
-                                            "type": "string",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
                     },
                     "403": {
                         "description": "Failure",
@@ -8600,6 +8462,19 @@
                 },
                 "type": "object"
             },
+            "SubscribePageData": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "button"
+                    },
+                    "value": {
+                        "type": "string",
+                        "example": "Subscribe to the selected newsletters"
+                    }
+                },
+                "type": "object"
+            },
             "SubscribePage": {
                 "properties": {
                     "id": {
@@ -8616,6 +8491,12 @@
                     },
                     "owner": {
                         "$ref": "#/components/schemas/Administrator"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubscribePageData"
+                        }
                     }
                 },
                 "type": "object"

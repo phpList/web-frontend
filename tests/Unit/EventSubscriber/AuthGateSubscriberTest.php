@@ -65,4 +65,22 @@ class AuthGateSubscriberTest extends TestCase
 
         $this->assertNull($event->getResponse());
     }
+
+    public function testSkipsRedirectForPublicSubscribePage(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+
+        $request = Request::create('/subscribe/7');
+        $request->setSession($session);
+
+        $event = new RequestEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+
+        $this->subscriber->onKernelRequest($event);
+
+        $this->assertNull($event->getResponse());
+    }
 }

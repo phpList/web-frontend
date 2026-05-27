@@ -20,6 +20,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 {
     private const ALLOW_LIST = [
         '/api/v2',
+        '/subscribe',
         '/build/',
         '/assets/',
         '/css/',

@@ -328,7 +328,7 @@ const handleSetDefault = async (targetPage) => {
 }
 
 const handlePreview = (page) => {
-  const previewUrl = `/?p=subscribe&id=${page.id}`
+  const previewUrl = `/subscribe/${page.id}`
   window.open(previewUrl, '_blank', 'noopener,noreferrer')
 }
 

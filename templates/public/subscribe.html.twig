@@ -1,0 +1,242 @@
+{% extends '@PhpListFrontend/base.html.twig' %}
+
+{% block title %}phpList - Subscribe{% endblock %}
+
+{% block body %}
+    <div
+        id="subscribe-page-app"
+        data-page-id="{{ page_id }}"
+        data-api-token="{{ api_token|default('') }}"
+    >
+        <header class="legacy-topbar">
+            <div class="legacy-topbar__inner">localhost</div>
+        </header>
+
+        <div class="legacy-page-shell">
+            <section class="legacy-card">
+                {{ data['intro']|default(language_texts.strSubscribeInfo|default(''))|raw }}
+                <p id="subscribe-page-intro" class="legacy-card__intro"></p>
+
+                <label class="legacy-label" for="subscribe-email">
+                    {{ language_texts.strRequired|default('Required fields are marked red') }} *
+                </label>
+
+                {% if admin !== null %}
+                    <div>
+                        <div class="adminmessage">
+                            <p>
+                                <b>
+                                    You are logged in as administrator ({{ admin.loginName }}) of this phpList system
+                                </b>
+                            </p>
+                            <p>
+                                You are therefore offered the following choice, which your subscribers will not see when they load this page.
+                            </p>
+                            <p><a href="{{ admin_page_url }}" class="button">Go back to admin area</a></p>
+                            <p>
+                                <b>Please choose</b>
+                                <br/>
+                                <input type=radio name="makeconfirmed" value="1">Make this subscriber confirmed immediately
+                                <br/>
+                                <input type=radio name="makeconfirmed" value="0" checked>Send this subscriber a request for confirmation email
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+                <form id="subscribe-form" class="legacy-form" novalidate>
+                    <div id="subscribe-page-header" class="legacy-html-text"></div>
+
+                    <div class="legacy-field-group">
+                        <label class="legacy-label" for="subscribe-email">
+                            {{ language_texts.strEmail|default('Email') }} *
+                        </label>
+                        <input id="subscribe-email" type="email" class="legacy-input" autocomplete="email">
+                    </div>
+
+                    <div id="email-confirmation-wrapper" class="legacy-field-group">
+                        <label class="legacy-label" for="subscribe-email-confirm">
+                            {{ language_texts.strConfirmEmail|default('Confirm your email address') }} *
+                        </label>
+                        <input id="subscribe-email-confirm" type="email" class="legacy-input" autocomplete="email">
+                    </div>
+
+                    {{ language_texts.strPleaseSelect|default('Please select the newsletters you want to sign up to') }}:
+
+                    <fieldset class="legacy-lists">
+                        <legend>General</legend>
+
+                        <p>
+                            {{ language_texts.strPleaseSelect|default('Please select the newsletters you want to sign up to:') }}
+                        </p>
+
+                        <div id="subscribe-lists" class="legacy-list-options">
+                            {% for list in lists %}
+                                <div class="list-item">
+                                    <input
+                                            type="checkbox"
+                                            id="list-{{ list.id }}"
+                                            name="lists[]"
+                                            value="{{ list.id }}"
+                                    >
+
+                                    <label for="list-{{ list.id }}">
+                                        <strong>{{ list.name }}</strong><br>
+                                        <span>{{ list.description }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    <button id="subscribe-action" type="submit" class="legacy-button">
+                        {{ language_texts.strSubmit|default('Subscribe to the selected newsletters') }}
+                    </button>
+                </form>
+
+                <div id="subscribe-page-footer" class="legacy-html-text"></div>
+                <p id="subscribe-error" class="legacy-error hidden"></p>
+            </section>
+        </div>
+    </div>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f3f3f3;
+            color: #2f2f2f;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .legacy-topbar {
+            background: #2d2d2d;
+            border-bottom: 1px solid #3e3e3e;
+            color: #9ea0a4;
+            font-size: 44px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .legacy-topbar__inner {
+            margin: 0 auto;
+            max-width: 1040px;
+            padding: 10px 16px 6px;
+        }
+
+        .legacy-page-shell {
+            padding: 22px 14px 36px;
+        }
+
+        .legacy-card {
+            background: #dcdcdc;
+            border: 3px solid #767676;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.34);
+            margin: 0 auto;
+            max-width: 760px;
+            padding: 28px 24px;
+        }
+
+        .legacy-card__title {
+            color: #343434;
+            font-size: 18px;
+            margin: 0 0 12px;
+        }
+
+        .legacy-card__intro {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0 0 16px;
+            min-height: 18px;
+        }
+
+        .legacy-form {
+            background: #e6e6e6;
+            border: 1px solid #c8c8c8;
+            display: block;
+            margin-bottom: 18px;
+            padding: 14px;
+        }
+
+        .legacy-html-text {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.45;
+            margin-bottom: 14px;
+        }
+
+        .legacy-field-group {
+            margin-bottom: 12px;
+        }
+
+        .legacy-label {
+            color: #be2f2f;
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .legacy-input {
+            border: 1px solid #bdbdbd;
+            box-sizing: border-box;
+            font-size: 13px;
+            max-width: 420px;
+            padding: 7px 8px;
+            width: 100%;
+        }
+
+        .legacy-lists {
+            border: 0;
+            margin: 16px 0;
+            padding: 0;
+        }
+
+        .legacy-lists legend {
+            color: #555;
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            padding: 0;
+        }
+
+        .legacy-list-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legacy-list-option {
+            align-items: center;
+            color: #383838;
+            display: inline-flex;
+            font-size: 13px;
+            gap: 8px;
+        }
+
+        .legacy-button {
+            background: #e5e5e5;
+            border: 1px solid #a2a2a2;
+            color: #222;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        .legacy-muted {
+            color: #707070;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .legacy-error {
+            color: #aa2d2d;
+            font-size: 13px;
+            margin: 10px 0 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+{% endblock %}

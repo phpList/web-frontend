@@ -1,102 +1,167 @@
 {% extends '@PhpListFrontend/base.html.twig' %}
 
-{% block title %}phpList - Subscribe{% endblock %}
+{% block title %}{{ data['title']|default(language_texts.strSubscribeTitle|default('Subscribe')) }}{% endblock %}
 
 {% block body %}
-    <div
-        id="subscribe-page-app"
-        data-page-id="{{ page_id }}"
-        data-api-token="{{ api_token|default('') }}"
-    >
-        <header class="legacy-topbar">
-            <div class="legacy-topbar__inner">localhost</div>
-        </header>
+    <div class="legacy-page-shell">
+        <section class="legacy-card">
+            {% if data['header'] is defined and data['header'] is not empty %}
+                <div class="legacy-html-text">{{ data['header']|raw }}</div>
+            {% endif %}
 
-        <div class="legacy-page-shell">
-            <section class="legacy-card">
-                {{ data['intro']|default(language_texts.strSubscribeInfo|default(''))|raw }}
-                <p id="subscribe-page-intro" class="legacy-card__intro"></p>
+            {% if data['intro'] is defined and data['intro'] is not empty %}
+                <div class="legacy-html-text">{{ data['intro']|raw }}</div>
+            {% endif %}
 
-                <label class="legacy-label" for="subscribe-email">
-                    {{ language_texts.strRequired|default('Required fields are marked red') }} *
-                </label>
+            <div class="legacy-required-note">
+                * {{ language_texts.strRequired|default('required fields are marked red') }}
+            </div>
 
-                {% if admin !== null %}
-                    <div>
+            {% if form_errors is not empty %}
+                <div class="legacy-error-box">
+                    {% for error in form_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if success_message %}
+                <div class="legacy-success">{{ success_message }}</div>
+            {% endif %}
+
+            {% if success_html %}
+                <div class="legacy-html-text">{{ success_html|raw }}</div>
+            {% else %}
+                <form method="post" action="{{ path('public_subscribe', {pageId: page_id}) }}" class="legacy-form" novalidate>
+                    {% if admin is not null %}
                         <div class="adminmessage">
-                            <p>
-                                <b>
-                                    You are logged in as administrator ({{ admin.loginName }}) of this phpList system
-                                </b>
-                            </p>
-                            <p>
-                                You are therefore offered the following choice, which your subscribers will not see when they load this page.
-                            </p>
+                            <p><b>You are logged in as administrator ({{ admin.loginName }}) of this phpList system</b></p>
+                            <p>You are therefore offered the following choice, which your subscribers will not see when they load this page.</p>
                             <p><a href="{{ admin_page_url }}" class="button">Go back to admin area</a></p>
                             <p>
-                                <b>Please choose</b>
-                                <br/>
-                                <input type=radio name="makeconfirmed" value="1">Make this subscriber confirmed immediately
-                                <br/>
-                                <input type=radio name="makeconfirmed" value="0" checked>Send this subscriber a request for confirmation email
+                                <b>Please choose</b><br>
+                                <label><input type="radio" name="makeconfirmed" value="1" {% if form_data.make_confirmed == '1' %}checked{% endif %}> Make this subscriber confirmed immediately</label><br>
+                                <label><input type="radio" name="makeconfirmed" value="0" {% if form_data.make_confirmed != '1' %}checked{% endif %}> Send this subscriber a request for confirmation email</label>
                             </p>
                         </div>
-                    </div>
-                {% endif %}
-                <form id="subscribe-form" class="legacy-form" novalidate>
-                    <div id="subscribe-page-header" class="legacy-html-text"></div>
+                    {% endif %}
 
                     <div class="legacy-field-group">
-                        <label class="legacy-label" for="subscribe-email">
-                            {{ language_texts.strEmail|default('Email') }} *
-                        </label>
-                        <input id="subscribe-email" type="email" class="legacy-input" autocomplete="email">
+                        <label class="legacy-label" for="email">{{ language_texts.strEmail|default('Email') }} *</label>
+                        <input id="email" name="email" type="email" class="legacy-input" value="{{ form_data.email|default('') }}" required autocomplete="email">
                     </div>
 
-                    <div id="email-confirmation-wrapper" class="legacy-field-group">
-                        <label class="legacy-label" for="subscribe-email-confirm">
-                            {{ language_texts.strConfirmEmail|default('Confirm your email address') }} *
-                        </label>
-                        <input id="subscribe-email-confirm" type="email" class="legacy-input" autocomplete="email">
-                    </div>
+                    {% if email_double_entry %}
+                        <div class="legacy-field-group">
+                            <label class="legacy-label" for="emailconfirm">{{ language_texts.strConfirmEmail|default('Confirm your email address') }} *</label>
+                            <input id="emailconfirm" name="emailconfirm" type="email" class="legacy-input" value="{{ form_data.email_confirm|default('') }}" required autocomplete="email">
+                        </div>
+                    {% endif %}
 
-                    {{ language_texts.strPleaseSelect|default('Please select the newsletters you want to sign up to') }}:
+                    {% if html_choice == 'textonly' %}
+                        <input type="hidden" name="htmlemail" value="0">
+                    {% elseif html_choice == 'htmlonly' %}
+                        <input type="hidden" name="htmlemail" value="1">
+                    {% elseif html_choice == 'checkfortext' %}
+                        <div class="legacy-field-group">
+                            <label><input type="checkbox" name="textemail" value="1" {% if not form_data.htmlemail %}checked{% endif %}> {{ language_texts.strPreferTextEmail|default('I would like to receive emails in text format') }}</label>
+                        </div>
+                    {% elseif html_choice == 'radiotext' or html_choice == 'radiohtml' %}
+                        <div class="legacy-field-group">
+                            <p class="legacy-label">{{ language_texts.strPreferredFormat|default('Preferred format') }}</p>
+                            <label><input type="radio" name="htmlemail" value="0" {% if not form_data.htmlemail %}checked{% endif %}> {{ language_texts.strText|default('Text') }}</label>
+                            <label><input type="radio" name="htmlemail" value="1" {% if form_data.htmlemail %}checked{% endif %}> {{ language_texts.strHTML|default('HTML') }}</label>
+                        </div>
+                    {% else %}
+                        <div class="legacy-field-group">
+                            <label><input type="checkbox" name="htmlemail" value="1" {% if form_data.htmlemail %}checked{% endif %}> {{ language_texts.strPreferHTMLEmail|default('I would like to receive emails in HTML format') }}</label>
+                        </div>
+                    {% endif %}
+
+                    {% for attribute in attributes %}
+                        {% set field = 'attribute' ~ attribute.id %}
+                        {% set value = form_data.attributes[attribute.id]|default(attribute.default_value|default('')) %}
+                        {% if attribute.type == 'checkbox' %}
+                            <div class="legacy-field-group">
+                                <label>
+                                    <input type="checkbox" id="{{ field }}" name="{{ field }}" value="1" {% if value %}checked{% endif %}>
+                                    <span class="{{ attribute.required ? 'legacy-label' : '' }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</span>
+                                </label>
+                            </div>
+                        {% elseif attribute.type == 'radio' %}
+                            <div class="legacy-field-group">
+                                <p class="{{ attribute.required ? 'legacy-label' : '' }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</p>
+                                {% for option in attribute.options %}
+                                    <label><input type="radio" name="{{ field }}" value="{{ option.id }}" {% if value == option.id or value == (option.id ~ '') %}checked{% endif %}> {{ option.name }}</label>
+                                {% endfor %}
+                            </div>
+                        {% elseif attribute.type == 'select' %}
+                            <div class="legacy-field-group">
+                                <label class="{{ attribute.required ? 'legacy-label' : '' }}" for="{{ field }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</label>
+                                <select id="{{ field }}" name="{{ field }}" class="legacy-input">
+                                    {% if not attribute.required %}
+                                        <option value="">--</option>
+                                    {% endif %}
+                                    {% for option in attribute.options %}
+                                        <option value="{{ option.id }}" {% if value == option.id or value ==  (option.id ~ '') %}selected{% endif %}>{{ option.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% elseif attribute.type == 'checkboxgroup' %}
+                            <div class="legacy-field-group">
+                                <p class="{{ attribute.required ? 'legacy-label' : '' }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</p>
+                                {% set selectedOptions = value is iterable ? value : [] %}
+                                {% for option in attribute.options %}
+                                    <label><input type="checkbox" name="{{ field }}[]" value="{{ option.id }}" {% if option.id in selectedOptions %}checked{% endif %}> {{ option.name }}</label>
+                                {% endfor %}
+                            </div>
+                        {% elseif attribute.type == 'textarea' %}
+                            <div class="legacy-field-group">
+                                <label class="{{ attribute.required ? 'legacy-label' : '' }}" for="{{ field }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</label>
+                                <textarea id="{{ field }}" name="{{ field }}" class="legacy-input" rows="5">{{ value }}</textarea>
+                            </div>
+                        {% elseif attribute.type == 'hidden' %}
+                            <input type="hidden" id="{{ field }}" name="{{ field }}" value="{{ value }}">
+                        {% elseif attribute.type == 'date' %}
+                            <div class="legacy-field-group">
+                                <label class="{{ attribute.required ? 'legacy-label' : '' }}" for="{{ field }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</label>
+                                <input id="{{ field }}" name="{{ field }}" type="date" class="legacy-input" value="{{ value }}">
+                            </div>
+                        {% else %}
+                            <div class="legacy-field-group">
+                                <label class="{{ attribute.required ? 'legacy-label' : '' }}" for="{{ field }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</label>
+                                <input id="{{ field }}" name="{{ field }}" type="text" class="legacy-input" value="{{ value }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
 
                     <fieldset class="legacy-lists">
-                        <legend>General</legend>
-
-                        <p>
-                            {{ language_texts.strPleaseSelect|default('Please select the newsletters you want to sign up to:') }}
-                        </p>
-
-                        <div id="subscribe-lists" class="legacy-list-options">
+                        <legend>{{ language_texts.strPleaseSelect|default('Please select the newsletters you want to sign up to') }}</legend>
+                        <div class="legacy-list-options">
                             {% for list in lists %}
-                                <div class="list-item">
-                                    <input
-                                            type="checkbox"
-                                            id="list-{{ list.id }}"
-                                            name="lists[]"
-                                            value="{{ list.id }}"
-                                    >
-
-                                    <label for="list-{{ list.id }}">
-                                        <strong>{{ list.name }}</strong><br>
-                                        <span>{{ list.description }}</span>
-                                    </label>
-                                </div>
+                                <label class="legacy-list-option">
+                                    <input type="checkbox" name="lists[]" value="{{ list.id }}" {% if list.id in form_data.selected_lists %}checked{% endif %}>
+                                    <span>
+                                        <strong>{{ list.name }}</strong>
+                                        {% if list.description %}<br><span>{{ list.description }}</span>{% endif %}
+                                    </span>
+                                </label>
                             {% endfor %}
                         </div>
                     </fieldset>
 
-                    <button id="subscribe-action" type="submit" class="legacy-button">
-                        {{ language_texts.strSubmit|default('Subscribe to the selected newsletters') }}
-                    </button>
-                </form>
+                    <div style="display:none">
+                        <input type="text" name="VerificationCodeX" value="">
+                    </div>
 
-                <div id="subscribe-page-footer" class="legacy-html-text"></div>
-                <p id="subscribe-error" class="legacy-error hidden"></p>
-            </section>
-        </div>
+                    <button type="submit" class="legacy-button">{{ data['button']|default(language_texts.strSubmit|default('Subscribe')) }}</button>
+                </form>
+            {% endif %}
+
+            {% if data['footer'] is defined and data['footer'] is not empty %}
+                <div class="legacy-html-text">{{ data['footer']|raw }}</div>
+            {% endif %}
+        </section>
     </div>
 
     <style>
@@ -107,53 +172,21 @@
             font-family: Arial, Helvetica, sans-serif;
         }
 
-        .legacy-topbar {
-            background: #2d2d2d;
-            border-bottom: 1px solid #3e3e3e;
-            color: #9ea0a4;
-            font-size: 44px;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-        }
-
-        .legacy-topbar__inner {
-            margin: 0 auto;
-            max-width: 1040px;
-            padding: 10px 16px 6px;
-        }
-
         .legacy-page-shell {
             padding: 22px 14px 36px;
         }
 
         .legacy-card {
             background: #dcdcdc;
-            border: 3px solid #767676;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.34);
+            border: 2px solid #767676;
             margin: 0 auto;
-            max-width: 760px;
-            padding: 28px 24px;
-        }
-
-        .legacy-card__title {
-            color: #343434;
-            font-size: 18px;
-            margin: 0 0 12px;
-        }
-
-        .legacy-card__intro {
-            color: #555;
-            font-size: 13px;
-            line-height: 1.4;
-            margin: 0 0 16px;
-            min-height: 18px;
+            max-width: 780px;
+            padding: 24px;
         }
 
         .legacy-form {
             background: #e6e6e6;
             border: 1px solid #c8c8c8;
-            display: block;
             margin-bottom: 18px;
             padding: 14px;
         }
@@ -163,6 +196,13 @@
             font-size: 13px;
             line-height: 1.45;
             margin-bottom: 14px;
+        }
+
+        .legacy-required-note {
+            color: #be2f2f;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 10px 0 14px;
         }
 
         .legacy-field-group {
@@ -181,7 +221,7 @@
             border: 1px solid #bdbdbd;
             box-sizing: border-box;
             font-size: 13px;
-            max-width: 420px;
+            max-width: 460px;
             padding: 7px 8px;
             width: 100%;
         }
@@ -194,8 +234,8 @@
 
         .legacy-lists legend {
             color: #555;
-            font-size: 20px;
-            font-weight: 400;
+            font-size: 14px;
+            font-weight: 700;
             margin-bottom: 8px;
             padding: 0;
         }
@@ -207,10 +247,8 @@
         }
 
         .legacy-list-option {
-            align-items: center;
-            color: #383838;
-            display: inline-flex;
-            font-size: 13px;
+            align-items: flex-start;
+            display: flex;
             gap: 8px;
         }
 
@@ -223,20 +261,30 @@
             padding: 6px 10px;
         }
 
-        .legacy-muted {
-            color: #707070;
-            font-size: 12px;
-            margin: 0;
-        }
-
-        .legacy-error {
-            color: #aa2d2d;
+        .legacy-error-box {
+            background: #fbe9e9;
+            border: 1px solid #c93e3e;
+            color: #8c1f1f;
             font-size: 13px;
-            margin: 10px 0 0;
+            margin-bottom: 12px;
+            padding: 10px;
         }
 
-        .hidden {
-            display: none !important;
+        .legacy-error-box p {
+            margin: 0 0 6px;
+        }
+
+        .legacy-error-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .legacy-success {
+            background: #ebf7ea;
+            border: 1px solid #6ca56a;
+            color: #215f20;
+            font-size: 13px;
+            margin-bottom: 12px;
+            padding: 10px;
         }
     </style>
 {% endblock %}

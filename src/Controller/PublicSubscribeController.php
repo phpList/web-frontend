@@ -46,7 +46,7 @@ class PublicSubscribeController extends AbstractController
         ]);
     }
 
-    #[Route('/subscribe/{pageId}', name: 'public_subscribe', requirements: ['pageId' => '\d+'], methods: ['GET'])]
+    #[Route('/subscribe/{pageId}', name: 'public_subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
     public function show(Request $request, int $pageId): Response
     {
         try {
@@ -56,6 +56,7 @@ class PublicSubscribeController extends AbstractController
         }
 
         $page = $this->subscribePagesClient->getSubscribePage($pageId);
+        $isSubmitted = $request->isMethod('POST');
 
         $data = array_column($page->data, 'value', 'key');
         $htmlChoice = $this->normalizeHtmlChoice($data['htmlchoice'] ?? null);
@@ -79,77 +80,8 @@ class PublicSubscribeController extends AbstractController
         );
 
         $errorMessages = [];
-        $successMessage = null;
-        $successHtml = null;
 
-        $languageFile = $data['language_file'] ?? 'english.inc';
-        $languageTexts = $this->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
-
-        $data['header'] = str_replace(
-            '[ORGANISATION_NAME]',
-            $this->configProvider->getValue(ConfigOption::OrganisationName),
-            (string) ($data['header'] ?? '')
-        );
-
-        return $this->render('@PhpListFrontend/public/subscribe.html.twig', [
-            'page' => $page,
-            'page_id' => $pageId,
-            'api_token' => $request->getSession()->get('auth_token'),
-            'data' => $data,
-            'language_texts' => $languageTexts,
-            'lists' => $lists,
-            'attributes' => $attributes,
-            'form_data' => $formData,
-            'form_errors' => $errorMessages,
-            'success_message' => $successMessage,
-            'success_html' => $successHtml,
-            'is_submitted' => false,
-            'html_choice' => $htmlChoice,
-            'email_double_entry' => $emailDoubleEntry,
-            'admin' => $admin,
-            'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
-            'show_unsubscribe_link' => $this->showUnsubscribeLink,
-            'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
-        ]);
-    }
-
-    #[Route('/subscribe/{pageId}', name: 'public_subscribe_create', requirements: ['pageId' => '\d+'], methods: ['POST'])]
-    public function create(Request $request, int $pageId): Response
-    {
-        try {
-            $admin = $this->authClient->getSessionUser();
-        } catch (AuthenticationException $e) {
-            $admin = null;
-        }
-
-        $page = $this->subscribePagesClient->getSubscribePage($pageId);
-
-        $data = array_column($page->data, 'value', 'key');
-        $htmlChoice = $this->normalizeHtmlChoice($data['htmlchoice'] ?? null);
-        $emailDoubleEntry = isset($data['emaildoubleentry']) && strtolower((string) $data['emaildoubleentry']) === 'yes';
-
-        $availableListIds = $this->parseNumericIds($data['lists'] ?? '');
-        $lists = $this->loadPublicLists($availableListIds);
-        $availableListIds = array_map(
-            static fn ($list): int => (int) $list->id,
-            $lists
-        );
-
-        $attributes = $this->buildAttributeConfig($data);
-        $formData = $this->buildInitialFormData(
-            $request,
-            $emailDoubleEntry,
-            $htmlChoice,
-            $data,
-            $availableListIds,
-            $attributes
-        );
-
-        $errorMessages = [];
-        $successMessage = null;
-        $successHtml = null;
-
-        if ($request->isMethod('POST')) {
+        if ($isSubmitted) {
             $errorMessages = $this->validateFormData(
                 $formData,
                 $emailDoubleEntry,
@@ -162,6 +94,12 @@ class PublicSubscribeController extends AbstractController
                     $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
                     $successHtml = trim((string) ($data['thankyoupage'] ?? ''));
                     $successMessage = $this->lang($data, 'strEmailConfirmation', 'Subscription request accepted.');
+                    return $this->render('@PhpListFrontend/public/thank-you.html.twig', [
+                        'admin' => $admin,
+                        'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
+                        'success_message' => $successMessage,
+                        'success_html' => $successHtml,
+                    ]);
                 } catch (ValidationException $exception) {
                     $errorMessages[] = $exception->getMessage();
                 } catch (ApiException $exception) {
@@ -189,9 +127,7 @@ class PublicSubscribeController extends AbstractController
             'attributes' => $attributes,
             'form_data' => $formData,
             'form_errors' => $errorMessages,
-            'success_message' => $successMessage,
-            'success_html' => $successHtml,
-            'is_submitted' => $request->isMethod('POST'),
+            'is_submitted' => $isSubmitted,
             'html_choice' => $htmlChoice,
             'email_double_entry' => $emailDoubleEntry,
             'admin' => $admin,

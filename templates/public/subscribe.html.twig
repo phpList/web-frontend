@@ -24,14 +24,6 @@
                     {% endfor %}
                 </div>
             {% endif %}
-
-            {% if success_message %}
-                <div class="legacy-success">{{ success_message }}</div>
-            {% endif %}
-
-            {% if success_html %}
-                <div class="legacy-html-text">{{ success_html|raw }}</div>
-            {% else %}
                 <form method="post" action="{{ path('public_subscribe', {pageId: page_id}) }}" class="legacy-form" novalidate>
                     {% if admin is not null %}
                         <div class="adminmessage">

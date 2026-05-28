@@ -25,8 +25,8 @@ class SubscriptionService
     public function unsubscribe(int $listId, string $email): void
     {
         $this->subscriptionClient->deleteSubscription(
-            [$email],
-            $listId
+            emails: [$email],
+            listId: $listId
         );
     }
 
@@ -68,7 +68,11 @@ class SubscriptionService
 
         foreach ((array) ($formData['selected_lists'] ?? []) as $listId) {
             try {
-                $this->subscriptionClient->createSubscriptions([$email], (int) $listId, $autoConfirm);
+                $this->subscriptionClient->createSubscriptions(
+                    emails: [$email],
+                    listId: (int) $listId,
+                    autoConfirm: $autoConfirm
+                );
             } catch (ApiException $exception) {
                 if ($exception->getStatusCode() !== 409) {
                     throw $exception;
@@ -79,8 +83,8 @@ class SubscriptionService
         if ($subscriberId !== null) {
             if ($autoConfirm) {
                 $this->subscribersClient->updateSubscriber(
-                    $subscriberId,
-                    new UpdateSubscriberRequest(
+                    id: $subscriberId,
+                    request: new UpdateSubscriberRequest(
                         email: $email,
                         confirmed: true,
                         blacklisted: false,
@@ -90,7 +94,7 @@ class SubscriptionService
                 );
             }
 
-            $this->saveSubscriberAttributes($subscriberId, $formData, $attributes);
+            $this->saveSubscriberAttributes(subscriberId: $subscriberId, formData: $formData, attributes: $attributes);
         }
     }
 
@@ -118,16 +122,20 @@ class SubscriptionService
                 continue;
             }
 
-            $this->subscriberAttributesClient->setAttributeValue($subscriberId, $attributeId, $normalizedValue);
+            $this->subscriberAttributesClient->setAttributeValue(
+                subscriberId: $subscriberId,
+                definitionId: $attributeId,
+                value: $normalizedValue
+            );
         }
     }
 
     private function findSubscriberByEmail(string $email): ?Subscriber
     {
         $collection = $this->subscribersClient->getSubscribers(
-            new SubscribersFilterRequest(findColumn: 'email', findValue: $email),
-            null,
-            25
+            request: new SubscribersFilterRequest(findColumn: 'email', findValue: $email),
+            afterid: null,
+            limit: 25
         );
 
         foreach ($collection->items as $item) {

@@ -21,9 +21,7 @@
                 </div>
             {% endif %}
 
-            {% if success_message %}
-                <div class="legacy-success">{{ success_message }}</div>
-            {% endif %}
+            {{ language_texts.strEmailConfirmation }}
 
             {% if success_html %}
                 <div class="legacy-html-text">{{ success_html|raw }}</div>

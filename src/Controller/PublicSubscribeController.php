@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
-use PhpList\Core\Core\ApplicationStructure;
 use PhpList\Core\Domain\Configuration\Model\ConfigOption;
 use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
 use PhpList\RestApiClient\Client;
@@ -15,6 +14,7 @@ use PhpList\RestApiClient\Entity\PublicSubscriberList;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\ValidationException;
+use PhpList\WebFrontend\Service\LanguageService;
 use PhpList\WebFrontend\Service\SubscriptionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -31,6 +31,7 @@ class PublicSubscribeController extends AbstractController
         private readonly AuthClient $authClient,
         private readonly ConfigProvider $configProvider,
         private readonly SubscriptionService $subscriptionService,
+        private readonly LanguageService $languageService,
         #[Autowire('%app.show_unsubscribe_link%')]
         private readonly bool $showUnsubscribeLink = true,
     ) {
@@ -67,6 +68,9 @@ class PublicSubscribeController extends AbstractController
         } catch (AuthenticationException $e) {
             $admin = null;
         }
+
+        $languageFile = $data['language_file'] ?? 'english.inc';
+        $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
 
         $page = $this->subscribePagesClient->getSubscribePage($pageId);
         $isSubmitted = $request->isMethod('POST');
@@ -106,12 +110,12 @@ class PublicSubscribeController extends AbstractController
                 try {
                     $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
                     $successHtml = trim((string) ($data['thankyoupage'] ?? ''));
-                    $successMessage = $this->lang($data, 'strEmailConfirmation', 'Subscription request accepted.');
+
                     return $this->render('@PhpListFrontend/public/thank-you.html.twig', [
                         'admin' => $admin,
                         'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
-                        'success_message' => $successMessage,
                         'success_html' => $successHtml,
+                        'language_texts' => $languageTexts,
                     ]);
                 } catch (ValidationException $exception) {
                     $errorMessages[] = $exception->getMessage();
@@ -120,9 +124,6 @@ class PublicSubscribeController extends AbstractController
                 }
             }
         }
-
-        $languageFile = $data['language_file'] ?? 'english.inc';
-        $languageTexts = $this->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
 
         $data['header'] = str_replace(
             '[ORGANISATION_NAME]',
@@ -626,62 +627,5 @@ class PublicSubscribeController extends AbstractController
         }
 
         return in_array(strtolower(trim((string) $value)), ['1', 'true', 'yes', 'on'], true);
-    }
-
-    private function lang(array $data, string $key, string $fallback): string
-    {
-        $languageFile = $data['language_file'] ?? 'english.inc';
-        $languageTexts = $this->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
-        $value = $languageTexts[$key] ?? $fallback;
-        return is_string($value) && $value !== '' ? $value : $fallback;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function loadLanguageTexts(?string $languageFile): array
-    {
-        $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
-        $languageDir = $applicationRoot . '/public/lists/texts';
-
-        if (!is_dir($languageDir)) {
-            return [];
-        }
-
-        $selectedFile = $this->sanitizeLanguageFile($languageFile) ?? 'english.inc';
-        $languagePath = $languageDir . '/' . $selectedFile;
-
-        if (!is_file($languagePath)) {
-            $languagePath = $languageDir . '/english.inc';
-        }
-
-        if (!is_file($languagePath)) {
-            return [];
-        }
-
-        $loader = static function (string $path): array {
-            require $path;
-
-            return array_map(function ($value) {
-                return $value;
-            }, get_defined_vars());
-        };
-
-        return $loader($languagePath);
-    }
-
-    private function sanitizeLanguageFile(?string $languageFile): ?string
-    {
-        if (!is_string($languageFile) || $languageFile === '') {
-            return null;
-        }
-
-        $languageFile = basename($languageFile);
-
-        if (!preg_match('/^[A-Za-z0-9._-]+\.inc$/', $languageFile)) {
-            return null;
-        }
-
-        return $languageFile;
     }
 }

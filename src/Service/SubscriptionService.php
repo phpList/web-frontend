@@ -45,40 +45,17 @@ class SubscriptionService
             $autoConfirm = true;
         }
 
-        try {
-            $subscriber = $this->subscribersClient->createSubscriber(
-                new CreateSubscriberRequest(
-                    email: $email,
-                    requestConfirmation: $requestConfirmation,
-                    htmlEmail: (bool) ($formData['htmlemail'] ?? true),
-                )
-            );
-            $subscriberId = $subscriber->id > 0 ? $subscriber->id : null;
-        } catch (ApiException $exception) {
-            if ($exception->getStatusCode() !== 409) {
-                throw $exception;
-            }
+        $subscriberId = $this->getOrCreateSubscriber(
+            email: $email,
+            requestConfirmation: $requestConfirmation,
+            htmlEmail: (bool) ($formData['htmlemail'] ?? true),
+        );
 
-            $subscriber = $this->findSubscriberByEmail($email);
-            if ($subscriber === null) {
-                throw $exception;
-            }
-            $subscriberId = $subscriber->id;
-        }
-
-        foreach ((array) ($formData['selected_lists'] ?? []) as $listId) {
-            try {
-                $this->subscriptionClient->createSubscriptions(
-                    emails: [$email],
-                    listId: (int) $listId,
-                    autoConfirm: $autoConfirm
-                );
-            } catch (ApiException $exception) {
-                if ($exception->getStatusCode() !== 409) {
-                    throw $exception;
-                }
-            }
-        }
+        $this->subscribeToLists(
+            email: $email,
+            selectedLists: $formData['selected_lists'] ?? [],
+            autoConfirm: $autoConfirm
+        );
 
         if ($subscriberId !== null) {
             if ($autoConfirm) {
@@ -133,9 +110,7 @@ class SubscriptionService
     private function findSubscriberByEmail(string $email): ?Subscriber
     {
         $collection = $this->subscribersClient->getSubscribers(
-            request: new SubscribersFilterRequest(findColumn: 'email', findValue: $email),
-            afterid: null,
-            limit: 25
+            request: new SubscribersFilterRequest(findColumn: 'email', findValue: $email)
         );
 
         foreach ($collection->items as $item) {
@@ -145,5 +120,48 @@ class SubscriptionService
         }
 
         return null;
+    }
+
+    private function getOrCreateSubscriber(string $email, bool $requestConfirmation, bool $htmlEmail): ?int
+    {
+        try {
+            $subscriber = $this->subscribersClient->createSubscriber(
+                new CreateSubscriberRequest(
+                    email: $email,
+                    requestConfirmation: $requestConfirmation,
+                    htmlEmail: $htmlEmail
+                )
+            );
+            $subscriberId = $subscriber->id > 0 ? $subscriber->id : null;
+        } catch (ApiException $exception) {
+            if ($exception->getStatusCode() !== 409) {
+                throw $exception;
+            }
+
+            $subscriber = $this->findSubscriberByEmail($email);
+            if ($subscriber === null) {
+                throw $exception;
+            }
+            $subscriberId = $subscriber->id;
+        }
+
+        return $subscriberId;
+    }
+
+    private function subscribeToLists(string $email, array $selectedLists, bool $autoConfirm)
+    {
+        foreach ($selectedLists as $listId) {
+            try {
+                $this->subscriptionClient->createSubscriptions(
+                    emails: [$email],
+                    listId: (int) $listId,
+                    autoConfirm: $autoConfirm
+                );
+            } catch (ApiException $exception) {
+                if ($exception->getStatusCode() !== 409) {
+                    throw $exception;
+                }
+            }
+        }
     }
 }

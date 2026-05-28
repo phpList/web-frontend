@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class PublicPagesController extends AbstractController
 {
     #[Route('/', name: 'pages', methods: ['GET'])]
-    #[Route('', name: 'pages_no_slash', methods: ['GET'])]
     public function index(Request $request): Response
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
@@ -24,7 +23,6 @@ class PublicPagesController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['GET'])]
-    #[Route('/create/', name: 'create_with_slash', methods: ['GET'])]
     public function create(Request $request): Response
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
@@ -35,7 +33,6 @@ class PublicPagesController extends AbstractController
     }
 
     #[Route('/{pageId}/edit', name: 'edit', methods: ['GET'])]
-    #[Route('/{pageId}/edit/', name: 'edit_with_slash', methods: ['GET'])]
     public function edit(Request $request, int $pageId): Response
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [

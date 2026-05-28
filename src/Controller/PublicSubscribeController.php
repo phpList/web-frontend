@@ -10,19 +10,14 @@ use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
 use PhpList\RestApiClient\Client;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\ListClient;
-use PhpList\RestApiClient\Endpoint\SubscriberAttributesClient;
-use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
-use PhpList\RestApiClient\Endpoint\SubscriptionClient;
 use PhpList\RestApiClient\Entity\PublicSubscriberList;
-use PhpList\RestApiClient\Entity\Subscriber;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\ValidationException;
-use PhpList\RestApiClient\Request\Subscriber\CreateSubscriberRequest;
-use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
-use PhpList\RestApiClient\Request\Subscriber\UpdateSubscriberRequest;
+use PhpList\WebFrontend\Service\SubscriptionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,16 +27,26 @@ class PublicSubscribeController extends AbstractController
     public function __construct(
         private readonly SubscribePagesClient $subscribePagesClient,
         private readonly ListClient $listClient,
-        private readonly SubscriptionClient $subscriptionClient,
-        private readonly SubscribersClient $subscribersClient,
-        private readonly SubscriberAttributesClient $subscriberAttributesClient,
         private readonly Client $apiClient,
         private readonly AuthClient $authClient,
         private readonly ConfigProvider $configProvider,
+        private readonly SubscriptionService $subscriptionService,
+        #[Autowire('%app.show_unsubscribe_link%')]
+        private readonly bool $showUnsubscribeLink = true,
     ) {
     }
 
-    #[Route('/subscribe/{pageId}', name: 'public_subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/subscribe/{pageId}', name: 'public_unsubscribe', methods: ['DELETE'])]
+    public function delete(Request $request): Response
+    {
+        return $this->render('@PhpListFrontend/spa.html.twig', [
+            'page' => 'Unsubscribe Page',
+            'api_token' => $request->getSession()->get('auth_token'),
+            'api_base_url' => $this->getParameter('api_base_url'),
+        ]);
+    }
+
+    #[Route('/subscribe/{pageId}', name: 'public_subscribe', requirements: ['pageId' => '\d+'], methods: ['GET'])]
     public function show(Request $request, int $pageId): Response
     {
         try {
@@ -51,7 +56,6 @@ class PublicSubscribeController extends AbstractController
         }
 
         $page = $this->subscribePagesClient->getSubscribePage($pageId);
-        $isSubmitted = $request->isMethod('POST');
 
         $data = array_column($page->data, 'value', 'key');
         $htmlChoice = $this->normalizeHtmlChoice($data['htmlchoice'] ?? null);
@@ -78,7 +82,74 @@ class PublicSubscribeController extends AbstractController
         $successMessage = null;
         $successHtml = null;
 
-        if ($isSubmitted) {
+        $languageFile = $data['language_file'] ?? 'english.inc';
+        $languageTexts = $this->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
+
+        $data['header'] = str_replace(
+            '[ORGANISATION_NAME]',
+            $this->configProvider->getValue(ConfigOption::OrganisationName),
+            (string) ($data['header'] ?? '')
+        );
+
+        return $this->render('@PhpListFrontend/public/subscribe.html.twig', [
+            'page' => $page,
+            'page_id' => $pageId,
+            'api_token' => $request->getSession()->get('auth_token'),
+            'data' => $data,
+            'language_texts' => $languageTexts,
+            'lists' => $lists,
+            'attributes' => $attributes,
+            'form_data' => $formData,
+            'form_errors' => $errorMessages,
+            'success_message' => $successMessage,
+            'success_html' => $successHtml,
+            'is_submitted' => false,
+            'html_choice' => $htmlChoice,
+            'email_double_entry' => $emailDoubleEntry,
+            'admin' => $admin,
+            'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
+            'show_unsubscribe_link' => $this->showUnsubscribeLink,
+            'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
+        ]);
+    }
+
+    #[Route('/subscribe/{pageId}', name: 'public_subscribe_create', requirements: ['pageId' => '\d+'], methods: ['POST'])]
+    public function create(Request $request, int $pageId): Response
+    {
+        try {
+            $admin = $this->authClient->getSessionUser();
+        } catch (AuthenticationException $e) {
+            $admin = null;
+        }
+
+        $page = $this->subscribePagesClient->getSubscribePage($pageId);
+
+        $data = array_column($page->data, 'value', 'key');
+        $htmlChoice = $this->normalizeHtmlChoice($data['htmlchoice'] ?? null);
+        $emailDoubleEntry = isset($data['emaildoubleentry']) && strtolower((string) $data['emaildoubleentry']) === 'yes';
+
+        $availableListIds = $this->parseNumericIds($data['lists'] ?? '');
+        $lists = $this->loadPublicLists($availableListIds);
+        $availableListIds = array_map(
+            static fn ($list): int => (int) $list->id,
+            $lists
+        );
+
+        $attributes = $this->buildAttributeConfig($data);
+        $formData = $this->buildInitialFormData(
+            $request,
+            $emailDoubleEntry,
+            $htmlChoice,
+            $data,
+            $availableListIds,
+            $attributes
+        );
+
+        $errorMessages = [];
+        $successMessage = null;
+        $successHtml = null;
+
+        if ($request->isMethod('POST')) {
             $errorMessages = $this->validateFormData(
                 $formData,
                 $emailDoubleEntry,
@@ -88,7 +159,7 @@ class PublicSubscribeController extends AbstractController
 
             if ($errorMessages === []) {
                 try {
-                    $this->subscribe($formData, $attributes, $admin !== null);
+                    $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
                     $successHtml = trim((string) ($data['thankyoupage'] ?? ''));
                     $successMessage = $this->lang($data, 'strEmailConfirmation', 'Subscription request accepted.');
                 } catch (ValidationException $exception) {
@@ -120,11 +191,13 @@ class PublicSubscribeController extends AbstractController
             'form_errors' => $errorMessages,
             'success_message' => $successMessage,
             'success_html' => $successHtml,
-            'is_submitted' => $isSubmitted,
+            'is_submitted' => $request->isMethod('POST'),
             'html_choice' => $htmlChoice,
             'email_double_entry' => $emailDoubleEntry,
             'admin' => $admin,
             'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
+            'show_unsubscribe_link' => $this->showUnsubscribeLink,
+            'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
         ]);
     }
 
@@ -497,116 +570,6 @@ class PublicSubscribeController extends AbstractController
         }
 
         return array_values(array_unique($errors));
-    }
-
-    /**
-     * @param array<string,mixed> $formData
-     * @param list<array<string,mixed>> $attributes
-     */
-    private function subscribe(array $formData, array $attributes, bool $isAdmin): void
-    {
-        $email = (string) $formData['email'];
-        $requestConfirmation = true;
-        $autoConfirm = false;
-        if ($isAdmin && ($formData['make_confirmed'] ?? '0') === '1') {
-            $requestConfirmation = false;
-            $autoConfirm = true;
-        }
-
-        $subscriber = null;
-        $subscriberId = null;
-
-        try {
-            $subscriber = $this->subscribersClient->createSubscriber(
-                new CreateSubscriberRequest(
-                    email: $email,
-                    requestConfirmation: $requestConfirmation,
-                    htmlEmail: (bool) ($formData['htmlemail'] ?? true),
-                )
-            );
-            $subscriberId = $subscriber->id > 0 ? $subscriber->id : null;
-        } catch (ApiException $exception) {
-            if ($exception->getStatusCode() !== 409) {
-                throw $exception;
-            }
-
-            $subscriber = $this->findSubscriberByEmail($email);
-            if ($subscriber === null) {
-                throw $exception;
-            }
-            $subscriberId = $subscriber->id;
-        }
-
-        foreach ((array) ($formData['selected_lists'] ?? []) as $listId) {
-            try {
-                $this->subscriptionClient->createSubscriptions([$email], (int) $listId, $autoConfirm);
-            } catch (ApiException $exception) {
-                if ($exception->getStatusCode() !== 409) {
-                    throw $exception;
-                }
-            }
-        }
-
-        if ($subscriberId !== null) {
-            if ($autoConfirm) {
-                $this->subscribersClient->updateSubscriber(
-                    $subscriberId,
-                    new UpdateSubscriberRequest(
-                        email: $email,
-                        confirmed: true,
-                        blacklisted: false,
-                        htmlEmail: (bool) ($formData['htmlemail'] ?? true),
-                        disabled: false,
-                    )
-                );
-            }
-
-            $this->saveSubscriberAttributes($subscriberId, $formData, $attributes);
-        }
-    }
-
-    /**
-     * @param list<array<string,mixed>> $attributes
-     */
-    private function saveSubscriberAttributes(int $subscriberId, array $formData, array $attributes): void
-    {
-        $attributeValues = is_array($formData['attributes'] ?? null) ? $formData['attributes'] : [];
-        foreach ($attributes as $attribute) {
-            $attributeId = (int) $attribute['id'];
-            $value = $attributeValues[$attributeId] ?? null;
-            $type = (string) ($attribute['type'] ?? 'textline');
-
-            if ($type === 'checkbox') {
-                $normalizedValue = $value ? 'on' : '';
-            } elseif ($type === 'checkboxgroup') {
-                $normalizedValue = is_array($value) ? implode(',', array_map('strval', $value)) : '';
-            } else {
-                $normalizedValue = trim((string) $value);
-            }
-
-            if ($normalizedValue === '' && ! ($attribute['required'] ?? false)) {
-                continue;
-            }
-
-            $this->subscriberAttributesClient->setAttributeValue($subscriberId, $attributeId, $normalizedValue);
-        }
-    }
-
-    private function findSubscriberByEmail(string $email): ?Subscriber
-    {
-        $collection = $this->subscribersClient->getSubscribers(
-            new SubscribersFilterRequest(findColumn: 'email', findValue: $email),
-            null,
-            25
-        );
-
-        foreach ($collection->items as $item) {
-            if (strcasecmp((string) $item->email, $email) === 0) {
-                return $item;
-            }
-        }
-
-        return null;
     }
 
     /**

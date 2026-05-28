@@ -22,6 +22,14 @@ class SubscriptionService
     ) {
     }
 
+    public function unsubscribe(int $listId, string $email): void
+    {
+        $this->subscriptionClient->deleteSubscription(
+            [$email],
+            $listId
+        );
+    }
+
     /**
      * @param array<string,mixed> $formData
      * @param list<array<string,mixed>> $attributes

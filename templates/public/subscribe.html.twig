@@ -23,7 +23,7 @@
                         <p>{{ error }}</p>
                     {% endfor %}
                 </div>
-            {% endif %}
+            {% else %}
                 <form method="post" action="{{ path('public_subscribe', {pageId: page_id}) }}" class="legacy-form" novalidate>
                     {% if admin is not null %}
                         <div class="adminmessage">

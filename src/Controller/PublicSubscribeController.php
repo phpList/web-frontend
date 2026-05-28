@@ -36,10 +36,23 @@ class PublicSubscribeController extends AbstractController
     ) {
     }
 
-    #[Route('/subscribe/{pageId}', name: 'public_unsubscribe', methods: ['DELETE'])]
-    public function delete(Request $request): Response
+    #[Route('/unsubscribe/{pageId}', name: 'public_unsubscribe', methods: ['GET', 'POST'])]
+    public function delete(Request $request, int $pageId): Response
     {
-        return $this->render('@PhpListFrontend/spa.html.twig', [
+        if ($request->isMethod('POST')) {
+            if ($request->query->has('email')) {
+                $email = trim((string) $request->query->get('email', ''));
+            }
+
+            $page = $this->subscribePagesClient->getSubscribePage($pageId);
+            $availableListIds = $this->parseNumericIds($page->data['lists'] ?? '');
+
+            foreach ($availableListIds as $listId) {
+                $this->subscriptionService->unsubscribe($listId, $email);
+            }
+        }
+
+        return $this->render('@PhpListFrontend/public/unsubscribe.html.twig', [
             'page' => 'Unsubscribe Page',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),

@@ -5,9 +5,6 @@
 {% block body %}
     <div class="legacy-page-shell">
         <section class="legacy-card">
-            {% if data['header'] is defined and data['header'] is not empty %}
-                <div class="legacy-html-text">{{ data['header']|raw }}</div>
-            {% endif %}
 
             {% if data['intro'] is defined and data['intro'] is not empty %}
                 <div class="legacy-html-text">{{ data['intro']|raw }}</div>
@@ -27,11 +24,6 @@
                 <div class="legacy-html-text">{{ success_html|raw }}</div>
             {% else %}
 
-            {% endif %}
-
-            {% if data['footer'] is defined and data['footer'] is not empty %}
-                <div class="legacy-html-text">{{ data['footer']|raw }}</div>
-            {% endif %}
         </section>
     </div>
 

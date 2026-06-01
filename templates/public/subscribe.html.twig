@@ -159,10 +159,6 @@
                     <a href="{{ unsubscribe_link }}">{{ language_texts.strUnsubscribe|default('Unsubscribe') }}</a>
                 {% endif %}
             </form>
-
-            {% if data['footer'] is defined and data['footer'] is not empty %}
-                <div class="legacy-html-text">{{ data['footer']|raw }}</div>
-            {% endif %}
         </section>
     </div>
 

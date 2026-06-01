@@ -1,0 +1,346 @@
+body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--primary-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+#container {
+    min-width: 300px;
+    margin: 0 auto;
+}
+
+#header {
+    background: var(--primary-text);
+    box-sizing: border-box;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+}
+
+#logo {
+    color: var(--logo-color);
+    margin-top: 0px;
+    font-size: 48px;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+#logo a {
+    color: var(--logo-color);
+    text-decoration: none;
+    font-size: 2rem;
+}
+
+#wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#mainContent {
+    min-height: 500px;
+}
+
+#footer {
+    padding: 20px;
+    border-top: 1px solid var(--footer-border);
+}
+
+.inline-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.inline-field .legacy-label {
+    margin: 0;
+    white-space: nowrap;
+    min-width: 80px; /* adjust as needed */
+}
+
+.inline-field .legacy-input {
+    flex: 1;
+}
+
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-inline .legacy-label {
+    margin: 0;
+}
+
+.checkbox-inline input[type="checkbox"] {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.checkbox-field label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 15px;
+    margin-bottom: 0;
+}
+
+.checkbox-field input[type="checkbox"] {
+    margin: 0;
+}
+
+.legacy-topbar {
+    background: linear-gradient(90deg, var(--topbar-gradient-start) 0%, var(--topbar-gradient-middle) 55%, var(--topbar-gradient-end) 100%);
+    border-bottom: 1px solid var(--topbar-border);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    margin: 10px 0 0;
+    min-height: 68px;
+}
+
+.legacy-topbar-inner {
+    box-sizing: border-box;
+    color: #e0e7ff;
+    font-size: 33px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 auto;
+    max-width: 930px;
+    padding: 6px 18px;
+}
+
+.legacy-page-shell {
+    padding: 40px 16px 60px;
+}
+
+.legacy-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 52px 30px 36px;
+}
+
+.legacy-form {
+    margin: 0;
+}
+
+.legacy-html-text {
+    color: var(--primary-text);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.legacy-required-note {
+    color: var(--required-color);
+    font-size: 12px;
+    font-weight: 400;
+    margin: 10px 0 14px;
+    text-transform: uppercase;
+}
+
+.legacy-field-group {
+    margin-bottom: 18px;
+}
+
+.legacy-label {
+    color: var(--primary-text);
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.legacy-input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    box-sizing: border-box;
+    color: var(--primary-text);
+    font-size: 13px;
+    max-width: none;
+    padding: 7px 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+}
+
+.legacy-input:focus {
+    outline: none;
+    border-color: #543ff6;
+    box-shadow: 0 0 0 3px rgba(84, 63, 246, 0.12);
+}
+
+.legacy-field-frame {
+    background: var(--field-frame-bg);
+    border: 1px solid var(--field-frame-border);
+    border-radius: 8px;
+    margin: 14px 0 12px;
+    padding: 10px;
+}
+
+.legacy-field-row {
+    align-items: center;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 220px minmax(0, 1fr);
+    margin-bottom: 12px;
+}
+
+.legacy-field-row .legacy-label {
+    margin: 0;
+}
+
+.legacy-option-label,
+.legacy-list-option,
+.legacy-check-label {
+    color: var(--primary-text);
+    font-size: 13px;
+}
+
+.legacy-lists {
+    border: 0;
+    margin: 16px 0;
+    padding: 0;
+}
+
+.legacy-lists legend {
+    color: var(--primary-text);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding: 0;
+}
+
+.legacy-list-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legacy-list-option {
+    align-items: flex-start;
+    display: flex;
+    gap: 8px;
+}
+
+.legacy-actions {
+    align-items: center;
+    display: flex;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.legacy-button {
+    background: #543ff6;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 8px 16px;
+    transition: background-color 0.15s;
+}
+
+.legacy-button:hover {
+    background: #303F9F;
+}
+
+.adminmessage {
+    background: var(--page-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    color: var(--primary-text);
+    font-size: 12px;
+    margin-bottom: 14px;
+    padding: 14px 14px 12px;
+}
+
+.adminmessage p {
+    margin: 0 0 8px;
+}
+
+.adminmessage p:last-child {
+    margin-bottom: 0;
+}
+
+.adminmessage .button {
+    background: #543ff6;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    color: #fff;
+    display: inline-block;
+    padding: 4px 8px;
+    text-decoration: none;
+}
+
+.legacy-confirmation {
+    color: var(--primary-text);
+    font-size: 13px;
+    margin: 10px 0 16px;
+}
+
+.legacy-powered-by {
+    margin-top: 26px;
+    text-align: center;
+}
+
+.legacy-powered-by img {
+    display: inline-block;
+}
+
+.legacy-error-box {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    border-radius: 6px;
+    color: var(--error-text);
+    font-size: 13px;
+    margin-bottom: 12px;
+    padding: 10px;
+}
+
+.legacy-error-box p {
+    margin: 0 0 6px;
+}
+
+.legacy-error-box p:last-child {
+    margin-bottom: 0;
+}
+
+.legacy-success {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    border-radius: 6px;
+    color: var(--success-text);
+    font-size: 13px;
+    margin-bottom: 12px;
+    padding: 10px;
+}
+
+.legacy-hidden {
+    display: none;
+}
+
+input[type="checkbox"] {
+    accent-color: var(--topbar-gradient-end);
+}
+
+@media (max-width: 720px) {
+    .legacy-topbar-inner {
+        font-size: 34px;
+    }
+
+    .legacy-card {
+        padding: 28px 16px;
+    }
+
+    .legacy-field-row {
+        gap: 6px;
+        grid-template-columns: 1fr;
+    }
+}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
+use PhpList\Core\Core\ApplicationStructure;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
 use PhpList\RestApiClient\Entity\Administrator;
@@ -70,6 +71,13 @@ class PublicSubscribeController extends BaseController
             'success_html' => $successHtml,
             'header' => $pageData['header'],
         ]);
+    }
+
+    #[Route('/subscribe/styles/{fileName}', name: 'subscribe_styles')]
+    public function getStylesheets(string $fileName): Response
+    {
+        $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
+        return $this->file($applicationRoot . '/public/build/' . $fileName);
     }
 
     #[Route('/subscribe/{pageId}', name: 'subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]

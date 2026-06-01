@@ -38,3 +38,6 @@ services:
       $projectDir: '%kernel.project_dir%'
     tags:
       - { name: translation.loader, alias: phplist }
+
+  PhpList\WebFrontend\Twig\HtmlCleanupExtension:
+    tags: [ 'twig.extension' ]

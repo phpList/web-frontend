@@ -1,5 +1,7 @@
 {% extends '@PhpListFrontend/base.html.twig' %}
 
+{% block head %} {{ header|raw }} {% endblock %}
+
 {% block title %}{{ data['title']|default(language_texts.strSubscribeTitle|default('Subscribe')) }}{% endblock %}
 
 {% block body %}
@@ -13,20 +15,12 @@
                 <div class="legacy-html-text">{{ data['intro']|raw }}</div>
             {% endif %}
 
-            <div class="legacy-required-note">
-                * {{ language_texts.strRequired|default('required fields are marked red') }}
-            </div>
-
             {% if form_errors is not empty %}
                 <div class="legacy-error-box">
                     {% for error in form_errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 </div>
-            {% endif %}
-
-            {% if success_message %}
-                <div class="legacy-success">{{ success_message }}</div>
             {% endif %}
 
             {% if success_html %}

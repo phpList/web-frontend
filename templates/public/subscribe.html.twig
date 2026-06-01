@@ -1,5 +1,7 @@
 {% extends '@PhpListFrontend/base.html.twig' %}
 
+{% block head %} {{ header|raw }} {% endblock %}
+
 {% block title %}{{ data['title']|default(language_texts.strSubscribeTitle|default('Subscribe')) }}{% endblock %}
 
 {% block body %}

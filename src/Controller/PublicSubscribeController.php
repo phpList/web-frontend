@@ -8,6 +8,7 @@ use PhpList\Core\Domain\Configuration\Model\ConfigOption;
 use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
+use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\ValidationException;
 use PhpList\WebFrontend\Service\LanguageService;
@@ -41,6 +42,15 @@ class PublicSubscribeController extends BaseController
     #[Route('/unsubscribe/{pageId}', name: 'unsubscribe', methods: ['GET', 'POST'])]
     public function delete(Request $request, int $pageId): Response
     {
+        $page = $this->subscribePagesClient->getSubscribePage($pageId);
+        $pageData = array_column($page->data, 'value', 'key');
+        $pageData['header'] = str_replace(
+            '[ORGANISATION_NAME]',
+            $this->configProvider->getValue(ConfigOption::OrganisationName),
+            (string) ($pageData['header'] ?? '')
+        );
+
+        $successHtml = null;
         if ($request->isMethod('POST')) {
             $email = trim((string) $request->request->get('email'));
 
@@ -48,19 +58,25 @@ class PublicSubscribeController extends BaseController
                 throw $this->createNotFoundException('Invalid email address.');
             }
 
-            $page = $this->subscribePagesClient->getSubscribePage($pageId);
-            $availableListIds = $this->listSelectionService->parseAvailableListIds($page->data['lists'] ?? '');
+            $availableListIds = $this->listSelectionService->parseAvailableListIds($pageData['lists'] ?? '');
 
             foreach ($availableListIds as $listId) {
                 $this->subscriptionService->unsubscribe($listId, $email);
             }
+
+            $languageFile = $pageData['language_file'] ?? 'english.inc';
+            $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
+
+            $successHtml = $languageTexts['strUnsubscribeDone'] ?? 'You have been unsubscribed successfully.';
         }
 
         return $this->render('@PhpListFrontend/public/unsubscribe.html.twig', [
             'page' => 'Unsubscribe Page',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),
-            'page_id' => $pageId
+            'page_id' => $pageId,
+            'success_html' => $successHtml,
+            'header' => $pageData['header'],
         ]);
     }
 
@@ -145,13 +161,14 @@ class PublicSubscribeController extends BaseController
             'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
             'show_unsubscribe_link' => $this->showUnsubscribeLink,
             'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
+            'header' => $data['header'],
         ]);
     }
 
     private function subscribeAndRender(
         array $formData,
         array $attributes,
-        ?array $admin = null,
+        ?Administrator $admin = null,
         int $pageId = 0,
         array $data = [],
         array $languageTexts = []

@@ -28,50 +28,65 @@ class PublicSubscribeFormBuilder
      */
     public function buildAttributeConfig(array $pageData): array
     {
-        $rawAttributes = $this->loadRawAttributes();
-        $selectedIds = $this->formDataMapper->parseNumericIds((string) ($pageData['attributes'] ?? ''));
-        $selectedIdLookup = array_fill_keys($selectedIds, true);
+        $selectedIds = $this->formDataMapper->parseNumericIds(
+            (string) ($pageData['attributes'] ?? '')
+        );
+
+        $selectedLookup = array_fill_keys($selectedIds, true);
         $overrides = $this->loadAttributeOverrides($pageData);
+
         $attributes = [];
 
-        /** @var SubscriberAttributeDefinition $attribute */
-        foreach ($rawAttributes as $attribute) {
-            $hasSelection = $selectedIds !== [];
-            $isSelected = isset($selectedIdLookup[$attribute->id]);
-            $overrideUse = $overrides['use'][$attribute->id] ?? null;
-
-            if ($overrideUse !== null) {
-                $include = (bool) $overrideUse;
-            } else {
-                $include = $hasSelection ? $isSelected : false;
-            }
-
-            if (!$include) {
+        foreach ($this->loadRawAttributes() as $attribute) {
+            if (!$this->shouldIncludeAttribute($attribute, $selectedIds, $selectedLookup, $overrides)) {
                 continue;
             }
 
-            $required = $overrides['required'][$attribute->id] ?? (bool) ($attribute->required ?? false);
-            $defaultValue = $overrides['default'][$attribute->id] ?? (string) ($attribute->de->default_value ?? '');
-            $listOrder = $overrides['order'][$attribute->id] ?? (int) ($attribute->listOrder);
-
-            $attributes[] = [
-                'id' => $attribute->id,
-                'name' => (string) ($attribute->name ?? ('Attribute ' . $attribute->id)),
-                'type' => $attribute->type,
-                'required' => (bool) $required,
-                'default_value' => $defaultValue,
-                'list_order' => $listOrder,
-                'options' => $this->normalizeAttributeOptions($attribute->options ?? []),
-            ];
+            $attributes[] = $this->mapAttributeConfig($attribute, $overrides);
         }
 
         usort(
             $attributes,
             static fn (array $left, array $right): int =>
-                [$left['list_order'], $left['id']] <=> [$right['list_order'], $right['id']]
+                [$left['list_order'], $left['id']]
+                <=> [$right['list_order'], $right['id']]
         );
 
         return $attributes;
+    }
+
+    private function shouldIncludeAttribute(
+        SubscriberAttributeDefinition $attribute,
+        array $selectedIds,
+        array $selectedLookup,
+        array $overrides
+    ): bool {
+        $overrideUse = $overrides['use'][$attribute->id] ?? null;
+
+        if ($overrideUse !== null) {
+            return (bool) $overrideUse;
+        }
+
+        return $selectedIds !== []
+            && isset($selectedLookup[$attribute->id]);
+    }
+
+    private function mapAttributeConfig(
+        SubscriberAttributeDefinition $attribute,
+        array $overrides
+    ): array {
+        return [
+            'id' => $attribute->id,
+            'name' => (string) ($attribute->name ?? ('Attribute ' . $attribute->id)),
+            'type' => $attribute->type,
+            'required' => $overrides['required'][$attribute->id]
+                ?? (bool) ($attribute->required ?? false),
+            'default_value' => $overrides['default'][$attribute->id]
+                ?? (string) ($attribute->de->default_value ?? ''),
+            'list_order' => $overrides['order'][$attribute->id]
+                ?? (int) $attribute->listOrder,
+            'options' => $this->normalizeAttributeOptions($attribute->options ?? []),
+        ];
     }
 
     /**

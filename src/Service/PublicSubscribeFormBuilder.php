@@ -47,9 +47,9 @@ class PublicSubscribeFormBuilder
 
         usort(
             $attributes,
-            static fn (array $left, array $right): int =>
-                [$left['list_order'], $left['id']]
-                <=> [$right['list_order'], $right['id']]
+            static fn (array $right, array $left): int =>
+                [$left['type'], $left['id']]
+                <=> [$right['type'], $right['id']]
         );
 
         return $attributes;

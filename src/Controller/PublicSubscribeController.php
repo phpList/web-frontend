@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
-use PhpList\Core\Domain\Configuration\Model\ConfigOption;
-use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
 use PhpList\RestApiClient\Entity\Administrator;
@@ -27,7 +25,6 @@ class PublicSubscribeController extends BaseController
     public function __construct(
         private readonly SubscribePagesClient $subscribePagesClient,
         protected AuthClient $authClient,
-        private readonly ConfigProvider $configProvider,
         private readonly SubscriptionService $subscriptionService,
         private readonly LanguageService $languageService,
         private readonly ListSelectionService $listSelectionService,
@@ -42,13 +39,8 @@ class PublicSubscribeController extends BaseController
     #[Route('/unsubscribe/{pageId}', name: 'unsubscribe', methods: ['GET', 'POST'])]
     public function delete(Request $request, int $pageId): Response
     {
-        $page = $this->subscribePagesClient->getSubscribePage($pageId);
-        $pageData = array_column($page->data, 'value', 'key');
-        $pageData['header'] = str_replace(
-            '[ORGANISATION_NAME]',
-            $this->configProvider->getValue(ConfigOption::OrganisationName),
-            (string) ($pageData['header'] ?? '')
-        );
+        $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
+        $pageData = $page->data;
 
         $successHtml = null;
         if ($request->isMethod('POST')) {
@@ -84,10 +76,9 @@ class PublicSubscribeController extends BaseController
     public function show(Request $request, int $pageId): Response
     {
         $admin = $this->getAdmin();
-        $page = $this->subscribePagesClient->getSubscribePage($pageId);
+        $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
+        $data = $page->data;
         $isSubmitted = $request->isMethod('POST');
-
-        $data = array_column($page->data, 'value', 'key');
 
         $languageFile = $data['language_file'] ?? 'english.inc';
         $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
@@ -137,12 +128,6 @@ class PublicSubscribeController extends BaseController
                 }
             }
         }
-
-        $data['header'] = str_replace(
-            '[ORGANISATION_NAME]',
-            $this->configProvider->getValue(ConfigOption::OrganisationName),
-            (string) ($data['header'] ?? '')
-        );
 
         return $this->render('@PhpListFrontend/public/subscribe.html.twig', [
             'page' => $page,

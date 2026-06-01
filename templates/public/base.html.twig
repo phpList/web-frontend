@@ -11,11 +11,9 @@
         <script src="{{ asset('build/runtime.js', 'phplist_web_frontend') }}" defer></script>
         <script src="{{ asset('build/app.js', 'phplist_web_frontend') }}" defer></script>
     {% endblock %}
+    {% include '@PhpListFrontend/public/_legacy_styles.html.twig' %}
+    {{ header|raw }}
 
-</head>
-<body>
-<main class="">
     {% block body %}{% endblock %}
-</main>
 </body>
 </html>

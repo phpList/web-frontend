@@ -32,7 +32,7 @@
             {% if success_html %}
                 <div class="legacy-html-text">{{ success_html|raw }}</div>
             {% else %}
-                <form method="post" action="{{ path('public_unsubscribe', {pageId: page_id}) }}" class="legacy-form" novalidate>
+                <form method="post" action="{{ path('public_unsubscribe', { pageId: page_id }) }}" class="legacy-form" novalidate>
                     <div>{{ language_texts.strUnsubscribeTitle|default('Unsubscribe') }}</div>
                     <div class="legacy-field-group">
                         <label class="legacy-label" for="email">{{ language_texts.strForwardEnterEmail|default('Email') }} *</label>

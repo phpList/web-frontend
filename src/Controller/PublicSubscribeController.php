@@ -9,34 +9,36 @@ use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
 use PhpList\RestApiClient\Exception\ApiException;
-use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\ValidationException;
 use PhpList\WebFrontend\Service\LanguageService;
+use PhpList\WebFrontend\Service\ListSelectionService;
 use PhpList\WebFrontend\Service\PublicSubscribeFormBuilder;
 use PhpList\WebFrontend\Service\PublicSubscribeFormValidator;
 use PhpList\WebFrontend\Service\SubscriptionService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class PublicSubscribeController extends AbstractController
+#[Route('', name: 'public_')]
+class PublicSubscribeController extends BaseController
 {
     public function __construct(
         private readonly SubscribePagesClient $subscribePagesClient,
-        private readonly AuthClient $authClient,
+        protected AuthClient $authClient,
         private readonly ConfigProvider $configProvider,
         private readonly SubscriptionService $subscriptionService,
         private readonly LanguageService $languageService,
+        private readonly ListSelectionService $listSelectionService,
         private readonly PublicSubscribeFormBuilder $formBuilder,
         private readonly PublicSubscribeFormValidator $formValidator,
         #[Autowire('%app.show_unsubscribe_link%')]
         private readonly bool $showUnsubscribeLink = true,
     ) {
+        parent::__construct($authClient);
     }
 
-    #[Route('/unsubscribe/{pageId}', name: 'public_unsubscribe', methods: ['GET', 'POST'])]
+    #[Route('/unsubscribe/{pageId}', name: 'unsubscribe', methods: ['GET', 'POST'])]
     public function delete(Request $request, int $pageId): Response
     {
         if ($request->isMethod('POST')) {
@@ -47,7 +49,7 @@ class PublicSubscribeController extends AbstractController
             }
 
             $page = $this->subscribePagesClient->getSubscribePage($pageId);
-            $availableListIds = $this->formValidator->parseNumericIds($page->data['lists'] ?? '');
+            $availableListIds = $this->listSelectionService->parseAvailableListIds($page->data['lists'] ?? '');
 
             foreach ($availableListIds as $listId) {
                 $this->subscriptionService->unsubscribe($listId, $email);
@@ -58,18 +60,14 @@ class PublicSubscribeController extends AbstractController
             'page' => 'Unsubscribe Page',
             'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),
+            'page_id' => $pageId
         ]);
     }
 
-    #[Route('/subscribe/{pageId}', name: 'public_subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/subscribe/{pageId}', name: 'subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
     public function show(Request $request, int $pageId): Response
     {
-        try {
-            $admin = $this->authClient->getSessionUser();
-        } catch (AuthenticationException $e) {
-            $admin = null;
-        }
-
+        $admin = $this->getAdmin();
         $page = $this->subscribePagesClient->getSubscribePage($pageId);
         $isSubmitted = $request->isMethod('POST');
 
@@ -79,9 +77,9 @@ class PublicSubscribeController extends AbstractController
         $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
 
         $htmlChoice = $this->formBuilder->normalizeHtmlChoice($data['htmlchoice'] ?? null);
-        $emailDoubleEntry = isset($data['emaildoubleentry']) && strtolower((string) $data['emaildoubleentry']) === 'yes';
+        $emailDoubleEntry = strtolower($data['emaildoubleentry'] ?? '') === 'yes';
 
-        $availableListIds = $this->formValidator->parseNumericIds($data['lists'] ?? '');
+        $availableListIds = $this->listSelectionService->parseAvailableListIds($data['lists'] ?? '');
         $lists = $this->formBuilder->loadPublicLists($availableListIds);
         $availableListIds = array_map(
             static fn ($list): int => (int) $list->id,
@@ -110,18 +108,15 @@ class PublicSubscribeController extends AbstractController
 
             if ($errorMessages === []) {
                 try {
-                    $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
-                    $successHtml = trim((string) ($data['thankyoupage'] ?? ''));
-
-                    return $this->render('@PhpListFrontend/public/thank-you.html.twig', [
-                        'admin' => $admin,
-                        'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
-                        'success_html' => $successHtml,
-                        'language_texts' => $languageTexts,
-                    ]);
-                } catch (ValidationException $exception) {
-                    $errorMessages[] = $exception->getMessage();
-                } catch (ApiException $exception) {
+                    return $this->subscribeAndRender(
+                        formData: $formData,
+                        attributes: $attributes,
+                        admin: $admin,
+                        pageId: $pageId,
+                        data: $data,
+                        languageTexts: $languageTexts
+                    );
+                } catch (ValidationException | ApiException $exception) {
                     $errorMessages[] = $exception->getMessage();
                 }
             }
@@ -150,6 +145,25 @@ class PublicSubscribeController extends AbstractController
             'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
             'show_unsubscribe_link' => $this->showUnsubscribeLink,
             'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
+        ]);
+    }
+
+    private function subscribeAndRender(
+        array $formData,
+        array $attributes,
+        ?array $admin = null,
+        int $pageId = 0,
+        array $data = [],
+        array $languageTexts = []
+    ): Response {
+        $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
+        $successHtml = trim((string) ($data['thankyoupage'] ?? ''));
+
+        return $this->render('@PhpListFrontend/public/thank-you.html.twig', [
+            'admin' => $admin,
+            'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
+            'success_html' => $successHtml,
+            'language_texts' => $languageTexts,
         ]);
     }
 }

@@ -87,13 +87,7 @@ class SubscriptionService
             $value = $attributeValues[$attributeId] ?? null;
             $type = (string) ($attribute['type'] ?? 'textline');
 
-            if ($type === 'checkbox') {
-                $normalizedValue = $value ? 'on' : '';
-            } elseif ($type === 'checkboxgroup') {
-                $normalizedValue = is_array($value) ? implode(',', array_map('strval', $value)) : '';
-            } else {
-                $normalizedValue = trim((string) $value);
-            }
+            $normalizedValue = $this->normalizerByType($type, $value);
 
             if ($normalizedValue === '' && ! ($attribute['required'] ?? false)) {
                 continue;
@@ -163,5 +157,18 @@ class SubscriptionService
                 }
             }
         }
+    }
+
+    private function normalizerByType(string $type, mixed $value): string
+    {
+        if ($type === 'checkbox') {
+            $normalizedValue = $value ? 'on' : '';
+        } elseif ($type === 'checkboxgroup') {
+            $normalizedValue = is_array($value) ? implode(',', array_map('strval', $value)) : '';
+        } else {
+            $normalizedValue = trim((string) $value);
+        }
+
+        return $normalizedValue;
     }
 }

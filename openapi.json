@@ -5105,6 +5105,49 @@
                 }
             }
         },
+        "/api/v2/subscribe-pages/{id}/public": {
+            "get": {
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Get public subscribe page (placeholders replaced with actual values)",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
+                "operationId": "c82021ebada5c3523680fd71890bca54",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Subscribe page ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscribePagePublic"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/attributes": {
             "get": {
                 "tags": [
@@ -8564,6 +8607,28 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/SubscribePageData"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SubscribePagePublic": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Subscribe to our newsletter"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 },

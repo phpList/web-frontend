@@ -21,5 +21,6 @@ security:
   access_control:
     - { path: ^/(?:app(?:_test)?\.php/)?login(?:/|$), roles: PUBLIC_ACCESS }
     - { path: ^/(?:app(?:_test)?\.php/)?api/v2(?:/|$), roles: PUBLIC_ACCESS }
-    - { path: ^/(?:app(?:_test)?\.php/)?subscribe(?:/|$), roles: PUBLIC_ACCESS }
+    - { path: ^/(?:app(?:_test)?\.php/)?subscribe, roles: PUBLIC_ACCESS }
+    - { path: ^/(?:app(?:_test)?\.php/)?unsubscribe, roles: PUBLIC_ACCESS }
     - { path: ^/, roles: ROLE_ADMIN }

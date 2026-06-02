@@ -38,7 +38,7 @@ class PublicSubscribeController extends BaseController
     }
 
     #[Route('/unsubscribe/{pageId}', name: 'unsubscribe', methods: ['GET', 'POST'])]
-    public function delete(Request $request, int $pageId): Response
+    public function unsubscribe(Request $request, int $pageId): Response
     {
         $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
         $pageData = $page->data;
@@ -65,7 +65,6 @@ class PublicSubscribeController extends BaseController
 
         return $this->render('@PhpListFrontend/public/unsubscribe.html.twig', [
             'page' => 'Unsubscribe Page',
-            'api_token' => $request->getSession()->get('auth_token'),
             'api_base_url' => $this->getParameter('api_base_url'),
             'page_id' => $pageId,
             'success_html' => $successHtml,
@@ -81,7 +80,7 @@ class PublicSubscribeController extends BaseController
     }
 
     #[Route('/subscribe/{pageId}', name: 'subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
-    public function show(Request $request, int $pageId): Response
+    public function subscribe(Request $request, int $pageId): Response
     {
         $admin = $this->getAdmin();
         $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
@@ -140,7 +139,6 @@ class PublicSubscribeController extends BaseController
         return $this->render('@PhpListFrontend/public/subscribe.html.twig', [
             'page' => $page,
             'page_id' => $pageId,
-            'api_token' => $request->getSession()->get('auth_token'),
             'data' => $data,
             'language_texts' => $languageTexts,
             'lists' => $lists,

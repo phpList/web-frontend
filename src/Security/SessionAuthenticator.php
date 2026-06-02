@@ -22,6 +22,7 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     private const NOT_SUPPORTED_PATHS = [
         '/login',
         '/subscribe/',
+        '/unsubscribe/',
         '/_profiler',
         '/_wdt',
         '/build/',

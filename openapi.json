@@ -5148,6 +5148,92 @@
                 }
             }
         },
+        "/api/v2/subscribe-pages/{id}/lists/{listId}/subscribers": {
+            "post": {
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Create subscription",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Subscribe subscriber to a list from subscribe page.",
+                "operationId": "764d299822f5efc74556ea96ba2cbfb4",
+                "parameters": [
+                    {
+                        "name": "listId",
+                        "in": "path",
+                        "description": "List ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Subscribe page ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PublicSubscriptionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Subscription"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/attributes": {
             "get": {
                 "tags": [
@@ -8309,6 +8395,30 @@
                     "html_email": {
                         "type": "boolean",
                         "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "PublicSubscriptionRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lia@example.com"
+                    },
+                    "confirmEmail": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lia@example.com"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "example": {
+                            "firstname": "John",
+                            "lastname": "Grigoryan",
+                            "country": "Armenia"
+                        },
+                        "additionalProperties": true
                     }
                 },
                 "type": "object"

@@ -5105,17 +5105,17 @@
                 }
             }
         },
-        "/api/v2/subscribe-pages/{id}/public": {
+        "/api/v2/public/subscribe-pages/{pageId}": {
             "get": {
                 "tags": [
-                    "subscriptions"
+                    "public"
                 ],
                 "summary": "Get public subscribe page (placeholders replaced with actual values)",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
-                "operationId": "c82021ebada5c3523680fd71890bca54",
+                "operationId": "0ce8d9a7201bd20911aede0e4b62f479",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "pageId",
                         "in": "path",
                         "description": "Subscribe page ID",
                         "required": true,
@@ -5146,28 +5146,17 @@
                         }
                     }
                 }
-            }
-        },
-        "/api/v2/subscribe-pages/{id}/lists/{listId}/subscribers": {
+            },
             "post": {
                 "tags": [
-                    "subscriptions"
+                    "public"
                 ],
                 "summary": "Create subscription",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Subscribe subscriber to a list from subscribe page.",
-                "operationId": "764d299822f5efc74556ea96ba2cbfb4",
+                "operationId": "106ea367d6b2e0925240532f5cf1087c",
                 "parameters": [
                     {
-                        "name": "listId",
-                        "in": "path",
-                        "description": "List ID",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "id",
+                        "name": "pageId",
                         "in": "path",
                         "description": "Subscribe page ID",
                         "required": true,
@@ -7034,74 +7023,6 @@
                     }
                 }
             }
-        },
-        "/api/v2/lists/{listId}/public": {
-            "get": {
-                "tags": [
-                    "lists"
-                ],
-                "summary": "Gets a subscriber list.",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns a single subscriber list with specified ID.",
-                "operationId": "4da85d04ec92d3dd4982c63f11f3d73e",
-                "parameters": [
-                    {
-                        "name": "listId",
-                        "in": "path",
-                        "description": "List ID",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Newsletter subscribers"
-                                        },
-                                        "list_position": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Main public list",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Failure",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "There is no list with that ID."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     },
     "components": {
@@ -8406,10 +8327,14 @@
                         "format": "email",
                         "example": "lia@example.com"
                     },
-                    "confirmEmail": {
+                    "confirm_email": {
                         "type": "string",
                         "format": "email",
                         "example": "lia@example.com"
+                    },
+                    "list_id": {
+                        "type": "integer",
+                        "example": 1
                     },
                     "attributes": {
                         "type": "object",
@@ -9006,6 +8931,10 @@
         {
             "name": "subscriptions",
             "description": "subscriptions"
+        },
+        {
+            "name": "public",
+            "description": "public"
         },
         {
             "name": "subscriber-attributes",

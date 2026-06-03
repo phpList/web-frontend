@@ -7,7 +7,6 @@ namespace PhpList\WebFrontend\Controller;
 use PhpList\Core\Core\ApplicationStructure;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
-use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\ValidationException;
 use PhpList\WebFrontend\Service\LanguageService;
@@ -37,7 +36,7 @@ class PublicSubscribeController extends BaseController
         parent::__construct($authClient);
     }
 
-    #[Route('/unsubscribe/{pageId}', name: 'unsubscribe', methods: ['GET', 'POST'])]
+    #[Route('/unsubscribe/{pageId}', name: 'unsubscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
     public function unsubscribe(Request $request, int $pageId): Response
     {
         $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
@@ -65,10 +64,9 @@ class PublicSubscribeController extends BaseController
 
         return $this->render('@PhpListFrontend/public/unsubscribe.html.twig', [
             'page' => 'Unsubscribe Page',
-            'api_base_url' => $this->getParameter('api_base_url'),
             'page_id' => $pageId,
+            'data' => $pageData,
             'success_html' => $successHtml,
-            'header' => $pageData['header'],
         ]);
     }
 
@@ -84,48 +82,42 @@ class PublicSubscribeController extends BaseController
     {
         $admin = $this->getAdmin();
         $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
-        $data = $page->data;
+        $pageData = $page->data;
         $isSubmitted = $request->isMethod('POST');
 
-        $languageFile = $data['language_file'] ?? 'english.inc';
+        $languageFile = $pageData['language_file'] ?? 'english.inc';
         $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
 
-        $htmlChoice = $this->formBuilder->normalizeHtmlChoice($data['htmlchoice'] ?? null);
-        $emailDoubleEntry = strtolower($data['emaildoubleentry'] ?? '') === 'yes';
+        $htmlChoice = $this->formBuilder->normalizeHtmlChoice($pageData['htmlchoice'] ?? null);
+        $emailDoubleEntry = strtolower($pageData['emaildoubleentry'] ?? '') === 'yes';
 
         $lists = $page->data['lists'];
         $availableListIds = array_map(static fn ($list): int => (int) $list['id'], $lists);
 
-        $attributes = $this->formBuilder->buildAttributeConfig($data);
+        $attributes = $this->formBuilder->buildAttributeConfig($pageData);
         $formData = $this->formBuilder->buildInitialFormData(
-            $request,
-            $emailDoubleEntry,
-            $htmlChoice,
-            $data,
-            $availableListIds,
-            $attributes
+            request: $request,
+            emailDoubleEntry: $emailDoubleEntry,
+            htmlChoice: $htmlChoice,
+            pageData: $pageData,
+            availableListIds: $availableListIds,
+            attributes: $attributes
         );
 
         $errorMessages = [];
-
+        $successHtml = null;
         if ($isSubmitted) {
             $errorMessages = $this->formValidator->validateFormData(
-                $formData,
-                $emailDoubleEntry,
-                $availableListIds,
-                $attributes
+                formData: $formData,
+                emailDoubleEntry: $emailDoubleEntry,
+                availableListIds: $availableListIds,
+                attributes: $attributes
             );
 
             if ($errorMessages === []) {
                 try {
-                    return $this->subscribeAndRender(
-                        formData: $formData,
-                        attributes: $attributes,
-                        admin: $admin,
-                        pageId: $pageId,
-                        data: $data,
-                        languageTexts: $languageTexts
-                    );
+                    $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
+                    $successHtml = trim((string) ($pageData['thankyoupage'] ?? ''));
                 } catch (ValidationException | ApiException $exception) {
                     $errorMessages[] = $exception->getMessage();
                 }
@@ -135,7 +127,7 @@ class PublicSubscribeController extends BaseController
         return $this->render('@PhpListFrontend/public/subscribe.html.twig', [
             'page' => $page,
             'page_id' => $pageId,
-            'data' => $data,
+            'data' => $pageData,
             'language_texts' => $languageTexts,
             'lists' => $lists,
             'attributes' => $attributes,
@@ -148,26 +140,7 @@ class PublicSubscribeController extends BaseController
             'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
             'show_unsubscribe_link' => $this->showUnsubscribeLink,
             'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
-            'header' => $data['header'],
-        ]);
-    }
-
-    private function subscribeAndRender(
-        array $formData,
-        array $attributes,
-        ?Administrator $admin = null,
-        int $pageId = 0,
-        array $data = [],
-        array $languageTexts = []
-    ): Response {
-        $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
-        $successHtml = trim((string) ($data['thankyoupage'] ?? ''));
-
-        return $this->render('@PhpListFrontend/public/thank-you.html.twig', [
-            'admin' => $admin,
-            'admin_page_url' => $this->generateUrl('public_edit', ['pageId' => $pageId]),
             'success_html' => $successHtml,
-            'language_texts' => $languageTexts,
         ]);
     }
 }

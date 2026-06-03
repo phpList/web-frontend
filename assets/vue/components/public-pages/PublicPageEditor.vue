@@ -547,17 +547,31 @@ const applyLoadedDataToForm = (page = null) => {
   const ownerIdFromPage = page?.owner?.id ? String(page.owner.id) : ''
   form.value.ownerId = getDataValue('owner_id', ownerIdFromPage)
 
-  // const config = {}
-  // attributes.value.forEach((attribute) => {
-  //   const id = attribute.id
-  //   config[id] = {
-  //     use: parseBoolean(getDataValue(`attribute_${id}_use`, '0')),
-  //     required: parseBoolean(getDataValue(`attribute_${id}_required`, '0')),
-  //     defaultValue: getDataValue(`attribute_${id}_default`, ''),
-  //     listOrder: getDataValue(`attribute_${id}_order`, '')
-  //   }
-  // })
-  // attributeConfig.value = config
+  const config = {}
+  form.value.attributes.split(',').forEach((attributeId) => {
+    const attribute = page.data.find(
+        (attr) => attr.key === `attribute${String(attributeId).padStart(3, '0')}`
+    )
+
+    if (!attribute) {
+      return
+    }
+    const [
+      use = '0',
+      defaultValue = '',
+      listOrder = '',
+      required = '0'
+    ] = attribute.value.split('###')
+
+    config[attributeId] = {
+      use: parseBoolean(use),
+      required: parseBoolean(required),
+      defaultValue,
+      listOrder
+    }
+  })
+
+  attributeConfig.value = config
 }
 
 const loadInitialData = async () => {
@@ -606,15 +620,6 @@ const persistDataItems = async () => {
     ? String(candidatePreselectedId)
     : ''
 
-  // todo: check how it should be done with attributes
-  // attributes.value.forEach((attribute) => {
-  //   const state = attributeState(attribute.id)
-  //   payload.push([`attribute_${attribute.id}_use`, state.use ? '1' : '0'])
-  //   payload.push([`attribute_${attribute.id}_required`, state.required ? '1' : '0'])
-  //   payload.push([`attribute_${attribute.id}_default`, state.defaultValue || ''])
-  //   payload.push([`attribute_${attribute.id}_order`, state.listOrder || ''])
-  // })
-
   return [
     ['title', form.value.title],
     ['language_file', form.value.languageFile],
@@ -649,6 +654,31 @@ const savePage = async () => {
     window.alert('Title is required.')
     return
   }
+
+  const attributeIds = []
+  attributes.value.forEach((attribute) => {
+    const state = attributeState(attribute.id)
+    if (!state.use) {
+      return
+    }
+
+    attributeIds.push(attribute.id)
+
+    dataItems.push({
+      key: `attribute${String(attribute.id).padStart(3, '0')}`,
+      value: [
+        state.use ? '1' : '',
+        state.defaultValue ?? '',
+        state.listOrder ?? '',
+        state.required ? '1' : ''
+      ].join('###')
+    })
+  })
+
+  dataItems.push({
+    key: 'attributes',
+    value: attributeIds.join(',')
+  })
 
   isSaving.value = true
   try {

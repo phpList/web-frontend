@@ -93,12 +93,8 @@ class PublicSubscribeController extends BaseController
         $htmlChoice = $this->formBuilder->normalizeHtmlChoice($data['htmlchoice'] ?? null);
         $emailDoubleEntry = strtolower($data['emaildoubleentry'] ?? '') === 'yes';
 
-        $availableListIds = $this->listSelectionService->parseAvailableListIds($data['lists'] ?? '');
-        $lists = $this->formBuilder->loadPublicLists($availableListIds);
-        $availableListIds = array_map(
-            static fn ($list): int => (int) $list->id,
-            $lists
-        );
+        $lists = $page->data['lists'];
+        $availableListIds = array_map(static fn ($list): int => (int) $list['id'], $lists);
 
         $attributes = $this->formBuilder->buildAttributeConfig($data);
         $formData = $this->formBuilder->buildInitialFormData(

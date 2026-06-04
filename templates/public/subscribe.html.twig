@@ -33,8 +33,8 @@
                             <p><a href="{{ admin_page_url }}" class="button">Go back to admin area</a></p>
                             <p>
                                 <b>Please choose</b><br>
-                                <label><input type="radio" name="makeconfirmed" value="1" {% if form_data.make_confirmed == '1' %}checked{% endif %}> Make this subscriber confirmed immediately</label><br>
-                                <label><input type="radio" name="makeconfirmed" value="0" {% if form_data.make_confirmed != '1' %}checked{% endif %}> Send this subscriber a request for confirmation email</label>
+                                <label><input type="radio" name="makeconfirmed" class="accent-ext-wf1" value="1" {% if form_data.make_confirmed == '1' %}checked{% endif %}> Make this subscriber confirmed immediately</label><br>
+                                <label><input type="radio" name="makeconfirmed" class="accent-ext-wf1" value="0" {% if form_data.make_confirmed != '1' %}checked{% endif %}> Send this subscriber a request for confirmation email</label>
                             </p>
                         </div>
                     {% endif %}
@@ -72,8 +72,8 @@
                     {% elseif html_choice == 'radiotext' or html_choice == 'radiohtml' %}
                         <div class="legacy-field-group  inline-field">
                             <p class="legacy-label">{{ language_texts.strPreferredFormat|default('Preferred format') }}</p>
-                            <label><input type="radio" name="htmlemail" value="0" {% if not form_data.htmlemail %}checked{% endif %}> {{ language_texts.strText|default('Text') }}</label>
-                            <label><input type="radio" name="htmlemail" value="1" {% if form_data.htmlemail %}checked{% endif %}> {{ language_texts.strHTML|default('HTML') }}</label>
+                            <label><input type="radio" name="htmlemail" class="accent-ext-wf1" value="0" {% if not form_data.htmlemail %}checked{% endif %}> {{ language_texts.strText|default('Text') }}</label>
+                            <label><input type="radio" name="htmlemail" class="accent-ext-wf1" value="1" {% if form_data.htmlemail %}checked{% endif %}> {{ language_texts.strHTML|default('HTML') }}</label>
                         </div>
                     {% else %}
                         <div class="legacy-field-group  inline-field">
@@ -95,7 +95,7 @@
                             <div class="legacy-field-group  inline-field">
                                 <p class="{{ attribute.required ? 'legacy-label' : '' }}">{{ attribute.name }}{% if attribute.required %} *{% endif %}</p>
                                 {% for option in attribute.options %}
-                                    <label><input type="radio" name="{{ field }}" value="{{ option.id }}" {% if value == option.id or value == (option.id ~ '') %}checked{% endif %}> {{ option.name }}</label>
+                                    <label><input type="radio" name="{{ field }}" class="accent-ext-wf1" value="{{ option.id }}" {% if value == option.id or value == (option.id ~ '') %}checked{% endif %}> {{ option.name }}</label>
                                 {% endfor %}
                             </div>
                         {% elseif attribute.type == 'select' %}

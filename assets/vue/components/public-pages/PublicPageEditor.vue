@@ -630,7 +630,7 @@ const persistDataItems = async () => {
     ['ajax_subscribeconfirmation', form.value.ajaxSuccessText],
     ['button', form.value.button],
     ['htmlchoice', form.value.htmlChoice],
-    ['emaildoubleentry', form.value.displayEmailConfirmationField ? 'yes' : 'no'],
+    ['emaildoubleentry', form.value.displayEmailConfirmationField === '1' ? 'yes' : 'no'],
     ['showcategories', form.value.displayListCategories ? 'yes' : 'no'],
     ['lists', selectedListIds],
     ['preselectlist', normalizedPreselectedId],

@@ -5177,18 +5177,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Subscription"
-                                    }
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Success"
                     },
                     "400": {
                         "description": "Failure",
@@ -5250,7 +5240,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "Success"
                     },
                     "400": {

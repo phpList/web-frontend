@@ -4726,7 +4726,7 @@
         "/api/v2/subscribe-pages": {
             "get": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Get subscribe pages list",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -4811,7 +4811,7 @@
             },
             "post": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Create subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -4898,7 +4898,7 @@
         "/api/v2/subscribe-pages/{id}": {
             "get": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Get subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -4958,7 +4958,7 @@
             },
             "put": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Update subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -5053,7 +5053,7 @@
             },
             "delete": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Delete subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -5108,7 +5108,7 @@
         "/api/v2/public/subscribe-pages/{pageId}": {
             "get": {
                 "tags": [
-                    "public"
+                    "subscribe-pages"
                 ],
                 "summary": "Get public subscribe page (placeholders replaced with actual values)",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -5149,7 +5149,7 @@
             },
             "post": {
                 "tags": [
-                    "public"
+                    "subscribe-pages"
                 ],
                 "summary": "Create subscription",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Subscribe subscriber to a list from subscribe page.",
@@ -8658,12 +8658,84 @@
                         "example": "Subscribe to our newsletter"
                     },
                     "data": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
+                        "properties": {
+                            "attributes": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        },
+                                        "required": {
+                                            "type": "boolean"
+                                        },
+                                        "default_value": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "list_order": {
+                                            "type": "integer"
+                                        },
+                                        "options": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "lists": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "list_position": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
                             }
+                        },
+                        "type": "object",
+                        "additionalProperties": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                },
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                },
+                                {
+                                    "type": "object"
+                                }
+                            ]
                         }
                     }
                 },
@@ -8933,8 +9005,8 @@
             "description": "subscriptions"
         },
         {
-            "name": "public",
-            "description": "public"
+            "name": "subscribe-pages",
+            "description": "subscribe-pages"
         },
         {
             "name": "subscriber-attributes",

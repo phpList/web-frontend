@@ -8374,6 +8374,10 @@
                 "type": "object"
             },
             "PublicSubscriptionRequest": {
+                "required": [
+                    "email",
+                    "list_id"
+                ],
                 "properties": {
                     "email": {
                         "type": "string",

@@ -5221,6 +5221,69 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "subscribe-pages"
+                ],
+                "summary": "Delete subscription",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Unsubscribe subscriber from a list from subscribe page.",
+                "operationId": "48751c56d39746c6b8dc3f782a9b22e5",
+                "parameters": [
+                    {
+                        "name": "pageId",
+                        "in": "path",
+                        "description": "Subscribe page ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Subscriber email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/v2/attributes": {

@@ -18,4 +18,6 @@
 
     {% block body %}{% endblock %}
 
+    {{ signature|raw }}
+
     {{ data['footer']|unescape_header|raw }}

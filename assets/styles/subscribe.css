@@ -330,6 +330,14 @@ input[type="checkbox"] {
     accent-color: var(--topbar-gradient-end);
 }
 
+.poweredby {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+}
+
 @media (max-width: 720px) {
     .legacy-topbar-inner {
         font-size: 34px;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Controller;
 
 use PhpList\Core\Core\ApplicationStructure;
+use PhpList\Core\Domain\Configuration\Model\ConfigOption;
+use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
 use PhpList\RestApiClient\Exception\ApiException;
@@ -27,6 +29,7 @@ class PublicSubscribeController extends BaseController
         private readonly LanguageService $languageService,
         private readonly PublicSubscribeFormBuilder $formBuilder,
         private readonly PublicSubscribeFormValidator $formValidator,
+        private readonly ConfigProvider $config,
         #[Autowire('%app.show_unsubscribe_link%')]
         private readonly bool $showUnsubscribeLink = true,
     ) {
@@ -59,6 +62,7 @@ class PublicSubscribeController extends BaseController
             'page_id' => $pageId,
             'data' => $pageData,
             'success_html' => $successHtml,
+            'signature' => $this->config->getValue(ConfigOption::PoweredByImage)
         ]);
     }
 
@@ -67,6 +71,14 @@ class PublicSubscribeController extends BaseController
     {
         $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
         return $this->file($applicationRoot . '/public/build/' . $fileName);
+    }
+
+    #[Route('/subscribe/images/{fileName}', name: 'subscribe_images')]
+    #[Route('/unsubscribe/images/{fileName}', name: 'unsubscribe_images')]
+    public function getImages(string $fileName): Response
+    {
+        $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
+        return $this->file($applicationRoot . '/public/' . $fileName);
     }
 
     #[Route('/subscribe/{pageId}', name: 'subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]
@@ -143,6 +155,7 @@ class PublicSubscribeController extends BaseController
             'show_unsubscribe_link' => $this->showUnsubscribeLink,
             'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
             'success_html' => $successHtml,
+            'signature' => $this->config->getValue(ConfigOption::PoweredByImage)
         ]);
     }
 }

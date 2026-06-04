@@ -9,11 +9,10 @@ use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\ValidationException;
+use PhpList\RestApiClient\Request\SubscribePage\PublicSubscriptionRequest;
 use PhpList\WebFrontend\Service\LanguageService;
-use PhpList\WebFrontend\Service\ListSelectionService;
 use PhpList\WebFrontend\Service\PublicSubscribeFormBuilder;
 use PhpList\WebFrontend\Service\PublicSubscribeFormValidator;
-use PhpList\WebFrontend\Service\SubscriptionService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +24,7 @@ class PublicSubscribeController extends BaseController
     public function __construct(
         private readonly SubscribePagesClient $subscribePagesClient,
         protected AuthClient $authClient,
-        private readonly SubscriptionService $subscriptionService,
         private readonly LanguageService $languageService,
-        private readonly ListSelectionService $listSelectionService,
         private readonly PublicSubscribeFormBuilder $formBuilder,
         private readonly PublicSubscribeFormValidator $formValidator,
         #[Autowire('%app.show_unsubscribe_link%')]
@@ -49,12 +46,7 @@ class PublicSubscribeController extends BaseController
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 throw $this->createNotFoundException('Invalid email address.');
             }
-
-            $availableListIds = $this->listSelectionService->parseAvailableListIds($pageData['lists'] ?? '');
-
-            foreach ($availableListIds as $listId) {
-                $this->subscriptionService->unsubscribe($listId, $email);
-            }
+            $this->subscribePagesClient->deletePublicSubscription($pageId, $email);
 
             $languageFile = $pageData['language_file'] ?? 'english.inc';
             $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
@@ -116,7 +108,17 @@ class PublicSubscribeController extends BaseController
 
             if ($errorMessages === []) {
                 try {
-                    $this->subscriptionService->subscribe($formData, $attributes, $admin !== null);
+                    foreach ($formData['selected_lists'] as $listId) {
+                        $this->subscribePagesClient->createPublicSubscription(
+                            pageId: $pageId,
+                            request: new PublicSubscriptionRequest(
+                                email: $formData['email'],
+                                listId: $listId,
+                                attributes: $attributes,
+                            )
+                        );
+                    }
+
                     $successHtml = trim((string) ($pageData['thankyoupage'] ?? ''));
                 } catch (ValidationException | ApiException $exception) {
                     $errorMessages[] = $exception->getMessage();

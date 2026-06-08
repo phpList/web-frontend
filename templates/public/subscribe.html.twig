@@ -1,6 +1,6 @@
 {% extends '@PhpListFrontend/public/base.html.twig' %}
 
-{% block title %}{{ data['title']|default(language_texts.strSubscribeTitle|default('Subscribe')) }}{% endblock %}
+{% block title %}{{ language_texts.strSubscribeTitle|default('Subscribe') }}{% endblock %}
 
 {% block body %}
     <div class="legacy-page-shell">

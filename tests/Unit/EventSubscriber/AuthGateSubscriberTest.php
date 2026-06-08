@@ -83,4 +83,33 @@ class AuthGateSubscriberTest extends TestCase
 
         $this->assertNull($event->getResponse());
     }
+
+    public function testSkipsRedirectForPublicUnsubscribePaths(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+
+        $request = Request::create('/unsubscribe');
+        $request->setSession($session);
+
+        $event = new RequestEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+
+        $this->subscriber->onKernelRequest($event);
+        $this->assertNull($event->getResponse());
+
+        $requestWithId = Request::create('/unsubscribe/7');
+        $requestWithId->setSession($session);
+
+        $eventWithId = new RequestEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $requestWithId,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+
+        $this->subscriber->onKernelRequest($eventWithId);
+        $this->assertNull($eventWithId->getResponse());
+    }
 }

@@ -43,7 +43,7 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     {
         $path = $this->normalizePath($request->getPathInfo());
         foreach (self::NOT_SUPPORTED_PATHS as $prefix) {
-            if (str_starts_with($path, $prefix)) {
+            if ($this->matchesPrefix($path, $prefix)) {
                 return false;
             }
         }
@@ -116,5 +116,15 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
         $normalizedPath = $this->normalizePath($path);
 
         return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
+    }
+
+    private function matchesPrefix(string $path, string $prefix): bool
+    {
+        if (str_ends_with($prefix, '/')) {
+            $exactPath = rtrim($prefix, '/');
+            return $path === $exactPath || str_starts_with($path, $prefix);
+        }
+
+        return str_starts_with($path, $prefix);
     }
 }

@@ -1,6 +1,6 @@
 {% extends '@PhpListFrontend/public/base.html.twig' %}
 
-{% block title %}{{ data['title']|default(language_texts.strSubscribeTitle|default('Subscribe')) }}{% endblock %}
+{% block title %}{{ language_texts.strUnsubscribeTitle }}{% endblock %}
 
 {% block body %}
     <div class="legacy-page-shell">
@@ -18,17 +18,17 @@
                 </div>
             {% endif %}
 
-            {% if success_html %}
-                <div class="legacy-html-text">{{ success_html|raw }}</div>
+            {% if success %}
+                <div class="legacy-html-text">{{ language_texts.strUnsubscribeDone|raw }}</div>
             {% else %}
                 <form method="post" action="{{ path('public_unsubscribe', { pageId: page_id }) }}" class="legacy-form" novalidate>
-                    <div>{{ language_texts.strUnsubscribeTitle|default('Unsubscribe') }}</div>
+
                     <div class="legacy-field-group">
-                        <label class="legacy-label" for="email">{{ language_texts.strForwardEnterEmail|default('Email') }} *</label>
+                        <label class="legacy-label" for="email">{{ language_texts.strEnterEmail|default('Email') }} *</label>
                         <input id="email" name="email" type="email" class="legacy-input" value="{{ form_data.email|default('') }}" required autocomplete="email">
                     </div>
 
-                    <button type="submit" class="legacy-button">{{ data['button']|default(language_texts.strContinue|default('Unsubscribe')) }}</button>
+                    <button type="submit" class="legacy-button">{{ language_texts.strContinue|default('Unsubscribe') }}</button>
                 </form>
             {% endif %}
 

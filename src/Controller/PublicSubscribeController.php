@@ -41,8 +41,10 @@ class PublicSubscribeController extends BaseController
     {
         $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
         $pageData = $page->data;
+        $languageFile = $pageData['language_file'] ?? 'english.inc';
+        $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
 
-        $successHtml = null;
+        $success = false;
         if ($request->isMethod('POST')) {
             $email = trim((string) $request->request->get('email'));
 
@@ -50,19 +52,16 @@ class PublicSubscribeController extends BaseController
                 throw $this->createNotFoundException('Invalid email address.');
             }
             $this->subscribePagesClient->deletePublicSubscription($pageId, $email);
-
-            $languageFile = $pageData['language_file'] ?? 'english.inc';
-            $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
-
-            $successHtml = $languageTexts['strUnsubscribeDone'] ?? 'You have been unsubscribed successfully.';
+            $success = true;
         }
 
         return $this->render('@PhpListFrontend/public/unsubscribe.html.twig', [
             'page' => 'Unsubscribe Page',
             'page_id' => $pageId,
             'data' => $pageData,
-            'success_html' => $successHtml,
-            'signature' => $this->config->getValue(ConfigOption::PoweredByImage)
+            'success' => $success,
+            'signature' => $this->config->getValue(ConfigOption::PoweredByImage),
+            'language_texts' => $languageTexts,
         ]);
     }
 

@@ -78,7 +78,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
         // Allow static assets commonly served under these prefixes
         foreach (self::ALLOW_LIST as $prefix) {
-            if (str_starts_with($path, $prefix)) {
+            if ($this->matchesPrefix($path, $prefix)) {
                 return true;
             }
         }
@@ -117,5 +117,15 @@ class AuthGateSubscriber implements EventSubscriberInterface
         $normalizedPath = $this->normalizePath($path);
 
         return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
+    }
+
+    private function matchesPrefix(string $path, string $prefix): bool
+    {
+        if (str_ends_with($prefix, '/')) {
+            $exactPath = rtrim($prefix, '/');
+            return $path === $exactPath || str_starts_with($path, $prefix);
+        }
+
+        return str_starts_with($path, $prefix);
     }
 }

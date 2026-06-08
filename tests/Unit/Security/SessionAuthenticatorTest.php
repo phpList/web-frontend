@@ -42,6 +42,18 @@ class SessionAuthenticatorTest extends TestCase
         $this->assertFalse($this->authenticator->supports($request));
     }
 
+    public function testSupportsReturnsFalseForUnsubscribePaths(): void
+    {
+        $request = Request::create('/unsubscribe');
+        $this->assertFalse($this->authenticator->supports($request));
+
+        $request = Request::create('/unsubscribe/7');
+        $this->assertFalse($this->authenticator->supports($request));
+
+        $request = Request::create('/subscribe');
+        $this->assertFalse($this->authenticator->supports($request));
+    }
+
     public function testSupportsReturnsTrueForOtherPaths(): void
     {
         $request = Request::create('/dashboard');

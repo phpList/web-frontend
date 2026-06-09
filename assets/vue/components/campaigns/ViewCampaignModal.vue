@@ -11,6 +11,7 @@
             type="button"
             class="text-sm text-slate-500 hover:text-slate-700"
             @click="emit('close')"
+            data-testid="close-btn"
         >
           Close
         </button>
@@ -62,7 +63,7 @@
               }}</pre>
           </div>
 
-          <p v-if="campaign?.messageSchedule?.requeueInterval">
+          <p v-if="campaign?.messageSchedule?.requeueInterval || campaign?.messageSchedule?.repeatInterval">
             <span class="font-medium text-slate-900">Requeueing:</span>
             {{ getMessage(campaign?.messageSchedule) }}
           </p>
@@ -92,6 +93,7 @@
                         type="checkbox"
                         :value="list.id"
                         class="h-4 w-4 rounded border-slate-300 text-slate-900 accent-ext-wf1"
+                        data-testid="send-btn"
                     >
                     <span>{{ list.name }}</span>
                   </label>

@@ -145,8 +145,8 @@ jobs:
       - name: Run tests with phpunit
         run: vendor/bin/phpunit tests
 
-#      - name: Run tests with vitest
-#        run: node vendor/bin/phpunit node_modules/vitest/vitest.mjs --run
+      - name: Run tests with vitest
+        run: node node_modules/vitest/vitest.mjs --run
 
       - name: Upload Panther screenshots
         if: failure()

@@ -70,11 +70,12 @@ class PublicSubscribeControllerPantherTest extends PantherTestCase
             'browser' => static::CHROME,
             'connection_timeout_in_ms' => 10000,
         ]);
-        $client->request('GET', '/subscribe/1');
+        $client->request('GET', '/index.php/subscribe/1');
+        $client->takeScreenshot('var/screenshots/public-subscribe.png');
 
         $currentPath = (string) parse_url($client->getCurrentURL(), PHP_URL_PATH);
 
-        $this->assertSame('/subscribe/1', $currentPath);
+        $this->assertSame('/index.php/subscribe/1', $currentPath);
         $this->assertNotSame('/login', $currentPath);
         $this->assertSelectorExists('form.legacy-form');
         $this->assertSelectorExists('input#email[name="email"][type="email"]');
@@ -87,8 +88,8 @@ class PublicSubscribeControllerPantherTest extends PantherTestCase
     public function publicSubscribePageRoutesProvider(): array
     {
         return [
-            'subscribe page route' => ['/subscribe/1'],
-            'unsubscribe page route' => ['/unsubscribe/1'],
+            'subscribe page route' => ['/index.php/subscribe/1'],
+            'unsubscribe page route' => ['/index.php/unsubscribe/1'],
         ];
     }
 }

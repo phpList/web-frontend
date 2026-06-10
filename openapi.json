@@ -4,7 +4,7 @@
         "title": "phpList API Documentation",
         "description": "This is the OpenAPI documentation for phpList API.",
         "contact": {
-            "email": "support@phplist.com"
+            "email": "tatevik@phplist.com"
         },
         "license": {
             "name": "AGPL-3.0-or-later",
@@ -1393,10 +1393,18 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/BounceView"
-                                    }
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BounceView"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/components/schemas/CursorPagination"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -4715,10 +4723,182 @@
                 }
             }
         },
+        "/api/v2/subscribe-pages": {
+            "get": {
+                "tags": [
+                    "subscribe-pages"
+                ],
+                "summary": "Get subscribe pages list",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
+                "operationId": "1a89921fa5f82ce43daf2ca40dc3f954",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "after_id",
+                        "in": "query",
+                        "description": "Last id (starting from 0)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 25,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SubscribePage"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/components/schemas/CursorPagination"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "subscribe-pages"
+                ],
+                "summary": "Create subscribe page",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
+                "operationId": "314286c5d8ef80c845f5dfd2d671bad3",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "active": {
+                                        "type": "boolean",
+                                        "nullable": true
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscribePage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/subscribe-pages/{id}": {
             "get": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Get subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -4778,7 +4958,7 @@
             },
             "put": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Update subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -4815,6 +4995,21 @@
                                     },
                                     "active": {
                                         "type": "boolean",
+                                        "nullable": true
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
                                         "nullable": true
                                     }
                                 },
@@ -4858,7 +5053,7 @@
             },
             "delete": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
                 "summary": "Delete subscribe page",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
@@ -4910,98 +5105,17 @@
                 }
             }
         },
-        "/api/v2/subscribe-pages": {
-            "post": {
-                "tags": [
-                    "subscriptions"
-                ],
-                "summary": "Create subscribe page",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
-                "operationId": "314286c5d8ef80c845f5dfd2d671bad3",
-                "parameters": [
-                    {
-                        "name": "php-auth-pw",
-                        "in": "header",
-                        "description": "Session key obtained from login",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "title": {
-                                        "type": "string"
-                                    },
-                                    "active": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SubscribePage"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Failure",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation failed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/subscribe-pages/{id}/data": {
+        "/api/v2/public/subscribe-pages/{pageId}": {
             "get": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
-                "summary": "Get subscribe page data",
+                "summary": "Get public subscribe page (placeholders replaced with actual values)",
                 "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
-                "operationId": "ffe22f26936614a0e853e7c44e5a0fca",
+                "operationId": "0ce8d9a7201bd20911aede0e4b62f479",
                 "parameters": [
                     {
-                        "name": "php-auth-pw",
-                        "in": "header",
-                        "description": "Session key obtained from login",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "id",
+                        "name": "pageId",
                         "in": "path",
                         "description": "Subscribe page ID",
                         "required": true,
@@ -5016,32 +5130,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer"
-                                            },
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "data": {
-                                                "type": "string",
-                                                "nullable": true
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Failure",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                    "$ref": "#/components/schemas/SubscribePagePublic"
                                 }
                             }
                         }
@@ -5058,25 +5147,16 @@
                     }
                 }
             },
-            "put": {
+            "post": {
                 "tags": [
-                    "subscriptions"
+                    "subscribe-pages"
                 ],
-                "summary": "Set subscribe page data item",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.",
-                "operationId": "a71571132947a19d862eac4baf7a98a7",
+                "summary": "Create subscription",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Subscribe subscriber to a list from subscribe page.",
+                "operationId": "106ea367d6b2e0925240532f5cf1087c",
                 "parameters": [
                     {
-                        "name": "php-auth-pw",
-                        "in": "header",
-                        "description": "Session key obtained from login",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "id",
+                        "name": "pageId",
                         "in": "path",
                         "description": "Subscribe page ID",
                         "required": true,
@@ -5086,63 +5166,111 @@
                     }
                 ],
                 "requestBody": {
+                    "description": "",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "value": {
-                                        "type": "string",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/PublicSubscriptionRequest"
                             }
                         }
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "data": {
-                                            "type": "string",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Success"
                     },
-                    "403": {
+                    "400": {
                         "description": "Failure",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                    "$ref": "#/components/schemas/BadRequestResponse"
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Failure",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "subscribe-pages"
+                ],
+                "summary": "Delete subscription",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Unsubscribe subscriber from lists of subscribe page.",
+                "operationId": "48751c56d39746c6b8dc3f782a9b22e5",
+                "parameters": [
+                    {
+                        "name": "pageId",
+                        "in": "path",
+                        "description": "Subscribe page ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PublicUnsubscriptionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -8247,6 +8375,51 @@
                 },
                 "type": "object"
             },
+            "PublicSubscriptionRequest": {
+                "required": [
+                    "email",
+                    "list_id"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lia@example.com"
+                    },
+                    "confirm_email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lia@example.com"
+                    },
+                    "list_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "example": {
+                            "firstname": "John",
+                            "lastname": "Grigoryan",
+                            "country": "Armenia"
+                        },
+                        "additionalProperties": true
+                    }
+                },
+                "type": "object"
+            },
+            "PublicUnsubscriptionRequest": {
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lia@example.com"
+                    }
+                },
+                "type": "object"
+            },
             "SubscriberAttributeDefinitionRequest": {
                 "required": [
                     "name"
@@ -8507,6 +8680,19 @@
                 },
                 "type": "object"
             },
+            "SubscribePageData": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "button"
+                    },
+                    "value": {
+                        "type": "string",
+                        "example": "Subscribe to the selected newsletters"
+                    }
+                },
+                "type": "object"
+            },
             "SubscribePage": {
                 "properties": {
                     "id": {
@@ -8523,6 +8709,106 @@
                     },
                     "owner": {
                         "$ref": "#/components/schemas/Administrator"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubscribePageData"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SubscribePagePublic": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Subscribe to our newsletter"
+                    },
+                    "data": {
+                        "properties": {
+                            "attributes": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        },
+                                        "required": {
+                                            "type": "boolean"
+                                        },
+                                        "default_value": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "list_order": {
+                                            "type": "integer"
+                                        },
+                                        "options": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "lists": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "list_position": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object",
+                        "additionalProperties": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                },
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                },
+                                {
+                                    "type": "object"
+                                }
+                            ]
+                        }
                     }
                 },
                 "type": "object"
@@ -8789,6 +9075,10 @@
         {
             "name": "subscriptions",
             "description": "subscriptions"
+        },
+        {
+            "name": "subscribe-pages",
+            "description": "subscribe-pages"
         },
         {
             "name": "subscriber-attributes",

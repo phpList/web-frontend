@@ -15,6 +15,7 @@ use PhpList\RestApiClient\Request\SubscribePage\PublicSubscriptionRequest;
 use PhpList\WebFrontend\Service\LanguageService;
 use PhpList\WebFrontend\Service\PublicSubscribeFormBuilder;
 use PhpList\WebFrontend\Service\PublicSubscribeFormValidator;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,19 +66,26 @@ class PublicSubscribeController extends BaseController
         ]);
     }
 
-    #[Route('/subscribe/styles/{fileName}', name: 'subscribe_styles')]
-    public function getStylesheets(string $fileName): Response
-    {
-        $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
-        return $this->file($applicationRoot . '/public/build/' . $fileName);
-    }
-
-    #[Route('/subscribe/images/{fileName}', name: 'subscribe_images')]
-    #[Route('/unsubscribe/images/{fileName}', name: 'unsubscribe_images')]
+    #[Route('/subscribe/images/{fileName}', name: 'sub_images', requirements: ['fileName' => '[A-Za-z0-9._-]+'])]
+    #[Route('/subscribe/styles/{fileName}', name: 'sub_styles', requirements: ['fileName' => '[A-Za-z0-9._-]+'])]
+    #[Route('/unsubscribe/images/{fileName}', name: 'unsub_images', requirements: ['fileName' => '[A-Za-z0-9._-]+'])]
     public function getImages(string $fileName): Response
     {
         $applicationRoot = (new ApplicationStructure())->getApplicationRoot();
-        return $this->file($applicationRoot . '/public/' . $fileName);
+
+        $baseDir = realpath($applicationRoot . '/public/build');
+
+        if ($baseDir === false) {
+            throw new RuntimeException('Build directory not found.');
+        }
+
+        $path = realpath($baseDir . DIRECTORY_SEPARATOR . $fileName);
+
+        if ($path === false || !str_starts_with($path, $baseDir . DIRECTORY_SEPARATOR)) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->file($path);
     }
 
     #[Route('/subscribe/{pageId}', name: 'subscribe', requirements: ['pageId' => '\d+'], methods: ['GET', 'POST'])]

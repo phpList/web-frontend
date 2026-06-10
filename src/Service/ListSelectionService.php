@@ -27,13 +27,13 @@ class ListSelectionService
     public function validateSelection(array $selectedLists, array $availableListIds): ?string
     {
         if ($selectedLists === []) {
-            return 'Please select a newsletter to subscribe to.';
+            return 'error.select_newsletter';
         }
 
         $allowedListLookup = array_fill_keys($availableListIds, true);
         foreach ($selectedLists as $selectedListId) {
             if (!isset($allowedListLookup[$selectedListId])) {
-                return 'One or more selected lists are not available.';
+                return 'error.invalid_selected_lists';
             }
         }
 

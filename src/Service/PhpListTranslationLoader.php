@@ -67,13 +67,16 @@ class PhpListTranslationLoader implements LoaderInterface
 
     private function mapLocaleToPhpListFile(string $locale): string
     {
+        $normalized = strtolower(str_replace('-', '_', $locale));
+        $baseLocale = strtok($normalized, '_') ?: 'en';
+
         $map = [
             'en' => 'english.php',
             'es' => 'spanish.php',
             'fr' => 'french.php',
         ];
 
-        return $map[$locale] ?? 'english.php';
+        return $map[$baseLocale] ?? 'english.php';
     }
 }
 

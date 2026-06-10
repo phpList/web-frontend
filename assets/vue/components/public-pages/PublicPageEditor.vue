@@ -547,9 +547,10 @@ const applyLoadedDataToForm = (page = null) => {
   const ownerIdFromPage = page?.owner?.id ? String(page.owner.id) : ''
   form.value.ownerId = getDataValue('owner_id', ownerIdFromPage)
 
+  const pageDataItems = Array.isArray(page?.data) ? page.data : []
   const config = {}
   form.value.attributes.split(',').forEach((attributeId) => {
-    const attribute = page.data.find(
+    const attribute = pageDataItems.find(
         (attr) => attr.key === `attribute${String(attributeId).padStart(3, '0')}`
     )
 
@@ -631,7 +632,7 @@ const persistDataItems = async () => {
     ['button', form.value.button],
     ['htmlchoice', form.value.htmlChoice],
     ['emaildoubleentry', form.value.displayEmailConfirmationField === '1' ? 'yes' : 'no'],
-    ['showcategories', form.value.displayListCategories ? 'yes' : 'no'],
+    ['showcategories', form.value.displayListCategories === '1' ? 'yes' : 'no'],
     ['lists', selectedListIds],
     ['preselectlist', normalizedPreselectedId],
     ['subscribesubject', form.value.subscribeSubject],

@@ -33,7 +33,7 @@
           <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-6 py-4 text-slate-600">{{ page.id }}</td>
             <td class="px-6 py-4 font-medium text-slate-900">{{ page.title || `Subscribe page #${page.id}` }}</td>
-            <td class="px-6 py-4 text-slate-700">{{ page.owner.loginName }}</td>
+            <td class="px-6 py-4 text-slate-700">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
             <td class="px-6 py-4">
               <label class="inline-flex items-center cursor-pointer">
                 <input
@@ -122,7 +122,7 @@
             <div>
               <p class="text-xs uppercase tracking-wide text-slate-500">#{{ page.id }}</p>
               <p class="font-semibold text-slate-900">{{ page.title || `Subscribe page #${page.id}` }}</p>
-              <p class="text-xs text-slate-500 mt-1">Owner: {{ page.owner.loginName }}</p>
+              <p class="text-xs text-slate-500 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
             </div>
             <div class="text-xs text-slate-500">
               {{ isRowBusy(page.id) ? 'Updating...' : '' }}

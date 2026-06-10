@@ -31,7 +31,8 @@ class PublicSubscribeFormValidator
         $errors = [];
         $email = trim((string) ($formData['email'] ?? ''));
         $emailConfirm = trim((string) ($formData['email_confirm'] ?? ''));
-        $selectedLists = array_values(array_unique(array_map('intval', $formData['selected_lists'] ?? [])));
+        $rawSelectedLists = is_array($formData['selected_lists'] ?? null) ? $formData['selected_lists'] : [];
+        $selectedLists = array_values(array_unique(array_map('intval', $rawSelectedLists)));
 
         if (($formData['honeypot'] ?? '') !== '') {
             $errors[] = 'Submission rejected.';

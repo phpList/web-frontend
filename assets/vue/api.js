@@ -29,7 +29,7 @@ const redirectToLogin = () => {
         return;
     }
     isAuthenticationRedirectInProgress = true;
-    const redirectTarget = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const redirectTarget = `${window.location.pathname}${window.location.search}`;
     const search = new URLSearchParams({ redirect: redirectTarget }).toString();
     window.location.href = `${AUTHENTICATION_REDIRECT_PATH}?${search}`;
 };

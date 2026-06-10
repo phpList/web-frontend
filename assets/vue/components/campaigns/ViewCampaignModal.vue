@@ -93,7 +93,6 @@
                         type="checkbox"
                         :value="list.id"
                         class="h-4 w-4 rounded border-slate-300 text-slate-900 accent-ext-wf1"
-                        data-testid="send-btn"
                     >
                     <span>{{ list.name }}</span>
                   </label>

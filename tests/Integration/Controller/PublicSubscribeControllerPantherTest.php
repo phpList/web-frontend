@@ -71,6 +71,8 @@ class PublicSubscribeControllerPantherTest extends PantherTestCase
             'connection_timeout_in_ms' => 10000,
         ]);
         $client->request('GET', '/index.php/subscribe/1');
+
+        $client->waitFor('form.legacy-form', 10);
         $client->takeScreenshot('var/screenshots/public-subscribe.png');
 
         $currentPath = (string) parse_url($client->getCurrentURL(), PHP_URL_PATH);

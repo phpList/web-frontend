@@ -4,7 +4,7 @@
       <h2 class="text-xl font-bold text-slate-900">Templates</h2>
       <div class="flex gap-2">
         <button
-          class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors"
+          class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors"
           type="button"
           @click="openDefaultTemplateModal"
         >
@@ -64,7 +64,7 @@
 
             <div class="mt-4 grid grid-cols-2 gap-2">
               <button
-                  class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                   type="button"
                   @click="goToEditTemplate(templateItem.id)"
               >

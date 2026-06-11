@@ -1,0 +1,33 @@
+:root {
+    --page-bg: #e5e7eb;
+    --primary-text: #374151;
+
+    --header-bg: #1e1b4b;
+    --logo-color: #c7d2fe;
+
+    --topbar-gradient-start: #312e81;
+    --topbar-gradient-middle: #3730a3;
+    --topbar-gradient-end: #4338ca;
+    --topbar-border: #4f46e5;
+
+    --card-bg: #ffffff;
+    --card-border: #e5e7eb;
+
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+
+    --field-frame-bg: #f9fafb;
+    --field-frame-border: #e5e7eb;
+
+    --required-color: #dc2626;
+
+    --error-bg: #fef2f2;
+    --error-border: #fca5a5;
+    --error-text: #dc2626;
+
+    --success-bg: #f0fdf4;
+    --success-border: #86efac;
+    --success-text: #16a34a;
+
+    --footer-border: #e5e7eb;
+}

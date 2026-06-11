@@ -64,7 +64,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                   @click="handleEdit(list)"
               >
                 <BaseIcon name="edit" class="w-3.5 h-3.5" />
@@ -82,7 +82,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                   @click="handleViewMembers(list)"
               >
                 <BaseIcon name="eye" class="w-3.5 h-3.5" />
@@ -158,7 +158,7 @@
 
             <button
                 type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="handleEdit(list)"
             >
               <BaseIcon name="edit" class="w-3.5 h-3.5" />
@@ -176,7 +176,7 @@
 
             <button
                 type="button"
-                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="handleViewMembers(list)"
             >
               <BaseIcon name="eye" class="w-3.5 h-3.5" />

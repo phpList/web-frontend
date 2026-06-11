@@ -25,8 +25,10 @@ class AuthController extends AbstractController
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(Request $request): Response
     {
+        $redirectTarget = $this->resolveRedirectTarget($request);
+
         if ($request->getSession()->has('auth_token')) {
-            return $this->redirectToRoute('home');
+            return $this->redirectAfterLogin($redirectTarget);
         }
 
         $error = null;
@@ -43,6 +45,7 @@ class AuthController extends AbstractController
             if ($username === '' || $password === '') {
                 return $this->render('@PhpListFrontend/auth/login.html.twig', [
                     'error' => 'Username and password are required.',
+                    'redirect' => $redirectTarget,
                 ]);
             }
 
@@ -53,7 +56,7 @@ class AuthController extends AbstractController
                 $request->getSession()->set('auth_id', (int) $authData['id']);
                 $request->getSession()->save();
 
-                return $this->redirectToRoute('home');
+                return $this->redirectAfterLogin($redirectTarget);
             } catch (Exception $e) {
                 $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
@@ -63,6 +66,7 @@ class AuthController extends AbstractController
 
         return $this->render('@PhpListFrontend/auth/login.html.twig', [
             'error' => $error,
+            'redirect' => $redirectTarget,
         ]);
     }
 
@@ -91,5 +95,45 @@ class AuthController extends AbstractController
         }
 
         return new JsonResponse($user->toArray());
+    }
+
+    private function redirectAfterLogin(?string $redirectTarget): Response
+    {
+        if ($redirectTarget !== null) {
+            return $this->redirect($redirectTarget);
+        }
+
+        return $this->redirectToRoute('home');
+    }
+
+    private function resolveRedirectTarget(Request $request): ?string
+    {
+        $redirectTarget = $request->get('redirect');
+        if (!is_string($redirectTarget)) {
+            return null;
+        }
+
+        $redirectTarget = trim($redirectTarget);
+        if ($redirectTarget === '') {
+            return null;
+        }
+
+        return $this->isSafeRedirectTarget($redirectTarget) ? $redirectTarget : null;
+    }
+
+    private function isSafeRedirectTarget(string $target): bool
+    {
+        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
+            return false;
+        }
+
+        $path = parse_url($target, PHP_URL_PATH);
+        if (!is_string($path)) {
+            return false;
+        }
+
+        $normalizedPath = (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
+
+        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

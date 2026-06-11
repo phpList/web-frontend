@@ -67,14 +67,14 @@
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
           :disabled="pagination.isFirstPage"
           @click="previousPage"
         >
           Previous
         </button>
         <button
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
           :disabled="!pagination.hasMore"
           @click="nextPage"
         >

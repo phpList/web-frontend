@@ -1,6 +1,6 @@
 <template>
   <div :class="cardClasses">
-    <div :class="bodyClasses">
+    <div :class="bodyClasses" data-testid="card-body">
       <slot />
     </div>
   </div>

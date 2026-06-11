@@ -6,6 +6,8 @@ Encore
     .setPublicPath('/build')
     .addEntry('app', './assets/app.js')
     .addStyleEntry('styles', './assets/styles/app.css')
+    .addStyleEntry('color', './assets/styles/color.css')
+    .addStyleEntry('subscribe', './assets/styles/subscribe.css')
     .enableVueLoader(() => {}, { version: 3 })
     .enableSingleRuntimeChunk()
     .enablePostCssLoader()

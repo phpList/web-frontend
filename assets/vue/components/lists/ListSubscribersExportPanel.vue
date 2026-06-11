@@ -71,7 +71,7 @@
             <input
                 ref="selectAllColumnsCheckbox"
                 type="checkbox"
-                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1"
+                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                 :checked="allColumnsSelected"
                 @change="toggleAllColumns"
             >
@@ -88,7 +88,7 @@
             <input
                 v-model="form.columns"
                 type="checkbox"
-                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 shrink-0"
+                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 shrink-0 accent-ext-wf1"
                 :value="column.value"
             >
             <span class="truncate">{{ column.label }}</span>

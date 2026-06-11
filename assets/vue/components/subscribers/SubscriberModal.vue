@@ -10,7 +10,7 @@
             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
               <div class="flex justify-between items-center">
                 <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
-                  Subscriber Details ID: {{ subscriber.id ?? '' }}
+                  Subscriber Details ID: {{ subscriber?.id ?? '' }}
                 </h3>
                 <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
                   <BaseIcon name="close" class="w-5 h-5" />
@@ -39,7 +39,7 @@
                       id="confirmed"
                       v-model="formData.confirmed"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="confirmed" class="ml-2 block text-sm text-slate-900">
                       Confirmed
@@ -51,7 +51,7 @@
                       id="blacklisted"
                       v-model="formData.blacklisted"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="blacklisted" class="ml-2 block text-sm text-slate-900">
                       Blacklisted
@@ -63,7 +63,7 @@
                       id="htmlEmail"
                       v-model="formData.htmlEmail"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="htmlEmail" class="ml-2 block text-sm text-slate-900">
                       HTML Email
@@ -75,7 +75,7 @@
                       id="disabled"
                       v-model="formData.disabled"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
                     >
                     <label for="disabled" class="ml-2 block text-sm text-slate-900">
                       Disabled
@@ -155,15 +155,6 @@ const formData = ref({
   disabled: false
 })
 
-watch(
-  () => [props.isOpen, props.subscriberId],
-  ([isOpen, subscriberId]) => {
-    if (isOpen && subscriberId) {
-      fetchSubscriberDetails()
-    }
-  }
-)
-
 const fetchSubscriberDetails = async () => {
   loading.value = true
   error.value = null
@@ -176,7 +167,7 @@ const fetchSubscriberDetails = async () => {
       confirmed: !!subscriber.value.confirmed,
       blacklisted: !!subscriber.value.blacklisted,
       htmlEmail: !!subscriber.value.htmlEmail,
-      disabled: !!subscriber.value.disabled
+      disabled: !!subscriber.value.disabled,
     }
   } catch (err) {
     error.value = err.message
@@ -202,4 +193,14 @@ const save = async () => {
 const close = () => {
   emit('close')
 }
+
+watch(
+    () => [props.isOpen, props.subscriberId],
+    ([isOpen, subscriberId]) => {
+      if (isOpen && subscriberId) {
+        fetchSubscriberDetails()
+      }
+    },
+    { immediate: true }
+)
 </script>

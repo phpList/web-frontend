@@ -19,6 +19,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/tatevikgr/rss-bundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/phpList/phplist-lan-texts"
         }
     ],
     "minimum-stability": "dev",
@@ -51,7 +55,9 @@
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/security-bundle": "^6.4",
-        "tatevikgr/rest-api-client": "dev-dev"
+        "tatevikgr/rest-api-client": "dev-dev",
+        "phplist/phplist-lan-texts": "^2021.05",
+        "psr/simple-cache": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -91,13 +97,18 @@
             "PhpList\\Core\\Composer\\ScriptHandler::createParametersConfiguration",
             "PhpList\\Core\\Composer\\ScriptHandler::clearAllCaches"
         ],
+        "publish-phplist-texts": [
+            "@php bin/console web-frontend:publish-phplist-texts"
+        ],
         "post-install-cmd": [
             "@create-directories",
-            "@update-configuration"
+            "@update-configuration",
+            "@publish-phplist-texts"
         ],
         "post-update-cmd": [
             "@create-directories",
-            "@update-configuration"
+            "@update-configuration",
+            "@publish-phplist-texts"
         ]
     },
     "extra": {

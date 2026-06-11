@@ -38,7 +38,7 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
                 $session->invalidate();
             }
 
-            $loginUrl = $this->urlGenerator->generate('login');
+            $loginUrl = $this->buildLoginUrl($request->getRequestUri());
 
             if ($request->isXmlHttpRequest()) {
                 $event->setResponse(new JsonResponse([
@@ -60,5 +60,32 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
 
             $event->setResponse(new RedirectResponse($loginUrl));
         }
+    }
+
+    private function buildLoginUrl(string $redirectTarget): string
+    {
+        $loginUrl = $this->urlGenerator->generate('login');
+
+        if (!$this->isSafeRedirectTarget($redirectTarget)) {
+            return $loginUrl;
+        }
+
+        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
+    }
+
+    private function isSafeRedirectTarget(string $target): bool
+    {
+        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
+            return false;
+        }
+
+        $path = parse_url($target, PHP_URL_PATH);
+        if (!is_string($path)) {
+            return false;
+        }
+
+        $normalizedPath = (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
+
+        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

@@ -11,7 +11,7 @@ const BaseIconStub = {
 }
 
 describe('SubscriberTable', () => {
-    const subscribers = [
+    const createSubscribers = () => ([
         {
             id: 1,
             email: 'john@example.com',
@@ -28,12 +28,12 @@ describe('SubscriberTable', () => {
             listCount: 1,
             createdAt: '2025-01-02',
         },
-    ]
+    ])
 
     const createWrapper = (props = {}) =>
         mount(SubscriberTable, {
             props: {
-                subscribers,
+                subscribers: createSubscribers(),
                 ...props,
             },
             global: {

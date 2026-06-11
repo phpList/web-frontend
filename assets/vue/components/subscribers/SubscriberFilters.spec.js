@@ -1,5 +1,4 @@
 // SubscriberFilters.spec.js
-
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import SubscriberFilters from './SubscriberFilters.vue'
@@ -121,7 +120,7 @@ describe('SubscriberFilters', () => {
 
         const buttons = wrapper.findAll('button')
 
-        if (buttons.length < 2) return
+        expect(buttons.length).toBeGreaterThan(2)
 
         await buttons[1].trigger('click')
         await buttons[2].trigger('click')
@@ -143,7 +142,7 @@ describe('SubscriberFilters', () => {
 
         const buttons = wrapper.findAll('button')
 
-        if (buttons.length < 2) return
+        expect(buttons.length).toBeGreaterThan(2)
 
         await buttons[1].trigger('click')
 

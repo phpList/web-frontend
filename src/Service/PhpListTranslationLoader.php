@@ -71,9 +71,9 @@ class PhpListTranslationLoader implements LoaderInterface
         $baseLocale = strtok($normalized, '_') ?: 'en';
 
         $map = [
-            'en' => 'english.php',
-            'es' => 'spanish.php',
-            'fr' => 'french.php',
+            'en' => 'english.inc',
+            'es' => 'spanish.inc',
+            'fr' => 'french.inc',
         ];
 
         return $map[$baseLocale] ?? 'english.php';

@@ -50,7 +50,7 @@ const ListSubscribersExportPanelStub = {
 }
 
 describe('SubscriberDirectory', () => {
-    const subscribers = [
+    const createSubscribers = () => ([
         {
             id: 1,
             email: 'john@example.com',
@@ -58,22 +58,23 @@ describe('SubscriberDirectory', () => {
             blacklisted: false,
             listCount: 2,
         },
-    ]
+    ])
 
-    const pagination = {
+    const createPagination = () => ({
         total: 1,
         isFirstPage: true,
         hasMore: false,
         afterId: null,
         prevId: null,
-    }
+    })
+
 
     const createWrapper = () =>
         mount(SubscriberDirectory, {
             global: {
                 provide: {
-                    subscribers,
-                    pagination,
+                    subscribers: createSubscribers(),
+                    pagination: createPagination(),
                 },
                 stubs: {
                     BaseIcon: BaseIconStub,
@@ -114,7 +115,7 @@ describe('SubscriberDirectory', () => {
         const table = wrapper.findComponent(SubscriberTableStub)
 
         expect(table.props('subscribers')).toEqual(
-            subscribers
+            createSubscribers()
         )
     })
 
@@ -192,9 +193,9 @@ describe('SubscriberDirectory', () => {
         backendFetch.mockResolvedValue({
             json: () =>
                 Promise.resolve({
-                    items: subscribers,
+                    items: createSubscribers(),
                     pagination: {
-                        ...pagination,
+                        ...createPagination(),
                         hasMore: true,
                         afterId: 10,
                     },

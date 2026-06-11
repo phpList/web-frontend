@@ -1,6 +1,6 @@
 // TemplateLibrary.spec.js
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import TemplateLibrary from './TemplateLibrary.vue'
 import { templateClient } from '../../api'
@@ -28,6 +28,7 @@ const BaseIconStub = {
 }
 
 describe('TemplateLibrary', () => {
+    const originalConfirm = window.confirm
     beforeEach(() => {
         vi.clearAllMocks()
         window.confirm = vi.fn()
@@ -35,6 +36,10 @@ describe('TemplateLibrary', () => {
         templateClient.getTemplates.mockResolvedValue({
             items: [],
         })
+    })
+
+    afterEach(() => {
+        window.confirm = originalConfirm
     })
 
     const createWrapper = () =>

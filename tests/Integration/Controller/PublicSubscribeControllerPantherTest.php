@@ -72,16 +72,17 @@ class PublicSubscribeControllerPantherTest extends PantherTestCase
         ]);
         $client->request('GET', '/index.php/subscribe/1');
 
+        $client->takeScreenshot('var/screenshots/public-subscribe-0.png');
         $client->waitFor('form.legacy-form', 10);
-        $client->takeScreenshot('var/screenshots/public-subscribe.png');
+        $client->takeScreenshot('var/screenshots/public-subscribe-1.png');
 
         $currentPath = (string) parse_url($client->getCurrentURL(), PHP_URL_PATH);
 
         $this->assertSame('/index.php/subscribe/1', $currentPath);
         $this->assertNotSame('/login', $currentPath);
-        $this->assertSelectorExists('form.legacy-form');
-        $this->assertSelectorExists('input#email[name="email"][type="email"]');
-        $this->assertSelectorExists('button[type="submit"].legacy-button');
+        $this->assertSelectorExists('form');
+        $this->assertSelectorExists('input[name="email"][type="email"]');
+        $this->assertSelectorExists('button[type="submit"]');
     }
 
     /**

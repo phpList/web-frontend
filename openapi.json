@@ -4908,7 +4908,7 @@
                         "name": "php-auth-pw",
                         "in": "header",
                         "description": "Session key obtained from login",
-                        "required": false,
+                        "required": true,
                         "schema": {
                             "type": "string"
                         }
@@ -5217,7 +5217,7 @@
                     "subscribe-pages"
                 ],
                 "summary": "Delete subscription",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Unsubscribe subscriber from a list from subscribe page.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production.Unsubscribe subscriber from lists of subscribe page.",
                 "operationId": "48751c56d39746c6b8dc3f782a9b22e5",
                 "parameters": [
                     {
@@ -5228,17 +5228,19 @@
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "description": "Subscriber email",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
+                "requestBody": {
+                    "description": "",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PublicUnsubscriptionRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "204": {
                         "description": "Success"
@@ -8401,6 +8403,19 @@
                             "country": "Armenia"
                         },
                         "additionalProperties": true
+                    }
+                },
+                "type": "object"
+            },
+            "PublicUnsubscriptionRequest": {
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lia@example.com"
                     }
                 },
                 "type": "object"

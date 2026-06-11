@@ -43,7 +43,7 @@ class PublicSubscribeController extends BaseController
         $page = $this->subscribePagesClient->getPublicSubscribePage($pageId);
         $pageData = $page->data;
         $languageFile = $pageData['language_file'] ?? 'english.inc';
-        $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
+        $languageTexts = $this->languageService->loadLanguageTexts($languageFile);
 
         $success = false;
         if ($request->isMethod('POST')) {
@@ -97,12 +97,12 @@ class PublicSubscribeController extends BaseController
         $isSubmitted = $request->isMethod('POST');
 
         $languageFile = $pageData['language_file'] ?? 'english.inc';
-        $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
+        $languageTexts = $this->languageService->loadLanguageTexts($languageFile);
 
         $htmlChoice = $this->formBuilder->normalizeHtmlChoice($pageData['htmlchoice'] ?? null);
         $emailDoubleEntry = strtolower((string) ($pageData['emaildoubleentry'] ?? '')) === 'yes';
 
-        $lists = $pageData['lists'];
+        $lists = $pageData['lists'] ?? [];
         $availableListIds = array_map(static fn ($list): int => (int) $list['id'], $lists);
 
         $attributes = $this->formBuilder->buildAttributeConfig($pageData);

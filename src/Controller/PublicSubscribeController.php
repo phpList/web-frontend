@@ -6,7 +6,7 @@ namespace PhpList\WebFrontend\Controller;
 
 use PhpList\Core\Core\ApplicationStructure;
 use PhpList\Core\Domain\Configuration\Model\ConfigOption;
-use PhpList\Core\Domain\Configuration\Service\Provider\ConfigProvider;
+use PhpList\Core\Domain\Configuration\Service\Provider\DefaultConfigProvider;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
 use PhpList\RestApiClient\Exception\ApiException;
@@ -30,7 +30,7 @@ class PublicSubscribeController extends BaseController
         private readonly LanguageService $languageService,
         private readonly PublicSubscribeFormBuilder $formBuilder,
         private readonly PublicSubscribeFormValidator $formValidator,
-        private readonly ConfigProvider $config,
+        private readonly DefaultConfigProvider $defaultConfigProvider,
         #[Autowire('%app.show_unsubscribe_link%')]
         private readonly bool $showUnsubscribeLink = true,
     ) {
@@ -61,7 +61,7 @@ class PublicSubscribeController extends BaseController
             'page_id' => $pageId,
             'data' => $pageData,
             'success' => $success,
-            'signature' => $this->config->getValue(ConfigOption::PoweredByImage),
+            'signature' => $this->getDefaultSignature(),
             'language_texts' => $languageTexts,
         ]);
     }
@@ -100,9 +100,9 @@ class PublicSubscribeController extends BaseController
         $languageTexts = $this->languageService->loadLanguageTexts(is_string($languageFile) ? $languageFile : null);
 
         $htmlChoice = $this->formBuilder->normalizeHtmlChoice($pageData['htmlchoice'] ?? null);
-        $emailDoubleEntry = strtolower($pageData['emaildoubleentry'] ?? '') === 'yes';
+        $emailDoubleEntry = strtolower((string) ($pageData['emaildoubleentry'] ?? '')) === 'yes';
 
-        $lists = $page->data['lists'];
+        $lists = $pageData['lists'];
         $availableListIds = array_map(static fn ($list): int => (int) $list['id'], $lists);
 
         $attributes = $this->formBuilder->buildAttributeConfig($pageData);
@@ -162,7 +162,16 @@ class PublicSubscribeController extends BaseController
             'show_unsubscribe_link' => $this->showUnsubscribeLink,
             'unsubscribe_link' => $this->generateUrl('public_unsubscribe', ['pageId' => $pageId]),
             'success_html' => $successHtml,
-            'signature' => $this->config->getValue(ConfigOption::PoweredByImage)
+            'signature' => $this->getDefaultSignature()
         ]);
+    }
+
+    private function getDefaultSignature(): string
+    {
+        $defaultConfig = $this->defaultConfigProvider->get(ConfigOption::PoweredByImage, []);
+
+        return is_array($defaultConfig) && is_scalar($defaultConfig['value'] ?? null)
+            ? (string) $defaultConfig['value']
+            : '';
     }
 }

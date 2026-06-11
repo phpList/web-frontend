@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Service;
 
-use PhpList\Core\Domain\Subscription\Service\Manager\SubscribePageManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -15,7 +14,6 @@ class PublicSubscribeFormBuilder
 {
     public function __construct(
         private readonly FormDataMapper $formDataMapper,
-        private readonly SubscribePageManager $subscribePageManager,
     ) {
     }
 
@@ -25,7 +23,7 @@ class PublicSubscribeFormBuilder
     public function buildAttributeConfig(array $pageData): array
     {
         $attributes = $pageData['attributes'] ?? [];
-        $overrides = $this->subscribePageManager->extractLegacyOverrides($pageData);
+        $overrides = $this->extractLegacyOverrides($pageData);
 
         $builtAttributes = [];
         foreach ($attributes as $attribute) {
@@ -91,5 +89,33 @@ class PublicSubscribeFormBuilder
             'textonly', 'htmlonly', 'checkfortext', 'checkforhtml', 'radiotext', 'radiohtml' => $normalized,
             default => 'checkforhtml',
         };
+    }
+
+    /**
+     * @param array<string,mixed> $pageData
+     * @return array<int,array{default?:string,order?:int,required?:bool}>
+     */
+    private function extractLegacyOverrides(array $pageData): array
+    {
+        $result = [];
+        foreach ($pageData as $key => $value) {
+            if (!preg_match('/^attribute(\d{1,})$/', (string) $key, $matches)) {
+                continue;
+            }
+
+            $id = (int) $matches[1];
+            $parts = explode('###', (string) $value);
+            if (isset($parts[1])) {
+                $result[$id]['default'] = $parts[1];
+            }
+            if (isset($parts[2])) {
+                $result[$id]['order'] = (int) $parts[2];
+            }
+            if (isset($parts[3])) {
+                $result[$id]['required'] = $parts[3] === '1';
+            }
+        }
+
+        return $result;
     }
 }

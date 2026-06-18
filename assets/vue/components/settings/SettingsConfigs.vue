@@ -77,7 +77,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { default as apiClient } from '../../api'
+import { default as apiClient, configClient } from '../../api'
 
 const configs = ref([])
 const isLoading = ref(false)
@@ -92,7 +92,7 @@ const loadConfigs = async () => {
   isLoading.value = true
   error.value = ''
   try {
-    const response = await apiClient.get('configs')
+    const response = await configClient.getConfigs()
     const items = Array.isArray(response?.items) ? response.items : []
     configs.value = items
     // initialize edited values
@@ -122,8 +122,7 @@ const save = async (key) => {
   success.value = { ...success.value, [key]: '' }
 
   try {
-    const payload = { value: edited.value[key] }
-    const response = await apiClient.put(`configs/${encodeURIComponent(key)}`, payload)
+    const response = await configClient.update(key, edited.value[key])
     // update local cache: response may be the updated config
     const idx = configs.value.findIndex((c) => c.key === key)
     if (idx !== -1) {

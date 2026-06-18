@@ -11,6 +11,7 @@ import {
     SubscriberAttributesClient,
     TemplatesClient,
     BouncesClient,
+    ConfigClient,
 } from '@tatevikgr/rest-api-client';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';
@@ -73,6 +74,8 @@ export const subscribePagesClient = new SubscribePagesClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
 export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);
+export const configClient = new ConfigClient(client);
+
 
 export const backendFetch = async (input, init = undefined) => {
     const response = await fetch(input, init);

@@ -8,10 +8,12 @@ use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
@@ -32,6 +34,23 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+
+        if ($exception instanceof AuthorizationException) {
+            $message = $exception->getMessage() ?: 'Access denied.';
+
+            if ($event->getRequest()->isXmlHttpRequest()) {
+                $event->setResponse(new JsonResponse([
+                    'error' => 'access_denied',
+                    'message' => $message,
+                ], 403));
+
+                return;
+            }
+
+            $event->setResponse(new Response($message, 403));
+
+            return;
+        }
 
         if ($exception instanceof AuthenticationException) {
             $request = $event->getRequest();

@@ -45,7 +45,6 @@ if (!apiBaseUrl) {
 
 const client = new Client(apiBaseUrl || '', {
     onAuthenticationError: redirectToLogin,
-    onAuthorizationError: redirectToLogin,
 });
 
 if (apiToken) {

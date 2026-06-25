@@ -8,6 +8,7 @@ use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BaseController extends AbstractController
@@ -21,7 +22,7 @@ class BaseController extends AbstractController
     {
         try {
             $admin = $this->authClient->getSessionUser();
-        } catch (ApiException | AuthenticationException) {
+        } catch (ApiException | AuthenticationException | AuthorizationException) {
             $admin = null;
         }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
+use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 use PhpList\RestApiClient\Endpoint\StatisticsClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +21,27 @@ class DashboardController extends AbstractController
     #[Route('/', name: 'home', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $stats = $this->statisticsClient->getDashboardStats();
+        $dashboardStats = [];
+        $dashboardError = null;
+
+        try {
+            $stats = $this->statisticsClient->getDashboardStats();
+            $dashboardStats = $this->buildDashboardStats($stats);
+        } catch (AuthenticationException | AuthorizationException $e) {
+            $dashboardError = $e->getMessage() ?: 'Unable to load dashboard statistics.';
+        }
+
+        return $this->render('@PhpListFrontend/spa.html.twig', [
+            'page' => 'Dashboard',
+            'api_token' => $request->getSession()->get('auth_token'),
+            'api_base_url' => $this->getParameter('api_base_url'),
+            'dashboard_stats' => $dashboardStats,
+            'dashboard_error' => $dashboardError,
+        ]);
+    }
+
+    private function buildDashboardStats(object $stats): array
+    {
         $recentCampaigns = [];
         foreach ($stats->recentCampaigns as $campaign) {
             $recentCampaigns[] = [
@@ -40,36 +62,31 @@ class DashboardController extends AbstractController
             $chartClicks[] = $point->clicks;
         }
 
-        return $this->render('@PhpListFrontend/spa.html.twig', [
-            'page' => 'Dashboard',
-            'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
-            'dashboard_stats' => [
-                'total_subscribers' => [
-                    'value' => $stats->totalSubscribers->value,
-                    'change_vs_last_month' => $stats->totalSubscribers->changeVsLastMonth,
-                ],
-                'active_campaigns' => [
-                    'value' => $stats->activeCampaigns->value,
-                    'change_vs_last_month' => $stats->activeCampaigns->changeVsLastMonth,
-                ],
-                'open_rate' => [
-                    'value' => $stats->openRate->value,
-                    'change_vs_last_month' => $stats->openRate->changeVsLastMonth,
-                ],
-                'bounce_rate' => [
-                    'value' => $stats->bounceRate->value,
-                    'change_vs_last_month' => $stats->bounceRate->changeVsLastMonth,
-                ],
-                'recent_campaigns' => $recentCampaigns,
-                'chart' => [
-                    'labels' => $chartLabels,
-                    'series' => [
-                        ['name' => 'Opens', 'data' => $chartOpens],
-                        ['name' => 'Clicks', 'data' => $chartClicks],
-                    ],
+        return [
+            'total_subscribers' => [
+                'value' => $stats->totalSubscribers->value,
+                'change_vs_last_month' => $stats->totalSubscribers->changeVsLastMonth,
+            ],
+            'active_campaigns' => [
+                'value' => $stats->activeCampaigns->value,
+                'change_vs_last_month' => $stats->activeCampaigns->changeVsLastMonth,
+            ],
+            'open_rate' => [
+                'value' => $stats->openRate->value,
+                'change_vs_last_month' => $stats->openRate->changeVsLastMonth,
+            ],
+            'bounce_rate' => [
+                'value' => $stats->bounceRate->value,
+                'change_vs_last_month' => $stats->bounceRate->changeVsLastMonth,
+            ],
+            'recent_campaigns' => $recentCampaigns,
+            'chart' => [
+                'labels' => $chartLabels,
+                'series' => [
+                    ['name' => 'Opens', 'data' => $chartOpens],
+                    ['name' => 'Clicks', 'data' => $chartClicks],
                 ],
             ],
-        ]);
+        ];
     }
 }

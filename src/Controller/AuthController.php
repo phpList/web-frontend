@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Controller;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,8 +17,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
+    use RedirectValidationTrait;
+
     public function __construct(
-        private readonly AuthClient $authClient,
+        private readonly AuthClient      $authClient,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -119,21 +122,5 @@ class AuthController extends AbstractController
         }
 
         return $this->isSafeRedirectTarget($redirectTarget) ? $redirectTarget : null;
-    }
-
-    private function isSafeRedirectTarget(string $target): bool
-    {
-        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
-            return false;
-        }
-
-        $path = parse_url($target, PHP_URL_PATH);
-        if (!is_string($path)) {
-            return false;
-        }
-
-        $normalizedPath = (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
-
-        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

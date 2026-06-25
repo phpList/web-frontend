@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Security;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,8 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class SessionAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
+    use RedirectValidationTrait;
+
     private const NOT_SUPPORTED_PATHS = [
         '/login',
         '/subscribe/',
@@ -100,22 +103,6 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
         }
 
         return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
-    }
-
-    private function isSafeRedirectTarget(string $target): bool
-    {
-        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
-            return false;
-        }
-
-        $path = parse_url($target, PHP_URL_PATH);
-        if (!is_string($path)) {
-            return false;
-        }
-
-        $normalizedPath = $this->normalizePath($path);
-
-        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 
     private function matchesPrefix(string $path, string $prefix): bool

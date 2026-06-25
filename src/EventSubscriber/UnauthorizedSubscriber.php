@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -14,6 +15,8 @@ use PhpList\RestApiClient\Exception\AuthenticationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
+    use RedirectValidationTrait;
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -71,21 +74,5 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
         }
 
         return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
-    }
-
-    private function isSafeRedirectTarget(string $target): bool
-    {
-        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
-            return false;
-        }
-
-        $path = parse_url($target, PHP_URL_PATH);
-        if (!is_string($path)) {
-            return false;
-        }
-
-        $normalizedPath = (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
-
-        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

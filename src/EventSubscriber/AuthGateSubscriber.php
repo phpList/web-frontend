@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class AuthGateSubscriber implements EventSubscriberInterface
 {
+    use RedirectValidationTrait;
+
     private const ALLOW_LIST = [
         '/api/v2',
         '/subscribe/',
@@ -86,11 +89,6 @@ class AuthGateSubscriber implements EventSubscriberInterface
         return false;
     }
 
-    private function normalizePath(string $path): string
-    {
-        return (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
-    }
-
     private function buildLoginUrl(Request $request): string
     {
         $loginUrl = $this->urlGenerator->generate('login');
@@ -101,22 +99,6 @@ class AuthGateSubscriber implements EventSubscriberInterface
         }
 
         return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
-    }
-
-    private function isSafeRedirectTarget(string $target): bool
-    {
-        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
-            return false;
-        }
-
-        $path = parse_url($target, PHP_URL_PATH);
-        if (!is_string($path)) {
-            return false;
-        }
-
-        $normalizedPath = $this->normalizePath($path);
-
-        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 
     private function matchesPrefix(string $path, string $prefix): bool

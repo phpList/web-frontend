@@ -43,11 +43,8 @@
                 v-model="form.type"
                 class="w-full rounded-lg border border-slate-300 px-3 py-2"
             >
-              <option value="string">String</option>
-              <option value="text">Text</option>
-              <option value="integer">Integer</option>
-              <option value="boolean">Boolean</option>
-              <option value="date">Date</option>
+              <option value="textline">String</option>
+              <option value="hidden">Hidden</option>
             </select>
           </div>
 

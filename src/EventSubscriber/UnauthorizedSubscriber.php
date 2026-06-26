@@ -36,7 +36,7 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
         $exception = $event->getThrowable();
 
         if ($exception instanceof AuthorizationException) {
-            $message = $exception->getMessage() ?: 'Access denied.';
+            $message = 'Access denied.';
 
             if ($event->getRequest()->isXmlHttpRequest()) {
                 $event->setResponse(new JsonResponse([
@@ -47,7 +47,9 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
                 return;
             }
 
-            $event->setResponse(new Response($message, 403));
+            $event->setResponse(new Response($message, 403, [
+                'Content-Type' => 'text/plain; charset=UTF-8',
+            ]));
 
             return;
         }

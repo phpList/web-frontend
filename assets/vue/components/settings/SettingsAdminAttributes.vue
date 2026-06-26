@@ -66,7 +66,7 @@
           </td>
 
           <td class="px-6 py-4 text-slate-600">
-            {{ attribute.type }}
+            {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
           </td>
 
           <td class="px-6 py-4">
@@ -145,7 +145,7 @@
               </p>
 
               <p class="text-sm text-slate-500">
-                {{ attribute.type }}
+                {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
               </p>
             </div>
 

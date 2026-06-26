@@ -108,7 +108,7 @@ class UnauthorizedSubscriberTest extends TestCase
 
         $data = json_decode($response->getContent(), true);
         $this->assertEquals('access_denied', $data['error']);
-        $this->assertEquals('No valid session key was provided as basic auth password.', $data['message']);
+        $this->assertEquals('Access denied.', $data['message']);
     }
 
     public function testOnKernelExceptionWithOtherException(): void

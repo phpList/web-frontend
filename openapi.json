@@ -4389,8 +4389,8 @@
                             }
                         }
                     },
-                    "403": {
-                        "description": "Unauthorized",
+                    "401": {
+                        "description": "Not authenticated",
                         "content": {
                             "application/json": {
                                 "schema": {

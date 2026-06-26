@@ -34,6 +34,10 @@
       <SettingsAdminAttributes />
     </template>
 
+    <template v-else-if="activeTab === 'subscriber_attributes'">
+      <SettingsSubscriberAttributes />
+    </template>
+
     <template v-else>
       <div class="bg-white rounded-xl border border-slate-200 p-6">
         <h3 class="text-base font-semibold text-slate-900">{{ currentTabLabel }}</h3>
@@ -49,11 +53,13 @@ import { useRoute, useRouter } from 'vue-router'
 import SettingsConfigs from './SettingsConfigs.vue'
 import SettingsAdmins from './SettingsAdmins.vue'
 import SettingsAdminAttributes from './SettingsAdminAttributes.vue'
+import SettingsSubscriberAttributes from "./SettingsSubscriberAttributes.vue";
 
 const tabs = [
   { id: 'configs', label: 'Configs' },
   { id: 'admins', label: 'Admins' },
   { id: 'admin_attributes', label: 'Admin Attributes' },
+  { id: 'subscriber_attributes', label: 'Subscriber Attributes' },
 ]
 
 const route = useRoute()

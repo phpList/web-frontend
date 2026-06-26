@@ -11,7 +11,7 @@ import {
     SubscriberAttributesClient,
     TemplatesClient,
     BouncesClient,
-    ConfigClient,
+    ConfigClient, AdminAttributeClient,
 } from '@tatevikgr/rest-api-client';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';
@@ -64,6 +64,7 @@ client.axiosInstance?.interceptors?.response?.use(
 
 export const subscribersClient = new SubscribersClient(client);
 export const adminClient = new AdminClient(client);
+export const adminAttributeClient = new AdminAttributeClient(client);
 export const listClient = new ListClient(client);
 export const campaignClient = new CampaignClient(client);
 export const listMessagesClient = new ListMessagesClient(client);

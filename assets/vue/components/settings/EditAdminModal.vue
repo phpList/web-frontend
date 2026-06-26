@@ -14,8 +14,8 @@
             <h3 id="edit-admin-modal-title" class="text-lg leading-6 font-medium text-slate-900">
               Edit Administrator
             </h3>
-            <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <button type="button" class="text-slate-400 hover:text-slate-500" @click="close" aria-label="Close edit administrator modal">
+              <BaseIcon name="close" class="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -163,6 +163,7 @@
 import { ref, watch } from 'vue'
 import { Requests } from '@tatevikgr/rest-api-client'
 import { adminClient } from '../../api'
+import BaseIcon from "../base/BaseIcon.vue";
 
 const props = defineProps({
   isOpen: Boolean,
@@ -209,8 +210,8 @@ const resetForm = () => {
 }
 
 watch(
-  () => props.isOpen,
-  (isOpen) => {
+  () => [props.isOpen, props.admin?.id],
+  ([isOpen]) => {
     if (isOpen) {
       resetForm()
     }

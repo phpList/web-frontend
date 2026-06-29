@@ -90,34 +90,34 @@
               </button>
             </div>
 
-            <div
-                v-for="(option, index) in form.options"
-                :key="index"
-                class="flex gap-2 mb-2"
-            >
-              <input
-                  v-model="option.name"
-                  placeholder="Name"
-                  class="flex-1 rounded border border-slate-300 px-3 py-2"
+            <div class="max-h-64 overflow-y-auto border rounded p-2 space-y-2 pr-2 border-slate-300">
+              <div
+                  v-for="(option, index) in form.options"
+                  :key="index"
+                  class="flex gap-2"
               >
+                <input
+                    v-model="option.name"
+                    class="flex-1 rounded border border-slate-300 px-3 py-2"
+                    placeholder="Option"
+                >
 
-              <input
-                  v-model.number="option.list_order"
-                  type="number"
-                  placeholder="Order"
-                  class="w-24 rounded border border-slate-300 px-3 py-2"
-              >
+                <input
+                    v-model.number="option.list_order"
+                    type="number"
+                    class="w-24 rounded border border-slate-300 px-3 py-2"
+                >
 
-              <button
-                  type="button"
-                  class="rounded border px-3"
-                  @click="removeOption(index)"
-              >
-                Remove
-              </button>
+                <button
+                    type="button"
+                    class="rounded px-3"
+                    @click="removeOption(index)"
+                >
+                  <BaseIcon name="delete" class="w-4 h-4 cursor-pointer"/>
+                </button>
+              </div>
             </div>
           </div>
-
           <div
               v-if="error"
               class="text-red-600"
@@ -135,7 +135,7 @@
             </button>
 
             <button
-                class="rounded bg-blue-600 px-4 py-2 text-white"
+                class="rounded bg-ext-wf1 px-4 py-2 text-white"
                 :disabled="saving"
             >
               {{ saving ? 'Creating...' : 'Create' }}
@@ -150,6 +150,7 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue';
 import { adminAttributeClient } from '../../api';
+import BaseIcon from "../base/BaseIcon.vue";
 
 const props = defineProps({
   isOpen: Boolean,

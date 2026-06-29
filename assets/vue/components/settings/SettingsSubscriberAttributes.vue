@@ -246,7 +246,7 @@ const fetchAttributes = async () => {
 
   try {
     const result = await subscriberAttributesClient.getAttributeDefinitions()
-    attributes.value = result.items ?? result.data ?? []
+    attributes.value = result.items ?? []
   } catch (e) {
     console.error(e)
     loadError.value = e?.message || 'Failed to load attributes.'

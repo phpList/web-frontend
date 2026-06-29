@@ -149,7 +149,7 @@
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue';
-import { adminAttributeClient } from '../../api';
+import { subscriberAttributesClient } from '../../api';
 import BaseIcon from "../base/BaseIcon.vue";
 
 const props = defineProps({
@@ -227,7 +227,7 @@ async function submit() {
   error.value = '';
 
   try {
-    await adminAttributeClient.createAttributeDefinition({
+    await subscriberAttributesClient.createAttributeDefinition({
       ...form,
       options: JSON.parse(JSON.stringify(form.options)),
     });

@@ -129,7 +129,7 @@
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue';
-import { adminAttributeClient } from '../../api';
+import { subscriberAttributesClient } from '../../api';
 import BaseIcon from "../base/BaseIcon.vue";
 
 const props = defineProps({
@@ -209,7 +209,7 @@ async function save() {
   error.value = '';
 
   try {
-    await adminAttributeClient.updateAttributeDefinition(
+    await subscriberAttributesClient.updateAttributeDefinition(
         form.id,
         JSON.parse(JSON.stringify(form))
     );

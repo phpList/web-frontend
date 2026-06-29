@@ -11,7 +11,8 @@ import {
     SubscriberAttributesClient,
     TemplatesClient,
     BouncesClient,
-    ConfigClient, AdminAttributeClient,
+    ConfigClient,
+    AdminAttributeClient,
 } from '@tatevikgr/rest-api-client';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';

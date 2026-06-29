@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
+    use RedirectValidationTrait;
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -29,6 +34,25 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+
+        if ($exception instanceof AuthorizationException) {
+            $message = 'Access denied.';
+
+            if ($event->getRequest()->isXmlHttpRequest()) {
+                $event->setResponse(new JsonResponse([
+                    'error' => 'access_denied',
+                    'message' => $message,
+                ], 403));
+
+                return;
+            }
+
+            $event->setResponse(new Response($message, 403, [
+                'Content-Type' => 'text/plain; charset=UTF-8',
+            ]));
+
+            return;
+        }
 
         if ($exception instanceof AuthenticationException) {
             $request = $event->getRequest();
@@ -71,21 +95,5 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
         }
 
         return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
-    }
-
-    private function isSafeRedirectTarget(string $target): bool
-    {
-        if (!str_starts_with($target, '/') || str_starts_with($target, '//')) {
-            return false;
-        }
-
-        $path = parse_url($target, PHP_URL_PATH);
-        if (!is_string($path)) {
-            return false;
-        }
-
-        $normalizedPath = (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
-
-        return $normalizedPath !== '/login' && !str_starts_with($normalizedPath, '/login');
     }
 }

@@ -6,6 +6,7 @@ namespace PhpList\WebFrontend\Tests\Unit\EventSubscriber;
 
 use Exception;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 use PhpList\WebFrontend\EventSubscriber\UnauthorizedSubscriber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -76,6 +77,38 @@ class UnauthorizedSubscriberTest extends TestCase
         $response = $event->getResponse();
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login?redirect=%2Fdashboard%3Frange%3D30d', $response->getTargetUrl());
+    }
+
+    public function testOnKernelExceptionWithAuthorizationException(): void
+    {
+        $authException = new AuthorizationException('No valid session key was provided as basic auth password.', 403);
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->expects($this->never())->method('invalidate');
+
+        $request = $this->createMock(Request::class);
+        $request->method('hasSession')->willReturn(true);
+        $request->method('getSession')->willReturn($session);
+        $request->method('isXmlHttpRequest')->willReturn(true);
+        $request->method('getRequestUri')->willReturn('/dashboard');
+
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $event = new ExceptionEvent(
+            $kernel,
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+            $authException
+        );
+
+        $this->subscriber->onKernelException($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(403, $response->getStatusCode());
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals('access_denied', $data['error']);
+        $this->assertEquals('Access denied.', $data['message']);
     }
 
     public function testOnKernelExceptionWithOtherException(): void

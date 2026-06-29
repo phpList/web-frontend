@@ -11,6 +11,7 @@ import {
     SubscriberAttributesClient,
     TemplatesClient,
     BouncesClient,
+    ConfigClient, AdminAttributeClient,
 } from '@tatevikgr/rest-api-client';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';
@@ -44,7 +45,6 @@ if (!apiBaseUrl) {
 
 const client = new Client(apiBaseUrl || '', {
     onAuthenticationError: redirectToLogin,
-    onAuthorizationError: redirectToLogin,
 });
 
 if (apiToken) {
@@ -64,6 +64,7 @@ client.axiosInstance?.interceptors?.response?.use(
 
 export const subscribersClient = new SubscribersClient(client);
 export const adminClient = new AdminClient(client);
+export const adminAttributeClient = new AdminAttributeClient(client);
 export const listClient = new ListClient(client);
 export const campaignClient = new CampaignClient(client);
 export const listMessagesClient = new ListMessagesClient(client);
@@ -73,6 +74,8 @@ export const subscribePagesClient = new SubscribePagesClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
 export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);
+export const configClient = new ConfigClient(client);
+
 
 export const backendFetch = async (input, init = undefined) => {
     const response = await fetch(input, init);

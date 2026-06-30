@@ -212,10 +212,11 @@ const resetForm = () => {
 watch(
   () => [props.isOpen, props.admin?.id],
   ([isOpen]) => {
-    if (isOpen) {
-      resetForm()
-    }
-  }
+      if (isOpen) {
+        resetForm()
+      }
+    },
+    { immediate: true }
 )
 
 const close = () => {

@@ -46,7 +46,7 @@
             Loading analytics...
           </div>
 
-          <div v-else-if="campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
+          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
             No campaign statistics found.
           </div>
 
@@ -120,7 +120,7 @@
             </dl>
           </div>
 
-          <div v-else class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
+          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
             No confirmation data found.
           </div>
         </BaseCard>
@@ -149,7 +149,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                <tr v-if="!isLoading && topDomains.length === 0">
+                <tr v-if="hasLoaded && topDomains.length === 0">
                   <td colspan="2" class="px-4 py-6 text-center text-slate-500">
                     No domain statistics found.
                   </td>
@@ -190,7 +190,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                <tr v-if="!isLoading && topLocalParts.length === 0">
+                <tr v-if="hasLoaded && topLocalParts.length === 0">
                   <td colspan="3" class="px-4 py-6 text-center text-slate-500">
                     No local-part statistics found.
                   </td>
@@ -238,7 +238,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr v-if="!isLoading && campaignStatistics.length === 0">
+              <tr v-if="hasLoaded && campaignStatistics.length === 0">
                 <td colspan="6" class="px-4 py-6 text-center text-slate-500">
                   No campaign statistics found.
                 </td>
@@ -285,6 +285,7 @@ import BaseIcon from '../components/base/BaseIcon.vue'
 import { statisticsClient } from '../api'
 
 const isLoading = ref(false)
+const hasLoaded = ref(false)
 const errorMessage = ref('')
 const campaignStatistics = ref([])
 const viewOpens = ref([])
@@ -308,7 +309,15 @@ const formatDate = (dateValue) => {
     return 'Unknown date'
   }
 
-  const date = new Date(dateValue)
+  let date
+
+  if (typeof dateValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    const [year, month, day] = dateValue.split('-').map(Number)
+    date = new Date(year, month - 1, day)
+  } else {
+    date = new Date(dateValue)
+  }
+
   if (Number.isNaN(date.getTime())) {
     return 'Unknown date'
   }
@@ -480,6 +489,7 @@ const loadAnalytics = async () => {
     console.error('Failed to load analytics:', error)
   } finally {
     isLoading.value = false
+    hasLoaded.value = true
   }
 }
 

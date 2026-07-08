@@ -5,6 +5,7 @@
     :editor="ClassicEditor"
     :config="editorConfig"
     :disabled="isDisabled"
+    :style="editorStyle"
     @ready="handleReady"
   />
 </template>
@@ -80,6 +81,11 @@ const localValue = computed({
 const editorRef = shallowRef(null);
 
 const isDisabled = computed(() => props.disabled || props.readonly);
+const editorStyle = computed(() => ({
+  '--editor-min-height': typeof props.minHeight === 'number'
+    ? `${props.minHeight}px`
+    : String(props.minHeight),
+}));
 
 const editorConfig = computed(() => {
   const config = props.config || {};

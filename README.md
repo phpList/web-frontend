@@ -99,8 +99,8 @@ The rich text editor lives in `assets/editor/` and is exposed to the existing fo
 
 ```bash
 yarn encore dev
-composer test
 yarn test:vue
+vendor/bin/phpunit
 ```
 
 ### Configuration

@@ -57,7 +57,7 @@ final class EditorUploadControllerTest extends KernelTestCase
         $response = $controller->upload($request);
 
         self::assertSame(200, $response->getStatusCode());
-        $payload = $response->toArray();
+        $payload = json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertArrayHasKey('url', $payload);
         self::assertArrayHasKey('fileName', $payload);

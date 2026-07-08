@@ -76,9 +76,11 @@ The rich text editor lives in `assets/editor/` and is exposed to the existing fo
 
 - `assets/editor/CkEditor.vue` is the reusable Vue 3 editor component.
 - `assets/editor/uploadAdapter.ts` provides CKEditor upload support against a Symfony endpoint.
+- `assets/editor/assetBrowserPlugin.js` adds a toolbar button that opens the native asset browser.
+- `assets/editor/EditorAssetPicker.vue` shows existing uploaded files and inserts them as images or links.
 - `assets/editor/plugins.ts` and `assets/editor/toolbar.ts` keep the editor configuration isolated and reusable.
 - `src/Service/EditorUploadService.php` stores uploads in the public filesystem and returns a browser URL.
-- `src/Controller/EditorUploadController.php` accepts authenticated uploads and returns CKEditor-compatible JSON.
+- `src/Controller/EditorUploadController.php` accepts authenticated uploads and lists existing assets.
 
 ### Reused from the legacy plugin
 
@@ -86,6 +88,7 @@ The rich text editor lives in `assets/editor/` and is exposed to the existing fo
 - image validation rules
 - public-file URL generation strategy
 - file storage separation for editor content
+- asset browsing behavior, expressed as a native Vue modal instead of a popup window
 
 ### New behavior
 
@@ -94,6 +97,7 @@ The rich text editor lives in `assets/editor/` and is exposed to the existing fo
 - upload adapter with progress support
 - cleanup on unmount
 - read-only mode support
+- existing file browser for reusing uploaded content
 
 ### Build and test
 
@@ -115,5 +119,5 @@ Uploads are stored below `public/<phplist.editor_images_dir>/ckeditor5/`.
 ### Limitations
 
 - This integration only covers image uploads from CKEditor.
-- elFinder is not embedded in the frontend UI; only the storage model and upload flow are reused.
+- elFinder is not embedded in the frontend UI; the frontend now provides a native asset browser instead.
 - Existing legacy HTML content is preserved as-is, but custom HTML support still depends on CKEditor 5 output rules.

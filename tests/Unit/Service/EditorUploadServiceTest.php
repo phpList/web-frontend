@@ -35,10 +35,67 @@ final class EditorUploadServiceTest extends TestCase
         self::assertSame('/uploadimages/ckeditor5/' . $result->fileName, $result->relativeUrl);
         self::assertFileExists($projectDir . '/public/uploadimages/ckeditor5/' . $result->fileName);
 
-        @unlink($projectDir . '/public/uploadimages/ckeditor5/' . $result->fileName);
-        @rmdir($projectDir . '/public/uploadimages/ckeditor5');
-        @rmdir($projectDir . '/public/uploadimages');
-        @rmdir($projectDir . '/public');
-        @rmdir($projectDir);
+        $this->removePath($projectDir . '/public/uploadimages/ckeditor5/' . $result->fileName);
+        $this->removePath($projectDir . '/public/uploadimages/ckeditor5');
+        $this->removePath($projectDir . '/public/uploadimages');
+        $this->removePath($projectDir . '/public');
+        $this->removePath($projectDir);
+    }
+
+    public function testListAssetsReturnsUploadedFilesSortedByNewestFirst(): void
+    {
+        $projectDir = sys_get_temp_dir() . '/phplist-editor-assets-' . bin2hex(random_bytes(4));
+        $service = new EditorUploadService($projectDir, 'uploadimages');
+
+        $directory = $projectDir . '/public/uploadimages/ckeditor5';
+        mkdir($directory, 0755, true);
+
+        $imagePath = $directory . '/image-one.png';
+        file_put_contents($imagePath, base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO3Z4foAAAAASUVORK5CYII='
+        ));
+        touch($imagePath, time() - 60);
+
+        $filePath = $directory . '/notes.txt';
+        file_put_contents($filePath, 'notes');
+
+        $assets = $service->listAssets();
+
+        self::assertCount(2, $assets);
+        self::assertSame('notes.txt', $assets[0]->fileName);
+        self::assertFalse($assets[0]->isImage);
+        self::assertSame('/uploadimages/ckeditor5/notes.txt', $assets[0]->url);
+        self::assertSame('image-one.png', $assets[1]->fileName);
+        self::assertTrue($assets[1]->isImage);
+
+        $this->removePath($imagePath);
+        $this->removePath($filePath);
+        $this->removePath($directory);
+        $this->removePath($projectDir . '/public/uploadimages');
+        $this->removePath($projectDir . '/public');
+        $this->removePath($projectDir);
+    }
+
+    private function removePath(string $path): void
+    {
+        if (is_file($path) || is_link($path)) {
+            unlink($path);
+
+            return;
+        }
+
+        if (!is_dir($path)) {
+            return;
+        }
+
+        foreach (scandir($path) as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+
+            $this->removePath($path . DIRECTORY_SEPARATOR . $item);
+        }
+
+        rmdir($path);
     }
 }

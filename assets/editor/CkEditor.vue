@@ -8,16 +8,29 @@
     :style="editorStyle"
     @ready="handleReady"
   />
+
+  <EditorAssetPicker
+    :open="assetPickerOpen"
+    :items="assetItems"
+    :query="assetQuery"
+    :loading="assetLoading"
+    :error="assetError"
+    @close="closeAssetPicker"
+    @refresh="loadAssets"
+    @select="insertAsset"
+    @update:query="assetQuery = $event"
+  />
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, shallowRef, useId, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, shallowRef, useId, watch } from 'vue';
 import { Ckeditor } from '@ckeditor/ckeditor5-vue';
 import { ClassicEditor } from 'ckeditor5';
 
 import { DEFAULT_PLUGINS } from './plugins.ts';
 import { DEFAULT_IMAGE_TOOLBAR, DEFAULT_TOOLBAR } from './toolbar.ts';
 import EditorUploadAdapter from './uploadAdapter.ts';
+import EditorAssetPicker from './EditorAssetPicker.vue';
 
 import 'ckeditor5/ckeditor5.css';
 
@@ -45,6 +58,10 @@ const props = defineProps({
   uploadEndpoint: {
     type: String,
     default: '/editor/upload',
+  },
+  assetsEndpoint: {
+    type: String,
+    default: '/editor/assets',
   },
   uploadHeaders: {
     type: Object,
@@ -79,6 +96,11 @@ const localValue = computed({
 });
 
 const editorRef = shallowRef(null);
+const assetPickerOpen = ref(false);
+const assetLoading = ref(false);
+const assetError = ref('');
+const assetItems = ref([]);
+const assetQuery = ref('');
 
 const isDisabled = computed(() => props.disabled || props.readonly);
 const editorStyle = computed(() => ({
@@ -129,6 +151,7 @@ const editorConfig = computed(() => {
     toolbar,
     image: imageConfig,
     htmlSupport,
+    openAssetPicker: openAssetPicker,
   };
 });
 
@@ -149,6 +172,73 @@ const syncReadOnlyState = (editor) => {
   }
 
   editor.disableReadOnlyMode('ckeditor-field');
+};
+
+const loadAssets = async () => {
+  assetLoading.value = true;
+  assetError.value = '';
+
+  try {
+    const response = await fetch(props.assetsEndpoint, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: props.withCredentials ? 'include' : 'same-origin',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to load assets (${response.status})`);
+    }
+
+    const payload = await response.json();
+    assetItems.value = Array.isArray(payload?.items) ? payload.items : [];
+  } catch (error) {
+    assetError.value = error?.message || 'Failed to load assets.';
+  } finally {
+    assetLoading.value = false;
+  }
+};
+
+const openAssetPicker = async () => {
+  assetPickerOpen.value = true;
+
+  if (assetItems.value.length === 0 && !assetLoading.value) {
+    await loadAssets();
+  }
+};
+
+const closeAssetPicker = () => {
+  assetPickerOpen.value = false;
+};
+
+const getSelectedEditor = () => editorRef.value;
+
+const insertAsset = (asset) => {
+  if (!asset) {
+    return;
+  }
+
+  const editor = getSelectedEditor();
+  if (!editor) {
+    return;
+  }
+
+  editor.model.change((writer) => {
+    if (asset.isImage) {
+      const imageElement = writer.createElement('imageBlock', {
+        src: asset.url,
+        alt: asset.fileName,
+      });
+      editor.model.insertContent(imageElement, editor.model.document.selection);
+      return;
+    }
+
+    const linkText = asset.fileName || asset.url;
+    const textNode = writer.createText(linkText, { linkHref: asset.url });
+    editor.model.insertContent(textNode, editor.model.document.selection);
+  });
+
+  closeAssetPicker();
 };
 
 const handleReady = (editor) => {

@@ -47,4 +47,15 @@ final class EditorUploadController
             'fileName' => $result->fileName,
         ]);
     }
+
+    #[Route('/assets', name: 'assets', methods: ['GET'])]
+    public function assets(): JsonResponse
+    {
+        return new JsonResponse([
+            'items' => array_map(
+                static fn ($asset) => $asset->toArray(),
+                $this->editorUploadService->listAssets()
+            ),
+        ]);
+    }
 }

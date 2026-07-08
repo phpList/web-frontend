@@ -4,17 +4,45 @@ import CkEditor from '../../../../assets/editor/CkEditor.vue'
 
 vi.mock('ckeditor5', () => ({
   ClassicEditor: {},
+  Alignment: {},
+  AutoImage: {},
+  AutoLink: {},
+  Autosave: {},
   Essentials: {},
   Paragraph: {},
   Bold: {},
   Italic: {},
   Heading: {},
+  Code: {},
+  FontBackgroundColor: {},
+  FontColor: {},
+  FontFamily: {},
+  FontSize: {},
   Link: {},
   List: {},
+  ListProperties: {},
   BlockQuote: {},
+  Highlight: {},
   Table: {},
+  TableCaption: {},
+  TableCellProperties: {},
+  TableColumnResize: {},
+  TableLayout: {},
+  TableProperties: {},
   TableToolbar: {},
   HorizontalLine: {},
+  HtmlEmbed: {},
+  SourceEditing: {},
+  RemoveFormat: {},
+  Strikethrough: {},
+  Subscript: {},
+  Superscript: {},
+  Underline: {},
+  TextTransformation: {},
+  TodoList: {},
+  Indent: {},
+  IndentBlock: {},
+  MediaEmbed: {},
   Image: {},
   ImageToolbar: {},
   ImageCaption: {},
@@ -22,11 +50,17 @@ vi.mock('ckeditor5', () => ({
   ImageResize: {},
   ImageUpload: {},
   ImageInsert: {},
+  ImageInsertUI: {},
   ImageInsertViaUrl: {},
-  AutoImage: {},
+  ImageInline: {},
+  ImageBlock: {},
+  LinkImage: {},
   PictureEditing: {},
+  PlainTableOutput: {},
   FileRepository: {},
   GeneralHtmlSupport: {},
+  Plugin: class {},
+  ButtonView: class {},
 }))
 
 vi.mock('@ckeditor/ckeditor5-vue', () => ({
@@ -84,7 +118,17 @@ describe('CkEditor', () => {
 
     expect(config.licenseKey).toBe('GPL')
     expect(config.toolbar).toContain('insertImage')
+    expect(config.toolbar).toContain('assetBrowser')
     expect(config.htmlSupport.allow[0].name).toBeDefined()
+  })
+
+  it('exposes an asset picker hook in the editor config', () => {
+    const wrapper = createWrapper()
+
+    const editor = wrapper.findComponent({ name: 'ckeditor' })
+    const config = editor.props('config')
+
+    expect(typeof config.openAssetPicker).toBe('function')
   })
 
   it('disables the editor when readonly is set', () => {

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Service;
 
+use PhpList\WebFrontend\Dto\EditorAssetItem;
 use PhpList\WebFrontend\Dto\EditorUploadResult;
+use FilesystemIterator;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -44,14 +46,65 @@ final class EditorUploadService
         );
     }
 
+    /**
+     * @return array<int, EditorAssetItem>
+     */
+    public function listAssets(): array
+    {
+        $directory = $this->getTargetDirectory();
+
+        if (!is_dir($directory)) {
+            return [];
+        }
+
+        $items = [];
+        foreach (new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS) as $fileInfo) {
+            if (!$fileInfo->isFile()) {
+                continue;
+            }
+
+            $fileName = $fileInfo->getBasename();
+            if ($fileName === '' || str_starts_with($fileName, '.')) {
+                continue;
+            }
+
+            $mimeType = (string) (mime_content_type($fileInfo->getPathname()) ?: 'application/octet-stream');
+
+            $items[] = new EditorAssetItem(
+                fileName: $fileName,
+                url: $this->buildRelativeUrl($fileName),
+                mimeType: $mimeType,
+                size: (int) $fileInfo->getSize(),
+                modifiedAt: (int) $fileInfo->getMTime(),
+                isImage: str_starts_with($mimeType, 'image/'),
+            );
+        }
+
+        usort(
+            $items,
+            static fn (EditorAssetItem $left, EditorAssetItem $right): int => $right->modifiedAt <=> $left->modifiedAt
+        );
+
+        return $items;
+    }
+
     public function buildRelativeUrl(string $fileName): string
     {
-        return sprintf('/%s/%s/%s', trim($this->editorImagesDir, '/'), self::STORAGE_SUBDIRECTORY, ltrim($fileName, '/'));
+        return sprintf(
+            '/%s/%s/%s',
+            trim($this->editorImagesDir, '/'),
+            self::STORAGE_SUBDIRECTORY,
+            ltrim($fileName, '/')
+        );
     }
 
     public function getTargetDirectory(): string
     {
-        return rtrim($this->projectDir, '/').'/public/'.trim($this->editorImagesDir, '/').'/'.self::STORAGE_SUBDIRECTORY;
+        return rtrim($this->projectDir, '/')
+            . '/public/'
+            . trim($this->editorImagesDir, '/')
+            . '/'
+            . self::STORAGE_SUBDIRECTORY;
     }
 
     private function buildFileName(UploadedFile $uploadedFile): string

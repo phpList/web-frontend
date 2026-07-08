@@ -67,3 +67,53 @@ To add new Vue components:
 1. Create the component in the `assets/vue/` directory
 2. Import and mount it in `assets/app.js`
 3. Add a mount point in the appropriate template
+
+## CKEditor 5 Integration
+
+The rich text editor lives in `assets/editor/` and is exposed to the existing forms through `assets/vue/components/base/CkEditorField.vue`.
+
+### Architecture
+
+- `assets/editor/CkEditor.vue` is the reusable Vue 3 editor component.
+- `assets/editor/uploadAdapter.ts` provides CKEditor upload support against a Symfony endpoint.
+- `assets/editor/plugins.ts` and `assets/editor/toolbar.ts` keep the editor configuration isolated and reusable.
+- `src/Service/EditorUploadService.php` stores uploads in the public filesystem and returns a browser URL.
+- `src/Controller/EditorUploadController.php` accepts authenticated uploads and returns CKEditor-compatible JSON.
+
+### Reused from the legacy plugin
+
+- upload path conventions
+- image validation rules
+- public-file URL generation strategy
+- file storage separation for editor content
+
+### New behavior
+
+- Vue component with `v-model`
+- configurable toolbar and CKEditor options
+- upload adapter with progress support
+- cleanup on unmount
+- read-only mode support
+
+### Build and test
+
+```bash
+yarn encore dev
+composer test
+yarn test:vue
+```
+
+### Configuration
+
+The backend uses the existing phpList upload directory parameters:
+
+- `phplist.upload_images_dir`
+- `phplist.editor_images_dir`
+
+Uploads are stored below `public/<phplist.editor_images_dir>/ckeditor5/`.
+
+### Limitations
+
+- This integration only covers image uploads from CKEditor.
+- elFinder is not embedded in the frontend UI; only the storage model and upload flow are reused.
+- Existing legacy HTML content is preserved as-is, but custom HTML support still depends on CKEditor 5 output rules.

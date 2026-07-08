@@ -1,50 +1,30 @@
-// CkEditorField.spec.js
-
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import CkEditorField from '../../../../../../assets/vue/components/base/CkEditorField.vue'
 
-vi.mock('ckeditor5', () => ({
-    ClassicEditor: {},
-    Essentials: {},
-    Paragraph: {},
-    Bold: {},
-    Italic: {},
-    Heading: {},
-    Link: {},
-    List: {},
-    BlockQuote: {},
-    Table: {},
-    TableToolbar: {},
-    HorizontalLine: {},
-    Image: {},
-    ImageToolbar: {},
-    ImageCaption: {},
-    ImageStyle: {},
-    ImageResize: {},
-    AutoImage: {},
-    PictureEditing: {},
-}))
-
-const CkeditorStub = {
-    name: 'ckeditor',
+const CkEditorStub = {
+    name: 'CkEditor',
     props: [
         'modelValue',
-        'editor',
-        'config',
         'id',
+        'readonly',
+        'disabled',
+        'minHeight',
+        'uploadEndpoint',
+        'uploadHeaders',
+        'withCredentials',
+        'toolbar',
+        'plugins',
+        'config',
     ],
     emits: ['update:modelValue'],
     template: `
-    <div class="ckeditor-stub">
-      <button
-        class="change-value"
-        @click="$emit('update:modelValue', '<p>Updated</p>')"
-      >
-        Update
-      </button>
-    </div>
-  `,
+      <div class="ckeditor-stub">
+        <button class="change-value" @click="$emit('update:modelValue', '<p>Updated</p>')">
+          Update
+        </button>
+      </div>
+    `,
 }
 
 describe('CkEditorField', () => {
@@ -55,7 +35,7 @@ describe('CkEditorField', () => {
             },
             global: {
                 stubs: {
-                    ckeditor: CkeditorStub,
+                    CkEditor: CkEditorStub,
                 },
             },
         })
@@ -80,8 +60,7 @@ describe('CkEditorField', () => {
             modelValue: '<p>Hello</p>',
         })
 
-        const editor =
-            wrapper.findComponent(CkeditorStub)
+        const editor = wrapper.findComponent(CkEditorStub)
 
         expect(editor.props('modelValue'))
             .toBe('<p>Hello</p>')
@@ -130,55 +109,33 @@ describe('CkEditorField', () => {
             id: 'editor-1',
         })
 
-        const editor =
-            wrapper.findComponent(CkeditorStub)
+        const editor = wrapper.findComponent(CkEditorStub)
 
         expect(editor.props('id'))
             .toBe('editor-1')
     })
 
-    it('passes editor instance to ckeditor', () => {
+    it('passes editor options through to the editor component', () => {
         const wrapper = createWrapper()
 
-        const editor =
-            wrapper.findComponent(CkeditorStub)
+        const editor = wrapper.findComponent(CkEditorStub)
 
-        expect(editor.props('editor'))
-            .toBeDefined()
+        expect(editor.props('uploadEndpoint'))
+            .toBe('/editor/upload')
+
+        expect(editor.props('minHeight'))
+            .toBe(300)
     })
 
-    it('passes editor config to ckeditor', () => {
-        const wrapper = createWrapper()
+    it('forwards custom config and toolbar props', () => {
+        const toolbar = ['undo', 'bold']
+        const wrapper = createWrapper({
+            toolbar,
+            config: { placeholder: 'Write here' },
+        })
 
-        const editor =
-            wrapper.findComponent(CkeditorStub)
-
-        const config = editor.props('config')
-
-        expect(config.licenseKey)
-            .toBe('GPL')
-
-        expect(config.toolbar)
-            .toContain('bold')
-
-        expect(config.toolbar)
-            .toContain('italic')
-
-        expect(config.toolbar)
-            .toContain('insertTable')
-    })
-
-    it('contains image toolbar configuration', () => {
-        const wrapper = createWrapper()
-
-        const config =
-            wrapper.findComponent(CkeditorStub)
-                .props('config')
-
-        expect(config.image.toolbar)
-            .toContain('toggleImageCaption')
-
-        expect(config.image.toolbar)
-            .toContain('imageTextAlternative')
+        const editor = wrapper.findComponent(CkEditorStub)
+        expect(editor.props('toolbar')).toEqual(toolbar)
+        expect(editor.props('config')).toEqual({ placeholder: 'Write here' })
     })
 })

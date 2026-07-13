@@ -3042,15 +3042,15 @@
                                         },
                                         "fileName": {
                                             "type": "string",
-                                            "example": "f47ac10b58cc4372a5670e02b2c3d479.png"
+                                            "example": "test.png"
                                         },
                                         "url": {
                                             "type": "string",
-                                            "example": "https://example.com/uploadfiles/f47ac10b58cc4372a5670e02b2c3d479.png"
+                                            "example": "https://ex.com/uploads/test.png"
                                         },
                                         "default": {
                                             "type": "string",
-                                            "example": "https://example.com/uploadfiles/f47ac10b58cc4372a5670e02b2c3d479.png"
+                                            "example": "https://ex.com/uploads/test.png"
                                         },
                                         "mimeType": {
                                             "type": "string",

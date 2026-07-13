@@ -2988,6 +2988,132 @@
                 }
             }
         },
+        "/api/v2/editor-uploads": {
+            "post": {
+                "tags": [
+                    "editor-uploads"
+                ],
+                "summary": "Upload editor asset",
+                "description": "Uploads an editor asset for use in CKEditor.",
+                "operationId": "b6cf7a64f5fccb8f0601331579203dc1",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "upload": {
+                                        "description": "Asset file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "file": {
+                                        "description": "Alternative asset file field name",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Asset uploaded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "uploaded": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "fileName": {
+                                            "type": "string",
+                                            "example": "f47ac10b58cc4372a5670e02b2c3d479.png"
+                                        },
+                                        "url": {
+                                            "type": "string",
+                                            "example": "https://example.com/uploadfiles/f47ac10b58cc4372a5670e02b2c3d479.png"
+                                        },
+                                        "default": {
+                                            "type": "string",
+                                            "example": "https://example.com/uploadfiles/f47ac10b58cc4372a5670e02b2c3d479.png"
+                                        },
+                                        "mimeType": {
+                                            "type": "string",
+                                            "example": "image/png"
+                                        },
+                                        "size": {
+                                            "type": "integer",
+                                            "example": 123456,
+                                            "nullable": true
+                                        },
+                                        "extension": {
+                                            "type": "string",
+                                            "example": "png"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "413": {
+                        "description": "Payload too large",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenericErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Storage failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenericErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/email-forward/{messageId}": {
             "post": {
                 "tags": [
@@ -9440,6 +9566,10 @@
         {
             "name": "campaigns",
             "description": "campaigns"
+        },
+        {
+            "name": "editor-uploads",
+            "description": "editor-uploads"
         },
         {
             "name": "list-messages",

@@ -2989,6 +2989,115 @@
             }
         },
         "/api/v2/editor-uploads": {
+            "get": {
+                "tags": [
+                    "editor-uploads"
+                ],
+                "summary": "List files in upload directory",
+                "description": "Returns a list of files in the requested upload directory.",
+                "operationId": "e7e69f1b4695239ad3301bc61de57862",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "directory",
+                        "in": "query",
+                        "description": "Upload directory name (e.g., \"uploads\" or \"images\")",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "uploads"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "files": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "image.png"
+                                                    },
+                                                    "path": {
+                                                        "type": "string",
+                                                        "example": "/uploads/image.png"
+                                                    },
+                                                    "size": {
+                                                        "type": "integer",
+                                                        "example": 12345
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "file"
+                                                    },
+                                                    "modified": {
+                                                        "type": "integer",
+                                                        "example": 1689255600
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "directory": {
+                                            "type": "string",
+                                            "example": "uploads"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - invalid directory",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Directory not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "editor-uploads"
@@ -3031,42 +3140,11 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Asset uploaded",
+                        "description": "Success",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "uploaded": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "fileName": {
-                                            "type": "string",
-                                            "example": "test.png"
-                                        },
-                                        "url": {
-                                            "type": "string",
-                                            "example": "https://ex.com/uploads/test.png"
-                                        },
-                                        "default": {
-                                            "type": "string",
-                                            "example": "https://ex.com/uploads/test.png"
-                                        },
-                                        "mimeType": {
-                                            "type": "string",
-                                            "example": "image/png"
-                                        },
-                                        "size": {
-                                            "type": "integer",
-                                            "example": 123456,
-                                            "nullable": true
-                                        },
-                                        "extension": {
-                                            "type": "string",
-                                            "example": "png"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/EditorUpload"
                                 }
                             }
                         }
@@ -8347,6 +8425,41 @@
                     }
                 },
                 "type": "object"
+            },
+            "EditorUpload": {
+                "properties": {
+                    "uploaded": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "fileName": {
+                        "type": "string",
+                        "example": "test.png"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "https://ex.com/uploads/test.png"
+                    },
+                    "default": {
+                        "type": "string",
+                        "example": "https://ex.com/uploads/test.png"
+                    },
+                    "mimeType": {
+                        "type": "string",
+                        "example": "image/png"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "example": 123456,
+                        "nullable": true
+                    },
+                    "extension": {
+                        "type": "string",
+                        "example": "png"
+                    }
+                },
+                "type": "object",
+                "nullable": true
             },
             "ForwardRecipientResult": {
                 "properties": {

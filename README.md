@@ -112,9 +112,8 @@ vendor/bin/phpunit
 The backend uses the existing phpList upload directory parameters:
 
 - `phplist.upload_images_dir`
-- `phplist.editor_images_dir`
 
-Uploads are stored below `public/<phplist.editor_images_dir>/ckeditor5/`.
+Uploads are stored below `public/<phplist.upload_images_dir>/ckeditor5/`.
 
 ### Limitations
 

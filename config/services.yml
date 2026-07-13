@@ -10,7 +10,7 @@ services:
     public: false
     bind:
       $projectDir: '%kernel.project_dir%'
-      $editorImagesDir: '%phplist.editor_images_dir%'
+      $editorImagesDir: '%phplist.upload_images_dir%'
 
   PhpList\WebFrontend\:
     resource: '../src/'

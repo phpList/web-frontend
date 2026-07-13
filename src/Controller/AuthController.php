@@ -7,6 +7,8 @@ namespace PhpList\WebFrontend\Controller;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\RestApiClient\Exception\ApiException;
+use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +22,7 @@ class AuthController extends AbstractController
     use RedirectValidationTrait;
 
     public function __construct(
-        private readonly AuthClient      $authClient,
+        private readonly AuthClient $authClient,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -88,7 +90,12 @@ class AuthController extends AbstractController
     {
         try {
             $user = $this->authClient->getSessionUser();
-        } catch (Exception | GuzzleException $e) {
+        } catch (AuthenticationException) {
+            return new JsonResponse(
+                ['error' => 'Unable to load current user.'],
+                401
+            );
+        } catch (ApiException $e) {
             $this->logger->error('Unable to load current user: ' . $e->getMessage());
 
             return new JsonResponse(

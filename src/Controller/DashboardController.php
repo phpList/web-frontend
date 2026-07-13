@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
-use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\AuthorizationException;
 use PhpList\RestApiClient\Endpoint\StatisticsClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +26,7 @@ class DashboardController extends AbstractController
         try {
             $stats = $this->statisticsClient->getDashboardStats();
             $dashboardStats = $this->buildDashboardStats($stats);
-        } catch (AuthenticationException | AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             $dashboardError = $e->getMessage() ?: 'Unable to load dashboard statistics.';
         }
 

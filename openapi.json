@@ -8432,7 +8432,7 @@
                         "type": "boolean",
                         "example": true
                     },
-                    "fileName": {
+                    "file_name": {
                         "type": "string",
                         "example": "test.png"
                     },
@@ -8444,7 +8444,7 @@
                         "type": "string",
                         "example": "https://ex.com/uploads/test.png"
                     },
-                    "mimeType": {
+                    "mime_type": {
                         "type": "string",
                         "example": "image/png"
                     },

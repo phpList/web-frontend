@@ -28,7 +28,11 @@ services:
   Symfony\Component\HttpFoundation\Session\SessionInterface: '@session'
 
   PhpList\RestApiClient\Client:
-    $baseUrl: '%api_base_url%'
+   $baseUrl: '%api_base_url%'
+
+  PhpList\RestApiClient\Endpoint\UploadsClient:
+    arguments:
+      $client: '@PhpList\RestApiClient\Client'
 
   PhpList\WebFrontend\EventListener\ApiSessionListener:
     tags:

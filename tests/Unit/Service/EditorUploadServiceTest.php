@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Unit\Service;
 
-use PhpList\WebFrontend\Service\EditorUploadService;
+use PhpList\WebFrontend\Service\UploadsClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -13,7 +13,7 @@ final class EditorUploadServiceTest extends TestCase
     public function testStoreImageMovesTheFileAndBuildsAPublicUrl(): void
     {
         $projectDir = sys_get_temp_dir() . '/phplist-editor-upload-' . bin2hex(random_bytes(4));
-        $service = new EditorUploadService($projectDir, 'uploadimages');
+        $service = new UploadsClient($projectDir, 'uploadimages');
 
         $sourceFile = tempnam(sys_get_temp_dir(), 'editor-upload-');
         self::assertIsString($sourceFile);
@@ -45,7 +45,7 @@ final class EditorUploadServiceTest extends TestCase
     public function testListAssetsReturnsUploadedFilesSortedByNewestFirst(): void
     {
         $projectDir = sys_get_temp_dir() . '/phplist-editor-assets-' . bin2hex(random_bytes(4));
-        $service = new EditorUploadService($projectDir, 'uploadimages');
+        $service = new UploadsClient($projectDir, 'uploadimages');
 
         $directory = $projectDir . '/public/uploadimages/ckeditor5';
         mkdir($directory, 0755, true);

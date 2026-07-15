@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Integration\Controller;
 
 use PhpList\WebFrontend\Controller\EditorUploadController;
-use PhpList\WebFrontend\Service\EditorUploadService;
+use PhpList\WebFrontend\Service\UploadsClient;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +30,7 @@ final class EditorUploadControllerTest extends KernelTestCase
         self::bootKernel();
 
         $projectDir = sys_get_temp_dir() . '/phplist-editor-upload-' . bin2hex(random_bytes(4));
-        $service = new EditorUploadService($projectDir, 'uploadimages');
+        $service = new UploadsClient($projectDir, 'uploadimages');
         $controller = new EditorUploadController($service);
 
         $sourceFile = tempnam(sys_get_temp_dir(), 'editor-upload-');
@@ -82,7 +82,7 @@ final class EditorUploadControllerTest extends KernelTestCase
         self::bootKernel();
 
         $projectDir = sys_get_temp_dir() . '/phplist-editor-assets-' . bin2hex(random_bytes(4));
-        $service = new EditorUploadService($projectDir, 'uploadimages');
+        $service = new UploadsClient($projectDir, 'uploadimages');
         $controller = new EditorUploadController($service);
 
         $directory = $projectDir . '/public/uploadimages/ckeditor5';

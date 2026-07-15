@@ -51,10 +51,20 @@ final class EditorUploadController
     #[Route('/assets', name: 'assets', methods: ['GET'])]
     public function assets(): JsonResponse
     {
+        try {
+            $assets = $this->editorUploadService->listAssets();
+        } catch (RuntimeException $exception) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => $exception->getMessage(),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         return new JsonResponse([
             'items' => array_map(
                 static fn ($asset) => $asset->toArray(),
-                $this->editorUploadService->listAssets()
+                $assets
             ),
         ]);
     }

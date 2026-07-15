@@ -4,98 +4,203 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Unit\Service;
 
-use PhpList\WebFrontend\Service\UploadsClient;
+use PhpList\RestApiClient\Endpoint\UploadsClient;
+use PhpList\RestApiClient\Exception\ApiException;
+use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\NotFoundException;
+use PhpList\WebFrontend\Service\EditorUploadService;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class EditorUploadServiceTest extends TestCase
 {
-    public function testStoreImageMovesTheFileAndBuildsAPublicUrl(): void
+    public function testStoreImageUploadsThroughApiAndReturnsResult(): void
     {
-        $projectDir = sys_get_temp_dir() . '/phplist-editor-upload-' . bin2hex(random_bytes(4));
-        $service = new UploadsClient($projectDir, 'uploadimages');
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->expects(self::once())
+            ->method('upload')
+            ->with(
+                self::callback(static fn (string $path): bool => str_ends_with($path, '.png')),
+                'upload'
+            )
+            ->willReturn([
+                'fileName' => 'hero-image.png',
+                'url' => '/uploadimages/hero-image.png',
+            ]);
 
+        $service = new EditorUploadService($uploadsClient);
+        $result = $service->storeImage($this->createImageUpload());
+
+        self::assertSame('hero-image.png', $result->fileName);
+        self::assertSame('/uploadimages/hero-image.png', $result->relativeUrl);
+    }
+
+    public function testStoreImageFallsBackToClientNameAndBuiltUrl(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('upload')->willReturn([]);
+
+        $service = new EditorUploadService($uploadsClient);
+        $result = $service->storeImage($this->createImageUpload('hero image.png'));
+
+        self::assertSame('hero image.png', $result->fileName);
+        self::assertSame('/uploadimages/hero image.png', $result->relativeUrl);
+    }
+
+    public function testStoreImageRejectsNonImageUploads(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->expects(self::never())->method('upload');
+
+        $sourceFile = tempnam(sys_get_temp_dir(), 'editor-upload-');
+        self::assertIsString($sourceFile);
+        file_put_contents($sourceFile, 'just some plain text, definitely not an image');
+        $upload = new UploadedFile($sourceFile, 'notes.txt', 'text/plain', null, true);
+
+        $service = new EditorUploadService($uploadsClient);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Only image uploads are supported.');
+
+        $service->storeImage($upload);
+    }
+
+    public function testStoreImageWrapsApiErrorsInRuntimeException(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('upload')
+            ->willThrowException(new ApiException('boom', 500));
+
+        $service = new EditorUploadService($uploadsClient);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Upload failed: boom');
+
+        $service->storeImage($this->createImageUpload());
+    }
+
+    public function testStoreImageRethrowsAuthenticationException(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('upload')
+            ->willThrowException(new AuthenticationException('Session expired', 401));
+
+        $service = new EditorUploadService($uploadsClient);
+
+        $this->expectException(AuthenticationException::class);
+
+        $service->storeImage($this->createImageUpload());
+    }
+
+    public function testListAssetsMapsApiFieldsAndSortsByNewestFirst(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->expects(self::once())
+            ->method('getUploads')
+            ->with('uploadimages')
+            ->willReturn([
+                // Real API listing shape: name/path/size/type/modified, no mimeType.
+                'files' => [
+                    [
+                        'name' => 'image-one.png',
+                        'path' => '/uploadimages/image-one.png',
+                        'size' => 120,
+                        'type' => 'file',
+                        'modified' => 100,
+                    ],
+                    [
+                        'name' => 'notes.txt',
+                        'path' => '/uploadimages/notes.txt',
+                        'size' => 8,
+                        'type' => 'file',
+                        'modified' => 200,
+                    ],
+                ],
+            ]);
+
+        $service = new EditorUploadService($uploadsClient);
+        $assets = $service->listAssets();
+
+        self::assertCount(2, $assets);
+        self::assertSame('notes.txt', $assets[0]->fileName);
+        self::assertFalse($assets[0]->isImage);
+        self::assertSame('/uploadimages/notes.txt', $assets[0]->url);
+        self::assertSame('image-one.png', $assets[1]->fileName);
+        self::assertTrue($assets[1]->isImage);
+        self::assertSame('image/png', $assets[1]->mimeType);
+        self::assertSame(100, $assets[1]->modifiedAt);
+    }
+
+    public function testListAssetsSkipsDirectoriesAndUnnamedEntries(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('getUploads')->willReturn([
+            'files' => [
+                ['type' => 'file'],
+                ['name' => 'nested', 'type' => 'directory'],
+                ['name' => 'kept.png', 'type' => 'file'],
+            ],
+        ]);
+
+        $service = new EditorUploadService($uploadsClient);
+        $assets = $service->listAssets();
+
+        self::assertCount(1, $assets);
+        self::assertSame('kept.png', $assets[0]->fileName);
+    }
+
+    public function testListAssetsReturnsEmptyWhenDirectoryMissing(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('getUploads')
+            ->willThrowException(new NotFoundException('Directory "uploadimages" not found.', 404));
+
+        $service = new EditorUploadService($uploadsClient);
+
+        self::assertSame([], $service->listAssets());
+    }
+
+    public function testListAssetsWrapsApiErrorsInRuntimeException(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('getUploads')
+            ->willThrowException(new ApiException('unavailable', 500));
+
+        $service = new EditorUploadService($uploadsClient);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Failed to list assets: unavailable');
+
+        $service->listAssets();
+    }
+
+    public function testListAssetsRethrowsAuthenticationException(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->method('getUploads')
+            ->willThrowException(new AuthenticationException('Session expired', 401));
+
+        $service = new EditorUploadService($uploadsClient);
+
+        $this->expectException(AuthenticationException::class);
+
+        $service->listAssets();
+    }
+
+    private function createImageUpload(string $clientName = 'newsletter-image.png'): UploadedFile
+    {
+        return new UploadedFile($this->createSourceFile(), $clientName, 'image/png', null, true);
+    }
+
+    private function createSourceFile(): string
+    {
         $sourceFile = tempnam(sys_get_temp_dir(), 'editor-upload-');
         self::assertIsString($sourceFile);
         file_put_contents($sourceFile, base64_decode(
             'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO3Z4foAAAAASUVORK5CYII='
         ));
 
-        $uploadedFile = new UploadedFile(
-            $sourceFile,
-            'hero image.png',
-            'image/png',
-            null,
-            true
-        );
-
-        $result = $service->storeImage($uploadedFile);
-
-        self::assertStringEndsWith('.png', $result->fileName);
-        self::assertSame('/uploadimages/ckeditor5/' . $result->fileName, $result->relativeUrl);
-        self::assertFileExists($projectDir . '/public/uploadimages/ckeditor5/' . $result->fileName);
-
-        $this->removePath($projectDir . '/public/uploadimages/ckeditor5/' . $result->fileName);
-        $this->removePath($projectDir . '/public/uploadimages/ckeditor5');
-        $this->removePath($projectDir . '/public/uploadimages');
-        $this->removePath($projectDir . '/public');
-        $this->removePath($projectDir);
-    }
-
-    public function testListAssetsReturnsUploadedFilesSortedByNewestFirst(): void
-    {
-        $projectDir = sys_get_temp_dir() . '/phplist-editor-assets-' . bin2hex(random_bytes(4));
-        $service = new UploadsClient($projectDir, 'uploadimages');
-
-        $directory = $projectDir . '/public/uploadimages/ckeditor5';
-        mkdir($directory, 0755, true);
-
-        $imagePath = $directory . '/image-one.png';
-        file_put_contents($imagePath, base64_decode(
-            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO3Z4foAAAAASUVORK5CYII='
-        ));
-        touch($imagePath, time() - 60);
-
-        $filePath = $directory . '/notes.txt';
-        file_put_contents($filePath, 'notes');
-
-        $assets = $service->listAssets();
-
-        self::assertCount(2, $assets);
-        self::assertSame('notes.txt', $assets[0]->fileName);
-        self::assertFalse($assets[0]->isImage);
-        self::assertSame('/uploadimages/ckeditor5/notes.txt', $assets[0]->url);
-        self::assertSame('image-one.png', $assets[1]->fileName);
-        self::assertTrue($assets[1]->isImage);
-
-        $this->removePath($imagePath);
-        $this->removePath($filePath);
-        $this->removePath($directory);
-        $this->removePath($projectDir . '/public/uploadimages');
-        $this->removePath($projectDir . '/public');
-        $this->removePath($projectDir);
-    }
-
-    private function removePath(string $path): void
-    {
-        if (is_file($path) || is_link($path)) {
-            unlink($path);
-
-            return;
-        }
-
-        if (!is_dir($path)) {
-            return;
-        }
-
-        foreach (scandir($path) as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
-
-            $this->removePath($path . DIRECTORY_SEPARATOR . $item);
-        }
-
-        rmdir($path);
+        return $sourceFile;
     }
 }

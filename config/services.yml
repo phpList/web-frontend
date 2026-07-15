@@ -10,7 +10,6 @@ services:
     public: false
     bind:
       $projectDir: '%kernel.project_dir%'
-      $editorImagesDir: '%phplist.upload_images_dir%'
 
   PhpList\WebFrontend\:
     resource: '../src/'
@@ -28,11 +27,7 @@ services:
   Symfony\Component\HttpFoundation\Session\SessionInterface: '@session'
 
   PhpList\RestApiClient\Client:
-   $baseUrl: '%api_base_url%'
-
-  PhpList\RestApiClient\Endpoint\UploadsClient:
-    arguments:
-      $client: '@PhpList\RestApiClient\Client'
+    $baseUrl: '%api_base_url%'
 
   PhpList\WebFrontend\EventListener\ApiSessionListener:
     tags:

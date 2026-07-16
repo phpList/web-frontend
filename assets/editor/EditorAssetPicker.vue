@@ -6,6 +6,7 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="editor-asset-picker-title"
+      @keydown.esc="$emit('close')"
     >
       <div class="w-full max-w-5xl overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl">
         <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
@@ -27,6 +28,7 @@
 
         <div class="flex flex-col gap-3 border-b border-slate-200 px-4 py-3 sm:flex-row sm:items-center">
           <input
+            ref="searchInput"
             :value="query"
             type="search"
             class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
@@ -120,7 +122,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 
 const props = defineProps({
   open: {
@@ -146,6 +148,24 @@ const props = defineProps({
 })
 
 defineEmits(['close', 'refresh', 'select', 'update:query'])
+
+const searchInput = ref(null)
+let previouslyFocused = null
+
+watch(
+  () => props.open,
+  (isOpen) => {
+    if (isOpen) {
+      previouslyFocused = document.activeElement
+      nextTick(() => {
+        searchInput.value?.focus()
+      })
+    } else if (previouslyFocused instanceof HTMLElement) {
+      previouslyFocused.focus()
+      previouslyFocused = null
+    }
+  },
+)
 
 const filteredItems = computed(() => {
   const needle = props.query.trim().toLowerCase()

@@ -139,9 +139,9 @@ final class EditorUploadService
 
             $items[] = new EditorAssetItem(
                 fileName: $fileName,
-                url: (string) $file['path'],
+                url: (string) ($file['path'] ?? $this->buildRelativeUrl($fileName)),
                 mimeType: $mimeType,
-                size: (int) ($file['size']),
+                size: (int) ($file['size'] ?? 0),
                 modifiedAt: (int) ($file['modified'] ?? time()),
                 isImage: str_starts_with($mimeType, 'image/'),
             );

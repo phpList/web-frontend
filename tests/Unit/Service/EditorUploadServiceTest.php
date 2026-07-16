@@ -46,7 +46,7 @@ final class EditorUploadServiceTest extends TestCase
         $result = $service->storeImage($this->createImageUpload('hero image.png'));
 
         self::assertSame('hero image.png', $result->fileName);
-        self::assertSame('/uploadimages/hero image.png', $result->relativeUrl);
+        self::assertSame('/uploadimages/hero%20image.png', $result->relativeUrl);
     }
 
     public function testStoreImageRejectsNonImageUploads(): void

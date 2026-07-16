@@ -66,6 +66,25 @@ final class EditorUploadServiceTest extends TestCase
         $service->storeImage($upload);
     }
 
+    public function testStoreImageRejectsFilesExceedingMaxSize(): void
+    {
+        $uploadsClient = $this->createMock(UploadsClient::class);
+        $uploadsClient->expects(self::never())->method('upload');
+
+        $sourceFile = tempnam(sys_get_temp_dir(), 'editor-upload-');
+        self::assertIsString($sourceFile);
+        // Write just over the 10 MB limit so the size check trips before upload.
+        file_put_contents($sourceFile, str_repeat("\0", 10 * 1024 * 1024 + 1));
+        $upload = new UploadedFile($sourceFile, 'huge.png', 'image/png', null, true);
+
+        $service = new EditorUploadService($uploadsClient);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The uploaded file exceeds the maximum allowed size of 10 MB.');
+
+        $service->storeImage($upload);
+    }
+
     public function testStoreImageWrapsApiErrorsInRuntimeException(): void
     {
         $uploadsClient = $this->createMock(UploadsClient::class);
@@ -123,13 +142,13 @@ final class EditorUploadServiceTest extends TestCase
         $assets = $service->listAssets();
 
         self::assertCount(2, $assets);
-        self::assertSame('notes.txt', $assets[0]->fileName);
-        self::assertFalse($assets[0]->isImage);
-        self::assertSame('/uploadimages/notes.txt', $assets[0]->url);
-        self::assertSame('image-one.png', $assets[1]->fileName);
-        self::assertTrue($assets[1]->isImage);
-        self::assertSame('image/png', $assets[1]->mimeType);
-        self::assertSame(100, $assets[1]->modifiedAt);
+        self::assertSame('notes.txt', $assets[1]->fileName);
+        self::assertFalse($assets[1]->isImage);
+        self::assertSame('/uploadimages/notes.txt', $assets[1]->url);
+        self::assertSame('image-one.png', $assets[0]->fileName);
+        self::assertTrue($assets[0]->isImage);
+        self::assertSame('image/png', $assets[0]->mimeType);
+        self::assertSame(100, $assets[0]->modifiedAt);
     }
 
     public function testListAssetsSkipsDirectoriesAndUnnamedEntries(): void
@@ -139,7 +158,7 @@ final class EditorUploadServiceTest extends TestCase
             'files' => [
                 ['type' => 'file'],
                 ['name' => 'nested', 'type' => 'directory'],
-                ['name' => 'kept.png', 'type' => 'file'],
+                ['name' => 'kept.png', 'type' => 'file', 'path' => '/uploads/kept.png', 'size' => '2MB'],
             ],
         ]);
 

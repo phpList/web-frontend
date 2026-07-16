@@ -18,6 +18,8 @@ final class EditorUploadService
 {
     private const UPLOAD_DIRECTORY = 'uploadimages';
 
+    private const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
     public function __construct(
         private readonly RestApiUploadsClient $uploadsClient,
     ) {
@@ -51,7 +53,7 @@ final class EditorUploadService
         }
 
         $fileName = $response['fileName']
-            ?? (string) ($uploadedFile->getClientOriginalName() ?: basename($uploadPath));
+            ?? ($uploadedFile->getClientOriginalName() ?: basename($uploadPath));
         $relativeUrl = $response['url'] ?? $this->buildRelativeUrl($fileName);
 
         return new EditorUploadResult(
@@ -164,6 +166,13 @@ final class EditorUploadService
     {
         if (!$uploadedFile->isValid()) {
             throw new RuntimeException($uploadedFile->getErrorMessage());
+        }
+
+        if ($uploadedFile->getSize() > self::MAX_FILE_SIZE) {
+            throw new RuntimeException(sprintf(
+                'The uploaded file exceeds the maximum allowed size of %d MB.',
+                intdiv(self::MAX_FILE_SIZE, 1024 * 1024)
+            ));
         }
 
         $mimeType = (string) $uploadedFile->getMimeType();

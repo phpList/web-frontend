@@ -66,6 +66,12 @@
               </tr>
             </thead>
             <tbody>
+              <tr v-if="!filteredItems.length">
+                <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
+                  No assets found.
+                </td>
+              </tr>
+
               <tr
                 v-for="item in filteredItems"
                 :key="item.url"

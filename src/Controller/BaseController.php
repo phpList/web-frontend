@@ -23,6 +23,10 @@ class BaseController extends AbstractController
         try {
             $admin = $this->authClient->getSessionUser();
         } catch (ApiException | AuthenticationException | AuthorizationException) {
+            // Best-effort context: knowing whether an admin is viewing is optional, so any
+            // failure (including an upstream ApiException) degrades to "anonymous visitor"
+            // rather than breaking public pages. Callers that need the API result to succeed
+            // must not rely on this method.
             $admin = null;
         }
 

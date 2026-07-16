@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Unit\Controller;
 
 use PhpList\RestApiClient\Entity\Administrator;
+use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PHPUnit\Framework\Assert;
@@ -316,5 +317,17 @@ class AuthControllerTest extends TestCase
             '{"id":123,"login_name":"testadmin","email":"admin@example.com","super_user":true}',
             $response->getContent()
         );
+    }
+
+    public function testAboutReturnsBadGatewayWhenUpstreamFails(): void
+    {
+        $this->authClient->expects($this->once())
+            ->method('getSessionUser')
+            ->willThrowException(new ApiException('upstream down', 500));
+
+        $response = $this->controller->about();
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(Response::HTTP_BAD_GATEWAY, $response->getStatusCode());
     }
 }

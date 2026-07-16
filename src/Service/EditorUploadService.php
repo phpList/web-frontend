@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Service;
 use Exception;
 use PhpList\WebFrontend\Dto\EditorAssetItem;
 use PhpList\WebFrontend\Dto\EditorUploadResult;
+use PhpList\WebFrontend\Exception\UpstreamServiceException;
 use PhpList\RestApiClient\Endpoint\UploadsClient as RestApiUploadsClient;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\AuthorizationException;
@@ -28,7 +29,7 @@ final class EditorUploadService
     /**
      * @throws AuthorizationException
      * @throws AuthenticationException
-     * @throws RuntimeException
+     * @throws UpstreamServiceException on API/transport failure
      */
     public function storeImage(UploadedFile $uploadedFile): EditorUploadResult
     {
@@ -45,7 +46,7 @@ final class EditorUploadService
         } catch (AuthenticationException | AuthorizationException $e) {
             throw $e;
         } catch (Exception $e) {
-            throw new RuntimeException('Upload failed: ' . $e->getMessage(), 0, $e);
+            throw new UpstreamServiceException('Upload failed: ' . $e->getMessage(), 0, $e);
         } finally {
             if ($uploadPath !== $tempPath && is_file($uploadPath)) {
                 unlink($uploadPath);
@@ -65,7 +66,7 @@ final class EditorUploadService
     /**
      * @throws AuthorizationException
      * @throws AuthenticationException
-     * @throws RuntimeException
+     * @throws UpstreamServiceException on API/transport failure
      * @return array<int, EditorAssetItem>
      */
     public function listAssets(): array
@@ -79,7 +80,7 @@ final class EditorUploadService
             // directory as an empty asset list rather than an error.
             return [];
         } catch (Exception $e) {
-            throw new RuntimeException('Failed to list assets: ' . $e->getMessage(), 0, $e);
+            throw new UpstreamServiceException('Failed to list assets: ' . $e->getMessage(), 0, $e);
         }
 
         $files = $response['files'] ?? [];
@@ -89,7 +90,7 @@ final class EditorUploadService
 
     public function buildRelativeUrl(string $fileName): string
     {
-        return '/' . self::UPLOAD_DIRECTORY . '/' . ltrim($fileName, '/');
+        return '/' . self::UPLOAD_DIRECTORY . '/' . rawurlencode(basename($fileName));
     }
 
     public function getTargetDirectory(): string

@@ -100,7 +100,7 @@ class AuthController extends AbstractController
 
             return new JsonResponse(
                 ['error' => 'Unable to load current user.'],
-                Response::HTTP_SERVICE_UNAVAILABLE
+                Response::HTTP_BAD_GATEWAY
             );
         }
 

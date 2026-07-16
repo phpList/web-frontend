@@ -72,7 +72,7 @@ final class EditorUploadControllerTest extends KernelTestCase
         self::assertSame('No file was provided.', $payload['error']['message']);
     }
 
-    public function testUploadReturnsBadRequestWhenApiFails(): void
+    public function testUploadReturnsBadGatewayWhenApiFails(): void
     {
         $uploadsClient = $this->createMock(UploadsClient::class);
         $uploadsClient->method('upload')
@@ -82,7 +82,7 @@ final class EditorUploadControllerTest extends KernelTestCase
 
         $response = $controller->upload($this->createUploadRequest());
 
-        self::assertSame(400, $response->getStatusCode());
+        self::assertSame(502, $response->getStatusCode());
         $payload = json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame('Upload failed: boom', $payload['error']['message']);
     }
@@ -116,7 +116,7 @@ final class EditorUploadControllerTest extends KernelTestCase
         self::assertTrue($payload['items'][0]['isImage']);
     }
 
-    public function testAssetsReturnsBadRequestWhenApiFails(): void
+    public function testAssetsReturnsBadGatewayWhenApiFails(): void
     {
         $uploadsClient = $this->createMock(UploadsClient::class);
         $uploadsClient->method('getUploads')
@@ -126,7 +126,7 @@ final class EditorUploadControllerTest extends KernelTestCase
 
         $response = $controller->assets();
 
-        self::assertSame(400, $response->getStatusCode());
+        self::assertSame(502, $response->getStatusCode());
         $payload = json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame('Failed to list assets: unavailable', $payload['error']['message']);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Controller;
 
+use PhpList\WebFrontend\Exception\UpstreamServiceException;
 use PhpList\WebFrontend\Service\EditorUploadService;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,12 +35,12 @@ final class EditorUploadController
 
         try {
             $result = $this->editorUploadService->storeImage($uploadedFile);
-        } catch (RuntimeException $exception) {
+        } catch (UpstreamServiceException $exception) {
             return new JsonResponse([
                 'error' => [
                     'message' => $exception->getMessage(),
                 ],
-            ], Response::HTTP_BAD_REQUEST);
+            ], Response::HTTP_BAD_GATEWAY);
         }
 
         return new JsonResponse([
@@ -53,12 +54,12 @@ final class EditorUploadController
     {
         try {
             $assets = $this->editorUploadService->listAssets();
-        } catch (RuntimeException $exception) {
+        } catch (UpstreamServiceException $exception) {
             return new JsonResponse([
                 'error' => [
                     'message' => $exception->getMessage(),
                 ],
-            ], Response::HTTP_BAD_REQUEST);
+            ], Response::HTTP_BAD_GATEWAY);
         }
 
         return new JsonResponse([

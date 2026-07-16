@@ -8,6 +8,7 @@ use PhpList\RestApiClient\Endpoint\UploadsClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\NotFoundException;
+use PhpList\WebFrontend\Exception\UpstreamServiceException;
 use PhpList\WebFrontend\Service\EditorUploadService;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -85,7 +86,7 @@ final class EditorUploadServiceTest extends TestCase
         $service->storeImage($upload);
     }
 
-    public function testStoreImageWrapsApiErrorsInRuntimeException(): void
+    public function testStoreImageWrapsApiErrorsInUpstreamServiceException(): void
     {
         $uploadsClient = $this->createMock(UploadsClient::class);
         $uploadsClient->method('upload')
@@ -93,7 +94,7 @@ final class EditorUploadServiceTest extends TestCase
 
         $service = new EditorUploadService($uploadsClient);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UpstreamServiceException::class);
         $this->expectExceptionMessage('Upload failed: boom');
 
         $service->storeImage($this->createImageUpload());
@@ -180,7 +181,7 @@ final class EditorUploadServiceTest extends TestCase
         self::assertSame([], $service->listAssets());
     }
 
-    public function testListAssetsWrapsApiErrorsInRuntimeException(): void
+    public function testListAssetsWrapsApiErrorsInUpstreamServiceException(): void
     {
         $uploadsClient = $this->createMock(UploadsClient::class);
         $uploadsClient->method('getUploads')
@@ -188,7 +189,7 @@ final class EditorUploadServiceTest extends TestCase
 
         $service = new EditorUploadService($uploadsClient);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UpstreamServiceException::class);
         $this->expectExceptionMessage('Failed to list assets: unavailable');
 
         $service->listAssets();

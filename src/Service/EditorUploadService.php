@@ -147,6 +147,12 @@ final class EditorUploadService
             );
         }
 
+        // Newest first, so the most recently uploaded assets surface at the top of the picker.
+        usort(
+            $items,
+            static fn (EditorAssetItem $as1, EditorAssetItem $as2): int => $as2->modifiedAt <=> $as1->modifiedAt
+        );
+
         return $items;
     }
 

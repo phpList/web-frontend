@@ -143,13 +143,14 @@ final class EditorUploadServiceTest extends TestCase
         $assets = $service->listAssets();
 
         self::assertCount(2, $assets);
-        self::assertSame('notes.txt', $assets[1]->fileName);
-        self::assertFalse($assets[1]->isImage);
-        self::assertSame('/uploadimages/notes.txt', $assets[1]->url);
-        self::assertSame('image-one.png', $assets[0]->fileName);
-        self::assertTrue($assets[0]->isImage);
-        self::assertSame('image/png', $assets[0]->mimeType);
-        self::assertSame(100, $assets[0]->modifiedAt);
+        self::assertSame('notes.txt', $assets[0]->fileName);
+        self::assertFalse($assets[0]->isImage);
+        self::assertSame('/uploadimages/notes.txt', $assets[0]->url);
+        self::assertSame(200, $assets[0]->modifiedAt);
+        self::assertSame('image-one.png', $assets[1]->fileName);
+        self::assertTrue($assets[1]->isImage);
+        self::assertSame('image/png', $assets[1]->mimeType);
+        self::assertSame(100, $assets[1]->modifiedAt);
     }
 
     public function testListAssetsSkipsDirectoriesAndUnnamedEntries(): void

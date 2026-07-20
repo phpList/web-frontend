@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-[#F8FAFC] flex text-slate-900 font-sans">
     <AppSidebar />
 
-    <div class="flex flex-col flex-1 min-h-screen">
+    <div class="flex flex-col flex-1 min-h-screen min-w-0">
       <RouterView />
     </div>
   </div>

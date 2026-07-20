@@ -81,7 +81,7 @@
                   <img
                     v-if="item.isImage"
                     :src="item.url"
-                    :alt="item.fileName"
+                    :alt="item.fileName.slice(0, 5) + '...'"
                     class="h-14 w-14 rounded border border-slate-200 object-cover"
                   >
                   <div

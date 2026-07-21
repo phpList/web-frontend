@@ -3032,9 +3032,9 @@
                                                         "type": "string",
                                                         "example": "image.png"
                                                     },
-                                                    "path": {
+                                                    "url": {
                                                         "type": "string",
-                                                        "example": "/uploads/image.png"
+                                                        "example": "https://ex.com/api/v2/editor-uploads/image.png"
                                                     },
                                                     "size": {
                                                         "type": "integer",
@@ -3185,6 +3185,45 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/GenericErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/editor-uploads/{filename}": {
+            "get": {
+                "tags": [
+                    "editor-uploads"
+                ],
+                "summary": "Get uploaded image by name",
+                "description": "Returns an uploaded image file by its name.",
+                "operationId": "e6468f87da70512337db720c33725084",
+                "parameters": [
+                    {
+                        "name": "filename",
+                        "in": "path",
+                        "description": "Name of the uploaded image file",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/octet-stream": {}
+                        }
+                    },
+                    "404": {
+                        "description": "File not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
                                 }
                             }
                         }
@@ -8456,6 +8495,32 @@
                     "extension": {
                         "type": "string",
                         "example": "png"
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "FileListingEntry": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "image.png"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "https://ex.com/api/v2/editor-uploads/image.png"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "example": 12345
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "file"
+                    },
+                    "modified": {
+                        "type": "integer",
+                        "example": 1689255600
                     }
                 },
                 "type": "object",

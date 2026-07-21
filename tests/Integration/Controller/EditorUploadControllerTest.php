@@ -92,12 +92,12 @@ final class EditorUploadControllerTest extends KernelTestCase
         $uploadsClient = $this->createMock(UploadsClient::class);
         $uploadsClient->expects(self::once())
             ->method('getUploads')
-            ->with('uploadimages')
+            ->with('/')
             ->willReturn([
                 'files' => [
                     [
                         'name' => 'asset.png',
-                        'path' => '/uploadimages/asset.png',
+                        'url' => 'http://api.phplist.test/uploadimages/asset.png',
                         'size' => 12,
                         'type' => 'file',
                         'modified' => 100,

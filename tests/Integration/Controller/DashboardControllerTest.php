@@ -57,7 +57,7 @@ class DashboardControllerTest extends KernelTestCase
         self::assertStringContainsString('data-dashboard-error=""', $content);
     }
 
-    public function testDashboardRendersDashboardErrorWhenAuthFails(): void
+    public function testDashboardPropagatesAuthenticationExceptionForLoginRedirect(): void
     {
         self::bootKernel();
 
@@ -74,12 +74,12 @@ class DashboardControllerTest extends KernelTestCase
         $session->set('auth_token', 'integration-token');
         $request->setSession($session);
 
-        $response = $controller->index($request);
-        $content = (string) $response->getContent();
+        // An expired session must not be rendered inline: the controller lets the
+        // AuthenticationException propagate so UnauthorizedSubscriber redirects to /login.
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Session expired');
 
-        self::assertSame(200, $response->getStatusCode());
-        self::assertStringContainsString('data-dashboard-error="Session&#x20;expired"', $content);
-        self::assertStringContainsString('data-dashboard-stats="&#x5B;&#x5D;"', $content);
+        $controller->index($request);
     }
 
     public function testDashboardRendersDashboardErrorWhenAuthorizationFails(): void

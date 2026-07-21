@@ -9,7 +9,6 @@ use PhpList\Core\Domain\Configuration\Model\ConfigOption;
 use PhpList\Core\Domain\Configuration\Service\Provider\DefaultConfigProvider;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\SubscribePagesClient;
-use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\ValidationException;
 use PhpList\RestApiClient\Request\SubscribePage\PublicSubscriptionRequest;
 use PhpList\WebFrontend\Service\LanguageService;
@@ -139,7 +138,10 @@ class PublicSubscribeController extends BaseController
                     }
 
                     $successHtml = trim((string) ($pageData['thankyoupage'] ?? ''));
-                } catch (ValidationException | ApiException $exception) {
+                } catch (ValidationException $exception) {
+                    // Genuine client-input rejection from the API: show it inline on the form.
+                    // A bare ApiException (upstream failure) is intentionally left to propagate
+                    // so the global handler can map it to a 502 rather than masking it here.
                     $errorMessages[] = $exception->getMessage();
                 }
             }

@@ -72,7 +72,7 @@ final class EditorUploadService
     public function listAssets(): array
     {
         try {
-            $response = $this->uploadsClient->getUploads(self::UPLOAD_DIRECTORY);
+            $response = $this->uploadsClient->getUploads();
         } catch (AuthenticationException | AuthorizationException $e) {
             throw $e;
         } catch (NotFoundException) {
@@ -139,7 +139,7 @@ final class EditorUploadService
 
             $items[] = new EditorAssetItem(
                 fileName: $fileName,
-                url: (string) ($file['path'] ?? $this->buildRelativeUrl($fileName)),
+                url: $file['url'],
                 mimeType: $mimeType,
                 size: (int) ($file['size'] ?? 0),
                 modifiedAt: (int) ($file['modified'] ?? time()),

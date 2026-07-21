@@ -118,20 +118,20 @@ final class EditorUploadServiceTest extends TestCase
         $uploadsClient = $this->createMock(UploadsClient::class);
         $uploadsClient->expects(self::once())
             ->method('getUploads')
-            ->with('uploadimages')
+            ->with('/')
             ->willReturn([
-                // Real API listing shape: name/path/size/type/modified, no mimeType.
+                // Real API listing shape: name/url/size/type/modified, no mimeType.
                 'files' => [
                     [
                         'name' => 'image-one.png',
-                        'path' => '/uploadimages/image-one.png',
+                        'url' => 'http://api.phplist.test/uploadimages/image-one.png',
                         'size' => 120,
                         'type' => 'file',
                         'modified' => 100,
                     ],
                     [
                         'name' => 'notes.txt',
-                        'path' => '/uploadimages/notes.txt',
+                        'url' => 'http://api.phplist.test/uploadimages/notes.txt',
                         'size' => 8,
                         'type' => 'file',
                         'modified' => 200,
@@ -145,7 +145,7 @@ final class EditorUploadServiceTest extends TestCase
         self::assertCount(2, $assets);
         self::assertSame('notes.txt', $assets[0]->fileName);
         self::assertFalse($assets[0]->isImage);
-        self::assertSame('/uploadimages/notes.txt', $assets[0]->url);
+        self::assertSame('http://api.phplist.test/uploadimages/notes.txt', $assets[0]->url);
         self::assertSame(200, $assets[0]->modifiedAt);
         self::assertSame('image-one.png', $assets[1]->fileName);
         self::assertTrue($assets[1]->isImage);
@@ -160,7 +160,12 @@ final class EditorUploadServiceTest extends TestCase
             'files' => [
                 ['type' => 'file'],
                 ['name' => 'nested', 'type' => 'directory'],
-                ['name' => 'kept.png', 'type' => 'file', 'path' => '/uploads/kept.png', 'size' => '2MB'],
+                [
+                    'name' => 'kept.png',
+                    'type' => 'file',
+                    'url' => 'http://api.phplist.test/uploads/kept.png',
+                    'size' => '2MB',
+                ],
             ],
         ]);
 

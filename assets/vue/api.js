@@ -77,7 +77,6 @@ export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);
 export const configClient = new ConfigClient(client);
 
-
 export const backendFetch = async (input, init = undefined) => {
     const response = await fetch(input, init);
 

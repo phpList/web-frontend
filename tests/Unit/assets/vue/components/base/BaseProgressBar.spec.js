@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import BaseProgressBar from './BaseProgressBar.vue'
+import BaseProgressBar from '../../../../../../assets/vue/components/base/BaseProgressBar.vue'
 
 describe('BaseProgressBar', () => {
   it('applies default height and progress attributes', () => {

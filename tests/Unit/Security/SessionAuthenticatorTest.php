@@ -42,6 +42,18 @@ class SessionAuthenticatorTest extends TestCase
         $this->assertFalse($this->authenticator->supports($request));
     }
 
+    public function testSupportsReturnsFalseForUnsubscribePaths(): void
+    {
+        $request = Request::create('/unsubscribe');
+        $this->assertFalse($this->authenticator->supports($request));
+
+        $request = Request::create('/unsubscribe/7');
+        $this->assertFalse($this->authenticator->supports($request));
+
+        $request = Request::create('/subscribe');
+        $this->assertFalse($this->authenticator->supports($request));
+    }
+
     public function testSupportsReturnsTrueForOtherPaths(): void
     {
         $request = Request::create('/dashboard');
@@ -109,25 +121,25 @@ class SessionAuthenticatorTest extends TestCase
     public function testOnAuthenticationFailureRedirectsToLogin(): void
     {
         $this->urlGenerator->method('generate')->with('login')->willReturn('/login');
-        
-        $request = Request::create('/dashboard');
+
+        $request = Request::create('/dashboard?tab=performance');
         $exception = new AuthenticationException('Auth failed');
-        
+
         $response = $this->authenticator->onAuthenticationFailure($request, $exception);
-        
+
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getTargetUrl());
+        $this->assertEquals('/login?redirect=%2Fdashboard%3Ftab%3Dperformance', $response->getTargetUrl());
     }
 
     public function testStartRedirectsToLogin(): void
     {
         $this->urlGenerator->method('generate')->with('login')->willReturn('/login');
-        
-        $request = Request::create('/dashboard');
-        
+
+        $request = Request::create('/dashboard?tab=overview');
+
         $response = $this->authenticator->start($request);
-        
+
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getTargetUrl());
+        $this->assertEquals('/login?redirect=%2Fdashboard%3Ftab%3Doverview', $response->getTargetUrl());
     }
 }

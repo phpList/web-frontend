@@ -6,6 +6,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    include: ['assets/vue/**/*.spec.js'],
+    include: [
+      'assets/vue/**/*.spec.js',
+      'tests/Unit/assets/vue/**/*.spec.js',
+      'tests/Unit/assets/editor/**/*.spec.js',
+    ],
   },
 })

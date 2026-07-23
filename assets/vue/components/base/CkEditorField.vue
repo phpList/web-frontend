@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-field" :style="{ '--editor-min-height': `300px` }">
+  <div class="editor-field" :style="editorFieldStyle">
     <label
         v-if="label"
         :for="fieldId"
@@ -8,49 +8,28 @@
       {{ label }}
     </label>
 
-    <ckeditor
+    <CkEditor
         :id="fieldId"
         v-model="localValue"
-        :editor="ClassicEditor"
-        :config="editorConfig"
+        :min-height="minHeight"
+        :readonly="readonly"
+        :disabled="disabled"
+        :upload-endpoint="uploadEndpoint"
+        :upload-headers="uploadHeaders"
+        :with-credentials="withCredentials"
+        :toolbar="toolbar"
+        :plugins="plugins"
+        :config="config"
     />
+
+    <p v-if="helperText" class="mt-1 text-xs text-slate-500">{{ helperText }}</p>
+    <p v-if="errorMessage" class="mt-1 text-xs text-red-600">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script setup>
 import { computed, useId } from 'vue'
-import { Ckeditor } from '@ckeditor/ckeditor5-vue'
-
-import {
-  ClassicEditor,
-  Essentials,
-  Paragraph,
-  Bold,
-  Italic,
-  Heading,
-  Link,
-  List,
-  BlockQuote,
-  Table,
-  TableToolbar,
-  HorizontalLine,
-
-  Image,
-  ImageToolbar,
-  ImageCaption,
-  ImageStyle,
-  ImageResize,
-  AutoImage,
-  PictureEditing
-} from 'ckeditor5'
-
-import 'ckeditor5/ckeditor5.css'
-
-defineOptions({
-  components: {
-    ckeditor: Ckeditor
-  }
-})
+import { CkEditor } from '../../../editor/index.ts'
 
 const props = defineProps({
   modelValue: {
@@ -64,6 +43,50 @@ const props = defineProps({
   id: {
     type: String,
     default: ''
+  },
+  readonly: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  helperText: {
+    type: String,
+    default: ''
+  },
+  errorMessage: {
+    type: String,
+    default: ''
+  },
+  minHeight: {
+    type: [Number, String],
+    default: 300
+  },
+  uploadEndpoint: {
+    type: String,
+    default: '/editor/upload'
+  },
+  uploadHeaders: {
+    type: Object,
+    default: () => ({})
+  },
+  withCredentials: {
+    type: Boolean,
+    default: true
+  },
+  toolbar: {
+    type: Array,
+    default: null
+  },
+  plugins: {
+    type: Array,
+    default: () => []
+  },
+  config: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -76,63 +99,16 @@ const localValue = computed({
 
 const generatedId = useId()
 const fieldId = computed(() => props.id || `ckeditor-${generatedId}`)
-
-const editorConfig = {
-  licenseKey: 'GPL',
-  plugins: [
-    Essentials,
-    Paragraph,
-    Bold,
-    Italic,
-    Heading,
-    Link,
-    List,
-    BlockQuote,
-    Table,
-    TableToolbar,
-    HorizontalLine,
-    Image,
-    ImageToolbar,
-    ImageCaption,
-    ImageStyle,
-    ImageResize,
-    AutoImage,
-    PictureEditing
-  ],
-  toolbar: [
-    'undo',
-    'redo',
-    '|',
-    'heading',
-    '|',
-    'bold',
-    'italic',
-    'link',
-    '|',
-    'bulletedList',
-    'numberedList',
-    '|',
-    'blockQuote',
-    'insertTable',
-    '|',
-    'horizontalLine'
-  ],
-  image: {
-    toolbar: [
-      'imageStyle:inline',
-      'imageStyle:block',
-      'imageStyle:side',
-      '|',
-      'toggleImageCaption',
-      'imageTextAlternative'
-    ]
-  }
-}
+const editorFieldStyle = computed(() => ({
+  '--editor-min-height': typeof props.minHeight === 'number'
+    ? `${props.minHeight}px`
+    : String(props.minHeight)
+}))
 </script>
 
 <style scoped>
 :deep(.ck-editor__editable_inline) {
-  min-height: var(--editor-min-height) !important;
+  min-height: var(--editor-min-height, 300px) !important;
   overflow-y: auto;
 }
 </style>

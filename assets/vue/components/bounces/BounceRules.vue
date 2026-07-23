@@ -83,7 +83,7 @@
               <h3 id="create-bounce-rule-modal-title" class="text-lg leading-6 font-medium text-slate-900">
                 New Bounce Rule
               </h3>
-              <button type="button" class="text-slate-400 hover:text-slate-500" :disabled="isCreatingRule" @click="closeCreateModal">
+              <button type="button" class="text-slate-400 hover:text-slate-500" :disabled="isCreatingRule" @click="closeCreateModal" data-testid="modal-close">
                 <span aria-hidden="true">×</span>
               </button>
             </div>
@@ -214,6 +214,7 @@
               type="submit"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:w-auto sm:text-sm disabled:opacity-50"
               :disabled="isCreatingRule"
+              data-testid="modal-submit"
             >
               {{ isCreatingRule ? 'Creating...' : 'Create Rule' }}
             </button>
@@ -222,6 +223,7 @@
               class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
               :disabled="isCreatingRule"
               @click="closeCreateModal"
+              data-testid="modal-cancel"
             >
               Cancel
             </button>

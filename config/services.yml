@@ -8,6 +8,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $projectDir: '%kernel.project_dir%'
 
   PhpList\WebFrontend\:
     resource: '../src/'
@@ -30,3 +32,12 @@ services:
   PhpList\WebFrontend\EventListener\ApiSessionListener:
     tags:
       - { name: kernel.event_subscriber }
+
+  PhpList\WebFrontend\Service\PhpListTranslationLoader:
+    arguments:
+      $projectDir: '%kernel.project_dir%'
+    tags:
+      - { name: translation.loader, alias: phplist }
+
+  PhpList\WebFrontend\Twig\HtmlCleanupExtension:
+    tags: [ 'twig.extension' ]

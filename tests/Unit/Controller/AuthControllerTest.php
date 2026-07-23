@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Unit\Controller;
 
 use PhpList\RestApiClient\Entity\Administrator;
+use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PHPUnit\Framework\Assert;
@@ -141,6 +142,48 @@ class AuthControllerTest extends TestCase
         $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
     }
 
+    public function testLoginWithPostRequestSuccessRedirectsToOriginalPath(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')
+            ->willReturnMap([
+                ['auth_token', false],
+                ['login_error', false]
+            ]);
+
+        $expected = [
+            ['auth_token', 'test-token'],
+            ['auth_expiry_date', '2026-03-18T14:15:38+04:00'],
+            ['auth_id', 1],
+        ];
+
+        $index = 0;
+
+        $session->expects($this->exactly(3))
+            ->method('set')
+            ->willReturnCallback(function ($key, $value) use (&$expected, &$index) {
+                Assert::assertSame($expected[$index][0], $key);
+                Assert::assertSame($expected[$index][1], $value);
+                $index++;
+            });
+
+        $request = Request::create('/login', 'POST', [
+            'username' => 'testuser',
+            'password' => 'testpass',
+            'redirect' => '/campaigns/42?tab=summary',
+        ]);
+        $request->setSession($session);
+
+        $this->authClient->method('login')
+            ->with('testuser', 'testpass')
+            ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
+
+        $response = $this->controller->login($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/campaigns/42?tab=summary', $response->getTargetUrl());
+    }
+
     public function testLoginWithPostRequestFailure(): void
     {
         $session = $this->createMock(SessionInterface::class);
@@ -186,6 +229,42 @@ class AuthControllerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('/', $response->getTargetUrl());
+    }
+
+    public function testLoginWithExistingSessionAndRedirectTarget(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')
+            ->willReturnMap([
+                ['auth_token', true],
+                ['login_error', false]
+            ]);
+
+        $request = Request::create('/login', 'GET', ['redirect' => '/lists/5/subscribers']);
+        $request->setSession($session);
+
+        $response = $this->controller->login($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/lists/5/subscribers', $response->getTargetUrl());
+    }
+
+    public function testLoginWithUnsafeRedirectFallsBackToHomeRoute(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')
+            ->willReturnMap([
+                ['auth_token', true],
+                ['login_error', false]
+            ]);
+
+        $request = Request::create('/login', 'GET', ['redirect' => 'https://example.com/evil']);
+        $request->setSession($session);
+
+        $response = $this->controller->login($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
     }
 
     public function testLogout(): void
@@ -238,5 +317,17 @@ class AuthControllerTest extends TestCase
             '{"id":123,"login_name":"testadmin","email":"admin@example.com","super_user":true}',
             $response->getContent()
         );
+    }
+
+    public function testAboutReturnsBadGatewayWhenUpstreamFails(): void
+    {
+        $this->authClient->expects($this->once())
+            ->method('getSessionUser')
+            ->willThrowException(new ApiException('upstream down', 500));
+
+        $response = $this->controller->about();
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(Response::HTTP_BAD_GATEWAY, $response->getStatusCode());
     }
 }

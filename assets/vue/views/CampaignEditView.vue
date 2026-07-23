@@ -27,7 +27,7 @@
 
       <div v-else class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div class="border-b border-slate-200 px-4 pt-4 sm:px-6 sm:pt-6">
-          <div class="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
             <button
               v-for="step in steps"
               :key="step.id"
@@ -117,7 +117,7 @@
 
           <section v-else-if="currentStep === 2" class="space-y-5">
             <h3 class="text-2xl font-semibold text-slate-900">Format</h3>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[2fr_2fr_1fr]">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_2fr_1fr]">
 
               <div>
                 <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-template">Use template</label>
@@ -133,12 +133,12 @@
                 </select>
               </div>
 
-              <div class="sm:justify-self-center justify-self-start">
+              <div class="md:justify-self-center justify-self-start">
                 <label class="mb-1 block text-sm font-medium text-slate-700">
                   Send format
                 </label>
 
-                <div class="flex gap-4">
+                <div class="flex flex-wrap gap-4">
                   <label class="flex items-center gap-2 text-sm text-slate-900">
                     <input type="radio" value="html" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"/>
                     HTML
@@ -156,12 +156,12 @@
                 </div>
               </div>
 
-              <label class="flex items-center gap-2 text-sm text-slate-800 sm:mt-2">
+              <label class="flex items-center gap-2 text-sm text-slate-800 md:mt-2">
                 <input
                   v-model="form.htmlFormated"
                   disabled
                   type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-slate-900"
+                  class="h-4 w-4 rounded border-slate-300 text-slate-900 accent-ext-wf1"
                 >
                 HTML formatted
               </label>
@@ -244,7 +244,7 @@
                   v-model="selectedListIds"
                   type="checkbox"
                   :value="list.id"
-                  class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400"
+                  class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400 accent-ext-wf1"
                 >
                 <span>{{ list.name || `List #${list.id}` }}</span>
               </label>
@@ -331,7 +331,7 @@
         </div>
 
         <div class="border-t border-slate-200 px-4 py-4 sm:px-6">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div class="text-sm">
               <div v-if="saveErrors.length" class="text-red-600">
                 <p class="font-medium">Please fix the following fields:</p>
@@ -343,7 +343,7 @@
               <p v-else-if="saveSuccess" class="text-emerald-700">{{ saveSuccess }}</p>
             </div>
 
-            <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap lg:justify-end">
               <button
                 type="button"
                 class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"

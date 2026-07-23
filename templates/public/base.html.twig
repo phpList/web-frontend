@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}phpList{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ asset('build/subscribe.css', 'phplist_web_frontend') }}">
+    <link rel="stylesheet" href="{{ asset('build/color.css', 'phplist_web_frontend') }}">
+    <link rel="stylesheet" href="{{ asset('build/app.css', 'phplist_web_frontend') }}">
+    <link rel="stylesheet" href="{{ asset('build/styles.css', 'phplist_web_frontend') }}">
+
+    {% block javascripts %}
+        <script src="{{ asset('build/runtime.js', 'phplist_web_frontend') }}" defer></script>
+        <script src="{{ asset('build/app.js', 'phplist_web_frontend') }}" defer></script>
+    {% endblock %}
+
+    {{ data['header']|default('')|unescape_header|raw }}
+
+    {% block body %}{% endblock %}
+
+    {{ signature|raw }}
+
+    {{ data['footer']|default('')|unescape_header|raw }}

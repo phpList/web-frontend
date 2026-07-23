@@ -7,6 +7,9 @@ namespace PhpList\WebFrontend\Controller;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\RestApiClient\Exception\ApiException;
+use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +19,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AuthController extends AbstractController
 {
+    use RedirectValidationTrait;
+
     public function __construct(
         private readonly AuthClient $authClient,
         private readonly LoggerInterface $logger
@@ -25,8 +30,10 @@ class AuthController extends AbstractController
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(Request $request): Response
     {
+        $redirectTarget = $this->resolveRedirectTarget($request);
+
         if ($request->getSession()->has('auth_token')) {
-            return $this->redirectToRoute('home');
+            return $this->redirectAfterLogin($redirectTarget);
         }
 
         $error = null;
@@ -43,6 +50,7 @@ class AuthController extends AbstractController
             if ($username === '' || $password === '') {
                 return $this->render('@PhpListFrontend/auth/login.html.twig', [
                     'error' => 'Username and password are required.',
+                    'redirect' => $redirectTarget,
                 ]);
             }
 
@@ -53,7 +61,7 @@ class AuthController extends AbstractController
                 $request->getSession()->set('auth_id', (int) $authData['id']);
                 $request->getSession()->save();
 
-                return $this->redirectToRoute('home');
+                return $this->redirectAfterLogin($redirectTarget);
             } catch (Exception $e) {
                 $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
@@ -63,6 +71,7 @@ class AuthController extends AbstractController
 
         return $this->render('@PhpListFrontend/auth/login.html.twig', [
             'error' => $error,
+            'redirect' => $redirectTarget,
         ]);
     }
 
@@ -81,15 +90,44 @@ class AuthController extends AbstractController
     {
         try {
             $user = $this->authClient->getSessionUser();
-        } catch (Exception | GuzzleException $e) {
+        } catch (AuthenticationException) {
+            return new JsonResponse(
+                ['error' => 'Unable to load current user.'],
+                401
+            );
+        } catch (ApiException $e) {
             $this->logger->error('Unable to load current user: ' . $e->getMessage());
 
             return new JsonResponse(
                 ['error' => 'Unable to load current user.'],
-                Response::HTTP_SERVICE_UNAVAILABLE
+                Response::HTTP_BAD_GATEWAY
             );
         }
 
         return new JsonResponse($user->toArray());
+    }
+
+    private function redirectAfterLogin(?string $redirectTarget): Response
+    {
+        if ($redirectTarget !== null) {
+            return $this->redirect($redirectTarget);
+        }
+
+        return $this->redirectToRoute('home');
+    }
+
+    private function resolveRedirectTarget(Request $request): ?string
+    {
+        $redirectTarget = $request->get('redirect');
+        if (!is_string($redirectTarget)) {
+            return null;
+        }
+
+        $redirectTarget = trim($redirectTarget);
+        if ($redirectTarget === '') {
+            return null;
+        }
+
+        return $this->isSafeRedirectTarget($redirectTarget) ? $redirectTarget : null;
     }
 }

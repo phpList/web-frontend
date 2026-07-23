@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import BaseButton from './BaseButton.vue'
+import BaseButton from '../../../../../../assets/vue/components/base/BaseButton.vue'
 
 describe('BaseButton', () => {
   it('renders slot content', () => {

@@ -25,22 +25,22 @@
           <th class="px-6 py-4">Status</th>
           <th class="px-6 py-4">Lists</th>
           <th class="px-6 py-4">Processed</th>
-          <th class="px-6 py-4">Statistics</th>
+          <th class="px-6 py-4" v-if="showStatistics">Statistics</th>
           <th class="px-6 py-4 text-right">Actions</th>
         </tr>
         </thead>
 
         <tbody class="divide-y divide-slate-200">
         <tr v-if="isLoading">
-          <td colspan="6" class="px-6 py-8 text-center text-slate-500">Loading campaigns...</td>
+          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500">Loading campaigns...</td>
         </tr>
 
         <tr v-else-if="errorMessage">
-          <td colspan="6" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
+          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
         </tr>
 
         <tr v-else-if="paginatedCampaigns.length === 0">
-          <td colspan="6" class="px-6 py-8 text-center text-slate-500">No campaigns for this filter.</td>
+          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500">No campaigns for this filter.</td>
         </tr>
 
         <tr
@@ -80,7 +80,7 @@
             <p class="text-xs leading-5"><span class="font-medium text-slate-700">Text:</span> {{ campaign.processedText }}</p>
             <p class="text-xs leading-5"><span class="font-medium text-slate-700">HTML:</span> {{ campaign.processedHtml }}</p>
           </td>
-          <td class="px-6 py-4 text-slate-600 align-top">
+          <td class="px-6 py-4 text-slate-600 align-top" v-if="showStatistics">
             <p class="text-xs leading-5"><span class="font-medium text-slate-700">Total views:</span> {{ campaign.totalViews }}</p>
             <p class="text-xs leading-5"><span class="font-medium text-slate-700">Unique views:</span> {{ campaign.uniqueViews }}</p>
             <p class="text-xs leading-5"><span class="font-medium text-slate-700">Bounced:</span> {{ campaign.bounced }}</p>
@@ -130,7 +130,7 @@
               <button
                   v-if="campaign.statusKey === 'draft'"
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleEdit(campaign.id)"
               >
@@ -139,7 +139,7 @@
               </button>
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleView(campaign.id)"
               >
@@ -223,7 +223,10 @@
             <p><span class="font-medium text-slate-700">Started:</span> {{ campaign.startedAt }}</p>
             <p><span class="font-medium text-slate-700">Time to send:</span> {{ campaign.timeToSend }}</p>
             <p><span class="font-medium text-slate-700">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
-            <p><span class="font-medium text-slate-700">Statistics:</span> Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}</p>
+            <p v-if="showStatistics">
+              <span class="font-medium text-slate-700">Statistics:</span>
+              Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
+            </p>
           </div>
 
           <div class="pt-2 flex flex-wrap gap-2">
@@ -270,7 +273,7 @@
             <button
                 v-if="campaign.statusKey === 'draft'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
@@ -279,7 +282,7 @@
             </button>
             <button
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
@@ -309,7 +312,7 @@
       <div class="flex gap-2 w-full sm:w-auto">
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
           :disabled="!canGoPrevious"
           @click="previousPage"
         >
@@ -317,7 +320,7 @@
         </button>
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
           :disabled="!canGoNext"
           @click="nextPage"
         >
@@ -400,6 +403,7 @@ const selectedCampaign = ref(null)
 const viewErrorMessage = ref('')
 const isResending = ref(false)
 const resendErrorMessage = ref('')
+const showStatistics = ref(true)
 
 const filterOptions = [
   { id: 'all', label: 'All' },
@@ -732,62 +736,77 @@ const fetchAllCampaigns = async () => {
 const fetchCampaignStatistics = async () => {
   const statisticsMap = {}
 
-  let cursor = null
-  let guard = 0
+  try {
+    let cursor = null
+    let guard = 0
 
-  // Base campaign statistics
-  while (guard < 200) {
-    const response = await statisticsClient.getCampaignStatistics(cursor, 100)
-    const items = Array.isArray(response?.items) ? response.items : []
+    while (guard < 200) {
+      const response = await statisticsClient.getCampaignStatistics(cursor, 100)
+      const items = Array.isArray(response?.items) ? response.items : []
 
-    items.forEach((item) => {
-      statisticsMap[item.campaignId] = {
-        bounces: Number(item.bounces ?? 0),
-        sent: Number(item.sent ?? 0),
-        uniqueViews: Number(item.uniqueViews ?? 0),
-      }
-    })
+      items.forEach((item) => {
+        statisticsMap[item.campaignId] = {
+          bounces: Number(item.bounces ?? 0),
+          sent: Number(item.sent ?? 0),
+          uniqueViews: Number(item.uniqueViews ?? 0),
+        }
+      })
 
-    const hasMore = Boolean(response?.pagination?.hasMore)
-    const nextCursor = response?.pagination?.nextCursor ?? null
-    if (!hasMore || nextCursor === null) break
+      const hasMore = Boolean(response?.pagination?.hasMore)
+      const nextCursor = response?.pagination?.nextCursor ?? null
 
-    cursor = nextCursor
-    guard += 1
+      if (!hasMore || nextCursor === null) break
+
+      cursor = nextCursor
+      guard++
+    }
+
+    cursor = null
+    guard = 0
+
+    while (guard < 200) {
+      const response = await statisticsClient.getStatisticsOfViewOpens(cursor, 100)
+      const items = Array.isArray(response?.items) ? response.items : []
+
+      items.forEach((item) => {
+        const existing = statisticsMap[item.campaignId] ?? {
+          bounces: 0,
+          sent: 0,
+          uniqueViews: 0,
+        }
+
+        statisticsMap[item.campaignId] = {
+          ...existing,
+          sent: Number(item.sent ?? existing.sent),
+        }
+      })
+
+      const hasMore = Boolean(response?.pagination?.hasMore)
+      const nextCursor = response?.pagination?.nextCursor ?? null
+
+      if (!hasMore || nextCursor === null) break
+
+      cursor = nextCursor
+      guard++
+    }
+
+    statisticsByCampaignId.value = statisticsMap
+    showStatistics.value = true
+  } catch (error) {
+    if (
+        error?.name === 'AuthorizationException' ||
+        error?.code === 'AuthorizationException' ||
+        error?.status === 403
+    ) {
+      showStatistics.value = false
+      statisticsByCampaignId.value = {}
+      return
+    }
+
+    throw error
   }
-
-  cursor = null
-  guard = 0
-
-  // View-open statistics
-  while (guard < 200) {
-    const response = await statisticsClient.getStatisticsOfViewOpens(cursor, 100)
-    const items = Array.isArray(response?.items) ? response.items : []
-
-    items.forEach((item) => {
-      const existing = statisticsMap[item.campaignId] || {
-        bounces: 0,
-        sent: 0,
-        uniqueViews: 0,
-      }
-
-      statisticsMap[item.campaignId] = {
-        ...existing,
-        // only merge fields that really belong here
-        sent: Number(item.sent ?? existing.sent),
-      }
-    })
-
-    const hasMore = Boolean(response?.pagination?.hasMore)
-    const nextCursor = response?.pagination?.nextCursor ?? null
-    if (!hasMore || nextCursor === null) break
-
-    cursor = nextCursor
-    guard += 1
-  }
-
-  statisticsByCampaignId.value = statisticsMap
 }
+
 const fetchListsForVisibleCampaigns = async () => {
   const pending = paginatedCampaigns.value
     .map((campaign) => campaign.id)

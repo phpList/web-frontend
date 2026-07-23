@@ -35,7 +35,7 @@
                 id="list-public"
                 v-model="createForm.public"
                 type="checkbox"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
               >
               <label for="list-public" class="ml-2 block text-sm text-slate-900">
                 Public

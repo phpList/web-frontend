@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Security;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,8 +20,12 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class SessionAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
+    use RedirectValidationTrait;
+
     private const NOT_SUPPORTED_PATHS = [
         '/login',
+        '/subscribe/',
+        '/unsubscribe/',
         '/_profiler',
         '/_wdt',
         '/build/',
@@ -41,7 +46,7 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     {
         $path = $this->normalizePath($request->getPathInfo());
         foreach (self::NOT_SUPPORTED_PATHS as $prefix) {
-            if (str_starts_with($path, $prefix)) {
+            if ($this->matchesPrefix($path, $prefix)) {
                 return false;
             }
         }
@@ -85,7 +90,28 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        $loginUrl = $this->urlGenerator->generate('login');
+        $loginUrl = $this->buildLoginUrl($request->getRequestUri());
         return new RedirectResponse($loginUrl);
+    }
+
+    private function buildLoginUrl(string $redirectTarget): string
+    {
+        $loginUrl = $this->urlGenerator->generate('login');
+
+        if (!$this->isSafeRedirectTarget($redirectTarget)) {
+            return $loginUrl;
+        }
+
+        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
+    }
+
+    private function matchesPrefix(string $path, string $prefix): bool
+    {
+        if (str_ends_with($prefix, '/')) {
+            $exactPath = rtrim($prefix, '/');
+            return $path === $exactPath || str_starts_with($path, $prefix);
+        }
+
+        return str_starts_with($path, $prefix);
     }
 }

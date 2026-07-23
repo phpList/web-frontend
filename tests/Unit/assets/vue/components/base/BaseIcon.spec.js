@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import BaseIcon from './BaseIcon.vue'
+import BaseIcon from '../../../../../../assets/vue/components/base/BaseIcon.vue'
 
 describe('BaseIcon', () => {
   it('renders icon svg for known icon name', () => {

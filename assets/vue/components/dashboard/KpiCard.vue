@@ -25,6 +25,7 @@ import BaseCard from '../../components/base/BaseCard.vue'
 import BaseIcon from '../../components/base/BaseIcon.vue'
 
 const props = defineProps({
+  id: String,
   label: String,
   value: [String, Number],
   change: String,         // "+12.5%" etc.

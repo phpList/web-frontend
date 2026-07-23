@@ -1,14 +1,18 @@
 import {
+    AdminClient,
     CampaignClient,
     Client,
     ListMessagesClient,
     ListClient,
     StatisticsClient,
+    SubscribePagesClient,
     SubscribersClient,
     SubscriptionClient,
     SubscriberAttributesClient,
     TemplatesClient,
     BouncesClient,
+    ConfigClient,
+    AdminAttributeClient,
 } from '@tatevikgr/rest-api-client';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';
@@ -27,7 +31,9 @@ const redirectToLogin = () => {
         return;
     }
     isAuthenticationRedirectInProgress = true;
-    window.location.href = AUTHENTICATION_REDIRECT_PATH;
+    const redirectTarget = `${window.location.pathname}${window.location.search}`;
+    const search = new URLSearchParams({ redirect: redirectTarget }).toString();
+    window.location.href = `${AUTHENTICATION_REDIRECT_PATH}?${search}`;
 };
 
 const appElement = document.getElementById('vue-app');
@@ -40,7 +46,6 @@ if (!apiBaseUrl) {
 
 const client = new Client(apiBaseUrl || '', {
     onAuthenticationError: redirectToLogin,
-    onAuthorizationError: redirectToLogin,
 });
 
 if (apiToken) {
@@ -59,14 +64,18 @@ client.axiosInstance?.interceptors?.response?.use(
 );
 
 export const subscribersClient = new SubscribersClient(client);
+export const adminClient = new AdminClient(client);
+export const adminAttributeClient = new AdminAttributeClient(client);
 export const listClient = new ListClient(client);
 export const campaignClient = new CampaignClient(client);
 export const listMessagesClient = new ListMessagesClient(client);
 export const statisticsClient = new StatisticsClient(client);
 export const subscriptionClient = new SubscriptionClient(client);
+export const subscribePagesClient = new SubscribePagesClient(client);
 export const subscriberAttributesClient = new SubscriberAttributesClient(client);
 export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);
+export const configClient = new ConfigClient(client);
 
 export const backendFetch = async (input, init = undefined) => {
     const response = await fetch(input, init);
@@ -98,6 +107,50 @@ export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
     }
 
     return lists;
+};
+
+export const fetchAllAdmins = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const admins = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const response = await adminClient.getAdministrators(afterId, limit);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        admins.push(...items);
+
+        const hasMore = response?.pagination?.hasMore === true;
+        const nextCursor = response?.pagination?.nextCursor;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    return admins;
+};
+
+export const fetchAllAttributeDefinitions = async ({ limit = 100, maxPages = 100 } = {}) => {
+    const attributes = [];
+    let afterId = null;
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+        const response = await subscriberAttributesClient.getAttributeDefinitions(afterId, limit);
+        const items = Array.isArray(response?.items) ? response.items : [];
+        attributes.push(...items);
+
+        const hasMore = response?.pagination?.hasMore === true;
+        const nextCursor = response?.pagination?.nextCursor;
+
+        if (!hasMore || !Number.isFinite(nextCursor) || nextCursor === afterId) {
+            break;
+        }
+
+        afterId = nextCursor;
+    }
+
+    return attributes;
 };
 
 export default client;

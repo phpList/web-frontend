@@ -4,6 +4,14 @@
 
     <!-- Main content -->
     <div class="w-full">
+      <div
+        v-if="dashboardError"
+        class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+        role="alert"
+      >
+        {{ dashboardError }}
+      </div>
+
       <!-- KPI Cards -->
       <KpiGrid />
 
@@ -50,6 +58,7 @@ const parseDashboardStats = () => {
 }
 
 const dashboardStats = parseDashboardStats()
+const dashboardError = appElement?.dataset.dashboardError || ''
 
 const chart = dashboardStats.chart || {
   labels: [],

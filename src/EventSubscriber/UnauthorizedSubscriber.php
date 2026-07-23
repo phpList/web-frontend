@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
+    use RedirectValidationTrait;
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -30,6 +35,25 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
+        if ($exception instanceof AuthorizationException) {
+            $message = 'Access denied.';
+
+            if ($event->getRequest()->isXmlHttpRequest()) {
+                $event->setResponse(new JsonResponse([
+                    'error' => 'access_denied',
+                    'message' => $message,
+                ], 403));
+
+                return;
+            }
+
+            $event->setResponse(new Response($message, 403, [
+                'Content-Type' => 'text/plain; charset=UTF-8',
+            ]));
+
+            return;
+        }
+
         if ($exception instanceof AuthenticationException) {
             $request = $event->getRequest();
 
@@ -38,7 +62,7 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
                 $session->invalidate();
             }
 
-            $loginUrl = $this->urlGenerator->generate('login');
+            $loginUrl = $this->buildLoginUrl($request->getRequestUri());
 
             if ($request->isXmlHttpRequest()) {
                 $event->setResponse(new JsonResponse([
@@ -60,5 +84,16 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
 
             $event->setResponse(new RedirectResponse($loginUrl));
         }
+    }
+
+    private function buildLoginUrl(string $redirectTarget): string
+    {
+        $loginUrl = $this->urlGenerator->generate('login');
+
+        if (!$this->isSafeRedirectTarget($redirectTarget)) {
+            return $loginUrl;
+        }
+
+        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
     }
 }

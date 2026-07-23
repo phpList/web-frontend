@@ -28,6 +28,7 @@ class ListsControllerPantherTest extends PantherTestCase
             'connection_timeout_in_ms' => 10000,
         ]);
         $client->request('GET', $path);
+        $client->takeScreenshot('var/screenshots/ananymouse-redirect-login.png');
 
         $this->assertPageTitleContains('phpList - Login');
         $this->assertSelectorExists('form');
@@ -41,8 +42,8 @@ class ListsControllerPantherTest extends PantherTestCase
     public function protectedListRoutesProvider(): array
     {
         return [
-            'lists index route' => ['/lists/'],
-            'list subscribers route' => ['/lists/11/subscribers'],
+            'lists index route' => ['/index.php/lists/'],
+            'list subscribers route' => ['/index.php/lists/11/subscribers'],
         ];
     }
 }

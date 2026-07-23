@@ -76,6 +76,8 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
             ],
             'access_control' => [
                 ['path' => '^/login', 'roles' => 'PUBLIC_ACCESS'],
+                ['path' => '^/subscribe/', 'roles' => 'PUBLIC_ACCESS'],
+                ['path' => '^/unsubscribe/', 'roles' => 'PUBLIC_ACCESS'],
                 ['path' => '^/api/v2', 'roles' => 'PUBLIC_ACCESS'],
                 ['path' => '^/', 'roles' => 'ROLE_ADMIN'],
             ],

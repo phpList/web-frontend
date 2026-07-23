@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +19,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class AuthGateSubscriber implements EventSubscriberInterface
 {
+    use RedirectValidationTrait;
+
     private const ALLOW_LIST = [
         '/api/v2',
+        '/subscribe/',
+        '/unsubscribe/',
         '/build/',
         '/assets/',
         '/css/',
@@ -55,7 +60,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
         $session = $request->getSession();
         if (!$session->has('auth_token')) {
-            $loginUrl = $this->urlGenerator->generate('login');
+            $loginUrl = $this->buildLoginUrl($request);
             $event->setResponse(new RedirectResponse($loginUrl));
         }
     }
@@ -76,7 +81,7 @@ class AuthGateSubscriber implements EventSubscriberInterface
 
         // Allow static assets commonly served under these prefixes
         foreach (self::ALLOW_LIST as $prefix) {
-            if (str_starts_with($path, $prefix)) {
+            if ($this->matchesPrefix($path, $prefix)) {
                 return true;
             }
         }
@@ -84,8 +89,25 @@ class AuthGateSubscriber implements EventSubscriberInterface
         return false;
     }
 
-    private function normalizePath(string $path): string
+    private function buildLoginUrl(Request $request): string
     {
-        return (string) preg_replace('#^/(?:app|app_test)\.php#', '', $path, 1);
+        $loginUrl = $this->urlGenerator->generate('login');
+        $redirectTarget = $request->getRequestUri();
+
+        if (!$this->isSafeRedirectTarget($redirectTarget)) {
+            return $loginUrl;
+        }
+
+        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
+    }
+
+    private function matchesPrefix(string $path, string $prefix): bool
+    {
+        if (str_ends_with($prefix, '/')) {
+            $exactPath = rtrim($prefix, '/');
+            return $path === $exactPath || str_starts_with($path, $prefix);
+        }
+
+        return str_starts_with($path, $prefix);
     }
 }

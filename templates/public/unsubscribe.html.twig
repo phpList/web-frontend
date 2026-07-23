@@ -1,0 +1,37 @@
+{% extends '@PhpListFrontend/public/base.html.twig' %}
+
+{% block title %}{{ language_texts.strUnsubscribeTitle }}{% endblock %}
+
+{% block body %}
+    <div class="legacy-page-shell">
+        <section class="legacy-card">
+
+            {% if data['intro'] is defined and data['intro'] is not empty %}
+                <div class="legacy-html-text">{{ data['intro']|raw }}</div>
+            {% endif %}
+
+            {% if form_errors is not empty %}
+                <div class="legacy-error-box">
+                    {% for error in form_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if success %}
+                <div class="legacy-html-text">{{ language_texts.strUnsubscribeDone|raw }}</div>
+            {% else %}
+                <form method="post" action="{{ path('public_unsubscribe', { pageId: page_id }) }}" class="legacy-form" novalidate>
+
+                    <div class="legacy-field-group">
+                        <label class="legacy-label" for="email">{{ language_texts.strEnterEmail|default('Email') }} *</label>
+                        <input id="email" name="email" type="email" class="legacy-input" value="{{ form_data.email|default('') }}" required autocomplete="email">
+                    </div>
+
+                    <button type="submit" class="legacy-button">{{ language_texts.strContinue|default('Unsubscribe') }}</button>
+                </form>
+            {% endif %}
+
+        </section>
+    </div>
+{% endblock %}

@@ -27,7 +27,7 @@ class ListsController extends AbstractController
             return $this->render('@PhpListFrontend/spa.html.twig', [
                 'page' => 'Lists',
                 'api_token' => $request->getSession()->get('auth_token'),
-                'api_base_url' => $this->getParameter('api_base_url'),
+                'api_base_url' => $this->getParameter('app.api_base_url'),
             ]);
         }
         $initialData = $this->listClient->getLists();
@@ -41,7 +41,7 @@ class ListsController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'List Subscribers',
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
+            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 }

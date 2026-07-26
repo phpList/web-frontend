@@ -33,7 +33,7 @@ class DashboardController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Dashboard',
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
+            'api_base_url' => $this->getParameter('app.api_base_url'),
             'dashboard_stats' => $dashboardStats,
             'dashboard_error' => $dashboardError,
         ]);

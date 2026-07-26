@@ -29,7 +29,7 @@ class DashboardControllerTest extends KernelTestCase
     public function testDashboardRendersSpaPayloadWithStats(): void
     {
         self::bootKernel();
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())

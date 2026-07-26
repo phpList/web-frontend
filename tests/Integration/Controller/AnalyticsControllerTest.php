@@ -27,7 +27,7 @@ class AnalyticsControllerTest extends KernelTestCase
         self::bootKernel();
         /** @var AnalyticsController $controller */
         $controller = static::getContainer()->get(AnalyticsController::class);
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $request = Request::create('/analytics/');
         $session = new Session(new MockArraySessionStorage());

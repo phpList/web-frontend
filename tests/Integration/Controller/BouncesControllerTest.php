@@ -27,7 +27,7 @@ class BouncesControllerTest extends KernelTestCase
         self::bootKernel();
         /** @var BouncesController $controller */
         $controller = static::getContainer()->get(BouncesController::class);
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $request = Request::create('/bounces/');
         $session = new Session(new MockArraySessionStorage());

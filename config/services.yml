@@ -1,7 +1,6 @@
 # config/services.yaml
 parameters:
-  api_base_url: '%env(API_BASE_URL)%'
-  env(API_BASE_URL): 'http://api.phplist.local/'
+  api_base_url: '%app.api_base_url%'
 
 services:
   _defaults:

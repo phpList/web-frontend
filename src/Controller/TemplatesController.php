@@ -18,7 +18,6 @@ class TemplatesController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Templates',
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 
@@ -28,7 +27,6 @@ class TemplatesController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Create Template',
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 
@@ -38,7 +36,6 @@ class TemplatesController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => sprintf('Edit Template #%d', $templateId),
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 }

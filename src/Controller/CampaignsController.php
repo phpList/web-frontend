@@ -18,7 +18,6 @@ class CampaignsController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Campaigns',
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 
@@ -28,7 +27,6 @@ class CampaignsController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Create Campaign',
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 
@@ -38,7 +36,6 @@ class CampaignsController extends AbstractController
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => sprintf('Edit Campaign #%d', $campaignId),
             'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('app.api_base_url'),
         ]);
     }
 }

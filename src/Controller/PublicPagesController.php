@@ -17,7 +17,6 @@ class PublicPagesController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Subscribe Pages',
-            'api_token' => $request->getSession()->get('auth_token'),
         ]);
     }
 
@@ -26,7 +25,6 @@ class PublicPagesController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Create Subscribe Page',
-            'api_token' => $request->getSession()->get('auth_token'),
         ]);
     }
 
@@ -35,7 +33,6 @@ class PublicPagesController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => sprintf('Edit Subscribe Page #%d', $pageId),
-            'api_token' => $request->getSession()->get('auth_token'),
         ]);
     }
 }

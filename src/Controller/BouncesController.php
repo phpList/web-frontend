@@ -23,7 +23,6 @@ class BouncesController extends AbstractController
 
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Bounces',
-            'api_token' => $request->getSession()->get('auth_token'),
             'bounce_actions' => $bounceActions,
         ]);
     }

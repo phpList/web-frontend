@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Tests\Integration\Controller;
 use PhpList\WebFrontend\Controller\AnalyticsController;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\RouterInterface;
@@ -33,6 +34,7 @@ class AnalyticsControllerTest extends KernelTestCase
         $session = new Session(new MockArraySessionStorage());
         $session->set('auth_token', 'integration-token');
         $request->setSession($session);
+        static::getContainer()->get(RequestStack::class)->push($request);
 
         $response = $controller->index($request);
         $content = (string) $response->getContent();

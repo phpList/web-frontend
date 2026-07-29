@@ -11,6 +11,7 @@ use PhpList\RestApiClient\Response\Statistics\DashboardStatisticsResponse;
 use PhpList\WebFrontend\Controller\DashboardController;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\RouterInterface;
@@ -29,7 +30,7 @@ class DashboardControllerTest extends KernelTestCase
     public function testDashboardRendersSpaPayloadWithStats(): void
     {
         self::bootKernel();
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
@@ -43,6 +44,7 @@ class DashboardControllerTest extends KernelTestCase
         $session = new Session(new MockArraySessionStorage());
         $session->set('auth_token', 'integration-token');
         $request->setSession($session);
+        static::getContainer()->get(RequestStack::class)->push($request);
 
         $response = $controller->index($request);
         $content = (string) $response->getContent();

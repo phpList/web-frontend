@@ -121,7 +121,13 @@
               </div>
             </div>
 
-            <div v-if="saveError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div v-if="saveErrors.length" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <p class="font-medium">Please fix the following fields:</p>
+              <ul class="mt-1 list-disc pl-5 space-y-1">
+                <li v-for="errorItem in saveErrors" :key="errorItem">{{ errorItem }}</li>
+              </ul>
+            </div>
+            <div v-else-if="saveError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {{ saveError }}
             </div>
             <div v-if="saveSuccess" class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
@@ -164,6 +170,7 @@ const isLoading = ref(false)
 const loadError = ref('')
 const isSaving = ref(false)
 const saveError = ref('')
+const saveErrors = ref([])
 const saveSuccess = ref('')
 const form = ref({
   title: '',
@@ -240,19 +247,63 @@ const handleFileChange = (event) => {
   form.value.file = file || null
 }
 
+const validationFieldLabels = {
+  title: 'Title',
+  content: 'Content',
+  text: 'Text version',
+  file: 'Template file',
+  list_order: 'List order',
+  check_links: 'Check links',
+  check_images: 'Check images',
+  check_external_images: 'Check external images'
+}
+
+const normalizeFieldName = (fieldPath = '') => {
+  if (validationFieldLabels[fieldPath]) return validationFieldLabels[fieldPath]
+
+  const fallback = String(fieldPath)
+    .split('.')
+    .pop()
+    ?.replace(/\[\d+]/g, '')
+    ?.replace(/_/g, ' ')
+    ?.replace(/([a-z])([A-Z])/g, '$1 $2')
+    ?.trim()
+
+  if (!fallback) return 'Field'
+  return fallback.charAt(0).toUpperCase() + fallback.slice(1)
+}
+
+const formatValidationErrors = (error) => {
+  const responseData = error?.responseData
+  const messages = []
+
+  if (responseData && typeof responseData === 'object' && !Array.isArray(responseData)) {
+    Object.entries(responseData).forEach(([field, rawMessage]) => {
+      if (!rawMessage) return
+      const text = Array.isArray(rawMessage) ? rawMessage.join(' ') : String(rawMessage)
+      messages.push(`${normalizeFieldName(field)}: ${text}`)
+    })
+  }
+
+  return [...new Set(messages)]
+}
+
 const saveTemplate = async () => {
   if (!isCreateMode.value && (!Number.isFinite(templateId.value) || templateId.value <= 0)) {
     saveError.value = 'Template ID is invalid.'
+    saveErrors.value = []
     return
   }
 
   if (!form.value.title) {
     saveError.value = 'Title is required.'
+    saveErrors.value = []
     return
   }
 
   isSaving.value = true
   saveError.value = ''
+  saveErrors.value = []
   saveSuccess.value = ''
 
   try {
@@ -292,7 +343,14 @@ const saveTemplate = async () => {
     saveSuccess.value = 'Template updated successfully.'
   } catch (error) {
     console.error('Failed to save template:', error)
-    saveError.value = error?.message || 'Failed to save template.'
+    const formattedErrors = formatValidationErrors(error)
+    if (formattedErrors.length > 0) {
+      saveErrors.value = formattedErrors
+      saveError.value = ''
+    } else {
+      saveError.value = error?.message || 'Failed to save template.'
+      saveErrors.value = []
+    }
   } finally {
     isSaving.value = false
   }

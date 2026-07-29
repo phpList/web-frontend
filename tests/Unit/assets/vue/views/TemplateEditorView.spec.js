@@ -97,6 +97,27 @@ describe('TemplateEditView', () => {
         )
     })
 
+    it('shows field-specific errors returned by the API', async () => {
+        vi.spyOn(api.templateClient, 'updateTemplate').mockRejectedValue({
+            name: 'ValidationException',
+            message: 'Validation failed',
+            responseData: {
+                title: ['This value is too long.'],
+                list_order: ['This value should be a valid number.'],
+            },
+        })
+
+        const wrapper = await mountComponent()
+
+        await wrapper.find('#template-title').setValue('Updated Template')
+        await wrapper.find('form').trigger('submit.prevent')
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Title: This value is too long.')
+        expect(wrapper.text()).toContain('List order: This value should be a valid number.')
+        expect(wrapper.text()).not.toContain('Validation failed')
+    })
+
     it('creates a template in create mode', async () => {
         mockRoute.name = 'template-create'
         mockRoute.params.templateId = ''

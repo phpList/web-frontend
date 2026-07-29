@@ -51,7 +51,7 @@
     },
     "require": {
         "php": "^8.1",
-        "phplist/core": "dev-env",
+        "phplist/core": "dev-dev",
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/security-bundle": "^6.4",

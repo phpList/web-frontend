@@ -248,7 +248,7 @@ describe('campaign normalisation', () => {
     })
 
     it('resolves active statuses to "Active" label', async () => {
-        for (const status of ['submitted', 'inprocess', 'requeued', 'scheduled']) {
+        for (const status of ['submitted', 'inprocess', 'scheduled']) {
             campaignClient.getCampaigns.mockResolvedValue(makePagedResponse([
                 makeCampaign({ id: 1, messageMetadata: { ...makeCampaign().messageMetadata, status } }),
             ]))
@@ -375,12 +375,12 @@ describe('action handlers', () => {
         expect(wrapper.text()).toContain('API error')
     })
 
-    it('handleRequeue calls updateCampaignStatus with "requeued"', async () => {
+    it('handleRequeue calls updateCampaignStatus with "submitted"', async () => {
         const { wrapper } = await mountComponent()
         const requeueBtn = wrapper.findAll('button[type="button"]').find((b) => b.text().includes('Requeue'))
         await requeueBtn.trigger('click')
         await flushPromises()
-        expect(campaignClient.updateCampaignStatus).toHaveBeenCalledWith(1, 'requeued')
+        expect(campaignClient.updateCampaignStatus).toHaveBeenCalledWith(1, 'submitted')
     })
 
     it('handleRequeue shows error feedback on failure', async () => {

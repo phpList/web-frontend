@@ -8225,8 +8225,7 @@
                             "sent",
                             "prepared",
                             "submitted",
-                            "suspended",
-                            "requeued"
+                            "suspended"
                         ],
                         "example": "draft"
                     }

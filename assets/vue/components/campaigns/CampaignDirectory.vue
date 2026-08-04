@@ -419,7 +419,7 @@ const statusClasses = {
   unknown: 'bg-amber-100 text-amber-700'
 }
 
-const activeStatuses = new Set(['active', 'submitted', 'prepared', 'inprocess', 'requeued', 'scheduled'])
+const activeStatuses = new Set(['active', 'submitted', 'prepared', 'inprocess', 'scheduled'])
 
 const resolveStatusKey = (statusRaw) => {
   if (statusRaw === 'sent') return 'sent'

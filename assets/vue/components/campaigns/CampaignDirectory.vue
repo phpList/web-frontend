@@ -8,7 +8,7 @@
           v-for="option in filterOptions"
           :key="option.id"
           type="button"
-          class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+          class="cursor-pointer flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
           :class="statusFilter === option.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
           @click="setFilter(option.id)"
         >
@@ -100,7 +100,7 @@
               <button
                 v-else-if="campaign.statusKey === 'active'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleSuspend(campaign.id)"
               >
@@ -110,7 +110,7 @@
               <button
                 v-else
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleRequeue(campaign.id)"
               >
@@ -120,7 +120,7 @@
               <button
                 v-if="campaign.statusKey === 'sent'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors"
+                class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleCopyToDraft(campaign.id)"
               >
@@ -130,7 +130,7 @@
               <button
                   v-if="campaign.statusKey === 'draft'"
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                  class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleEdit(campaign.id)"
               >
@@ -139,7 +139,7 @@
               </button>
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleView(campaign.id)"
               >
@@ -233,7 +233,7 @@
             <button
               v-if="campaign.statusKey === 'draft'"
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleDelete(campaign)"
             >
@@ -243,7 +243,7 @@
             <button
               v-else-if="campaign.statusKey === 'active'"
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleSuspend(campaign.id)"
             >
@@ -253,7 +253,7 @@
             <button
               v-else
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+              class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleRequeue(campaign.id)"
             >
@@ -263,7 +263,7 @@
             <button
               v-if="campaign.statusKey === 'sent'"
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50"
+              class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleCopyToDraft(campaign.id)"
             >
@@ -273,7 +273,7 @@
             <button
                 v-if="campaign.statusKey === 'draft'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
@@ -282,7 +282,7 @@
             </button>
             <button
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
@@ -509,7 +509,7 @@ const handleRequeue = async (campaignId) => {
   setActionFeedback(campaignId, 'Requeueing campaign...')
 
   try {
-    await campaignClient.updateCampaignStatus(campaignId, 'requeued')
+    await campaignClient.updateCampaignStatus(campaignId, 'submitted')
     setActionFeedback(campaignId, 'Campaign requeued.', 'success')
     await fetchCampaigns()
   } catch (error) {

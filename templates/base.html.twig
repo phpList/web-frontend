@@ -7,6 +7,15 @@
     <meta id="api-config" data-api-base-url="{{ api_base_url }}">
     <link rel="stylesheet" href="{{ asset('build/app.css', 'phplist_web_frontend') }}">
     <link rel="stylesheet" href="{{ asset('build/styles.css', 'phplist_web_frontend') }}">
+    <script>
+        (function () {
+            var stored = localStorage.getItem('color-scheme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (stored ? stored === 'dark' : prefersDark) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
 
     {% block javascripts %}
         <script src="{{ asset('build/runtime.js', 'phplist_web_frontend') }}" defer></script>

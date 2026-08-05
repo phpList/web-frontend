@@ -8,20 +8,20 @@
   >
     <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
     <form class="mt-4 space-y-4" @submit.prevent="submitCreateAdmin">
-      <div class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg md:min-w-xl sm:w-full z-10 max-h-[90vh] overflow-y-auto">
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 space-y-4">
+      <div class="relative bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg md:min-w-xl sm:w-full z-10 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 space-y-4">
           <div class="flex justify-between items-center">
-            <h3 id="create-admin-modal-title" class="text-lg leading-6 font-medium text-slate-900">
+            <h3 id="create-admin-modal-title" class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100">
               Create New Administrator
             </h3>
-            <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
+            <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400" @click="close">
               <BaseIcon name="close" class="w-3.5 h-3.5" />
             </button>
           </div>
 
           <!-- Login Name -->
           <div>
-            <label for="admin-login-name" class="block text-sm font-medium text-slate-700">Login Name</label>
+            <label for="admin-login-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Login Name</label>
             <input
               id="admin-login-name"
               v-model.trim="form.login_name"
@@ -30,27 +30,27 @@
               minlength="3"
               maxlength="255"
               placeholder="admin"
-              class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
-            <p class="mt-1 text-xs text-slate-500">Minimum 3 characters</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Minimum 3 characters</p>
           </div>
 
           <!-- Email -->
           <div>
-            <label for="admin-email" class="block text-sm font-medium text-slate-700">Email</label>
+            <label for="admin-email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
             <input
               id="admin-email"
               v-model.trim="form.email"
               type="email"
               required
               placeholder="admin@example.com"
-              class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
           </div>
 
           <!-- Password -->
           <div>
-            <label for="admin-password" class="block text-sm font-medium text-slate-700">Password</label>
+            <label for="admin-password" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Password</label>
             <input
               id="admin-password"
               v-model="form.password"
@@ -59,9 +59,9 @@
               minlength="6"
               maxlength="255"
               placeholder="••••••••"
-              class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
-            <p class="mt-1 text-xs text-slate-500">Minimum 6 characters</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Minimum 6 characters</p>
           </div>
 
           <!-- Super User -->
@@ -70,25 +70,25 @@
               id="admin-super-user"
               v-model="form.super_user"
               type="checkbox"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
             >
-            <label for="admin-super-user" class="ml-2 block text-sm text-slate-900">
+            <label for="admin-super-user" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
               Super User / Full Access
             </label>
           </div>
 
           <!-- Privileges Section -->
-          <div v-if="!form.super_user" class="border-t pt-4">
-            <p class="text-sm font-medium text-slate-700 mb-3">Privileges</p>
+          <div v-if="!form.super_user" class="border-t border-slate-200 dark:border-slate-700 pt-4">
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-3">Privileges</p>
             <div class="space-y-2">
               <div class="flex items-center">
                 <input
                   id="priv-subscribers"
                   v-model="form.privileges.subscribers"
                   type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
-                <label for="priv-subscribers" class="ml-2 block text-sm text-slate-700">
+                <label for="priv-subscribers" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
                   Subscribers Management
                 </label>
               </div>
@@ -98,9 +98,9 @@
                   id="priv-campaigns"
                   v-model="form.privileges.campaigns"
                   type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
-                <label for="priv-campaigns" class="ml-2 block text-sm text-slate-700">
+                <label for="priv-campaigns" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
                   Campaigns Management
                 </label>
               </div>
@@ -110,9 +110,9 @@
                   id="priv-statistics"
                   v-model="form.privileges.statistics"
                   type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
-                <label for="priv-statistics" class="ml-2 block text-sm text-slate-700">
+                <label for="priv-statistics" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
                   Statistics Viewing
                 </label>
               </div>
@@ -122,19 +122,19 @@
                   id="priv-settings"
                   v-model="form.privileges.settings"
                   type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
-                <label for="priv-settings" class="ml-2 block text-sm text-slate-700">
+                <label for="priv-settings" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
                   Settings Management
                 </label>
               </div>
             </div>
           </div>
 
-          <p v-if="createError" class="text-sm text-red-600">{{ createError }}</p>
+          <p v-if="createError" class="text-sm text-red-600 dark:text-red-400">{{ createError }}</p>
         </div>
 
-        <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
           <button
             type="submit"
             :disabled="isCreating || !isFormValid"
@@ -144,7 +144,7 @@
           </button>
           <button
             type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm transition-colors"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm transition-colors"
             @click="close"
           >
             Cancel

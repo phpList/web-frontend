@@ -1,15 +1,15 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <h2 class="text-xl font-bold text-slate-900">Campaigns</h2>
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Campaigns</h2>
 
-      <div class="inline-flex rounded-lg border border-slate-200 p-1 bg-slate-50 w-full sm:w-auto">
+      <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-slate-50 dark:bg-slate-900 w-full sm:w-auto">
         <button
           v-for="option in filterOptions"
           :key="option.id"
           type="button"
           class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-          :class="statusFilter === option.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+          :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
           @click="setFilter(option.id)"
         >
           {{ option.label }}
@@ -19,7 +19,7 @@
 
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 text-slate-500 font-medium">
+        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
         <tr>
           <th class="px-6 py-4">Subject</th>
           <th class="px-6 py-4">Status</th>
@@ -30,25 +30,25 @@
         </tr>
         </thead>
 
-        <tbody class="divide-y divide-slate-200">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
         <tr v-if="isLoading">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500">Loading campaigns...</td>
+          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading campaigns...</td>
         </tr>
 
         <tr v-else-if="errorMessage">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
+          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
         </tr>
 
         <tr v-else-if="paginatedCampaigns.length === 0">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500">No campaigns for this filter.</td>
+          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No campaigns for this filter.</td>
         </tr>
 
         <tr
           v-for="campaign in paginatedCampaigns"
           :key="campaign.id"
-          class="hover:bg-slate-50 transition-colors"
+          class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
         >
-          <td class="px-6 py-4 font-medium text-slate-900">{{ campaign.subject }}</td>
+          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ campaign.subject }}</td>
           <td class="px-6 py-4">
             <span
               class="px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -57,7 +57,7 @@
               {{ campaign.statusLabel }}
             </span>
           </td>
-          <td class="px-6 py-4 text-slate-600 align-top">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
             <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
             <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
             <p
@@ -67,30 +67,30 @@
             >
               <router-link
                   :to="`/lists/${list.id}/subscribers`"
-                  class="text-blue-600 hover:underline"
+                  class="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 {{ list.name }}
               </router-link>
             </p>
           </td>
-          <td class="px-6 py-4 text-slate-600 align-top">
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Started:</span> {{ campaign.startedAt }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Time to send:</span> {{ campaign.timeToSend }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Total:</span> {{ campaign.processedTotal }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Text:</span> {{ campaign.processedText }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">HTML:</span> {{ campaign.processedHtml }}</p>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total:</span> {{ campaign.processedTotal }}</p>
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Text:</span> {{ campaign.processedText }}</p>
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">HTML:</span> {{ campaign.processedHtml }}</p>
           </td>
-          <td class="px-6 py-4 text-slate-600 align-top" v-if="showStatistics">
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Total views:</span> {{ campaign.totalViews }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Unique views:</span> {{ campaign.uniqueViews }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Bounced:</span> {{ campaign.bounced }}</p>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top" v-if="showStatistics">
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total views:</span> {{ campaign.totalViews }}</p>
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Unique views:</span> {{ campaign.uniqueViews }}</p>
+            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Bounced:</span> {{ campaign.bounced }}</p>
           </td>
           <td class="px-6 py-4 align-top text-right">
             <div class="inline-flex flex-wrap justify-end gap-2">
               <button
                 v-if="campaign.statusKey === 'draft'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleDelete(campaign)"
               >
@@ -100,7 +100,7 @@
               <button
                 v-else-if="campaign.statusKey === 'active'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleSuspend(campaign.id)"
               >
@@ -110,7 +110,7 @@
               <button
                 v-else
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleRequeue(campaign.id)"
               >
@@ -120,7 +120,7 @@
               <button
                 v-if="campaign.statusKey === 'sent'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleCopyToDraft(campaign.id)"
               >
@@ -130,7 +130,7 @@
               <button
                   v-if="campaign.statusKey === 'draft'"
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleEdit(campaign.id)"
               >
@@ -139,7 +139,7 @@
               </button>
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleView(campaign.id)"
               >
@@ -151,9 +151,9 @@
               v-if="getActionFeedback(campaign.id)"
               class="mt-2 text-xs"
               :class="{
-                'text-emerald-700': getActionFeedback(campaign.id)?.type === 'success',
-                'text-red-700': getActionFeedback(campaign.id)?.type === 'error',
-                'text-slate-500': getActionFeedback(campaign.id)?.type === 'info'
+                'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
+                'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
+                'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
               }"
             >
               {{ getActionFeedback(campaign.id)?.message }}
@@ -163,24 +163,24 @@
         </tbody>
       </table>
 
-      <div class="block md:hidden divide-y divide-slate-100">
+      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
         <div
           v-if="isLoading"
-          class="px-4 py-8 text-center text-slate-500 text-sm"
+          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
         >
           Loading campaigns...
         </div>
 
         <div
           v-else-if="errorMessage"
-          class="px-4 py-8 text-center text-red-600 text-sm"
+          class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
         >
           {{ errorMessage }}
         </div>
 
         <div
           v-else-if="paginatedCampaigns.length === 0"
-          class="px-4 py-8 text-center text-slate-500 text-sm"
+          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
         >
           No campaigns for this filter.
         </div>
@@ -192,7 +192,7 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="font-semibold text-slate-900">{{ campaign.subject }}</p>
+              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ campaign.subject }}</p>
             </div>
             <span
               class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
@@ -202,9 +202,9 @@
             </span>
           </div>
 
-          <div class="text-xs text-slate-600 space-y-1">
+          <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
             <p>
-              <span class="font-medium text-slate-700">Lists: </span>
+              <span class="font-medium text-slate-700 dark:text-slate-200">Lists: </span>
               <template v-if="campaign.lists.length > 0">
                 <span
                     v-for="(list, index) in campaign.lists"
@@ -212,7 +212,7 @@
                 >
                   <router-link
                       :to="`/lists/${list.id}/subscribers`"
-                      class="text-blue-600 hover:underline"
+                      class="text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     {{ list.name }}
                   </router-link>
@@ -220,11 +220,11 @@
                 </span>
               </template>
             </p>
-            <p><span class="font-medium text-slate-700">Started:</span> {{ campaign.startedAt }}</p>
-            <p><span class="font-medium text-slate-700">Time to send:</span> {{ campaign.timeToSend }}</p>
-            <p><span class="font-medium text-slate-700">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
+            <p><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
+            <p><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
+            <p><span class="font-medium text-slate-700 dark:text-slate-200">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
             <p v-if="showStatistics">
-              <span class="font-medium text-slate-700">Statistics:</span>
+              <span class="font-medium text-slate-700 dark:text-slate-200">Statistics:</span>
               Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
             </p>
           </div>
@@ -233,7 +233,7 @@
             <button
               v-if="campaign.statusKey === 'draft'"
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleDelete(campaign)"
             >
@@ -243,7 +243,7 @@
             <button
               v-else-if="campaign.statusKey === 'active'"
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleSuspend(campaign.id)"
             >
@@ -253,7 +253,7 @@
             <button
               v-else
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleRequeue(campaign.id)"
             >
@@ -263,7 +263,7 @@
             <button
               v-if="campaign.statusKey === 'sent'"
               type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors disabled:opacity-50"
               :disabled="isActionLoading(campaign.id)"
               @click="handleCopyToDraft(campaign.id)"
             >
@@ -273,7 +273,7 @@
             <button
                 v-if="campaign.statusKey === 'draft'"
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
@@ -282,7 +282,7 @@
             </button>
             <button
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
@@ -294,9 +294,9 @@
             v-if="getActionFeedback(campaign.id)"
             class="text-xs"
             :class="{
-              'text-emerald-700': getActionFeedback(campaign.id)?.type === 'success',
-              'text-red-700': getActionFeedback(campaign.id)?.type === 'error',
-              'text-slate-500': getActionFeedback(campaign.id)?.type === 'info'
+              'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
+              'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
+              'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
             }"
           >
             {{ getActionFeedback(campaign.id)?.message }}
@@ -305,14 +305,14 @@
       </div>
     </div>
 
-    <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
       <div class="text-center sm:text-left">
-        Showing <span class="font-medium text-slate-900">{{ rangeStart }}</span>-<span class="font-medium text-slate-900">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900">{{ filteredCampaigns.length }}</span>
+        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeStart }}</span>-<span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ filteredCampaigns.length }}</span>
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           :disabled="!canGoPrevious"
           @click="previousPage"
         >
@@ -320,7 +320,7 @@
         </button>
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           :disabled="!canGoNext"
           @click="nextPage"
         >
@@ -413,10 +413,10 @@ const filterOptions = [
 ]
 
 const statusClasses = {
-  sent: 'bg-emerald-100 text-emerald-700',
-  active: 'bg-blue-100 text-blue-700',
-  draft: 'bg-slate-100 text-slate-700',
-  unknown: 'bg-amber-100 text-amber-700'
+  sent: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+  active: 'bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400',
+  draft: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
+  unknown: 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400'
 }
 
 const activeStatuses = new Set(['active', 'submitted', 'prepared', 'inprocess', 'scheduled'])

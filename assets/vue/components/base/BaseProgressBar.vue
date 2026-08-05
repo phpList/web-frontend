@@ -1,6 +1,6 @@
 <!-- assets/vue/components/base/BaseProgressBar.vue -->
 <template>
-  <div class="progress bg-secondary bg-opacity-25 rounded-pill" :style="wrapperStyle">
+  <div class="progress bg-secondary bg-opacity-25 dark:bg-slate-700 rounded-pill" :style="wrapperStyle">
     <div
         class="progress-bar bg-primary rounded-pill"
         role="progressbar"

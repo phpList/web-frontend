@@ -8,14 +8,14 @@
     ></div>
 
     <aside
-        class="fixed inset-y-0 left-0 bg-white border-r border-slate-200 w-64 z-50 transform transition-transform duration-300 lg:inset-auto lg:sticky lg:top-0 lg:self-start lg:h-screen lg:translate-x-0"
+        class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 w-64 z-50 transform transition-transform duration-300 lg:inset-auto lg:sticky lg:top-0 lg:self-start lg:h-screen lg:translate-x-0"
         :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="flex flex-col h-full">
-        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-100">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-700">
           <SidebarLogo />
           <button
-              class="lg:hidden p-1.5 hover:bg-slate-100 rounded-lg text-slate-400"
+              class="lg:hidden p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400"
               @click="closeSidebar"
           >
             <BaseIcon name="close" />

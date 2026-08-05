@@ -9,7 +9,7 @@
         <h3 class="text-lg font-semibold text-slate-900">Campaign details: {{ campaign?.id || '-' }}</h3>
         <button
             type="button"
-            class="cursor-pointer text-sm text-slate-500 hover:text-slate-700"
+            class="text-sm text-slate-500 hover:text-slate-700"
             @click="emit('close')"
             data-testid="close-btn"
         >
@@ -105,7 +105,7 @@
 
               <button
                   type="button"
-                  class="cursor-pointer inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  class="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                   :disabled="selectedMailingListIds.length === 0 || isResending"
                   @click="handleResend"
               >

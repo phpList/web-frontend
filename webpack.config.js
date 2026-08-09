@@ -11,6 +11,7 @@ Encore
     .enableVueLoader(() => {}, { version: 3 })
     .enableSingleRuntimeChunk()
     .enablePostCssLoader()
+    .enableVersioning(Encore.isProduction())
     .copyFiles({
         from: './assets/images',
         to: 'images/[path][name].[hash:8].[ext]',

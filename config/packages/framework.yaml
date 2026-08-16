@@ -6,6 +6,7 @@ framework:
     session:
         enabled: true
         handler_id: null
+        name: phpList4_session
         cookie_secure: auto
         cookie_samesite: lax
     translator:

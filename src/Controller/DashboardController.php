@@ -6,6 +6,9 @@ namespace PhpList\WebFrontend\Controller;
 
 use PhpList\RestApiClient\Exception\AuthorizationException;
 use PhpList\RestApiClient\Endpoint\StatisticsClient;
+use PhpList\RestApiClient\Response\Statistics\CampaignPerformanceCollection;
+use PhpList\RestApiClient\Response\Statistics\DashboardSummaryResponse;
+use PhpList\RestApiClient\Response\Statistics\RecentCampaignsCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +27,10 @@ class DashboardController extends AbstractController
         $dashboardError = null;
 
         try {
-            $stats = $this->statisticsClient->getDashboardStats();
-            $dashboardStats = $this->buildDashboardStats($stats);
+            $summary = $this->statisticsClient->getDashboardSummary();
+            $recentCampaigns = $this->statisticsClient->getRecentCampaigns();
+            $campaignPerformance = $this->statisticsClient->getCampaignPerformance();
+            $dashboardStats = $this->buildDashboardStats($summary, $recentCampaigns, $campaignPerformance);
         } catch (AuthorizationException $e) {
             $dashboardError = $e->getMessage() ?: 'Unable to load dashboard statistics.';
         }
@@ -37,11 +42,14 @@ class DashboardController extends AbstractController
         ]);
     }
 
-    private function buildDashboardStats(object $stats): array
-    {
-        $recentCampaigns = [];
-        foreach ($stats->recentCampaigns as $campaign) {
-            $recentCampaigns[] = [
+    private function buildDashboardStats(
+        DashboardSummaryResponse $summary,
+        RecentCampaignsCollection $recentCampaigns,
+        CampaignPerformanceCollection $campaignPerformance
+    ): array {
+        $recentCampaignRows = [];
+        foreach ($recentCampaigns->campaigns as $campaign) {
+            $recentCampaignRows[] = [
                 'name' => $campaign->name,
                 'status' => $campaign->status,
                 'date' => $campaign->date?->format('Y-m-d') ?? '',
@@ -53,7 +61,7 @@ class DashboardController extends AbstractController
         $chartLabels = [];
         $chartOpens = [];
         $chartClicks = [];
-        foreach ($stats->campaignPerformance as $point) {
+        foreach ($campaignPerformance->points as $point) {
             $chartLabels[] = $point->date?->format('M d') ?? '';
             $chartOpens[] = $point->opens;
             $chartClicks[] = $point->clicks;
@@ -61,22 +69,22 @@ class DashboardController extends AbstractController
 
         return [
             'total_subscribers' => [
-                'value' => $stats->totalSubscribers->value,
-                'change_vs_last_month' => $stats->totalSubscribers->changeVsLastMonth,
+                'value' => $summary->totalSubscribers->value,
+                'change_vs_last_month' => $summary->totalSubscribers->changeVsLastMonth,
             ],
             'active_campaigns' => [
-                'value' => $stats->activeCampaigns->value,
-                'change_vs_last_month' => $stats->activeCampaigns->changeVsLastMonth,
+                'value' => $summary->activeCampaigns->value,
+                'change_vs_last_month' => $summary->activeCampaigns->changeVsLastMonth,
             ],
             'open_rate' => [
-                'value' => $stats->openRate->value,
-                'change_vs_last_month' => $stats->openRate->changeVsLastMonth,
+                'value' => $summary->openRate->value,
+                'change_vs_last_month' => $summary->openRate->changeVsLastMonth,
             ],
             'bounce_rate' => [
-                'value' => $stats->bounceRate->value,
-                'change_vs_last_month' => $stats->bounceRate->changeVsLastMonth,
+                'value' => $summary->bounceRate->value,
+                'change_vs_last_month' => $summary->bounceRate->changeVsLastMonth,
             ],
-            'recent_campaigns' => $recentCampaigns,
+            'recent_campaigns' => $recentCampaignRows,
             'chart' => [
                 'labels' => $chartLabels,
                 'series' => [

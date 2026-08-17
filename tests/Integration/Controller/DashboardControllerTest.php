@@ -7,7 +7,9 @@ namespace PhpList\WebFrontend\Tests\Integration\Controller;
 use PhpList\RestApiClient\Endpoint\StatisticsClient;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\AuthorizationException;
-use PhpList\RestApiClient\Response\Statistics\DashboardStatisticsResponse;
+use PhpList\RestApiClient\Response\Statistics\CampaignPerformanceCollection;
+use PhpList\RestApiClient\Response\Statistics\DashboardSummaryResponse;
+use PhpList\RestApiClient\Response\Statistics\RecentCampaignsCollection;
 use PhpList\WebFrontend\Controller\DashboardController;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +36,14 @@ class DashboardControllerTest extends KernelTestCase
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
-            ->method('getDashboardStats')
-            ->willReturn($this->createDashboardStatsResponse());
+            ->method('getDashboardSummary')
+            ->willReturn($this->createDashboardSummaryResponse());
+        $statsClient->expects(self::once())
+            ->method('getRecentCampaigns')
+            ->willReturn($this->createRecentCampaignsCollection());
+        $statsClient->expects(self::once())
+            ->method('getCampaignPerformance')
+            ->willReturn($this->createCampaignPerformanceCollection());
 
         $controller = new DashboardController($statsClient);
         $controller->setContainer(static::getContainer());
@@ -65,8 +73,10 @@ class DashboardControllerTest extends KernelTestCase
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
-            ->method('getDashboardStats')
+            ->method('getDashboardSummary')
             ->willThrowException(new AuthenticationException('Session expired'));
+        $statsClient->expects(self::never())->method('getRecentCampaigns');
+        $statsClient->expects(self::never())->method('getCampaignPerformance');
 
         $controller = new DashboardController($statsClient);
         $controller->setContainer(static::getContainer());
@@ -90,11 +100,13 @@ class DashboardControllerTest extends KernelTestCase
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
-            ->method('getDashboardStats')
+            ->method('getDashboardSummary')
             ->willThrowException(new AuthorizationException(
                 'No valid session key was provided as basic auth password.',
                 403
             ));
+        $statsClient->expects(self::never())->method('getRecentCampaigns');
+        $statsClient->expects(self::never())->method('getCampaignPerformance');
 
         $controller = new DashboardController($statsClient);
         $controller->setContainer(static::getContainer());
@@ -114,9 +126,9 @@ class DashboardControllerTest extends KernelTestCase
         self::assertStringContainsString('data-dashboard-stats="&#x5B;&#x5D;"', $content);
     }
 
-    private function createDashboardStatsResponse(): DashboardStatisticsResponse
+    private function createDashboardSummaryResponse(): DashboardSummaryResponse
     {
-        return new DashboardStatisticsResponse([
+        return new DashboardSummaryResponse([
             'summary_statistics' => [
                 'total_subscribers' => [
                     'value' => 1000,
@@ -135,6 +147,12 @@ class DashboardControllerTest extends KernelTestCase
                     'change_vs_last_month' => -0.2,
                 ],
             ],
+        ]);
+    }
+
+    private function createRecentCampaignsCollection(): RecentCampaignsCollection
+    {
+        return new RecentCampaignsCollection([
             'recent_campaigns' => [
                 [
                     'name' => 'Weekly Digest',
@@ -144,6 +162,12 @@ class DashboardControllerTest extends KernelTestCase
                     'click_rate' => 12.3,
                 ],
             ],
+        ]);
+    }
+
+    private function createCampaignPerformanceCollection(): CampaignPerformanceCollection
+    {
+        return new CampaignPerformanceCollection([
             'campaign_performance' => [
                 [
                     'date' => '2026-04-09',

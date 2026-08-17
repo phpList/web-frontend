@@ -55,7 +55,7 @@
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/security-bundle": "^6.4",
-        "tatevikgr/rest-api-client": "dev-main",
+        "tatevikgr/rest-api-client": "dev-dev",
         "phplist/phplist-lan-texts": "^2021.05",
         "psr/simple-cache": "^3.0",
         "ext-fileinfo": "*"

@@ -129,23 +129,21 @@ class DashboardControllerTest extends KernelTestCase
     private function createDashboardSummaryResponse(): DashboardSummaryResponse
     {
         return new DashboardSummaryResponse([
-            'summary_statistics' => [
-                'total_subscribers' => [
-                    'value' => 1000,
-                    'change_vs_last_month' => 8.2,
-                ],
-                'active_campaigns' => [
-                    'value' => 3,
-                    'change_vs_last_month' => 1.0,
-                ],
-                'open_rate' => [
-                    'value' => 47.6,
-                    'change_vs_last_month' => 2.1,
-                ],
-                'bounce_rate' => [
-                    'value' => 1.2,
-                    'change_vs_last_month' => -0.2,
-                ],
+            'total_subscribers' => [
+                'value' => 1000,
+                'change_vs_last_month' => 8.2,
+            ],
+            'active_campaigns' => [
+                'value' => 3,
+                'change_vs_last_month' => 1.0,
+            ],
+            'open_rate' => [
+                'value' => 47.6,
+                'change_vs_last_month' => 2.1,
+            ],
+            'bounce_rate' => [
+                'value' => 1.2,
+                'change_vs_last_month' => -0.2,
             ],
         ]);
     }
@@ -153,14 +151,12 @@ class DashboardControllerTest extends KernelTestCase
     private function createRecentCampaignsCollection(): RecentCampaignsCollection
     {
         return new RecentCampaignsCollection([
-            'recent_campaigns' => [
-                [
-                    'name' => 'Weekly Digest',
-                    'status' => 'sent',
-                    'date' => '2026-04-10',
-                    'open_rate' => 53.2,
-                    'click_rate' => 12.3,
-                ],
+            [
+                'name' => 'Weekly Digest',
+                'status' => 'sent',
+                'date' => '2026-04-10',
+                'open_rate' => 53.2,
+                'click_rate' => 12.3,
             ],
         ]);
     }
@@ -168,12 +164,10 @@ class DashboardControllerTest extends KernelTestCase
     private function createCampaignPerformanceCollection(): CampaignPerformanceCollection
     {
         return new CampaignPerformanceCollection([
-            'campaign_performance' => [
-                [
-                    'date' => '2026-04-09',
-                    'opens' => 120,
-                    'clicks' => 24,
-                ],
+            [
+                'date' => '2026-04-09',
+                'opens' => 120,
+                'clicks' => 24,
             ],
         ]);
     }

@@ -60,18 +60,42 @@
           <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
             <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
             <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
-            <p
-                v-for="list in campaign.lists"
-                :key="`${campaign.id}-${list.id}`"
-                class="text-xs leading-5"
-            >
-              <router-link
-                  :to="`/lists/${list.id}/subscribers`"
-                  class="text-blue-600 dark:text-blue-400 hover:underline"
+            <template v-else-if="campaign.lists.length <= 3">
+              <p
+                  v-for="list in campaign.lists"
+                  :key="`${campaign.id}-${list.id}`"
+                  class="text-xs leading-5"
               >
-                {{ list.name }}
-              </router-link>
-            </p>
+                <router-link
+                    :to="`/lists/${list.id}/subscribers`"
+                    class="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {{ list.name }}
+                </router-link>
+              </p>
+            </template>
+            <template v-else>
+              <button
+                  type="button"
+                  class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                  @click="toggleListsExpanded(campaign.id)"
+              >
+                {{ isListsExpanded(campaign.id) ? '▼' : '▶' }} {{ campaign.lists.length }} lists
+              </button>
+              <p
+                  v-if="isListsExpanded(campaign.id)"
+                  v-for="list in campaign.lists"
+                  :key="`${campaign.id}-${list.id}`"
+                  class="text-xs leading-5"
+              >
+                - <router-link
+                    :to="`/lists/${list.id}/subscribers`"
+                    class="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {{ list.name }}
+                </router-link>
+              </p>
+            </template>
           </td>
           <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
             <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
@@ -307,7 +331,7 @@
 
     <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
       <div class="text-center sm:text-left">
-        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeStart }}</span>-<span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ filteredCampaigns.length }}</span>
+        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeStart }}</span>-<span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ totalForFilter }}</span>
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
@@ -353,8 +377,11 @@ import BaseIcon from '../base/BaseIcon.vue'
 const pageSize = 5
 const route = useRoute()
 const router = useRouter()
-const allCampaigns = ref([])
+const rawCampaignsByPage = ref(new Map())
+const cursorsByPage = ref(new Map([[1, null]]))
+const totalForFilter = ref(0)
 const listsByCampaignId = ref({})
+const expandedListsByCampaignId = ref({})
 const statisticsByCampaignId = ref({})
 const loadingListsByCampaignId = ref({})
 const actionLoadingByCampaignId = ref({})
@@ -419,7 +446,7 @@ const statusClasses = {
   unknown: 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400'
 }
 
-const activeStatuses = new Set(['active', 'submitted', 'prepared', 'inprocess', 'scheduled'])
+const activeStatuses = new Set(['submitted', 'prepared', 'inprocess'])
 
 const resolveStatusKey = (statusRaw) => {
   if (statusRaw === 'sent') return 'sent'
@@ -492,6 +519,13 @@ const fetchMailingLists = async () => {
 }
 
 const isListsLoading = (campaignId) => loadingListsByCampaignId.value[campaignId] === true
+const isListsExpanded = (campaignId) => expandedListsByCampaignId.value[campaignId] === true
+const toggleListsExpanded = (campaignId) => {
+  expandedListsByCampaignId.value = {
+    ...expandedListsByCampaignId.value,
+    [campaignId]: !isListsExpanded(campaignId)
+  }
+}
 const isActionLoading = (campaignId) => actionLoadingByCampaignId.value[campaignId] === true
 const getActionFeedback = (campaignId) => actionFeedbackByCampaignId.value[campaignId] || null
 
@@ -511,7 +545,7 @@ const handleRequeue = async (campaignId) => {
   try {
     await campaignClient.updateCampaignStatus(campaignId, 'submitted')
     setActionFeedback(campaignId, 'Campaign requeued.', 'success')
-    await fetchCampaigns()
+    await refreshCurrentPage()
   } catch (error) {
     console.error(`Failed to requeue campaign ${campaignId}:`, error)
     setActionFeedback(campaignId, error?.message || 'Failed to requeue campaign.', 'error')
@@ -528,7 +562,7 @@ const handleSuspend = async (campaignId) => {
   try {
     await campaignClient.updateCampaignStatus(campaignId, 'suspended')
     setActionFeedback(campaignId, 'Campaign suspended.', 'success')
-    await fetchCampaigns()
+    await refreshCurrentPage()
   } catch (error) {
     console.error(`Failed to suspend campaign ${campaignId}:`, error)
     setActionFeedback(campaignId, error?.message || 'Failed to suspend campaign.', 'error')
@@ -552,7 +586,10 @@ const handleDelete = async (campaign) => {
   try {
     await campaignClient.deleteCampaign(campaign.id)
     setActionFeedback(campaign.id, 'Campaign deleted.', 'success')
-    await fetchCampaigns()
+    // Delay the refresh so the success feedback is visible before the row disappears.
+    setTimeout(() => {
+      refreshCurrentPage()
+    }, 1500)
   } catch (error) {
     console.error(`Failed to delete campaign ${campaign.id}:`, error)
     setActionFeedback(campaign.id, error?.message || 'Failed to delete campaign.', 'error')
@@ -619,7 +656,7 @@ const handleCopyToDraft = async (campaignId) => {
 
   try {
     await campaignClient.copyCampaign(campaignId)
-    await fetchCampaigns()
+    await refreshCurrentPage()
     setActionFeedback(campaignId, 'Created draft copy')
   } catch (error) {
     console.error(`Failed to copy campaign ${campaignId} to draft:`, error)
@@ -629,166 +666,235 @@ const handleCopyToDraft = async (campaignId) => {
   }
 }
 
-const normalizedCampaigns = computed(() =>
-    allCampaigns.value.map((campaign) => {
-      const statusRaw = (campaign?.messageMetadata?.status || '').toLowerCase()
-      const statusKey = resolveStatusKey(statusRaw)
-      const subject = campaign?.messageContent?.subject || `Campaign #${campaign.id}`
-      const enteredAt = campaign?.messageMetadata?.entered || null
-      const sentAt = campaign?.messageMetadata?.sent || null
-      const statistics = getCampaignStatistics(campaign.id)
-      const processedTotal = Number(campaign?.messageMetadata?.processed ?? 0)
-      const isTextFormat = (campaign?.messageFormat?.sendFormat || '').toLowerCase() === 'text'
-      const processedText = isTextFormat ? processedTotal : 0
-      const processedHtml = isTextFormat ? 0 : processedTotal
-      const lists = getCampaignLists(campaign.id)
-      const sendStart = campaign?.messageMetadata?.sendStart || null
+// Maps a UI filter tab to the server-side `status` query param. 'active' groups several
+// raw statuses, sent as a comma-separated list the backend matches via IN(...).
+const statusParamForFilter = (filterId) => ({
+  sent: 'sent',
+  draft: 'draft',
+  active: Array.from(activeStatuses).join(','),
+}[filterId] ?? null)
 
-      return {
-        id: campaign.id,
-        subject,
-        statusKey,
-        statusLabel: toStatusLabel(statusKey, statusRaw),
-        startedAt: formatDate(enteredAt),
-        timeToSend: formatDuration(sendStart, sentAt),
-        processedTotal,
-        processedText,
-        processedHtml,
-        totalViews: Number(campaign?.messageMetadata?.views ?? 0),
-        uniqueViews: Number(statistics?.uniqueViews ?? 0),
-        bounced: Number(statistics?.bounces ?? 0),
-        lists,
-        listSummary: lists.length > 0 ? lists.map((item) => item.name).join(', ') : '-'
+// Bumped whenever the filter resets pagination, so a slow response from a since-abandoned
+// filter can never overwrite the current view after a newer request has already landed.
+let paginationGeneration = 0
+const pageRequestsInFlight = new Map()
+
+const resetPagination = () => {
+  paginationGeneration += 1
+  pageRequestsInFlight.clear()
+  rawCampaignsByPage.value = new Map()
+  cursorsByPage.value = new Map([[1, null]])
+}
+
+// Fetches and caches one page (5 campaigns) at a time, newest-first, filtered server-side by the
+// active status tab - no more draining the entire campaign list into memory up front. This only
+// fetches/caches; it never touches `currentPage` itself, so walking through intermediate pages
+// (see loadUpToPage) can't leak a transient wrong page number out to the URL-syncing watchers.
+const loadPage = (page) => {
+  if (rawCampaignsByPage.value.has(page)) {
+    return Promise.resolve()
+  }
+
+  const inFlight = pageRequestsInFlight.get(page)
+  if (inFlight) return inFlight
+
+  const generation = paginationGeneration
+  const request = (async () => {
+    isLoading.value = true
+    errorMessage.value = ''
+
+    try {
+      const afterId = cursorsByPage.value.get(page) ?? null
+      const response = await campaignClient.getCampaigns(
+        afterId,
+        pageSize,
+        null,
+        statusParamForFilter(statusFilter.value),
+        'desc'
+      )
+      if (generation !== paginationGeneration) return
+
+      const items = Array.isArray(response?.items) ? response.items : []
+
+      rawCampaignsByPage.value.set(page, items)
+      totalForFilter.value = Number(response?.pagination?.total ?? 0)
+
+      if (response?.pagination?.hasMore) {
+        cursorsByPage.value.set(page + 1, response?.pagination?.nextCursor ?? null)
       }
-    })
-)
+    } catch (error) {
+      if (generation === paginationGeneration) {
+        console.error(`Failed to load campaigns page ${page}:`, error)
+        errorMessage.value = 'Failed to load campaigns.'
+      }
+    } finally {
+      isLoading.value = false
+      pageRequestsInFlight.delete(page)
+    }
+  })()
 
-const filteredCampaigns = computed(() => {
-  if (statusFilter.value === 'all') return normalizedCampaigns.value
-  return normalizedCampaigns.value.filter((campaign) => campaign.statusKey === statusFilter.value)
-})
+  pageRequestsInFlight.set(page, request)
+  return request
+}
 
-const totalPages = computed(() => {
-  const pages = Math.ceil(filteredCampaigns.value.length / pageSize)
-  return Math.max(1, pages)
-})
+// Navigates to a page, fetching/caching every page from 1 up to it along the way (cursors for
+// unvisited pages aren't known ahead of time), then commits currentPage exactly once at the end.
+const loadUpToPage = async (targetPage) => {
+  for (let page = 1; page <= targetPage; page += 1) {
+    await loadPage(page)
+  }
+  currentPage.value = targetPage
+}
 
-const paginatedCampaigns = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  const end = start + pageSize
-  return filteredCampaigns.value.slice(start, end)
-})
+// A mutation can shift which campaigns fall on the current page and every page after it
+// (but never on earlier pages), so drop those from the cache and refetch just the current one.
+const invalidateFromCurrentPage = () => {
+  const page = currentPage.value
+  for (const key of [...rawCampaignsByPage.value.keys()]) {
+    if (key >= page) rawCampaignsByPage.value.delete(key)
+  }
+  for (const key of [...cursorsByPage.value.keys()]) {
+    if (key > page) cursorsByPage.value.delete(key)
+  }
+}
 
+const refreshCurrentPage = async () => {
+  invalidateFromCurrentPage()
+  await loadPage(currentPage.value)
+}
+
+// Expensive (date formatting, statistics/lists lookups) — run only for the page being rendered.
+const normalizeCampaign = (campaign) => {
+  const statusRaw = (campaign?.messageMetadata?.status || '').toLowerCase()
+  const statusKey = resolveStatusKey(statusRaw)
+  const subject = campaign?.messageContent?.subject || `Campaign #${campaign.id}`
+  const enteredAt = campaign?.messageMetadata?.entered || null
+  const sentAt = campaign?.messageMetadata?.sent || null
+  const statistics = getCampaignStatistics(campaign.id)
+  const processedTotal = Number(campaign?.messageMetadata?.processed ?? 0)
+  const isTextFormat = (campaign?.messageFormat?.sendFormat || '').toLowerCase() === 'text'
+  const processedText = isTextFormat ? processedTotal : 0
+  const processedHtml = isTextFormat ? 0 : processedTotal
+  const lists = getCampaignLists(campaign.id)
+  const sendStart = campaign?.messageMetadata?.sendStart || null
+
+  return {
+    id: campaign.id,
+    subject,
+    statusKey,
+    statusLabel: toStatusLabel(statusKey, statusRaw),
+    startedAt: formatDate(enteredAt),
+    timeToSend: formatDuration(sendStart, sentAt),
+    processedTotal,
+    processedText,
+    processedHtml,
+    totalViews: Number(campaign?.messageMetadata?.views ?? 0),
+    uniqueViews: Number(statistics?.uniqueViews ?? 0),
+    bounced: Number(statistics?.bounces ?? 0),
+    lists,
+    listSummary: lists.length > 0 ? lists.map((item) => item.name).join(', ') : '-'
+  }
+}
+
+const paginatedCampaigns = computed(() => (rawCampaignsByPage.value.get(currentPage.value) ?? []).map(normalizeCampaign))
+
+const totalPages = computed(() => Math.max(1, Math.ceil(totalForFilter.value / pageSize)))
 const canGoPrevious = computed(() => currentPage.value > 1)
 const canGoNext = computed(() => currentPage.value < totalPages.value)
 
 const rangeStart = computed(() => {
-  if (filteredCampaigns.value.length === 0) return 0
+  if (totalForFilter.value === 0) return 0
   return (currentPage.value - 1) * pageSize + 1
 })
 
 const rangeEnd = computed(() => {
-  if (filteredCampaigns.value.length === 0) return 0
-  return Math.min(currentPage.value * pageSize, filteredCampaigns.value.length)
+  if (totalForFilter.value === 0) return 0
+  return Math.min(currentPage.value * pageSize, totalForFilter.value)
 })
 
-const setFilter = async (filterId) => {
-  currentPage.value = 1
+const setFilter = (filterId) => {
   statusFilter.value = filterId
 }
 
-const previousPage = () => {
+const previousPage = async () => {
   if (canGoPrevious.value) {
-    currentPage.value -= 1
+    const target = currentPage.value - 1
+    await loadPage(target)
+    currentPage.value = target
   }
 }
 
-const nextPage = () => {
+const nextPage = async () => {
   if (canGoNext.value) {
-    currentPage.value += 1
+    const target = currentPage.value + 1
+    await loadPage(target)
+    currentPage.value = target
   }
 }
 
-const fetchAllCampaigns = async () => {
+// maxPages is a safety net against runaway loops, not a functional cap - it's far above any
+// realistic dataset size, and hitting it logs a warning instead of silently truncating results.
+const drainPaginated = async (fetchPage, onItems, { limit = 100, maxPages = 500 } = {}) => {
   let cursor = null
-  let guard = 0
-  const campaigns = []
+  let pages = 0
 
-  while (guard < 200) {
-    const response = await campaignClient.getCampaigns(cursor, 50)
+  while (pages < maxPages) {
+    const response = await fetchPage(cursor, limit)
     const items = Array.isArray(response?.items) ? response.items : []
-    campaigns.push(...items)
+    onItems(items)
 
     const hasMore = Boolean(response?.pagination?.hasMore)
     const nextCursor = response?.pagination?.nextCursor ?? null
-    if (!hasMore || nextCursor === null) {
-      break
-    }
+    // A cursor that doesn't advance (server pagination bug) would otherwise spin until maxPages,
+    // hammering the API with identical requests - bail out the moment it stops moving forward.
+    if (!hasMore || nextCursor === null || nextCursor === cursor) break
 
     cursor = nextCursor
-    guard += 1
+    pages += 1
   }
 
-  campaigns.sort((a, b) => Number(b.id) - Number(a.id))
-  return campaigns
+  if (pages >= maxPages) {
+    console.warn('Pagination guard reached; results may be incomplete.')
+  }
 }
 
 const fetchCampaignStatistics = async () => {
-  const statisticsMap = {}
-
   try {
-    let cursor = null
-    let guard = 0
+    // Independent endpoints - written into separate maps so they can be fetched concurrently
+    // without one drain's pagination racing the other's, then merged once both are done.
+    const campaignStatsMap = {}
+    const viewOpensSentByCampaignId = {}
 
-    while (guard < 200) {
-      const response = await statisticsClient.getCampaignStatistics(cursor, 100)
-      const items = Array.isArray(response?.items) ? response.items : []
+    await Promise.all([
+      drainPaginated(
+        (cursor, limit) => statisticsClient.getCampaignStatistics(cursor, limit),
+        (items) => {
+          items.forEach((item) => {
+            campaignStatsMap[item.campaignId] = {
+              bounces: Number(item.bounces ?? 0),
+              sent: Number(item.sent ?? 0),
+              uniqueViews: Number(item.uniqueViews ?? 0),
+            }
+          })
+        },
+        { limit: 100 }
+      ),
+      drainPaginated(
+        (cursor, limit) => statisticsClient.getStatisticsOfViewOpens(cursor, limit),
+        (items) => {
+          items.forEach((item) => {
+            viewOpensSentByCampaignId[item.campaignId] = Number(item.sent ?? 0)
+          })
+        },
+        { limit: 100 }
+      )
+    ])
 
-      items.forEach((item) => {
-        statisticsMap[item.campaignId] = {
-          bounces: Number(item.bounces ?? 0),
-          sent: Number(item.sent ?? 0),
-          uniqueViews: Number(item.uniqueViews ?? 0),
-        }
-      })
-
-      const hasMore = Boolean(response?.pagination?.hasMore)
-      const nextCursor = response?.pagination?.nextCursor ?? null
-
-      if (!hasMore || nextCursor === null) break
-
-      cursor = nextCursor
-      guard++
-    }
-
-    cursor = null
-    guard = 0
-
-    while (guard < 200) {
-      const response = await statisticsClient.getStatisticsOfViewOpens(cursor, 100)
-      const items = Array.isArray(response?.items) ? response.items : []
-
-      items.forEach((item) => {
-        const existing = statisticsMap[item.campaignId] ?? {
-          bounces: 0,
-          sent: 0,
-          uniqueViews: 0,
-        }
-
-        statisticsMap[item.campaignId] = {
-          ...existing,
-          sent: Number(item.sent ?? existing.sent),
-        }
-      })
-
-      const hasMore = Boolean(response?.pagination?.hasMore)
-      const nextCursor = response?.pagination?.nextCursor ?? null
-
-      if (!hasMore || nextCursor === null) break
-
-      cursor = nextCursor
-      guard++
-    }
+    const statisticsMap = { ...campaignStatsMap }
+    Object.entries(viewOpensSentByCampaignId).forEach(([campaignId, sent]) => {
+      const existing = statisticsMap[campaignId] ?? { bounces: 0, sent: 0, uniqueViews: 0 }
+      statisticsMap[campaignId] = { ...existing, sent }
+    })
 
     statisticsByCampaignId.value = statisticsMap
     showStatistics.value = true
@@ -846,41 +952,32 @@ const fetchListsForVisibleCampaigns = async () => {
   loadingListsByCampaignId.value = nextLoading
 }
 
-const fetchCampaigns = async () => {
-  isLoading.value = true
-  errorMessage.value = ''
-
-  try {
-    const [campaigns] = await Promise.all([
-      fetchAllCampaigns(),
-      fetchCampaignStatistics()
-    ])
-    allCampaigns.value = campaigns
-  } catch (error) {
-    console.error('Failed to load campaigns:', error)
-    errorMessage.value = 'Failed to load campaigns.'
-    allCampaigns.value = []
-  } finally {
-    isLoading.value = false
-  }
-}
-
 onMounted(() => {
-  fetchCampaigns()
+  loadUpToPage(currentPage.value)
+  fetchCampaignStatistics()
   fetchMailingLists()
+})
+
+watch(statusFilter, () => {
+  resetPagination()
+  loadPage(1).then(() => {
+    currentPage.value = 1
+  })
 })
 
 watch(totalPages, (pages) => {
   if (isLoading.value) return
   if (currentPage.value > pages) {
-    currentPage.value = pages
+    loadPage(pages).then(() => {
+      currentPage.value = pages
+    })
   }
 })
 
 watch(() => route.query.page, (pageQuery) => {
   const nextPage = parsePageQuery(pageQuery)
   if (nextPage !== currentPage.value) {
-    currentPage.value = nextPage
+    loadUpToPage(nextPage)
   }
 })
 

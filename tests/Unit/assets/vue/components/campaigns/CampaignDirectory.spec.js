@@ -54,9 +54,9 @@ const makeCampaign = (overrides = {}) => ({
     ...overrides,
 })
 
-const makePagedResponse = (items = [], hasMore = false, nextCursor = null) => ({
+const makePagedResponse = (items = [], hasMore = false, nextCursor = null, total = items.length) => ({
     items,
-    pagination: { hasMore, nextCursor },
+    pagination: { total, hasMore, nextCursor },
 })
 
 const makeStatsResponse = (items = []) => makePagedResponse(items)
@@ -64,6 +64,30 @@ const makeStatsResponse = (items = []) => makePagedResponse(items)
 const defaultStats = () => makeStatsResponse([
     { campaignId: 1, bounces: 2, sent: 100, uniqueViews: 10 },
 ])
+
+// A minimal fake backend: filters by status, sorts by id, and paginates via after_id the same
+// way the real server does. Lets tests drive multi-page/filtered scenarios realistically instead
+// of hand-chaining mockResolvedValueOnce for every call.
+const buildFakeCampaignServer = (campaigns) => (afterId, limit = 5, subject = null, status = null, sort = 'asc') => {
+    let pool = campaigns
+    if (status) {
+        const statuses = status.split(',')
+        pool = pool.filter((c) => statuses.includes(c.messageMetadata.status))
+    }
+
+    const sorted = [...pool].sort((a, b) => (sort === 'desc' ? b.id - a.id : a.id - b.id))
+    const windowed = afterId == null
+        ? sorted
+        : sorted.filter((c) => (sort === 'desc' ? c.id < afterId : c.id > afterId))
+
+    const page = windowed.slice(0, limit)
+    const hasMore = windowed.length > limit
+    const nextCursor = page.length > 0 ? page[page.length - 1].id : null
+
+    return Promise.resolve(makePagedResponse(page, hasMore, nextCursor, sorted.length))
+}
+
+const manyCampaigns = (count, overrides = {}) => Array.from({ length: count }, (_, i) => makeCampaign({ id: i + 1, ...overrides }))
 
 const makeRouter = async (query = {}) => {
     const router = createRouter({
@@ -115,6 +139,17 @@ describe('on mount', () => {
         expect(campaignClient.getCampaigns).toHaveBeenCalled()
     })
 
+    it('fetches only page 1 on mount, not the full dataset', async () => {
+        campaignClient.getCampaigns.mockImplementation(buildFakeCampaignServer(manyCampaigns(50)))
+        await mountComponent()
+        expect(campaignClient.getCampaigns).toHaveBeenCalledTimes(1)
+    })
+
+    it('requests campaigns newest-first with no status filter by default', async () => {
+        await mountComponent()
+        expect(campaignClient.getCampaigns).toHaveBeenCalledWith(null, 5, null, null, 'desc')
+    })
+
     it('fetches mailing lists on mount', async () => {
         await mountComponent()
         expect(fetchAllLists).toHaveBeenCalledTimes(1)
@@ -135,15 +170,6 @@ describe('on mount', () => {
         campaignClient.getCampaigns.mockRejectedValue(new Error('Network error'))
         const { wrapper } = await mountComponent()
         expect(wrapper.text()).toContain('Failed to load campaigns.')
-    })
-
-    it('paginates through multiple pages to fetch all campaigns', async () => {
-        campaignClient.getCampaigns
-            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 1 })], true, 1))
-            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 2, messageContent: { subject: 'Second' } })]))
-        const { wrapper } = await mountComponent()
-        expect(campaignClient.getCampaigns).toHaveBeenCalledTimes(2)
-        expect(wrapper.text()).toContain('Test Campaign')
     })
 })
 
@@ -170,16 +196,13 @@ describe('status filter', () => {
     })
 
     it('reads status from the query param', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse([makeCampaign({ id: 1, messageMetadata: { ...makeCampaign().messageMetadata, status: 'draft' } })])
-        )
         const { wrapper } = await mountComponent({ status: 'draft' })
         const draftBtn = wrapper.findAll('button[type="button"]').find((b) => b.text().trim() === 'Draft')
         expect(draftBtn.classes()).toContain('bg-white')
     })
 
     it('filters campaigns when Sent is clicked', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(makePagedResponse([
+        campaignClient.getCampaigns.mockImplementation(buildFakeCampaignServer([
             makeCampaign({ id: 1 }),
             makeCampaign({ id: 2, messageContent: { subject: 'Draft Campaign' }, messageMetadata: { ...makeCampaign().messageMetadata, status: 'draft' } }),
         ]))
@@ -187,6 +210,12 @@ describe('status filter', () => {
         await clickFilter(wrapper, 'Sent')
         expect(wrapper.text()).toContain('Test Campaign')
         expect(wrapper.text()).not.toContain('Draft Campaign')
+    })
+
+    it('requests the grouped status list for the Active tab', async () => {
+        const { wrapper } = await mountComponent()
+        await clickFilter(wrapper, 'Active')
+        expect(campaignClient.getCampaigns).toHaveBeenLastCalledWith(null, 5, null, 'submitted,prepared,inprocess', 'desc')
     })
 
     it('updates URL query param when filter is clicked', async () => {
@@ -208,11 +237,8 @@ describe('status filter', () => {
     })
 
     it('resets to page 1 when filter changes', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 10 }, (_, i) => makeCampaign({ id: i + 1 })))
-        )
+        campaignClient.getCampaigns.mockImplementation(buildFakeCampaignServer(manyCampaigns(10)))
         const { wrapper, router } = await mountComponent()
-        // advance to page 2 first
         const [, nextBtn] = wrapper.findAll('button[type="button"]').slice(-2)
         await nextBtn.trigger('click')
         await flushPromises()
@@ -248,7 +274,7 @@ describe('campaign normalisation', () => {
     })
 
     it('resolves active statuses to "Active" label', async () => {
-        for (const status of ['submitted', 'inprocess', 'scheduled']) {
+        for (const status of ['submitted', 'inprocess']) {
             campaignClient.getCampaigns.mockResolvedValue(makePagedResponse([
                 makeCampaign({ id: 1, messageMetadata: { ...makeCampaign().messageMetadata, status } }),
             ]))
@@ -270,7 +296,6 @@ describe('campaign normalisation', () => {
             makeCampaign({ messageFormat: { sendFormat: 'text' }, messageMetadata: { ...makeCampaign().messageMetadata, processed: 50 } }),
         ]))
         const { wrapper } = await mountComponent()
-        // text format: text=50, html=0
         const text = wrapper.text()
         expect(text).toContain('50') // processedText
     })
@@ -361,6 +386,17 @@ describe('action handlers', () => {
         await suspendBtn.trigger('click')
         await flushPromises()
         expect(wrapper.text()).toContain('Campaign suspended.')
+    })
+
+    it('handleSuspend refetches the current page after success', async () => {
+        campaignClient.getCampaigns.mockResolvedValue(makePagedResponse([
+            makeCampaign({ messageMetadata: { ...makeCampaign().messageMetadata, status: 'inprocess' } }),
+        ]))
+        const { wrapper } = await mountComponent()
+        const suspendBtn = wrapper.findAll('button[type="button"]').find((b) => b.text().includes('Suspend'))
+        await suspendBtn.trigger('click')
+        await flushPromises()
+        expect(campaignClient.getCampaigns).toHaveBeenCalledTimes(2)
     })
 
     it('handleSuspend shows error feedback on failure', async () => {
@@ -507,7 +543,7 @@ describe('pagination', () => {
 
     it('enables Next when there are more pages', async () => {
         campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 6 }, (_, i) => makeCampaign({ id: i + 1 })))
+            makePagedResponse(manyCampaigns(5), true, 5, 6)
         )
         const { wrapper } = await mountComponent()
         expect(getNextBtn(wrapper).element.disabled).toBe(false)
@@ -515,7 +551,7 @@ describe('pagination', () => {
 
     it('shows correct range text', async () => {
         campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 6 }, (_, i) => makeCampaign({ id: i + 1 })))
+            makePagedResponse(manyCampaigns(5), true, 5, 6)
         )
         const { wrapper } = await mountComponent()
         expect(wrapper.text()).toContain('1')
@@ -523,45 +559,56 @@ describe('pagination', () => {
         expect(wrapper.text()).toContain('6')
     })
 
-    it('advances to the next page when Next is clicked', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 6 }, (_, i) => makeCampaign({ id: i + 1 })))
-        )
+    it('fetches one page at a time - not the whole dataset - when paging forward', async () => {
+        campaignClient.getCampaigns
+            .mockResolvedValueOnce(makePagedResponse(manyCampaigns(5), true, 5, 6))
+            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 6, messageContent: { subject: 'Sixth' } })], false, 6, 6))
         const { wrapper } = await mountComponent()
         await getNextBtn(wrapper).trigger('click')
         await flushPromises()
-        // page 2 — range should start at 6
-        expect(wrapper.text()).toContain('6')
+        expect(campaignClient.getCampaigns).toHaveBeenCalledTimes(2)
+        expect(wrapper.text()).toContain('Sixth')
+    })
+
+    it('uses the cursor returned by the previous page when fetching the next one', async () => {
+        campaignClient.getCampaigns
+            .mockResolvedValueOnce(makePagedResponse(manyCampaigns(5), true, 5, 6))
+            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 6 })], false, 6, 6))
+        const { wrapper } = await mountComponent()
+        await getNextBtn(wrapper).trigger('click')
+        await flushPromises()
+        expect(campaignClient.getCampaigns).toHaveBeenLastCalledWith(5, 5, null, null, 'desc')
     })
 
     it('updates the URL page param when navigating', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 6 }, (_, i) => makeCampaign({ id: i + 1 })))
-        )
+        campaignClient.getCampaigns
+            .mockResolvedValueOnce(makePagedResponse(manyCampaigns(5), true, 5, 6))
+            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 6 })], false, 6, 6))
         const { wrapper, router } = await mountComponent()
         await getNextBtn(wrapper).trigger('click')
         await flushPromises()
         expect(router.currentRoute.value.query.page).toBe('2')
     })
 
-    it('removes page param from URL when back on page 1', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 6 }, (_, i) => makeCampaign({ id: i + 1 })))
-        )
+    it('caches a previously visited page instead of refetching it', async () => {
+        campaignClient.getCampaigns
+            .mockResolvedValueOnce(makePagedResponse(manyCampaigns(5), true, 5, 6))
+            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 6 })], false, 6, 6))
         const { wrapper, router } = await mountComponent()
         await getNextBtn(wrapper).trigger('click')
         await flushPromises()
         await getPrevBtn(wrapper).trigger('click')
         await flushPromises()
         expect(router.currentRoute.value.query.page).toBeUndefined()
+        expect(campaignClient.getCampaigns).toHaveBeenCalledTimes(2)
     })
 
     it('reads page from URL query param on initial load', async () => {
-        campaignClient.getCampaigns.mockResolvedValue(
-            makePagedResponse(Array.from({ length: 6 }, (_, i) => makeCampaign({ id: i + 1 })))
-        )
+        campaignClient.getCampaigns
+            .mockResolvedValueOnce(makePagedResponse(manyCampaigns(5), true, 5, 6))
+            .mockResolvedValueOnce(makePagedResponse([makeCampaign({ id: 6, messageContent: { subject: 'Sixth' } })], false, 6, 6))
         const { wrapper } = await mountComponent({ page: '2' })
-        expect(wrapper.text()).toContain('6')
+        expect(wrapper.text()).toContain('Sixth')
     })
 
     it('falls back to page 1 for an invalid page query param', async () => {
@@ -614,5 +661,13 @@ describe('statistics', () => {
             .mockResolvedValueOnce(makeStatsResponse([]))
         await mountComponent()
         expect(statisticsClient.getCampaignStatistics).toHaveBeenCalledTimes(2)
+    })
+
+    it('stops draining when the server reports hasMore but the cursor never advances', async () => {
+        // A server pagination bug (stuck/repeated next_cursor) must not spin the client forever:
+        // one call establishes the cursor, a second call sees it hasn't moved and bails out.
+        statisticsClient.getStatisticsOfViewOpens.mockResolvedValue(makePagedResponse([], true, 0))
+        await mountComponent()
+        expect(statisticsClient.getStatisticsOfViewOpens).toHaveBeenCalledTimes(2)
     })
 })

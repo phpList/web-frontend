@@ -2634,6 +2634,29 @@
                             "type": "string",
                             "maxLength": 50
                         }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by one or more comma-separated statuses: draft, prepared, submitted, inprocess, sent, suspended",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort direction by campaign id - desc returns newest campaigns first",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
                     }
                 ],
                 "responses": {

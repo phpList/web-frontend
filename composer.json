@@ -130,6 +130,15 @@
                     "type": "attribute",
                     "prefix": "/"
                 }
+            },
+            "configuration": {
+                "framework": {
+                    "exceptions": {
+                        "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException": {
+                            "log_level": "info"
+                        }
+                    }
+                }
             }
         }
     },

@@ -287,7 +287,7 @@ import { useDarkMode } from '../composables/useDarkMode'
 
 const { isDark } = useDarkMode()
 
-const isLoading = ref(false)
+const isLoading = ref(true)
 const hasLoaded = ref(false)
 const errorMessage = ref('')
 const campaignStatistics = ref([])

@@ -13,7 +13,7 @@
       </div>
 
       <!-- KPI Cards -->
-      <KpiGrid />
+      <KpiGrid :summary="summary" />
 
       <!-- Chart + Overview -->
       <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -36,37 +36,67 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import KpiGrid from '../components/dashboard/KpiGrid.vue'
 import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
 import QuickActionsCard from '../components/dashboard/QuickActionsCard.vue'
 import RecentCampaignsCard from '../components/dashboard/RecentCampaignsCard.vue'
+import { statisticsClient } from '../api'
 
-const appElement = document.getElementById('vue-app')
-
-const parseDashboardStats = () => {
-  const raw = appElement?.dataset.dashboardStats
-  if (!raw) {
-    return {}
-  }
-
-  try {
-    return JSON.parse(raw)
-  } catch {
-    return {}
-  }
-}
-
-const dashboardStats = parseDashboardStats()
-const dashboardError = appElement?.dataset.dashboardError || ''
-
-const chart = dashboardStats.chart || {
+const dashboardError = ref('')
+const summary = ref(null)
+const recentCampaigns = ref([])
+const chart = ref({
   labels: [],
   series: [
     { name: 'Opens', data: [] },
     { name: 'Clicks', data: [] },
   ],
+})
+
+const formatChartLabel = (dateValue) => {
+  if (!dateValue) {
+    return ''
+  }
+
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+    ? new Date(...dateValue.split('-').map((part, index) => (index === 1 ? Number(part) - 1 : Number(part))))
+    : new Date(dateValue)
+
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' }).format(date)
 }
 
-const recentCampaigns = dashboardStats.recent_campaigns || []
+const loadDashboard = async () => {
+  dashboardError.value = ''
+
+  try {
+    const [summaryResponse, recentCampaignsResponse, performanceResponse] = await Promise.all([
+      statisticsClient.getDashboardSummary(),
+      statisticsClient.getRecentCampaigns(),
+      statisticsClient.getCampaignPerformance(),
+    ])
+
+    summary.value = summaryResponse
+    recentCampaigns.value = recentCampaignsResponse?.campaigns ?? []
+
+    const points = performanceResponse?.points ?? []
+    chart.value = {
+      labels: points.map((point) => formatChartLabel(point.date)),
+      series: [
+        { name: 'Opens', data: points.map((point) => point.opens) },
+        { name: 'Clicks', data: points.map((point) => point.clicks) },
+      ],
+    }
+  } catch (error) {
+    dashboardError.value = 'Unable to load dashboard statistics.'
+    console.error('Failed to load dashboard statistics:', error)
+  }
+}
+
+onMounted(loadDashboard)
 </script>

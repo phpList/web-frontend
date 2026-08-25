@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Security;
 
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -91,6 +92,15 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $loginUrl = $this->buildLoginUrl($request->getRequestUri());
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'error' => 'session_expired',
+                'message' => 'Your session has expired. Please log in again.',
+                'redirect' => $loginUrl,
+            ], 401);
+        }
+
         return new RedirectResponse($loginUrl);
     }
 

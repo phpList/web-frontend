@@ -54,6 +54,7 @@ describe('DashboardView', () => {
     beforeEach(() => {
         document.body.innerHTML = ''
         vi.clearAllMocks()
+        vi.resetModules()
     })
 
     it('loads dashboard statistics from the statistics client on mount', async () => {
@@ -69,8 +70,6 @@ describe('DashboardView', () => {
         statisticsClient.getCampaignPerformance.mockResolvedValue({
             points: [{ date: '2026-06-01', opens: 10, clicks: 3 }],
         })
-
-        vi.resetModules()
 
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
@@ -89,8 +88,6 @@ describe('DashboardView', () => {
         statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
         statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
 
-        vi.resetModules()
-
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
         const wrapper = mount(DashboardView)
@@ -99,5 +96,30 @@ describe('DashboardView', () => {
 
         expect(wrapper.text()).toContain('Unable to load dashboard statistics.')
         expect(wrapper.find('[role="alert"]').exists()).toBe(true)
+    })
+
+    it('does not re-fetch dashboard statistics when the view is remounted', async () => {
+        statisticsClient.getDashboardSummary.mockResolvedValue({
+            totalSubscribers: { value: 12345, changeVsLastMonth: 5.2 },
+            activeCampaigns: { value: 42, changeVsLastMonth: -3.5 },
+            openRate: { value: 28, changeVsLastMonth: 1.1 },
+            bounceRate: { value: 4, changeVsLastMonth: -0.7 },
+        })
+        statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
+        statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
+
+        const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
+
+        const firstMount = mount(DashboardView)
+        await flushPromises()
+        firstMount.unmount()
+
+        const secondMount = mount(DashboardView)
+        await flushPromises()
+
+        expect(statisticsClient.getDashboardSummary).toHaveBeenCalledTimes(1)
+        expect(statisticsClient.getRecentCampaigns).toHaveBeenCalledTimes(1)
+        expect(statisticsClient.getCampaignPerformance).toHaveBeenCalledTimes(1)
+        expect(secondMount.find('[role="alert"]').exists()).toBe(false)
     })
 })

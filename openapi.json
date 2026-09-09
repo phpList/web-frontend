@@ -2293,6 +2293,78 @@
                 }
             }
         },
+        "/api/v2/campaigns/{messageId}/resume": {
+            "post": {
+                "tags": [
+                    "campaigns"
+                ],
+                "summary": "Resumes a campaign stuck in processing.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Resumes a campaign/message that is stuck in Prepared/InProcess status past the stuck-campaign threshold, re-dispatching it for processing.",
+                "operationId": "ee5901f2b1bebdb50d545cb51ece9f24",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "path",
+                        "description": "message ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Failure - campaign is not currently stuck in processing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/campaigns/{messageId}/status": {
             "patch": {
                 "tags": [
@@ -2777,6 +2849,72 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/campaigns/stuck": {
+            "get": {
+                "tags": [
+                    "campaigns"
+                ],
+                "summary": "Gets a list of campaigns stuck in processing.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns campaigns stuck in Prepared/InProcess status past the stuck-campaign threshold, for admin review. No automatic action is taken on these campaigns.",
+                "operationId": "8ad25e9c6917e8ded396dc8876db717d",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "subject": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "inprocess"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "stuck_seconds": {
+                                                "type": "integer",
+                                                "example": 1845
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }

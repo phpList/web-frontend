@@ -17,7 +17,7 @@
     "postcss-loader": "^8.1.0",
     "tailwindcss": "^4.2.1",
     "vite": "^5.4.19",
-    "vitest": "^2.1.8",
+    "vitest": "^4.1.11",
     "vue-loader": "^17.3.1",
     "webpack": "5.104.1",
     "webpack-cli": "^5.1.4",

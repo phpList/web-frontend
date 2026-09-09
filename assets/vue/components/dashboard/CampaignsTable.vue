@@ -1,7 +1,7 @@
 <template>
   <table class="w-full text-left border-collapse">
-    <thead class="border-b border-gray-200">
-    <tr class="uppercase text-xs text-gray-500 font-semibold">
+    <thead class="border-b border-gray-200 dark:border-slate-700">
+    <tr class="uppercase text-xs text-gray-500 font-semibold dark:text-slate-400">
       <th class="py-3 pr-4">Campaign Name</th>
       <th class="py-3 px-4">Status</th>
       <th class="py-3 px-4">Date</th>
@@ -14,9 +14,9 @@
     <tr
         v-for="row in rows"
         :key="row.id"
-        class="border-b border-gray-200 last:border-0 hover:bg-gray-50"
+        class="border-b border-gray-200 last:border-0 hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-700"
     >
-      <td class="py-3 pr-4 font-medium text-gray-900">
+      <td class="py-3 pr-4 font-medium text-gray-900 dark:text-slate-100">
         {{ row.name }}
       </td>
 
@@ -29,14 +29,14 @@
           </span>
       </td>
 
-      <td class="py-3 px-4 text-sm text-gray-500">{{ row.date }}</td>
-      <td class="py-3 px-4 text-sm text-gray-500">{{ row.openRate ?? '—' }}</td>
-      <td class="py-3 pl-4 text-sm text-gray-500">{{ row.clickRate ?? '—' }}</td>
+      <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-400">{{ row.date }}</td>
+      <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-400">{{ row.openRate ?? '—' }}</td>
+      <td class="py-3 pl-4 text-sm text-gray-500 dark:text-slate-400">{{ row.clickRate ?? '—' }}</td>
     </tr>
 
     <!-- empty state -->
     <tr v-if="!rows.length">
-      <td colspan="5" class="text-center py-8 text-gray-500">
+      <td colspan="5" class="text-center py-8 text-gray-500 dark:text-slate-400">
         No campaigns yet.
       </td>
     </tr>
@@ -56,9 +56,9 @@ const statusClass = (status) => {
   const s = status.toLowerCase()
 
   return {
-    sent: 'bg-green-100 text-green-800',
-    scheduled: 'bg-blue-100 text-blue-800',
-    draft: 'bg-gray-100 text-gray-800',
-  }[s] || 'bg-gray-100 text-gray-800'
+    sent: 'bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400',
+    scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400',
+    draft: 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300',
+  }[s] || 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300'
 }
 </script>

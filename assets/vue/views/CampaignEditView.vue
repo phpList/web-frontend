@@ -1,32 +1,32 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500">Campaign</p>
-            <h2 class="text-xl font-bold text-slate-900">{{ pageTitle }}</h2>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Campaign</p>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ pageTitle }}</h2>
           </div>
 
           <RouterLink
             to="/campaigns"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             Back to Campaigns
           </RouterLink>
         </div>
       </div>
 
-      <div v-if="isLoading" class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+      <div v-if="isLoading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
         Loading campaign...
       </div>
 
-      <div v-else-if="loadError" class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-600 shadow-sm">
+      <div v-else-if="loadError" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
         {{ loadError }}
       </div>
 
-      <div v-else class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div class="border-b border-slate-200 px-4 pt-4 sm:px-6 sm:pt-6">
+      <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div class="border-b border-slate-200 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
             <button
               v-for="step in steps"
@@ -35,7 +35,7 @@
               class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
               :class="currentStep === step.id
                 ? 'bg-ext-wf1 text-white'
-                : 'bg-slate-200 text-slate-600 hover:bg-slate-300'"
+                : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'"
               @click="goToStep(step.id)"
             >
               <span class="block text-base leading-none">{{ step.id }}</span>
@@ -46,53 +46,53 @@
 
         <div class="p-4 sm:p-6 space-y-5">
           <section v-if="currentStep === 1" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900">Content</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Content</h3>
 
             <div>
-              <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-subject">Subject</label>
+              <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-subject">Subject</label>
               <input
                 id="campaign-subject"
                 v-model="form.subject"
                 type="text"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 placeholder="Campaign subject"
               >
             </div>
 
-            <div class="space-y-3 rounded-lg border border-slate-200 p-4">
-              <p class="text-sm font-semibold text-slate-900">How do you want to compose content?</p>
+            <div class="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+              <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">How do you want to compose content?</p>
 
-              <label class="flex items-center gap-2 text-sm text-slate-800">
+              <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
                 <input
                   v-model="form.composeMode"
                   type="radio"
                   value="webpage"
-                  class="h-4 w-4 border-slate-300 text-slate-900"
+                  class="h-4 w-4 border-slate-300 dark:border-slate-600 text-slate-900"
                 >
                 Send a webpage
               </label>
 
-              <label class="flex items-center gap-2 text-sm text-slate-800">
+              <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
                 <input
                   v-model="form.composeMode"
                   type="radio"
                   value="compose"
-                  class="h-4 w-4 border-slate-300 text-slate-900"
+                  class="h-4 w-4 border-slate-300 dark:border-slate-600 text-slate-900"
                 >
                 Compose message
               </label>
             </div>
 
             <div v-if="form.composeMode === 'webpage'" class="space-y-2">
-              <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-webpage-url">Webpage URL</label>
+              <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-webpage-url">Webpage URL</label>
               <input
                 id="campaign-webpage-url"
                 v-model="form.webpageUrl"
                 type="url"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/page"
               >
-              <p class="text-xs text-slate-500">Campaign content will be saved as <code>[URL:YOUR_URL]</code>.</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Campaign content will be saved as <code>[URL:YOUR_URL]</code>.</p>
             </div>
 
             <div v-else class="space-y-4">
@@ -104,25 +104,25 @@
             </div>
 
             <div>
-              <label for="campaign-footer" class="mb-1 block text-sm font-medium text-slate-700">Footer</label>
+              <label for="campaign-footer" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Footer</label>
 
               <textarea
                   id="campaign-footer"
                   v-model="form.footer"
                   rows="6"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               ></textarea>
             </div>
           </section>
 
           <section v-else-if="currentStep === 2" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900">Format</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Format</h3>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_2fr_1fr]">
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-template">Use template</label>
-                <select id="campaign-template" v-model="form.templateId" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500" >
-                  <option value="" class="text-slate-400">No template</option>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-template">Use template</label>
+                <select id="campaign-template" v-model="form.templateId" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500" >
+                  <option value="" class="text-slate-400 dark:text-slate-500">No template</option>
                   <option
                       v-for="template in templates"
                       :key="template.id"
@@ -134,34 +134,34 @@
               </div>
 
               <div class="md:justify-self-center justify-self-start">
-                <label class="mb-1 block text-sm font-medium text-slate-700">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
                   Send format
                 </label>
 
                 <div class="flex flex-wrap gap-4">
-                  <label class="flex items-center gap-2 text-sm text-slate-900">
-                    <input type="radio" value="html" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"/>
+                  <label class="flex items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
+                    <input type="radio" value="html" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"/>
                     HTML
                   </label>
 
-                  <label class="flex items-center gap-2 text-sm text-slate-900">
-                    <input type="radio" value="text" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"/>
+                  <label class="flex items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
+                    <input type="radio" value="text" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"/>
                     Text
                   </label>
 
-                  <label class="flex items-center gap-2 text-sm text-slate-900">
-                    <input type="radio" value="invite" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"/>
+                  <label class="flex items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
+                    <input type="radio" value="invite" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"/>
                     Invite
                   </label>
                 </div>
               </div>
 
-              <label class="flex items-center gap-2 text-sm text-slate-800 md:mt-2">
+              <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200 md:mt-2">
                 <input
                   v-model="form.htmlFormated"
                   disabled
                   type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-slate-900 accent-ext-wf1"
+                  class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 accent-ext-wf1"
                 >
                 HTML formatted
               </label>
@@ -170,109 +170,109 @@
           </section>
 
           <section v-else-if="currentStep === 3" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900">Scheduling</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Scheduling</h3>
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-embargo">Embargo until</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-embargo">Embargo until</label>
                 <input
                   id="campaign-embargo"
                   v-model="form.embargo"
                   type="datetime-local"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-repeat-interval">Repeat interval (minutes)</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-repeat-interval">Repeat interval (minutes)</label>
                 <input
                   id="campaign-repeat-interval"
                   v-model="form.repeatInterval"
                   type="number"
                   min="0"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-repeat-until">Stop sending after</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-repeat-until">Stop sending after</label>
                 <input
                   id="campaign-repeat-until"
                   v-model="form.repeatUntil"
                   type="datetime-local"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-requeue-interval">Requeue every (minutes)</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-requeue-interval">Requeue every (minutes)</label>
                 <input
                   id="campaign-requeue-interval"
                   v-model="form.requeueInterval"
                   type="number"
                   min="0"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-requeue-until">Requeue until</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-requeue-until">Requeue until</label>
                 <input
                   id="campaign-requeue-until"
                   v-model="form.requeueUntil"
                   type="datetime-local"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
               </div>
             </div>
           </section>
 
           <section v-else-if="currentStep === 4" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900">Lists</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Lists</h3>
 
-            <p class="text-sm text-slate-600">Please select the lists you want to send this campaign to.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Please select the lists you want to send this campaign to.</p>
 
-            <div class="max-h-96 overflow-auto rounded-lg border border-slate-200 p-3">
+            <div class="max-h-96 overflow-auto rounded-lg border border-slate-200 dark:border-slate-700 p-3">
               <label
                 v-for="list in mailingLists"
                 :key="list.id"
                 :for="`campaign-list-${list.id}`"
-                class="flex items-center gap-2 py-1 text-sm text-slate-800"
+                class="flex items-center gap-2 py-1 text-sm text-slate-800 dark:text-slate-200"
               >
                 <input
                   :id="`campaign-list-${list.id}`"
                   v-model="selectedListIds"
                   type="checkbox"
                   :value="list.id"
-                  class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400 accent-ext-wf1"
+                  class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-400 accent-ext-wf1"
                 >
                 <span>{{ list.name || `List #${list.id}` }}</span>
               </label>
 
-              <p v-if="mailingLists.length === 0" class="text-sm text-slate-500">No mailing lists found.</p>
+              <p v-if="mailingLists.length === 0" class="text-sm text-slate-500 dark:text-slate-400">No mailing lists found.</p>
             </div>
           </section>
 
           <section v-else-if="currentStep === 5" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900">Send test</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Send test</h3>
 
-            <p class="text-sm text-slate-600">Test send to email address(es).</p>
-            <div class="text-slate-400">
+            <p class="text-sm text-slate-600 dark:text-slate-300">Test send to email address(es).</p>
+            <div class="text-slate-400 dark:text-slate-500">
               (comma separate addresses - all must be existing subscribers)
             </div>
 
-            <div class="rounded-lg border border-slate-200 p-3 space-y-3">
+            <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
               <textarea
                 id="campaign-test-recipients"
                 v-model="form.testRecipients"
                 rows="5"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 placeholder="email1@example.com, email2@example.com"
               ></textarea>
 
               <button
                 type="button"
-                class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                class="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
                 :disabled="isSendingTest"
                 @click="sendTestCampaign"
               >
@@ -282,71 +282,71 @@
           </section>
 
           <section v-else class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900">Finish</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Finish</h3>
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-from">From</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-from">From</label>
                 <input
                   id="campaign-from"
                   v-model="form.fromField"
                   type="text"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   placeholder="From name or address"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-reply-to">Reply-To</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-reply-to">Reply-To</label>
                 <input
                   id="campaign-reply-to"
                   v-model="form.replyTo"
                   type="text"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   placeholder="Reply-to email"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700" for="campaign-to-field">To field</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-to-field">To field</label>
                 <input
                   id="campaign-to-field"
                   v-model="form.toField"
                   type="text"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   placeholder="Recipient field"
                 >
               </div>
             </div>
 
-            <div class="space-y-2 rounded-lg border p-4" :class="warnings.length ? 'border-amber-300 bg-amber-50' : 'border-emerald-300 bg-emerald-50'">
-              <p class="text-sm font-semibold" :class="warnings.length ? 'text-amber-800' : 'text-emerald-800'">
+            <div class="space-y-2 rounded-lg border p-4" :class="warnings.length ? 'border-amber-300 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10' : 'border-emerald-300 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10'">
+              <p class="text-sm font-semibold" :class="warnings.length ? 'text-amber-800 dark:text-amber-400' : 'text-emerald-800 dark:text-emerald-400'">
                 {{ warnings.length ? 'Please review before saving' : 'Campaign is ready to save' }}
               </p>
-              <p v-for="warning in warnings" :key="warning" class="text-sm text-amber-800">
+              <p v-for="warning in warnings" :key="warning" class="text-sm text-amber-800 dark:text-amber-400">
                 {{ warning }}
               </p>
             </div>
           </section>
         </div>
 
-        <div class="border-t border-slate-200 px-4 py-4 sm:px-6">
+        <div class="border-t border-slate-200 dark:border-slate-700 px-4 py-4 sm:px-6">
           <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div class="text-sm">
-              <div v-if="saveErrors.length" class="text-red-600">
+              <div v-if="saveErrors.length" class="text-red-600 dark:text-red-400">
                 <p class="font-medium">Please fix the following fields:</p>
                 <ul class="mt-1 list-disc pl-5 space-y-1">
                   <li v-for="errorItem in saveErrors" :key="errorItem">{{ errorItem }}</li>
                 </ul>
               </div>
-              <p v-else-if="saveError" class="text-red-600 whitespace-pre-line">{{ saveError }}</p>
-              <p v-else-if="saveSuccess" class="text-emerald-700">{{ saveSuccess }}</p>
+              <p v-else-if="saveError" class="text-red-600 dark:text-red-400 whitespace-pre-line">{{ saveError }}</p>
+              <p v-else-if="saveSuccess" class="text-emerald-700 dark:text-emerald-400">{{ saveSuccess }}</p>
             </div>
 
             <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap lg:justify-end">
               <button
                 type="button"
-                class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                class="rounded-md border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
                 :disabled="currentStep === 1"
                 @click="previousStep"
               >
@@ -356,7 +356,7 @@
               <button
                 v-if="currentStep < steps.length"
                 type="button"
-                class="rounded-md border border-slate-900 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                class="rounded-md border border-slate-900 dark:border-slate-700 bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 disabled:opacity-50"
                 :disabled="isSaving"
                 @click="nextStep"
               >
@@ -365,7 +365,7 @@
 
               <button
                 type="button"
-                class="rounded-md border border-slate-900 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                class="rounded-md border border-slate-900 dark:border-slate-700 bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 disabled:opacity-50"
                 :disabled="isSaving || isQueueing"
                 @click="saveAndContinueEditing"
               >
@@ -375,7 +375,7 @@
               <button
                 v-if="canQueueCampaign"
                 type="button"
-                class="rounded-md border border-emerald-700 bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50"
+                class="rounded-md border border-emerald-700 dark:border-emerald-600 bg-emerald-700 dark:bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 dark:hover:bg-emerald-500 disabled:opacity-50"
                 :disabled="isSaving || isQueueing"
                 @click="queueCampaignToSend"
               >

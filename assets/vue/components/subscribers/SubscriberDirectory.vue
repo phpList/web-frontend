@@ -1,23 +1,23 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200  shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 ">
+  <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700  shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 ">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <h2 class="text-xl font-bold text-slate-900 ">Subscribers</h2>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 ">Subscribers</h2>
         <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
           <div class="flex gap-2 flex-1 sm:w-[400px]">
             <div class="relative flex-1">
-              <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
               <input
                 v-model="searchQuery"
                 placeholder="Search subscribers..."
-                class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200  rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-600  rounded-lg bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                 type="text"
                 @input="handleSearch"
               >
             </div>
             <select
                 v-model="searchColumn"
-                class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                 @change="handleSearch"
             >
               <option v-for="col in searchColumns" :key="col.id" :value="col.id">
@@ -46,7 +46,7 @@
         </div>
       </div>
     </div>
-    <div class="px-6 py-4 bg-slate-50/50 border-b border-slate-200">
+    <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
       <SubscriberFilters @filter-change="handleFilterChange" />
     </div>
     <SubscriberTable :subscribers="subscribers" @view="openSubscriberModal" />
@@ -61,20 +61,20 @@
       :import-result="importResult"
       @close="isImportResultOpen = false"
     />
-    <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
       <div class="text-center sm:text-left">
-        Showing <span class="font-medium text-slate-900">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900">{{ pagination.total }}</span> subscribers
+        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ pagination.total }}</span> subscribers
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
           :disabled="pagination.isFirstPage"
           @click="previousPage"
         >
           Previous
         </button>
         <button
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
           :disabled="!pagination.hasMore"
           @click="nextPage"
         >

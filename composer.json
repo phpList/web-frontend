@@ -51,11 +51,11 @@
     },
     "require": {
         "php": "^8.1",
-        "phplist/core": "dev-main",
+        "phplist/core": "dev-dev",
         "symfony/twig-bundle": "^6.4",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/security-bundle": "^6.4",
-        "tatevikgr/rest-api-client": "dev-main",
+        "tatevikgr/rest-api-client": "dev-dev",
         "phplist/phplist-lan-texts": "^2021.05",
         "psr/simple-cache": "^3.0",
         "ext-fileinfo": "*"
@@ -96,6 +96,7 @@
             "PhpList\\Core\\Composer\\ScriptHandler::createBundleConfiguration",
             "PhpList\\Core\\Composer\\ScriptHandler::createRoutesConfiguration",
             "PhpList\\Core\\Composer\\ScriptHandler::createParametersConfiguration",
+            "PhpList\\Core\\Composer\\ScriptHandler::createDotenvConfiguration",
             "PhpList\\Core\\Composer\\ScriptHandler::clearAllCaches"
         ],
         "publish-phplist-texts": [
@@ -128,6 +129,15 @@
                     "resource": "@PhpListFrontendBundle/Controller/",
                     "type": "attribute",
                     "prefix": "/"
+                }
+            },
+            "configuration": {
+                "framework": {
+                    "exceptions": {
+                        "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException": {
+                            "log_level": "info"
+                        }
+                    }
                 }
             }
         }

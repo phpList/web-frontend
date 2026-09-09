@@ -2293,6 +2293,78 @@
                 }
             }
         },
+        "/api/v2/campaigns/{messageId}/resume": {
+            "post": {
+                "tags": [
+                    "campaigns"
+                ],
+                "summary": "Resumes a campaign stuck in processing.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Resumes a campaign/message that is stuck in Prepared/InProcess status past the stuck-campaign threshold, re-dispatching it for processing.",
+                "operationId": "ee5901f2b1bebdb50d545cb51ece9f24",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "path",
+                        "description": "message ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Failure - campaign is not currently stuck in processing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/campaigns/{messageId}/status": {
             "patch": {
                 "tags": [
@@ -2634,6 +2706,29 @@
                             "type": "string",
                             "maxLength": 50
                         }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by one or more comma-separated statuses: draft, prepared, submitted, inprocess, sent, suspended",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort direction by campaign id - desc returns newest campaigns first",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
                     }
                 ],
                 "responses": {
@@ -2754,6 +2849,72 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/campaigns/stuck": {
+            "get": {
+                "tags": [
+                    "campaigns"
+                ],
+                "summary": "Gets a list of campaigns stuck in processing.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns campaigns stuck in Prepared/InProcess status past the stuck-campaign threshold, for admin review. No automatic action is taken on these campaigns.",
+                "operationId": "8ad25e9c6917e8ded396dc8876db717d",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "subject": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "inprocess"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "stuck_seconds": {
+                                                "type": "integer",
+                                                "example": 1845
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -3816,7 +3977,7 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateTemplateRequest"
+                                "$ref": "#/components/schemas/CreateTemplateRequest"
                             }
                         }
                     }
@@ -3827,10 +3988,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Template"
-                                    }
+                                    "$ref": "#/components/schemas/Template"
                                 }
                             }
                         }
@@ -3841,6 +3999,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AlreadyExistsResponse"
                                 }
                             }
                         }
@@ -4485,14 +4653,14 @@
                 }
             }
         },
-        "/api/v2/analytics/dashboard": {
+        "/api/v2/analytics/dashboard/summary": {
             "get": {
                 "tags": [
                     "analytics"
                 ],
-                "summary": "Gets dashboard analytics statistics.",
-                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns dashboard cards with aggregate analytics metrics.",
-                "operationId": "9d12b324dd31b9672eb96506e88a4147",
+                "summary": "Gets dashboard summary statistics.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns dashboard summary statistics.",
+                "operationId": "3ecb8b72d02b77df67ccbcb3070c82ec",
                 "parameters": [
                     {
                         "name": "php-auth-pw",
@@ -4511,123 +4679,198 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "summary_statistics": {
+                                        "total_subscribers": {
                                             "properties": {
-                                                "total_subscribers": {
-                                                    "properties": {
-                                                        "value": {
-                                                            "type": "integer",
-                                                            "example": 48294
-                                                        },
-                                                        "change_vs_last_month": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 12.5
-                                                        }
-                                                    },
-                                                    "type": "object"
+                                                "value": {
+                                                    "type": "integer",
+                                                    "example": 48294
                                                 },
-                                                "active_campaigns": {
-                                                    "properties": {
-                                                        "value": {
-                                                            "type": "integer",
-                                                            "example": 12
-                                                        },
-                                                        "change_vs_last_month": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 0
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "open_rate": {
-                                                    "properties": {
-                                                        "value": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 12
-                                                        },
-                                                        "change_vs_last_month": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 0
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "bounce_rate": {
-                                                    "properties": {
-                                                        "value": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 12
-                                                        },
-                                                        "change_vs_last_month": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 0
-                                                        }
-                                                    },
-                                                    "type": "object"
+                                                "change_vs_last_month": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12.5
                                                 }
                                             },
                                             "type": "object"
                                         },
-                                        "recent_campaigns": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "March Newsletter"
-                                                    },
-                                                    "status": {
-                                                        "type": "string",
-                                                        "example": "sent",
-                                                        "nullable": true
-                                                    },
-                                                    "date": {
-                                                        "type": "string",
-                                                        "format": "date",
-                                                        "example": "2026-03-15",
-                                                        "nullable": true
-                                                    },
-                                                    "open_rate": {
-                                                        "type": "string",
-                                                        "example": "42.50%"
-                                                    },
-                                                    "click_rate": {
-                                                        "type": "string",
-                                                        "example": "8.10%"
-                                                    }
+                                        "active_campaigns": {
+                                            "properties": {
+                                                "value": {
+                                                    "type": "integer",
+                                                    "example": 12
                                                 },
-                                                "type": "object"
-                                            }
+                                                "change_vs_last_month": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
                                         },
-                                        "campaign_performance": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "date": {
-                                                        "type": "string",
-                                                        "format": "date",
-                                                        "example": "2026-03-19"
-                                                    },
-                                                    "opens": {
-                                                        "type": "integer",
-                                                        "example": 234
-                                                    },
-                                                    "clicks": {
-                                                        "type": "integer",
-                                                        "example": 57
-                                                    }
+                                        "open_rate": {
+                                            "properties": {
+                                                "value": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12
                                                 },
-                                                "type": "object"
-                                            }
+                                                "change_vs_last_month": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "bounce_rate": {
+                                            "properties": {
+                                                "value": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12
+                                                },
+                                                "change_vs_last_month": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/analytics/dashboard/recent-campaigns": {
+            "get": {
+                "tags": [
+                    "analytics"
+                ],
+                "summary": "Gets dashboard recent campaigns statistics.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns the most recent campaigns with their performance metrics.",
+                "operationId": "c5c93fc6bac24a4f506a5d0ded25bb55",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "March Newsletter"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "sent",
+                                                "nullable": true
+                                            },
+                                            "date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-03-15",
+                                                "nullable": true
+                                            },
+                                            "open_rate": {
+                                                "type": "string",
+                                                "example": "42.50%"
+                                            },
+                                            "click_rate": {
+                                                "type": "string",
+                                                "example": "8.10%"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/analytics/dashboard/performance": {
+            "get": {
+                "tags": [
+                    "analytics"
+                ],
+                "summary": "Gets dashboard campaign performance statistics.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns campaign performance metrics over time.",
+                "operationId": "5a81041f89c91c9e6630c14289696769",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-03-19"
+                                            },
+                                            "opens": {
+                                                "type": "integer",
+                                                "example": 234
+                                            },
+                                            "clicks": {
+                                                "type": "integer",
+                                                "example": 57
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
                                 }
                             }
                         }
@@ -8225,8 +8468,7 @@
                             "sent",
                             "prepared",
                             "submitted",
-                            "suspended",
-                            "requeued"
+                            "suspended"
                         ],
                         "example": "draft"
                     }

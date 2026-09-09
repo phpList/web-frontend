@@ -4,12 +4,12 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
       @click.self="emit('close')"
   >
-    <div class="w-full max-w-2xl rounded-xl border border-slate-200 bg-white shadow-xl">
-      <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-        <h3 class="text-lg font-semibold text-slate-900">Campaign details: {{ campaign?.id || '-' }}</h3>
+    <div class="w-full max-w-2xl rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-5 py-4">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Campaign details: {{ campaign?.id || '-' }}</h3>
         <button
             type="button"
-            class="text-sm text-slate-500 hover:text-slate-700"
+            class="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             @click="emit('close')"
             data-testid="close-btn"
         >
@@ -18,60 +18,60 @@
       </div>
 
       <div class="p-5">
-        <p v-if="isViewLoading" class="text-sm text-slate-500">
+        <p v-if="isViewLoading" class="text-sm text-slate-500 dark:text-slate-400">
           Loading campaign...
         </p>
 
-        <p v-else-if="viewErrorMessage" class="text-sm text-red-600">
+        <p v-else-if="viewErrorMessage" class="text-sm text-red-600 dark:text-red-400">
           {{ viewErrorMessage }}
         </p>
 
-        <div v-else-if="campaign" class="space-y-2 text-sm text-slate-700">
+        <div v-else-if="campaign" class="space-y-2 text-sm text-slate-700 dark:text-slate-200">
           <p>
-            <span class="font-medium text-slate-900">Subject:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">Subject:</span>
             {{ campaign?.messageContent?.subject || '-' }}
           </p>
 
           <p>
-            <span class="font-medium text-slate-900">Entered:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">Entered:</span>
             {{ formatDate(campaign?.messageMetadata?.entered || null) }}
           </p>
 
           <p>
-            <span class="font-medium text-slate-900">From:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">From:</span>
             {{ campaign?.messageOptions?.fromField || '-' }}
           </p>
 
           <div class="pt-2">
-            <p class="font-medium text-slate-900">HTML content</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs whitespace-pre-wrap">{{
+            <p class="font-medium text-slate-900 dark:text-slate-100">HTML content</p>
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
                 campaign?.messageContent?.text || '-'
               }}</pre>
           </div>
 
           <div class="pt-2">
-            <p class="font-medium text-slate-900">Text content</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs whitespace-pre-wrap">{{
+            <p class="font-medium text-slate-900 dark:text-slate-100">Text content</p>
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
                 campaign?.messageContent?.textMessage || '-'
               }}</pre>
           </div>
 
           <div class="pt-2">
-            <p class="font-medium text-slate-900">Footer</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs whitespace-pre-wrap">{{
+            <p class="font-medium text-slate-900 dark:text-slate-100">Footer</p>
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
                 campaign?.messageContent?.footer || '-'
               }}</pre>
           </div>
 
           <p v-if="campaign?.messageSchedule?.requeueInterval || campaign?.messageSchedule?.repeatInterval">
-            <span class="font-medium text-slate-900">Requeueing:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">Requeueing:</span>
             {{ getMessage(campaign?.messageSchedule) }}
           </p>
 
-          <div class="mt-6 border-t border-slate-200 pt-4">
-            <p class="mb-2 font-medium text-slate-900">
+          <div class="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
+            <p class="mb-2 font-medium text-slate-900 dark:text-slate-100">
               Resend campaign
-              <span class="ml-2 text-xs font-light text-slate-600">
+              <span class="ml-2 text-xs font-light text-slate-600 dark:text-slate-300">
                 Choose mailing lists
               </span>
             </p>
@@ -79,7 +79,7 @@
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div class="flex-1">
                 <div
-                    class="max-h-44 overflow-auto rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm"
+                    class="max-h-44 overflow-auto rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm"
                 >
                   <label
                       v-for="list in mailingLists"
@@ -92,12 +92,12 @@
                         v-model="selectedMailingListIds"
                         type="checkbox"
                         :value="list.id"
-                        class="h-4 w-4 rounded border-slate-300 text-slate-900 accent-ext-wf1"
+                        class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 accent-ext-wf1"
                     >
                     <span>{{ list.name }}</span>
                   </label>
 
-                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500">
+                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500 dark:text-slate-400">
                     No mailing lists found.
                   </p>
                 </div>
@@ -105,7 +105,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  class="inline-flex items-center justify-center rounded-md bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                   :disabled="selectedMailingListIds.length === 0 || isResending"
                   @click="handleResend"
               >
@@ -113,13 +113,13 @@
               </button>
             </div>
 
-            <p v-if="resendErrorMessage" class="mt-2 text-sm text-red-600">
+            <p v-if="resendErrorMessage" class="mt-2 text-sm text-red-600 dark:text-red-400">
               {{ resendErrorMessage }}
             </p>
           </div>
         </div>
 
-        <p v-else class="text-sm text-slate-500">
+        <p v-else class="text-sm text-slate-500 dark:text-slate-400">
           No campaign selected.
         </p>
       </div>

@@ -38,7 +38,8 @@ const redirectToLogin = () => {
 
 const appElement = document.getElementById('vue-app');
 const apiToken = appElement?.dataset.apiToken;
-const apiBaseUrl = appElement?.dataset.apiBaseUrl;
+const apiElement = document.getElementById('api-config');
+const apiBaseUrl = apiElement?.dataset.apiBaseUrl;
 
 if (!apiBaseUrl) {
     console.error('API Base URL is not configured.');

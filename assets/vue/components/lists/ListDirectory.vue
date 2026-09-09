@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center">
-      <h2 class="text-xl font-bold text-slate-900">Mailing Lists</h2>
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Mailing Lists</h2>
 
       <button
         type="button"
@@ -18,7 +18,7 @@
 
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 text-slate-500 font-medium">
+        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
         <tr>
           <th class="px-6 py-4">ID</th>
           <th class="px-6 py-4">Name</th>
@@ -26,18 +26,18 @@
           <th class="px-6 py-4 text-right">Actions</th>
         </tr>
         </thead>
-        <tbody class="divide-y divide-slate-200">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
         <tr
             v-for="list in mailingLists"
             :key="list.id"
-            class="hover:bg-slate-50 transition-colors"
+            class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
         >
-          <td class="px-6 py-4 text-slate-600">{{ list.id }}</td>
-          <td class="px-6 py-4 font-medium text-slate-900">{{ list.name }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ list.id }}</td>
+          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ list.name }}</td>
           <td class="px-6 py-4">
               <span
                   class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                  :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
               >
                 {{ isPublic(list) ? 'Yes' : 'No' }}
               </span>
@@ -46,7 +46,7 @@
             <div class="flex flex-wrap justify-end gap-2">
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
                   @click="handleDelete(list)"
               >
                 <BaseIcon name="delete" class="w-3.5 h-3.5" />
@@ -55,7 +55,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
                   @click="handleAddSubscriber(list)"
               >
                 <BaseIcon name="addUser" class="w-3.5 h-3.5" />
@@ -64,7 +64,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                   @click="handleEdit(list)"
               >
                 <BaseIcon name="edit" class="w-3.5 h-3.5" />
@@ -73,7 +73,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors"
                   @click="handleStartCampaign(list)"
               >
                 <BaseIcon name="plane" class="w-3.5 h-3.5" />
@@ -82,7 +82,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                   @click="handleViewMembers(list)"
               >
                 <BaseIcon name="eye" class="w-3.5 h-3.5" />
@@ -93,31 +93,31 @@
         </tr>
 
         <tr v-if="!isLoading && !loadError && mailingLists.length === 0">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             No mailing lists found.
           </td>
         </tr>
         <tr v-if="isLoading">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             Loading mailing lists...
           </td>
         </tr>
 
         <tr v-else-if="loadError">
-          <td colspan="4" class="px-6 py-8 text-center text-red-600">
+          <td colspan="4" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
             {{ loadError }}
           </td>
         </tr>
 
         <tr v-else-if="mailingLists.length === 0">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             No mailing lists found.
           </td>
         </tr>
         </tbody>
       </table>
 
-      <div class="block md:hidden divide-y divide-slate-100">
+      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
         <div
             v-for="list in mailingLists"
             :key="`mobile-${list.id}`"
@@ -125,13 +125,13 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500">#{{ list.id }}</p>
-              <p class="font-semibold text-slate-900">{{ list.name }}</p>
+              <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ list.id }}</p>
+              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ list.name }}</p>
             </div>
 
             <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
             >
               {{ isPublic(list) ? 'Public' : 'Private' }}
             </span>
@@ -140,7 +140,7 @@
           <div class="grid grid-cols-2 gap-2">
             <button
                 type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
                 @click="handleDelete(list)"
             >
               <BaseIcon name="delete" class="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@
 
             <button
                 type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
                 @click="handleAddSubscriber(list)"
             >
               <BaseIcon name="addUser" class="w-3.5 h-3.5" />
@@ -158,7 +158,7 @@
 
             <button
                 type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                 @click="handleEdit(list)"
             >
               <BaseIcon name="edit" class="w-3.5 h-3.5" />
@@ -167,7 +167,7 @@
 
             <button
                 type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors"
                 @click="handleStartCampaign(list)"
             >
               <BaseIcon name="plane" class="w-3.5 h-3.5" />
@@ -176,7 +176,7 @@
 
             <button
                 type="button"
-                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                 @click="handleViewMembers(list)"
             >
               <BaseIcon name="eye" class="w-3.5 h-3.5" />
@@ -187,21 +187,21 @@
 
         <div
             v-if="isLoading"
-            class="px-4 py-8 text-center text-slate-500 text-sm"
+            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
         >
           Loading mailing lists...
         </div>
 
         <div
             v-else-if="loadError"
-            class="px-4 py-8 text-center text-red-600 text-sm"
+            class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
         >
           {{ loadError }}
         </div>
 
         <div
             v-else-if="mailingLists.length === 0"
-            class="px-4 py-8 text-center text-slate-500 text-sm"
+            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
         >
           No mailing lists found.
         </div>

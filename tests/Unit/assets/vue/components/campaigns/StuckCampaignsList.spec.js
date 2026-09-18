@@ -1,11 +1,13 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import StuckCampaignsList from '../../../../../../assets/vue/components/campaigns/StuckCampaignsList.vue'
-import { getStuckCampaigns, resumeStuckCampaign } from '../../../../../../assets/vue/api'
+import { campaignClient } from '../../../../../../assets/vue/api'
 
 vi.mock('../../../../../../assets/vue/api', () => ({
-    getStuckCampaigns: vi.fn(),
-    resumeStuckCampaign: vi.fn(),
+    campaignClient: {
+        getStuckCampaigns: vi.fn(),
+        resumeCampaign: vi.fn(),
+    },
 }))
 
 vi.mock('../../../../../../assets/vue/components/base/BaseIcon.vue', () => ({
@@ -16,8 +18,8 @@ const makeStuckCampaign = (overrides = {}) => ({
     id: 1,
     subject: 'Stuck Newsletter',
     status: 'inprocess',
-    updated_at: '2024-03-01T10:00:00Z',
-    stuck_seconds: 2700,
+    updatedAt: '2024-03-01T10:00:00Z',
+    stuckSeconds: 2700,
     ...overrides,
 })
 
@@ -34,18 +36,18 @@ describe('StuckCampaignsList', () => {
     })
 
     it('loads and renders stuck campaigns on mount', async () => {
-        getStuckCampaigns.mockResolvedValue([makeStuckCampaign()])
+        campaignClient.getStuckCampaigns.mockResolvedValue({ items: [makeStuckCampaign()] })
 
         const wrapper = mountComponent()
         await flushPromises()
 
-        expect(getStuckCampaigns).toHaveBeenCalledTimes(1)
+        expect(campaignClient.getStuckCampaigns).toHaveBeenCalledTimes(1)
         expect(wrapper.text()).toContain('Stuck Newsletter')
         expect(wrapper.text()).toContain('45m')
     })
 
     it('shows an empty state when there are no stuck campaigns', async () => {
-        getStuckCampaigns.mockResolvedValue([])
+        campaignClient.getStuckCampaigns.mockResolvedValue({ items: [] })
 
         const wrapper = mountComponent()
         await flushPromises()
@@ -54,7 +56,7 @@ describe('StuckCampaignsList', () => {
     })
 
     it('shows an error message when loading fails', async () => {
-        getStuckCampaigns.mockRejectedValue(new Error('Network error'))
+        campaignClient.getStuckCampaigns.mockRejectedValue(new Error('Network error'))
 
         const wrapper = mountComponent()
         await flushPromises()
@@ -64,8 +66,8 @@ describe('StuckCampaignsList', () => {
 
     it('resumes a campaign and refreshes the list', async () => {
         vi.useFakeTimers()
-        getStuckCampaigns.mockResolvedValue([makeStuckCampaign()])
-        resumeStuckCampaign.mockResolvedValue({})
+        campaignClient.getStuckCampaigns.mockResolvedValue({ items: [makeStuckCampaign()] })
+        campaignClient.resumeCampaign.mockResolvedValue({})
 
         const wrapper = mountComponent()
         await flushPromises()
@@ -74,13 +76,13 @@ describe('StuckCampaignsList', () => {
         await resumeButton.trigger('click')
         await flushPromises()
 
-        expect(resumeStuckCampaign).toHaveBeenCalledWith(1)
+        expect(campaignClient.resumeCampaign).toHaveBeenCalledWith(1)
         expect(wrapper.text()).toContain('Campaign resumed.')
 
         vi.runAllTimers()
         await flushPromises()
 
-        expect(getStuckCampaigns).toHaveBeenCalledTimes(2)
+        expect(campaignClient.getStuckCampaigns).toHaveBeenCalledTimes(2)
         vi.useRealTimers()
     })
 })

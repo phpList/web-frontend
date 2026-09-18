@@ -58,6 +58,7 @@ const sections = [
     label: 'Marketing',
     items: [
       { label: 'Campaigns', icon: 'plane', route: '/campaigns' },
+      { label: 'Stuck Campaigns', icon: 'warning', route: '/campaigns/stuck' },
       { label: 'Templates', icon: 'template', route: '/templates' },
     ],
   },

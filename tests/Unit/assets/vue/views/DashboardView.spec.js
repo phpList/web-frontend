@@ -1,6 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
+
+const statisticsClient = {
+    getDashboardSummary: vi.fn(),
+    getRecentCampaigns: vi.fn(),
+    getCampaignPerformance: vi.fn(),
+}
+
+vi.mock('../../../../../assets/vue/api', () => ({
+    statisticsClient,
+}))
 
 vi.mock('../../../../../assets/vue/layouts/AdminLayout.vue', () => ({
     default: defineComponent({
@@ -12,6 +22,7 @@ vi.mock('../../../../../assets/vue/layouts/AdminLayout.vue', () => ({
 vi.mock('../../../../../assets/vue/components/dashboard/KpiGrid.vue', () => ({
     default: defineComponent({
         name: 'KpiGrid',
+        props: ['summary'],
         template: '<div class="dashboard-block" />',
     }),
 }))
@@ -19,6 +30,7 @@ vi.mock('../../../../../assets/vue/components/dashboard/KpiGrid.vue', () => ({
 vi.mock('../../../../../assets/vue/components/dashboard/PerformanceChartCard.vue', () => ({
     default: defineComponent({
         name: 'PerformanceChartCard',
+        props: ['chart'],
         template: '<div class="dashboard-block" />',
     }),
 }))
@@ -33,6 +45,7 @@ vi.mock('../../../../../assets/vue/components/dashboard/QuickActionsCard.vue', (
 vi.mock('../../../../../assets/vue/components/dashboard/RecentCampaignsCard.vue', () => ({
     default: defineComponent({
         name: 'RecentCampaignsCard',
+        props: ['rows'],
         template: '<div class="dashboard-block" />',
     }),
 }))
@@ -40,24 +53,73 @@ vi.mock('../../../../../assets/vue/components/dashboard/RecentCampaignsCard.vue'
 describe('DashboardView', () => {
     beforeEach(() => {
         document.body.innerHTML = ''
+        vi.clearAllMocks()
+        vi.resetModules()
     })
 
-    it('renders the dashboard error banner when provided by the server', async () => {
-        document.body.innerHTML = `
-      <div
-        id="vue-app"
-        data-dashboard-stats="{}"
-        data-dashboard-error="Session expired"
-      ></div>
-    `
-
-        vi.resetModules()
+    it('loads dashboard statistics from the statistics client on mount', async () => {
+        statisticsClient.getDashboardSummary.mockResolvedValue({
+            totalSubscribers: { value: 12345, changeVsLastMonth: 5.2 },
+            activeCampaigns: { value: 42, changeVsLastMonth: -3.5 },
+            openRate: { value: 28, changeVsLastMonth: 1.1 },
+            bounceRate: { value: 4, changeVsLastMonth: -0.7 },
+        })
+        statisticsClient.getRecentCampaigns.mockResolvedValue({
+            campaigns: [{ name: 'Summer launch', status: 'sent', date: '2026-06-01', openRate: '60%', clickRate: '20%' }],
+        })
+        statisticsClient.getCampaignPerformance.mockResolvedValue({
+            points: [{ date: '2026-06-01', opens: 10, clicks: 3 }],
+        })
 
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
         const wrapper = mount(DashboardView)
 
-        expect(wrapper.text()).toContain('Session expired')
+        await flushPromises()
+
+        expect(statisticsClient.getDashboardSummary).toHaveBeenCalled()
+        expect(statisticsClient.getRecentCampaigns).toHaveBeenCalled()
+        expect(statisticsClient.getCampaignPerformance).toHaveBeenCalled()
+        expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    })
+
+    it('renders an error banner when loading dashboard statistics fails', async () => {
+        statisticsClient.getDashboardSummary.mockRejectedValue(new Error('Session expired'))
+        statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
+        statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
+
+        const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
+
+        const wrapper = mount(DashboardView)
+
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Unable to load dashboard statistics.')
         expect(wrapper.find('[role="alert"]').exists()).toBe(true)
+    })
+
+    it('does not re-fetch dashboard statistics when the view is remounted', async () => {
+        statisticsClient.getDashboardSummary.mockResolvedValue({
+            totalSubscribers: { value: 12345, changeVsLastMonth: 5.2 },
+            activeCampaigns: { value: 42, changeVsLastMonth: -3.5 },
+            openRate: { value: 28, changeVsLastMonth: 1.1 },
+            bounceRate: { value: 4, changeVsLastMonth: -0.7 },
+        })
+        statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
+        statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
+
+        const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
+
+        const firstMount = mount(DashboardView)
+        await flushPromises()
+        firstMount.unmount()
+
+        const secondMount = mount(DashboardView)
+        await flushPromises()
+
+        expect(statisticsClient.getDashboardSummary).toHaveBeenCalledTimes(1)
+        expect(statisticsClient.getRecentCampaigns).toHaveBeenCalledTimes(1)
+        expect(statisticsClient.getCampaignPerformance).toHaveBeenCalledTimes(1)
+        expect(secondMount.find('[role="alert"]').exists()).toBe(false)
     })
 })

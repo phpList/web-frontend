@@ -1,7 +1,7 @@
 <template>
   <BaseCard class="h-full">
     <header class="mb-4">
-      <h2 class="text-sm font-bold text-gray-900 mb-0">
+      <h2 class="text-sm font-bold text-gray-900 mb-0 dark:text-slate-100">
         Quick Actions
       </h2>
     </header>
@@ -11,14 +11,14 @@
         v-for="action in quickActions"
         :key="action.id"
         :href="action.href"
-        class="rounded-xl border border-gray-200 bg-gray-100/70 px-4 py-4 text-center transition-colors hover:bg-gray-100"
+        class="rounded-xl border border-gray-200 bg-gray-100/70 px-4 py-4 text-center transition-colors hover:bg-gray-100 dark:border-slate-700 dark:bg-slate-800/70 dark:hover:bg-slate-700"
       >
         <div class="mb-2 flex justify-center">
           <span class="inline-flex items-center justify-center">
             <svg
               v-if="action.id === 'campaign'"
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-blue-600"
+              class="h-5 w-5 text-blue-600 dark:text-blue-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -30,7 +30,7 @@
             <svg
               v-else-if="action.id === 'subscribers'"
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-emerald-600"
+              class="h-5 w-5 text-emerald-600 dark:text-emerald-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -44,20 +44,20 @@
             <svg
               v-else-if="action.id === 'import'"
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-indigo-600"
+              class="h-5 w-5 text-indigo-600 dark:text-indigo-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               stroke-width="2"
               aria-hidden="true"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V8m0 0-3 3m3-3 3 3" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20 16.6A5 5 0 0 0 18 7H6a5 5 0 0 0-2 9.6" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v10m0 0-4-4m4 4 4-4"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 15v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
             </svg>
             <svg
               v-else
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-amber-600"
+              class="h-5 w-5 text-amber-600 dark:text-amber-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -69,7 +69,7 @@
             </svg>
           </span>
         </div>
-        <p class="m-0 text-sm font-semibold text-slate-800">
+        <p class="m-0 text-sm font-semibold text-slate-800 dark:text-slate-100">
           {{ action.label }}
         </p>
       </a>

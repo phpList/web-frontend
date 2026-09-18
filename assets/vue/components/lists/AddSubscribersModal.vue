@@ -8,21 +8,21 @@
   >
     <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
 
-    <div class="relative z-10 w-full overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:w-full">
+    <div class="relative z-10 w-full overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:w-full">
       <form class="mt-4 space-y-4" @submit.prevent="submitAddSubscribers">
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6">
           <div class="flex items-center justify-between">
-            <h3 id="add-subscribers-modal-title" class="text-lg font-medium leading-6 text-slate-900">
+            <h3 id="add-subscribers-modal-title" class="text-lg font-medium leading-6 text-slate-900 dark:text-slate-100">
               Add subscribers
             </h3>
 
-            <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
+            <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400" @click="close">
               <BaseIcon name="close" class="w-5 h-5" />
             </button>
           </div>
 
             <div>
-              <label for="subscriber-emails" class="block text-sm font-medium text-slate-700">
+              <label for="subscriber-emails" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
                 Email addresses
               </label>
               <textarea
@@ -30,28 +30,28 @@
                   v-model.trim="addSubsForm.emails"
                   rows="8"
                   placeholder="john@example.com&#10;jane@example.com&#10;team@example.com"
-                  class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
               ></textarea>
-              <p class="mt-1 text-xs text-slate-500">
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Enter one email per line, or separate multiple emails with commas.
               </p>
             </div>
 
-            <label class="flex items-center gap-2 text-sm text-slate-700">
+            <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
               <input
                   v-model="addSubsForm.autoConfirm"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-ext-wf1 accent-ext-wf1"
+                  class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-ext-wf1 accent-ext-wf1"
               />
               Auto confirm subscribers
             </label>
 
-            <p v-if="addSubsError" class="text-sm text-red-600">
+            <p v-if="addSubsError" class="text-sm text-red-600 dark:text-red-400">
               {{ addSubsError }}
             </p>
         </div>
 
-        <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
         <button
             type="submit"
             :disabled="addingSubscribers || !addSubsForm.emails.trim()"
@@ -62,7 +62,7 @@
 
         <button
             type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-base font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-base font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
             @click="close"
         >
           Cancel

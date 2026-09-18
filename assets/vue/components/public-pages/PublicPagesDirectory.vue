@@ -1,7 +1,7 @@
 <template>
-  <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <header class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <h2 class="text-xl font-bold text-slate-900">Subscribe Pages</h2>
+  <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <header class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Subscribe Pages</h2>
       <button
         type="button"
         class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20 disabled:opacity-60"
@@ -18,7 +18,7 @@
 
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 text-slate-500 font-medium">
+        <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
         <tr>
           <th class="px-6 py-4">ID</th>
           <th class="px-6 py-4">Title</th>
@@ -28,17 +28,17 @@
           <th class="px-6 py-4 text-right">Actions</th>
         </tr>
         </thead>
-        <tbody class="divide-y divide-slate-200">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
         <template v-for="page in subscribePages" :key="page.id">
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="px-6 py-4 text-slate-600">{{ page.id }}</td>
-            <td class="px-6 py-4 font-medium text-slate-900">{{ page.title || `Subscribe page #${page.id}` }}</td>
-            <td class="px-6 py-4 text-slate-700">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ page.id }}</td>
+            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</td>
+            <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
             <td class="px-6 py-4">
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="radio"
-                  class="w-4 h-4 text-ext-wf1 border-slate-300 focus:ring-ext-wf2"
+                  class="w-4 h-4 text-ext-wf1 border-slate-300 dark:border-slate-600 focus:ring-ext-wf2"
                   :checked="page.isDefault"
                   :disabled="isRowBusy(page.id)"
                   @change="handleSetDefault(page)"
@@ -49,7 +49,7 @@
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  class="w-4 h-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+                  class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                   :checked="page.active"
                   :disabled="isRowBusy(page.id)"
                   @change="handleToggleActive(page, $event)"
@@ -60,7 +60,7 @@
               <div class="flex flex-wrap items-center justify-end gap-2">
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-60"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-60"
                     :disabled="isRowBusy(page.id)"
                     @click="handlePreview(page)"
                 >
@@ -70,7 +70,7 @@
 
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-60"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-60"
                     :disabled="isRowBusy(page.id)"
                     @click="handleEdit(page)"
                 >
@@ -80,7 +80,7 @@
 
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-60"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-60"
                     :disabled="isRowBusy(page.id)"
                     @click="handleDelete(page)"
                 >
@@ -93,26 +93,26 @@
         </template>
 
         <tr v-if="isLoading">
-          <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             Loading subscribe pages...
           </td>
         </tr>
 
         <tr v-else-if="loadError">
-          <td colspan="6" class="px-6 py-8 text-center text-red-600">
+          <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
             {{ loadError }}
           </td>
         </tr>
 
         <tr v-else-if="subscribePages.length === 0">
-          <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             No subscribe pages found.
           </td>
         </tr>
         </tbody>
       </table>
 
-      <div class="block md:hidden divide-y divide-slate-100">
+      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
         <article
           v-for="page in subscribePages"
           :key="`mobile-${page.id}`"
@@ -120,20 +120,20 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500">#{{ page.id }}</p>
-              <p class="font-semibold text-slate-900">{{ page.title || `Subscribe page #${page.id}` }}</p>
-              <p class="text-xs text-slate-500 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
+              <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ page.id }}</p>
+              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
             </div>
-            <div class="text-xs text-slate-500">
+            <div class="text-xs text-slate-500 dark:text-slate-400">
               {{ isRowBusy(page.id) ? 'Updating...' : '' }}
             </div>
           </div>
 
           <div class="flex items-center justify-between gap-3">
-            <label class="inline-flex items-center gap-2 text-xs text-slate-700">
+            <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
               <input
                 type="radio"
-                class="w-4 h-4 text-ext-wf1 border-slate-300 focus:ring-ext-wf2"
+                class="w-4 h-4 text-ext-wf1 border-slate-300 dark:border-slate-600 focus:ring-ext-wf2"
                 :checked="page.isDefault"
                 :disabled="isRowBusy(page.id)"
                 @change="handleSetDefault(page)"
@@ -141,10 +141,10 @@
               Default
             </label>
 
-            <label class="inline-flex items-center gap-2 text-xs text-slate-700">
+            <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
               <input
                 type="checkbox"
-                class="w-4 h-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+                class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                 :checked="page.active"
                 :disabled="isRowBusy(page.id)"
                 @change="handleToggleActive(page, $event)"
@@ -156,7 +156,7 @@
           <div class="grid grid-cols-2 gap-2">
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-60"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-60"
               :disabled="isRowBusy(page.id)"
               @click="handlePreview(page)"
             >
@@ -166,7 +166,7 @@
 
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-60"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-60"
               :disabled="isRowBusy(page.id)"
               @click="handleEdit(page)"
             >
@@ -176,7 +176,7 @@
 
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-60"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-60"
               :disabled="isRowBusy(page.id)"
               @click="handleDelete(page)"
             >
@@ -188,21 +188,21 @@
 
         <div
           v-if="isLoading"
-          class="px-4 py-8 text-center text-slate-500 text-sm"
+          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
         >
           Loading subscribe pages...
         </div>
 
         <div
           v-else-if="loadError"
-          class="px-4 py-8 text-center text-red-600 text-sm"
+          class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
         >
           {{ loadError }}
         </div>
 
         <div
           v-else-if="subscribePages.length === 0"
-          class="px-4 py-8 text-center text-slate-500 text-sm"
+          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
         >
           No subscribe pages found.
         </div>

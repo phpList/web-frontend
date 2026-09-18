@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center">
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Administrators</h2>
-        <p class="mt-0.5 text-sm text-slate-500">Manage administrator accounts and permissions</p>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Administrators</h2>
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Manage administrator accounts and permissions</p>
       </div>
 
       <button
@@ -22,7 +22,7 @@
     <div class="overflow-x-auto">
       <!-- Desktop Table View -->
       <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 text-slate-500 font-medium">
+        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
           <tr>
             <th class="px-6 py-4">ID</th>
             <th class="px-6 py-4">Login Name</th>
@@ -32,31 +32,31 @@
             <th class="px-6 py-4 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-200">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
           <tr
             v-for="admin in admins"
             :key="admin.id"
-            class="hover:bg-slate-50 transition-colors"
+            class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
           >
-            <td class="px-6 py-4 text-slate-600">{{ admin.id }}</td>
-            <td class="px-6 py-4 font-medium text-slate-900">{{ admin.loginName }}</td>
-            <td class="px-6 py-4 text-slate-600">{{ admin.email }}</td>
+            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.id }}</td>
+            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ admin.loginName }}</td>
+            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.email }}</td>
             <td class="px-6 py-4">
               <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="admin.superUser ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'"
+                :class="admin.superUser ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
               >
                 {{ admin.superUser ? 'Yes' : 'No' }}
               </span>
             </td>
-            <td class="px-6 py-4 text-slate-600 text-xs">
+            <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-xs">
               {{ formatDate(admin.createdAt) }}
             </td>
             <td class="px-6 py-4">
               <div class="flex flex-wrap justify-end gap-2">
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                   @click="handleEdit(admin)"
                 >
                   <BaseIcon name="edit" class="w-3.5 h-3.5" />
@@ -65,7 +65,7 @@
 
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                   @click="handleDelete(admin)"
                 >
                   <BaseIcon name="delete" class="w-3.5 h-3.5" />
@@ -76,18 +76,18 @@
           </tr>
 
           <tr v-if="!isLoading && !loadError && admins.length === 0">
-            <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+            <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
               No administrators found. Create one to get started.
             </td>
           </tr>
           <tr v-if="isLoading">
-            <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+            <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
               Loading administrators...
             </td>
           </tr>
 
           <tr v-else-if="loadError">
-            <td colspan="6" class="px-6 py-8 text-center text-red-600">
+            <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
               {{ loadError }}
             </td>
           </tr>
@@ -95,7 +95,7 @@
       </table>
 
       <!-- Mobile Card View -->
-      <div class="block md:hidden divide-y divide-slate-100">
+      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
         <div
           v-for="admin in admins"
           :key="`mobile-${admin.id}`"
@@ -103,27 +103,27 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500">#{{ admin.id }}</p>
-              <p class="font-semibold text-slate-900">{{ admin.loginName }}</p>
-              <p class="text-sm text-slate-500">{{ admin.email }}</p>
+              <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ admin.id }}</p>
+              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ admin.loginName }}</p>
+              <p class="text-sm text-slate-500 dark:text-slate-400">{{ admin.email }}</p>
             </div>
 
             <span
               class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-              :class="admin.superUser ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'"
+              :class="admin.superUser ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
             >
               {{ admin.superUser ? 'Super' : 'User' }}
             </span>
           </div>
 
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-slate-500 dark:text-slate-400">
             Created: {{ formatDate(admin.createdAt) }}
           </p>
 
           <div class="grid grid-cols-2 gap-2">
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               @click="handleEdit(admin)"
             >
               <BaseIcon name="edit" class="w-3.5 h-3.5" />
@@ -132,7 +132,7 @@
 
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
               @click="handleDelete(admin)"
             >
               <BaseIcon name="delete" class="w-3.5 h-3.5" />
@@ -141,15 +141,15 @@
           </div>
         </div>
 
-        <div v-if="isLoading" class="px-4 py-8 text-center text-slate-500 text-sm">
+        <div v-if="isLoading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
           Loading administrators...
         </div>
 
-        <div v-else-if="loadError" class="px-4 py-8 text-center text-red-600 text-sm">
+        <div v-else-if="loadError" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">
           {{ loadError }}
         </div>
 
-        <div v-else-if="admins.length === 0" class="px-4 py-8 text-center text-slate-500 text-sm">
+        <div v-else-if="admins.length === 0" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
           No administrators found. Create one to get started.
         </div>
       </div>

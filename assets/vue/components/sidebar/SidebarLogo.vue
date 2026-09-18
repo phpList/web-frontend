@@ -8,7 +8,7 @@
           style="object-fit: contain;"
       />
     </div>
-    <span class="font-bold text-lg tracking-tight text-slate-900">phpList <span class="text-ext-wf1">4</span></span>
+    <span class="font-bold text-lg tracking-tight text-slate-900 dark:text-slate-100">phpList <span class="text-ext-wf1">4</span></span>
   </RouterLink>
 </template>
 

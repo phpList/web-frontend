@@ -7,10 +7,13 @@ namespace PhpList\WebFrontend\Tests\Integration\Controller;
 use PhpList\RestApiClient\Endpoint\StatisticsClient;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\AuthorizationException;
-use PhpList\RestApiClient\Response\Statistics\DashboardStatisticsResponse;
+use PhpList\RestApiClient\Response\Statistics\CampaignPerformanceCollection;
+use PhpList\RestApiClient\Response\Statistics\DashboardSummaryResponse;
+use PhpList\RestApiClient\Response\Statistics\RecentCampaignsCollection;
 use PhpList\WebFrontend\Controller\DashboardController;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\RouterInterface;
@@ -29,12 +32,18 @@ class DashboardControllerTest extends KernelTestCase
     public function testDashboardRendersSpaPayloadWithStats(): void
     {
         self::bootKernel();
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
-            ->method('getDashboardStats')
-            ->willReturn($this->createDashboardStatsResponse());
+            ->method('getDashboardSummary')
+            ->willReturn($this->createDashboardSummaryResponse());
+        $statsClient->expects(self::once())
+            ->method('getRecentCampaigns')
+            ->willReturn($this->createRecentCampaignsCollection());
+        $statsClient->expects(self::once())
+            ->method('getCampaignPerformance')
+            ->willReturn($this->createCampaignPerformanceCollection());
 
         $controller = new DashboardController($statsClient);
         $controller->setContainer(static::getContainer());
@@ -43,6 +52,7 @@ class DashboardControllerTest extends KernelTestCase
         $session = new Session(new MockArraySessionStorage());
         $session->set('auth_token', 'integration-token');
         $request->setSession($session);
+        static::getContainer()->get(RequestStack::class)->push($request);
 
         $response = $controller->index($request);
         $content = (string) $response->getContent();
@@ -63,8 +73,10 @@ class DashboardControllerTest extends KernelTestCase
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
-            ->method('getDashboardStats')
+            ->method('getDashboardSummary')
             ->willThrowException(new AuthenticationException('Session expired'));
+        $statsClient->expects(self::never())->method('getRecentCampaigns');
+        $statsClient->expects(self::never())->method('getCampaignPerformance');
 
         $controller = new DashboardController($statsClient);
         $controller->setContainer(static::getContainer());
@@ -88,11 +100,13 @@ class DashboardControllerTest extends KernelTestCase
 
         $statsClient = $this->createMock(StatisticsClient::class);
         $statsClient->expects(self::once())
-            ->method('getDashboardStats')
+            ->method('getDashboardSummary')
             ->willThrowException(new AuthorizationException(
                 'No valid session key was provided as basic auth password.',
                 403
             ));
+        $statsClient->expects(self::never())->method('getRecentCampaigns');
+        $statsClient->expects(self::never())->method('getCampaignPerformance');
 
         $controller = new DashboardController($statsClient);
         $controller->setContainer(static::getContainer());
@@ -112,42 +126,48 @@ class DashboardControllerTest extends KernelTestCase
         self::assertStringContainsString('data-dashboard-stats="&#x5B;&#x5D;"', $content);
     }
 
-    private function createDashboardStatsResponse(): DashboardStatisticsResponse
+    private function createDashboardSummaryResponse(): DashboardSummaryResponse
     {
-        return new DashboardStatisticsResponse([
-            'summary_statistics' => [
-                'total_subscribers' => [
-                    'value' => 1000,
-                    'change_vs_last_month' => 8.2,
-                ],
-                'active_campaigns' => [
-                    'value' => 3,
-                    'change_vs_last_month' => 1.0,
-                ],
-                'open_rate' => [
-                    'value' => 47.6,
-                    'change_vs_last_month' => 2.1,
-                ],
-                'bounce_rate' => [
-                    'value' => 1.2,
-                    'change_vs_last_month' => -0.2,
-                ],
+        return new DashboardSummaryResponse([
+            'total_subscribers' => [
+                'value' => 1000,
+                'change_vs_last_month' => 8.2,
             ],
-            'recent_campaigns' => [
-                [
-                    'name' => 'Weekly Digest',
-                    'status' => 'sent',
-                    'date' => '2026-04-10',
-                    'open_rate' => 53.2,
-                    'click_rate' => 12.3,
-                ],
+            'active_campaigns' => [
+                'value' => 3,
+                'change_vs_last_month' => 1.0,
             ],
-            'campaign_performance' => [
-                [
-                    'date' => '2026-04-09',
-                    'opens' => 120,
-                    'clicks' => 24,
-                ],
+            'open_rate' => [
+                'value' => 47.6,
+                'change_vs_last_month' => 2.1,
+            ],
+            'bounce_rate' => [
+                'value' => 1.2,
+                'change_vs_last_month' => -0.2,
+            ],
+        ]);
+    }
+
+    private function createRecentCampaignsCollection(): RecentCampaignsCollection
+    {
+        return new RecentCampaignsCollection([
+            [
+                'name' => 'Weekly Digest',
+                'status' => 'sent',
+                'date' => '2026-04-10',
+                'open_rate' => 53.2,
+                'click_rate' => 12.3,
+            ],
+        ]);
+    }
+
+    private function createCampaignPerformanceCollection(): CampaignPerformanceCollection
+    {
+        return new CampaignPerformanceCollection([
+            [
+                'date' => '2026-04-09',
+                'opens' => 120,
+                'clicks' => 24,
             ],
         ]);
     }

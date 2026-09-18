@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center">
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
           Admin Attributes
         </h2>
 
-        <p class="mt-0.5 text-sm text-slate-500">
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
           Manage administrator attribute definitions
         </p>
       </div>
@@ -40,7 +40,7 @@
       <!-- Desktop -->
 
       <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 text-slate-500 font-medium">
+        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
         <tr>
           <th class="px-6 py-4">ID</th>
           <th class="px-6 py-4">Name</th>
@@ -50,22 +50,22 @@
         </tr>
         </thead>
 
-        <tbody class="divide-y divide-slate-200">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
 
         <tr
             v-for="attribute in attributes"
             :key="attribute.id"
-            class="hover:bg-slate-50 transition-colors"
+            class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
         >
-          <td class="px-6 py-4 text-slate-600">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
             {{ attribute.id }}
           </td>
 
-          <td class="px-6 py-4 font-medium text-slate-900">
+          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
             {{ attribute.name }}
           </td>
 
-          <td class="px-6 py-4 text-slate-600">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
             {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
           </td>
 
@@ -73,8 +73,8 @@
             <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium"
                 :class="attribute.required
-                ? 'bg-red-100 text-red-700'
-                : 'bg-slate-100 text-slate-600'"
+                ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400'
+                : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
             >
               {{ attribute.required ? 'Required' : 'Optional' }}
             </span>
@@ -84,7 +84,7 @@
             <div class="flex justify-end gap-2">
 
               <button
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                   @click="handleEdit(attribute)"
               >
                 <BaseIcon name="edit" class="w-3.5 h-3.5"/>
@@ -92,7 +92,7 @@
               </button>
 
               <button
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
                   @click="handleDelete(attribute)"
               >
                 <BaseIcon name="delete" class="w-3.5 h-3.5"/>
@@ -104,19 +104,19 @@
         </tr>
 
         <tr v-if="!isLoading && !loadError && attributes.length===0">
-          <td colspan="5" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             No attributes found.
           </td>
         </tr>
 
         <tr v-if="isLoading">
-          <td colspan="5" class="px-6 py-8 text-center text-slate-500">
+          <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
             Loading attributes...
           </td>
         </tr>
 
         <tr v-else-if="loadError">
-          <td colspan="5" class="px-6 py-8 text-center text-red-600">
+          <td colspan="5" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
             {{ loadError }}
           </td>
         </tr>
@@ -126,7 +126,7 @@
 
       <!-- Mobile -->
 
-      <div class="block md:hidden divide-y divide-slate-100">
+      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
 
         <div
             v-for="attribute in attributes"
@@ -136,15 +136,15 @@
           <div class="flex justify-between items-start">
 
             <div>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-slate-500 dark:text-slate-400">
                 #{{ attribute.id }}
               </p>
 
-              <p class="font-semibold text-slate-900">
+              <p class="font-semibold text-slate-900 dark:text-slate-100">
                 {{ attribute.name }}
               </p>
 
-              <p class="text-sm text-slate-500">
+              <p class="text-sm text-slate-500 dark:text-slate-400">
                 {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
               </p>
             </div>
@@ -152,8 +152,8 @@
             <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium"
                 :class="attribute.required
-                ? 'bg-red-100 text-red-700'
-                : 'bg-slate-100 text-slate-600'"
+                ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400'
+                : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
             >
               {{ attribute.required ? 'Required' : 'Optional' }}
             </span>
@@ -163,7 +163,7 @@
           <div class="grid grid-cols-2 gap-2">
 
             <button
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200"
                 @click="handleEdit(attribute)"
             >
               <BaseIcon name="edit" class="w-3.5 h-3.5"/>
@@ -171,7 +171,7 @@
             </button>
 
             <button
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
                 @click="handleDelete(attribute)"
             >
               <BaseIcon name="delete" class="w-3.5 h-3.5"/>
@@ -183,21 +183,21 @@
 
         <div
             v-if="isLoading"
-            class="px-4 py-8 text-center text-slate-500"
+            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400"
         >
           Loading attributes...
         </div>
 
         <div
             v-else-if="loadError"
-            class="px-4 py-8 text-center text-red-600"
+            class="px-4 py-8 text-center text-red-600 dark:text-red-400"
         >
           {{ loadError }}
         </div>
 
         <div
             v-else-if="attributes.length===0"
-            class="px-4 py-8 text-center text-slate-500"
+            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400"
         >
           No attributes found.
         </div>

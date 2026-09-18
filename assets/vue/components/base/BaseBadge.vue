@@ -19,10 +19,10 @@ const badgeClass = computed(() => {
   const base = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
   switch (props.variant) {
     case 'counter':
-      return `${base} bg-indigo-50 text-ext-wf3 border border-indigo-100`;
+      return `${base} bg-indigo-50 dark:bg-indigo-500/10 text-ext-wf3 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/20`;
     case 'neutral':
     default:
-      return `${base} bg-gray-100 text-gray-800`;
+      return `${base} bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-200`;
   }
 })
 </script>

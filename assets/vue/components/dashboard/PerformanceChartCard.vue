@@ -2,10 +2,10 @@
 <template>
   <BaseCard>
     <header class="mb-3 flex items-center justify-between">
-      <h2 class="text-sm font-bold text-gray-900">
+      <h2 class="text-sm font-bold text-gray-900 dark:text-slate-100">
         Campaign Performance
       </h2>
-      <p class="text-gray-500 text-xs mb-0">
+      <p class="text-gray-500 text-xs mb-0 dark:text-slate-400">
         Daily opens and clicks for the last 30 days
       </p>
     </header>
@@ -25,6 +25,7 @@
 import { computed } from 'vue'
 import BaseCard from '../../components/base/BaseCard.vue'
 import VueApexCharts from 'vue3-apexcharts'
+import { useDarkMode } from '../../composables/useDarkMode'
 
 defineOptions({
   components: {
@@ -42,6 +43,8 @@ const props = defineProps({
     }),
   },
 })
+
+const { isDark } = useDarkMode()
 
 const series = computed(() => props.chart?.series ?? [])
 
@@ -71,7 +74,7 @@ const chartOptions = computed(() => ({
     enabled: false,
   },
   grid: {
-    borderColor: '#e5e7eb',
+    borderColor: isDark.value ? '#334155' : '#e5e7eb',
     strokeDashArray: 4,
     padding: {
       left: 8,
@@ -85,6 +88,9 @@ const chartOptions = computed(() => ({
     position: 'top',
     horizontalAlign: 'right',
     fontSize: '12px',
+    labels: {
+      colors: isDark.value ? '#cbd5e1' : '#374151',
+    },
     markers: {
       width: 8,
       height: 8,
@@ -97,7 +103,7 @@ const chartOptions = computed(() => ({
     axisTicks: { show: false },
     labels: {
       style: {
-        colors: '#9ca3af',
+        colors: isDark.value ? '#64748b' : '#9ca3af',
         fontSize: '12px',
       },
     },
@@ -105,7 +111,7 @@ const chartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        colors: '#9ca3af',
+        colors: isDark.value ? '#64748b' : '#9ca3af',
         fontSize: '12px',
       },
       formatter: (value) => Math.round(value).toLocaleString(),
@@ -114,6 +120,7 @@ const chartOptions = computed(() => ({
   tooltip: {
     shared: true,
     intersect: false,
+    theme: isDark.value ? 'dark' : 'light',
     y: {
       formatter: (value) => value.toLocaleString(),
     },

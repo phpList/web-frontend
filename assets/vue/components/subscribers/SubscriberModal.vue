@@ -4,15 +4,15 @@
     <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
 
     <!-- Modal Content -->
-    <div class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full z-10">
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+    <div class="relative bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full z-10">
+        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div class="sm:flex sm:items-start">
             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
               <div class="flex justify-between items-center">
-                <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
+                <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100" id="modal-title">
                   Subscriber Details ID: {{ subscriber?.id ?? '' }}
                 </h3>
-                <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
+                <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-300" @click="close">
                   <BaseIcon name="close" class="w-5 h-5" />
                 </button>
               </div>
@@ -20,28 +20,28 @@
                 <div v-if="loading" class="flex justify-center py-8">
                   <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
-                <div v-else-if="error" class="text-red-500 text-sm">
+                <div v-else-if="error" class="text-red-500 dark:text-red-400 text-sm">
                   {{ error }}
                 </div>
                 <form v-else @submit.prevent="save" class="space-y-4">
                   <div>
-                    <label class="block text-sm font-medium text-slate-700">Email</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
                     <input
                       v-model="formData.email"
                       type="email"
                       required
-                      class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      class="mt-1 block w-full border border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                   </div>
-                  
+
                   <div class="flex items-center">
                     <input
                       id="confirmed"
                       v-model="formData.confirmed"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
-                    <label for="confirmed" class="ml-2 block text-sm text-slate-900">
+                    <label for="confirmed" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
                       Confirmed
                     </label>
                   </div>
@@ -51,9 +51,9 @@
                       id="blacklisted"
                       v-model="formData.blacklisted"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
-                    <label for="blacklisted" class="ml-2 block text-sm text-slate-900">
+                    <label for="blacklisted" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
                       Blacklisted
                     </label>
                   </div>
@@ -63,9 +63,9 @@
                       id="htmlEmail"
                       v-model="formData.htmlEmail"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
-                    <label for="htmlEmail" class="ml-2 block text-sm text-slate-900">
+                    <label for="htmlEmail" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
                       HTML Email
                     </label>
                   </div>
@@ -75,30 +75,30 @@
                       id="disabled"
                       v-model="formData.disabled"
                       type="checkbox"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
-                    <label for="disabled" class="ml-2 block text-sm text-slate-900">
+                    <label for="disabled" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
                       Disabled
                     </label>
                   </div>
-                  
+
                   <div v-if="subscriber && subscriber.subscribedLists" class="mt-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Subscribed Lists</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Subscribed Lists</label>
                     <div class="flex flex-wrap gap-2">
                       <span
                         v-for="list in subscriber.subscribedLists"
                         :key="list.id"
-                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700"
+                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
                       >
                         {{ list.name }}
                       </span>
-                      <span v-if="!subscriber.subscribedLists.length" class="text-xs text-slate-500">
+                      <span v-if="!subscriber.subscribedLists.length" class="text-xs text-slate-500 dark:text-slate-400">
                         No lists
                       </span>
                     </div>
                   </div>
 
-                  <div v-if="subscriber" class="text-xs text-slate-400 mt-4 pt-4 border-t border-slate-100">
+                  <div v-if="subscriber" class="text-xs text-slate-400 dark:text-slate-500 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                     <p>Created: {{ subscriber.createdAt }}</p>
                     <p>Updated: {{ subscriber.updatedAt === '' ? '-' : subscriber.updatedAt }}</p>
                     <p>Bounce Count: {{ subscriber.bounceCount }}</p>
@@ -110,7 +110,7 @@
             </div>
           </div>
         </div>
-        <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
           <button
             type="button"
             :disabled="loading || saving"
@@ -121,7 +121,7 @@
           </button>
           <button
             type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
             @click="close"
           >
             Cancel

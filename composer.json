@@ -58,7 +58,8 @@
         "tatevikgr/rest-api-client": "dev-dev",
         "phplist/phplist-lan-texts": "^2021.05",
         "psr/simple-cache": "^3.0",
-        "ext-fileinfo": "*"
+        "ext-fileinfo": "*",
+        "elasticsearch/elasticsearch": "^8.9"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",

@@ -28,6 +28,14 @@ class CampaignsController extends AbstractController
         ]);
     }
 
+    #[Route('/stuck', name: 'stuck', methods: ['GET'])]
+    public function stuck(Request $request): Response
+    {
+        return $this->render('@PhpListFrontend/spa.html.twig', [
+            'page' => 'Stuck Campaigns',
+        ]);
+    }
+
     #[Route('/{campaignId}/edit', name: 'edit', methods: ['GET'])]
     public function edit(Request $request, int $campaignId): Response
     {

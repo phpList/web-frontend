@@ -1,5 +1,23 @@
 <template>
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div
+    v-if="loading"
+    class="flex justify-center py-8 mb-8"
+  >
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+  </div>
+
+  <div
+    v-else-if="error"
+    class="mb-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
+    role="alert"
+  >
+    {{ error }}
+  </div>
+
+  <section
+    v-else
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+  >
     <div
       v-for="kpi in kpis"
       :key="kpi.id"
@@ -17,6 +35,14 @@ const props = defineProps({
   summary: {
     type: Object,
     default: null,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  error: {
+    type: String,
+    default: '',
   },
 })
 

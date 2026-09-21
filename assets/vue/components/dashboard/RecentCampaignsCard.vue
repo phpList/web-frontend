@@ -7,7 +7,22 @@
       </h2>
     </header>
 
-    <div class="overflow-x-auto">
+    <div
+      v-if="loading"
+      class="flex justify-center py-8"
+    >
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+    </div>
+
+    <div
+      v-else-if="error"
+      class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
+      role="alert"
+    >
+      {{ error }}
+    </div>
+
+    <div v-else class="overflow-x-auto">
       <CampaignsTable :rows="rows" />
     </div>
   </BaseCard>
@@ -21,6 +36,14 @@ const props = defineProps({
   rows: {
     type: Array,
     default: () => [],
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  error: {
+    type: String,
+    default: '',
   },
 })
 </script>

@@ -10,10 +10,19 @@ const defaultChart = () => ({
 })
 
 const summary = ref(null)
+const summaryLoading = ref(false)
+const summaryError = ref('')
+const summaryLoaded = ref(false)
+
 const recentCampaigns = ref([])
+const recentCampaignsLoading = ref(false)
+const recentCampaignsError = ref('')
+const recentCampaignsLoaded = ref(false)
+
 const chart = ref(defaultChart())
-const error = ref('')
-const loaded = ref(false)
+const chartLoading = ref(false)
+const chartError = ref('')
+const chartLoaded = ref(false)
 
 const formatChartLabel = (dateValue) => {
   if (!dateValue) {
@@ -31,24 +40,56 @@ const formatChartLabel = (dateValue) => {
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' }).format(date)
 }
 
-const load = async () => {
-  if (loaded.value) {
+const loadSummary = async () => {
+  if (summaryLoaded.value || summaryLoading.value) {
     return
   }
 
-  error.value = ''
+  summaryLoading.value = true
+  summaryError.value = ''
 
   try {
-    const [summaryResponse, recentCampaignsResponse, performanceResponse] = await Promise.all([
-      statisticsClient.getDashboardSummary(),
-      statisticsClient.getRecentCampaigns(),
-      statisticsClient.getCampaignPerformance(),
-    ])
+    summary.value = await statisticsClient.getDashboardSummary()
+    summaryLoaded.value = true
+  } catch (err) {
+    summaryError.value = 'Unable to load dashboard summary.'
+    console.error('Failed to load dashboard summary:', err)
+  } finally {
+    summaryLoading.value = false
+  }
+}
 
-    summary.value = summaryResponse
-    recentCampaigns.value = recentCampaignsResponse?.campaigns ?? []
+const loadRecentCampaigns = async () => {
+  if (recentCampaignsLoaded.value || recentCampaignsLoading.value) {
+    return
+  }
 
-    const points = performanceResponse?.points ?? []
+  recentCampaignsLoading.value = true
+  recentCampaignsError.value = ''
+
+  try {
+    const response = await statisticsClient.getRecentCampaigns()
+    recentCampaigns.value = response?.campaigns ?? []
+    recentCampaignsLoaded.value = true
+  } catch (err) {
+    recentCampaignsError.value = 'Unable to load recent campaigns.'
+    console.error('Failed to load recent campaigns:', err)
+  } finally {
+    recentCampaignsLoading.value = false
+  }
+}
+
+const loadChart = async () => {
+  if (chartLoaded.value || chartLoading.value) {
+    return
+  }
+
+  chartLoading.value = true
+  chartError.value = ''
+
+  try {
+    const response = await statisticsClient.getCampaignPerformance()
+    const points = response?.points ?? []
     chart.value = {
       labels: points.map((point) => formatChartLabel(point.date)),
       series: [
@@ -56,21 +97,32 @@ const load = async () => {
         { name: 'Clicks', data: points.map((point) => point.clicks) },
       ],
     }
-
-    loaded.value = true
+    chartLoaded.value = true
   } catch (err) {
-    error.value = 'Unable to load dashboard statistics.'
-    console.error('Failed to load dashboard statistics:', err)
+    chartError.value = 'Unable to load campaign performance.'
+    console.error('Failed to load campaign performance:', err)
+  } finally {
+    chartLoading.value = false
   }
+}
+
+const load = () => {
+  loadSummary()
+  loadRecentCampaigns()
+  loadChart()
 }
 
 export function useDashboardData() {
   return {
     summary,
+    summaryLoading,
+    summaryError,
     recentCampaigns,
+    recentCampaignsLoading,
+    recentCampaignsError,
     chart,
-    error,
-    loaded,
+    chartLoading,
+    chartError,
     load,
   }
 }

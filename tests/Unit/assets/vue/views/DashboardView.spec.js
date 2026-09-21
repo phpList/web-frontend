@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import { defineComponent } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 
 const statisticsClient = {
     getDashboardSummary: vi.fn(),
@@ -22,16 +22,16 @@ vi.mock('../../../../../assets/vue/layouts/AdminLayout.vue', () => ({
 vi.mock('../../../../../assets/vue/components/dashboard/KpiGrid.vue', () => ({
     default: defineComponent({
         name: 'KpiGrid',
-        props: ['summary'],
-        template: '<div class="dashboard-block" />',
+        props: ['summary', 'loading', 'error'],
+        template: '<div class="dashboard-block" :data-loading="loading" :data-error="error">{{ summary ? "summary-loaded" : "" }}</div>',
     }),
 }))
 
 vi.mock('../../../../../assets/vue/components/dashboard/PerformanceChartCard.vue', () => ({
     default: defineComponent({
         name: 'PerformanceChartCard',
-        props: ['chart'],
-        template: '<div class="dashboard-block" />',
+        props: ['chart', 'loading', 'error'],
+        template: '<div class="dashboard-block" :data-loading="loading" :data-error="error" />',
     }),
 }))
 
@@ -45,8 +45,8 @@ vi.mock('../../../../../assets/vue/components/dashboard/QuickActionsCard.vue', (
 vi.mock('../../../../../assets/vue/components/dashboard/RecentCampaignsCard.vue', () => ({
     default: defineComponent({
         name: 'RecentCampaignsCard',
-        props: ['rows'],
-        template: '<div class="dashboard-block" />',
+        props: ['rows', 'loading', 'error'],
+        template: '<div class="dashboard-block" :data-loading="loading" :data-error="error" />',
     }),
 }))
 
@@ -57,7 +57,7 @@ describe('DashboardView', () => {
         vi.resetModules()
     })
 
-    it('shows a loading spinner while dashboard statistics are being fetched, then renders the content', async () => {
+    it('marks each section as loading independently, and clears loading once each resolves', async () => {
         let resolveSummary
         statisticsClient.getDashboardSummary.mockReturnValue(new Promise((resolve) => {
             resolveSummary = resolve
@@ -72,9 +72,20 @@ describe('DashboardView', () => {
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
         const wrapper = mount(DashboardView)
+        await nextTick()
 
-        expect(wrapper.find('.animate-spin').exists()).toBe(true)
-        expect(wrapper.findComponent({ name: 'KpiGrid' }).exists()).toBe(false)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(true)
+        expect(wrapper.findComponent({ name: 'PerformanceChartCard' }).props('loading')).toBe(true)
+        expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('loading')).toBe(true)
+
+        await flushPromises()
+
+        // Sections whose requests already resolved stop loading and show their data,
+        // while the summary section (still pending) keeps its own spinner.
+        expect(wrapper.findComponent({ name: 'PerformanceChartCard' }).props('loading')).toBe(false)
+        expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('loading')).toBe(false)
+        expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('rows')).toHaveLength(1)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(true)
 
         resolveSummary({
             totalSubscribers: { value: 12345, changeVsLastMonth: 5.2 },
@@ -87,12 +98,11 @@ describe('DashboardView', () => {
         expect(statisticsClient.getDashboardSummary).toHaveBeenCalled()
         expect(statisticsClient.getRecentCampaigns).toHaveBeenCalled()
         expect(statisticsClient.getCampaignPerformance).toHaveBeenCalled()
-        expect(wrapper.find('.animate-spin').exists()).toBe(false)
-        expect(wrapper.find('[role="alert"]').exists()).toBe(false)
-        expect(wrapper.findComponent({ name: 'KpiGrid' }).exists()).toBe(true)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(false)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).text()).toContain('summary-loaded')
     })
 
-    it('renders an error banner when loading dashboard statistics fails', async () => {
+    it('surfaces an error for the failing section only, without blocking the others', async () => {
         statisticsClient.getDashboardSummary.mockRejectedValue(new Error('Session expired'))
         statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
         statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
@@ -103,8 +113,9 @@ describe('DashboardView', () => {
 
         await flushPromises()
 
-        expect(wrapper.text()).toContain('Unable to load dashboard statistics.')
-        expect(wrapper.find('[role="alert"]').exists()).toBe(true)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).props('error')).toBe('Unable to load dashboard summary.')
+        expect(wrapper.findComponent({ name: 'PerformanceChartCard' }).props('error')).toBe('')
+        expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('error')).toBe('')
     })
 
     it('does not re-fetch dashboard statistics when the view is remounted', async () => {
@@ -129,7 +140,7 @@ describe('DashboardView', () => {
         expect(statisticsClient.getDashboardSummary).toHaveBeenCalledTimes(1)
         expect(statisticsClient.getRecentCampaigns).toHaveBeenCalledTimes(1)
         expect(statisticsClient.getCampaignPerformance).toHaveBeenCalledTimes(1)
-        expect(secondMount.find('[role="alert"]').exists()).toBe(false)
-        expect(secondMount.find('.animate-spin').exists()).toBe(false)
+        expect(secondMount.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(false)
+        expect(secondMount.findComponent({ name: 'KpiGrid' }).props('error')).toBe('')
     })
 })

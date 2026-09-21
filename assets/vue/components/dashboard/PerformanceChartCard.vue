@@ -10,7 +10,23 @@
       </p>
     </header>
 
-    <div class="mt-3" style="height: 220px;">
+    <div
+      v-if="loading"
+      class="mt-3 flex items-center justify-center"
+      style="height: 220px;"
+    >
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+    </div>
+
+    <div
+      v-else-if="error"
+      class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
+      role="alert"
+    >
+      {{ error }}
+    </div>
+
+    <div v-else class="mt-3" style="height: 220px;">
       <apexchart
           type="area"
           height="220"
@@ -41,6 +57,14 @@ const props = defineProps({
       labels: [],
       series: [],
     }),
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  error: {
+    type: String,
+    default: '',
   },
 })
 

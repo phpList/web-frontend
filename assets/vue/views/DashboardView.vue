@@ -5,38 +5,47 @@
     <!-- Main content -->
     <div class="w-full">
       <div
-        v-if="dashboardError"
-        class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
-        role="alert"
+        v-if="loading"
+        class="flex justify-center py-16"
       >
-        {{ dashboardError }}
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
       </div>
 
-      <!-- KPI Cards -->
-      <KpiGrid :summary="summary" />
+      <template v-else>
+        <div
+          v-if="dashboardError"
+          class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
+          role="alert"
+        >
+          {{ dashboardError }}
+        </div>
 
-      <!-- Chart + Overview -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="w-full lg:col-span-2">
-          <PerformanceChartCard :chart="chart" class="h-full" />
-        </div>
-        <div class="w-full lg:col-span-1">
-          <QuickActionsCard class="h-full" />
-        </div>
-      </section>
+        <!-- KPI Cards -->
+        <KpiGrid :summary="summary" />
 
-      <!-- Recent items list -->
-      <section class="grid grid-cols-1 gap-6">
-        <div class="w-full">
-          <RecentCampaignsCard :rows="recentCampaigns" />
-        </div>
-      </section>
+        <!-- Chart + Overview -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div class="w-full lg:col-span-2">
+            <PerformanceChartCard :chart="chart" class="h-full" />
+          </div>
+          <div class="w-full lg:col-span-1">
+            <QuickActionsCard class="h-full" />
+          </div>
+        </section>
+
+        <!-- Recent items list -->
+        <section class="grid grid-cols-1 gap-6">
+          <div class="w-full">
+            <RecentCampaignsCard :rows="recentCampaigns" />
+          </div>
+        </section>
+      </template>
     </div>
   </AdminLayout>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import KpiGrid from '../components/dashboard/KpiGrid.vue'
 import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
@@ -44,7 +53,9 @@ import QuickActionsCard from '../components/dashboard/QuickActionsCard.vue'
 import RecentCampaignsCard from '../components/dashboard/RecentCampaignsCard.vue'
 import { useDashboardData } from '../composables/useDashboardData'
 
-const { summary, recentCampaigns, chart, error: dashboardError, load } = useDashboardData()
+const { summary, recentCampaigns, chart, error: dashboardError, loaded, load } = useDashboardData()
+
+const loading = computed(() => !loaded.value && !dashboardError.value)
 
 onMounted(load)
 </script>

@@ -57,13 +57,11 @@ describe('DashboardView', () => {
         vi.resetModules()
     })
 
-    it('loads dashboard statistics from the statistics client on mount', async () => {
-        statisticsClient.getDashboardSummary.mockResolvedValue({
-            totalSubscribers: { value: 12345, changeVsLastMonth: 5.2 },
-            activeCampaigns: { value: 42, changeVsLastMonth: -3.5 },
-            openRate: { value: 28, changeVsLastMonth: 1.1 },
-            bounceRate: { value: 4, changeVsLastMonth: -0.7 },
-        })
+    it('shows a loading spinner while dashboard statistics are being fetched, then renders the content', async () => {
+        let resolveSummary
+        statisticsClient.getDashboardSummary.mockReturnValue(new Promise((resolve) => {
+            resolveSummary = resolve
+        }))
         statisticsClient.getRecentCampaigns.mockResolvedValue({
             campaigns: [{ name: 'Summer launch', status: 'sent', date: '2026-06-01', openRate: '60%', clickRate: '20%' }],
         })
@@ -75,12 +73,23 @@ describe('DashboardView', () => {
 
         const wrapper = mount(DashboardView)
 
+        expect(wrapper.find('.animate-spin').exists()).toBe(true)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).exists()).toBe(false)
+
+        resolveSummary({
+            totalSubscribers: { value: 12345, changeVsLastMonth: 5.2 },
+            activeCampaigns: { value: 42, changeVsLastMonth: -3.5 },
+            openRate: { value: 28, changeVsLastMonth: 1.1 },
+            bounceRate: { value: 4, changeVsLastMonth: -0.7 },
+        })
         await flushPromises()
 
         expect(statisticsClient.getDashboardSummary).toHaveBeenCalled()
         expect(statisticsClient.getRecentCampaigns).toHaveBeenCalled()
         expect(statisticsClient.getCampaignPerformance).toHaveBeenCalled()
+        expect(wrapper.find('.animate-spin').exists()).toBe(false)
         expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+        expect(wrapper.findComponent({ name: 'KpiGrid' }).exists()).toBe(true)
     })
 
     it('renders an error banner when loading dashboard statistics fails', async () => {
@@ -121,5 +130,6 @@ describe('DashboardView', () => {
         expect(statisticsClient.getRecentCampaigns).toHaveBeenCalledTimes(1)
         expect(statisticsClient.getCampaignPerformance).toHaveBeenCalledTimes(1)
         expect(secondMount.find('[role="alert"]').exists()).toBe(false)
+        expect(secondMount.find('.animate-spin').exists()).toBe(false)
     })
 })

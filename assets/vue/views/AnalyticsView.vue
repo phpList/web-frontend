@@ -9,7 +9,11 @@
         {{ errorMessage }}
       </div>
 
-      <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div v-if="isLoading" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+
+      <section v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <BaseCard v-for="metric in metrics" :key="metric.id" class="h-full">
           <header class="mb-2 flex items-center gap-3">
             <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
@@ -42,8 +46,8 @@
             </p>
           </header>
 
-          <div v-if="isLoading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
-            Loading analytics...
+          <div v-if="isLoading" class="flex min-h-[260px] items-center justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
           </div>
 
           <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
@@ -68,7 +72,11 @@
             </p>
           </header>
 
-          <div v-if="domainConfirmation" class="space-y-4">
+          <div v-if="isLoading" class="flex min-h-[260px] items-center justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+          </div>
+
+          <div v-else-if="domainConfirmation" class="space-y-4">
             <div>
               <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Domain</p>
               <p class="mt-1 break-all text-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -149,7 +157,14 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                <tr v-if="hasLoaded && topDomains.length === 0">
+                <tr v-if="isLoading">
+                  <td colspan="2" class="px-4 py-8 text-center">
+                    <div class="flex justify-center">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+                    </div>
+                  </td>
+                </tr>
+                <tr v-else-if="hasLoaded && topDomains.length === 0">
                   <td colspan="2" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
                     No domain statistics found.
                   </td>
@@ -190,7 +205,14 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                <tr v-if="hasLoaded && topLocalParts.length === 0">
+                <tr v-if="isLoading">
+                  <td colspan="3" class="px-4 py-8 text-center">
+                    <div class="flex justify-center">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+                    </div>
+                  </td>
+                </tr>
+                <tr v-else-if="hasLoaded && topLocalParts.length === 0">
                   <td colspan="3" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
                     No local-part statistics found.
                   </td>
@@ -238,7 +260,14 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-              <tr v-if="hasLoaded && campaignStatistics.length === 0">
+              <tr v-if="isLoading">
+                <td colspan="6" class="px-4 py-8 text-center">
+                  <div class="flex justify-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+                  </div>
+                </td>
+              </tr>
+              <tr v-else-if="hasLoaded && campaignStatistics.length === 0">
                 <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
                   No campaign statistics found.
                 </td>

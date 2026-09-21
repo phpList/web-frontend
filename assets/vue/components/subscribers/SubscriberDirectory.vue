@@ -49,7 +49,22 @@
     <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
       <SubscriberFilters @filter-change="handleFilterChange" />
     </div>
-    <SubscriberTable :subscribers="subscribers" @view="openSubscriberModal" />
+    <div
+      v-if="isInitialLoading"
+      class="flex justify-center py-12"
+    >
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+    </div>
+    <template v-else>
+      <div
+        v-if="loadError"
+        class="mx-4 sm:mx-6 my-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
+        role="alert"
+      >
+        {{ loadError }}
+      </div>
+      <SubscriberTable :subscribers="subscribers" @view="openSubscriberModal" />
+    </template>
     <SubscriberModal
       :is-open="isModalOpen"
       :subscriber-id="selectedSubscriberId"
@@ -61,7 +76,10 @@
       :import-result="importResult"
       @close="isImportResultOpen = false"
     />
-    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+    <div
+      v-if="!isInitialLoading"
+      class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400"
+    >
       <div class="text-center sm:text-left">
         Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ pagination.total }}</span> subscribers
       </div>
@@ -93,7 +111,7 @@ import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
 import SubscriberModal from './SubscriberModal.vue'
 import ImportResult from './ImportResult.vue'
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { subscriberFilters } from './subscriberFilters'
 import { backendFetch, subscribersClient } from '../../api'
 import ListSubscribersExportPanel from "../lists/ListSubscribersExportPanel.vue";
@@ -117,6 +135,8 @@ const selectedSubscriberId = ref(null)
 const fileInput = ref(null)
 const isImporting = ref(false)
 const isImportResultOpen = ref(false)
+const isLoading = ref(false)
+const loadError = ref('')
 const importResult = ref({
   imported: 0,
   skipped: 0,
@@ -124,6 +144,8 @@ const importResult = ref({
 })
 let searchTimeout = null
 let fetchController = null
+
+const isInitialLoading = computed(() => isLoading.value && subscribers.value.length === 0)
 
 const searchColumns = [
   { id: 'email', label: 'Email' },
@@ -188,8 +210,9 @@ onMounted(() => {
 
 const fetchSubscribers = async (afterId = null) => {
   fetchController?.abort()
-  fetchController = new AbortController()
-  const { signal } = fetchController
+  const controller = new AbortController()
+  fetchController = controller
+  const { signal } = controller
 
   const url = new URL('/subscribers', window.location.origin)
   if (afterId !== null) {
@@ -204,6 +227,9 @@ const fetchSubscribers = async (afterId = null) => {
     url.searchParams.set('findColumn', searchColumn.value)
     url.searchParams.set('findValue', searchQuery.value)
   }
+
+  isLoading.value = true
+  loadError.value = ''
 
   try {
     const response = await backendFetch(url, {
@@ -220,6 +246,11 @@ const fetchSubscribers = async (afterId = null) => {
   } catch (error) {
     if (error?.name === 'AbortError') return
     console.error('Failed to fetch subscribers:', error)
+    loadError.value = 'Unable to load subscribers.'
+  } finally {
+    if (fetchController === controller) {
+      isLoading.value = false
+    }
   }
 }
 

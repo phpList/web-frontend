@@ -213,20 +213,20 @@ const closeSearchResultsOnOutsideClick = (event) => {
 onMounted(async () => {
   document.addEventListener('click', closeSearchResultsOnOutsideClick);
 
-  try {
-    const response = await backendFetch('/admin-about', {
-      headers: {
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
-
-    if (response.ok) {
-      adminData.value = await response.json();
-    }
-  } catch (error) {
-    console.error('Failed to fetch admin data:', error);
-  }
+  // try {
+  //   const response = await backendFetch('/admin-about', {
+  //     headers: {
+  //       Accept: 'application/json',
+  //       'X-Requested-With': 'XMLHttpRequest'
+  //     }
+  //   });
+  //
+  //   if (response.ok) {
+  //     adminData.value = await response.json();
+  //   }
+  // } catch (error) {
+  //   console.error('Failed to fetch admin data:', error);
+  // }
 });
 
 onBeforeUnmount(() => {

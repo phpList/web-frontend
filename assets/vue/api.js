@@ -47,6 +47,7 @@ if (!apiBaseUrl) {
 
 const client = new Client(apiBaseUrl || '', {
     onAuthenticationError: redirectToLogin,
+    timeout: 90000,
 });
 
 if (apiToken) {

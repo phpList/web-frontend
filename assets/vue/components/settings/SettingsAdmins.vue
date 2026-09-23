@@ -11,10 +11,7 @@
         class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
         @click="openCreateModal"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="M12 5v14"></path>
-        </svg>
+        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
         Add Admin
       </button>
     </div>
@@ -42,35 +39,22 @@
             <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ admin.loginName }}</td>
             <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.email }}</td>
             <td class="px-6 py-4">
-              <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="admin.superUser ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-              >
+              <BaseBadge :variant="admin.superUser ? 'info' : 'neutral'">
                 {{ admin.superUser ? 'Yes' : 'No' }}
-              </span>
+              </BaseBadge>
             </td>
             <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-xs">
               {{ formatDate(admin.createdAt) }}
             </td>
             <td class="px-6 py-4">
               <div class="flex flex-wrap justify-end gap-2">
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  @click="handleEdit(admin)"
-                >
-                  <BaseIcon name="edit" class="w-3.5 h-3.5" />
+                <ActionButton icon="edit" @click="handleEdit(admin)">
                   Edit
-                </button>
+                </ActionButton>
 
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                  @click="handleDelete(admin)"
-                >
-                  <BaseIcon name="delete" class="w-3.5 h-3.5" />
+                <ActionButton variant="danger" icon="delete" @click="handleDelete(admin)">
                   Delete
-                </button>
+                </ActionButton>
               </div>
             </td>
           </tr>
@@ -108,12 +92,9 @@
               <p class="text-sm text-slate-500 dark:text-slate-400">{{ admin.email }}</p>
             </div>
 
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-              :class="admin.superUser ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-            >
+            <BaseBadge class="whitespace-nowrap" :variant="admin.superUser ? 'info' : 'neutral'">
               {{ admin.superUser ? 'Super' : 'User' }}
-            </span>
+            </BaseBadge>
           </div>
 
           <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -121,23 +102,13 @@
           </p>
 
           <div class="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-              @click="handleEdit(admin)"
-            >
-              <BaseIcon name="edit" class="w-3.5 h-3.5" />
+            <ActionButton block icon="edit" @click="handleEdit(admin)">
               Edit
-            </button>
+            </ActionButton>
 
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-              @click="handleDelete(admin)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5" />
+            <ActionButton block variant="danger" icon="delete" @click="handleDelete(admin)">
               Delete
-            </button>
+            </ActionButton>
           </div>
         </div>
 
@@ -178,6 +149,8 @@ import CreateAdminModal from './CreateAdminModal.vue'
 import EditAdminModal from './EditAdminModal.vue'
 import { fetchAllAdmins, adminClient } from '../../api'
 import BaseIcon from "../base/BaseIcon.vue";
+import BaseBadge from "../base/BaseBadge.vue";
+import ActionButton from "../base/ActionButton.vue";
 
 const admins = ref([])
 const isLoading = ref(false)

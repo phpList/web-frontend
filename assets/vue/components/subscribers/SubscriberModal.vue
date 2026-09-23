@@ -1,22 +1,11 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
-
-    <!-- Modal Content -->
-    <div class="relative bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full z-10">
-        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-          <div class="sm:flex sm:items-start">
-            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-              <div class="flex justify-between items-center">
-                <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100" id="modal-title">
-                  Subscriber Details ID: {{ subscriber?.id ?? '' }}
-                </h3>
-                <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-300" @click="close">
-                  <BaseIcon name="close" class="w-5 h-5" />
-                </button>
-              </div>
-              <div class="mt-4 space-y-4">
+  <BaseModal
+      :is-open="isOpen"
+      :title="`Subscriber Details ID: ${subscriber?.id ?? ''}`"
+      max-width="lg"
+      @close="close"
+  >
+        <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 space-y-4">
                 <div v-if="loading" class="flex justify-center py-8">
                   <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
@@ -106,33 +95,30 @@
                     <p>UUID: {{ subscriber.uuid === '' ? '-' : subscriber.uuid }}</p>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
         </div>
-        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-          <button
-            type="button"
-            :disabled="loading || saving"
-            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50"
-            @click="save"
-          >
-            {{ saving ? 'Saving...' : 'Save' }}
-          </button>
-          <button
-            type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
-            @click="close"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-  </div>
+
+    <template #footer>
+      <button
+          type="button"
+          :disabled="loading || saving"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50"
+          @click="save"
+      >
+        {{ saving ? 'Saving...' : 'Save' }}
+      </button>
+      <button
+          type="button"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+          @click="close"
+      >
+        Cancel
+      </button>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
-import BaseIcon from '../base/BaseIcon.vue'
+import BaseModal from '../base/BaseModal.vue'
 import { ref, watch } from 'vue'
 import { subscribersClient } from '../../api'
 

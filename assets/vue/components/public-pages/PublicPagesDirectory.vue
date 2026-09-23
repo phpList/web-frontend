@@ -8,10 +8,7 @@
         :disabled="isLoading"
         @click="handleCreatePage"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="M12 5v14"></path>
-        </svg>
+        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
         Add New Subscribe Page
       </button>
     </header>
@@ -58,35 +55,17 @@
             </td>
             <td colspan="5" class="px-6 py-3">
               <div class="flex flex-wrap items-center justify-end gap-2">
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-60"
-                    :disabled="isRowBusy(page.id)"
-                    @click="handlePreview(page)"
-                >
-                  <BaseIcon name="eye" class="w-3.5 h-3.5" />
+                <ActionButton variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
                   Preview
-                </button>
+                </ActionButton>
 
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-60"
-                    :disabled="isRowBusy(page.id)"
-                    @click="handleEdit(page)"
-                >
-                  <BaseIcon name="edit" class="w-3.5 h-3.5" />
+                <ActionButton icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
                   Edit
-                </button>
+                </ActionButton>
 
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-60"
-                    :disabled="isRowBusy(page.id)"
-                    @click="handleDelete(page)"
-                >
-                  <BaseIcon name="delete" class="w-3.5 h-3.5" />
+                <ActionButton variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
                   Delete
-                </button>
+                </ActionButton>
               </div>
             </td>
           </tr>
@@ -154,35 +133,17 @@
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-60"
-              :disabled="isRowBusy(page.id)"
-              @click="handlePreview(page)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton block variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
               Preview
-            </button>
+            </ActionButton>
 
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-60"
-              :disabled="isRowBusy(page.id)"
-              @click="handleEdit(page)"
-            >
-              <BaseIcon name="edit" class="w-3.5 h-3.5" />
+            <ActionButton block icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
               Edit
-            </button>
+            </ActionButton>
 
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-60"
-              :disabled="isRowBusy(page.id)"
-              @click="handleDelete(page)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5" />
+            <ActionButton block variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
               Delete
-            </button>
+            </ActionButton>
           </div>
         </article>
 
@@ -216,6 +177,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseIcon from '../base/BaseIcon.vue'
+import ActionButton from '../base/ActionButton.vue'
 import { subscribePagesClient } from '../../api'
 
 const router = useRouter()

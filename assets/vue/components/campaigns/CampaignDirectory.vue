@@ -111,65 +111,57 @@
           </td>
           <td class="px-6 py-4 align-top text-right">
             <div class="inline-flex flex-wrap justify-end gap-2">
-              <button
-                v-if="campaign.statusKey === 'draft'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
-                :disabled="isActionLoading(campaign.id)"
-                @click="handleDelete(campaign)"
-              >
-                <BaseIcon name="delete" class="w-3.5 h-3.5" />
-                Delete
-              </button>
-              <button
-                v-else-if="campaign.statusKey === 'active'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
-                :disabled="isActionLoading(campaign.id)"
-                @click="handleSuspend(campaign.id)"
-              >
-                <BaseIcon name="pause" class="w-3.5 h-3.5" />
-                Suspend
-              </button>
-              <button
-                v-else
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
-                :disabled="isActionLoading(campaign.id)"
-                @click="handleRequeue(campaign.id)"
-              >
-                <BaseIcon name="start" class="w-3.5 h-3.5" />
-                Requeue
-              </button>
-              <button
-                v-if="campaign.statusKey === 'sent'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors"
-                :disabled="isActionLoading(campaign.id)"
-                @click="handleCopyToDraft(campaign.id)"
-              >
-                <BaseIcon name="copy" class="w-3.5 h-3.5" />
-                Copy to draft
-              </button>
-              <button
+              <ActionButton
                   v-if="campaign.statusKey === 'draft'"
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                  variant="danger"
+                  icon="delete"
+                  :disabled="isActionLoading(campaign.id)"
+                  @click="handleDelete(campaign)"
+              >
+                Delete
+              </ActionButton>
+              <ActionButton
+                  v-else-if="campaign.statusKey === 'active'"
+                  variant="danger"
+                  icon="pause"
+                  :disabled="isActionLoading(campaign.id)"
+                  @click="handleSuspend(campaign.id)"
+              >
+                Suspend
+              </ActionButton>
+              <ActionButton
+                  v-else
+                  variant="warning"
+                  icon="start"
+                  :disabled="isActionLoading(campaign.id)"
+                  @click="handleRequeue(campaign.id)"
+              >
+                Requeue
+              </ActionButton>
+              <ActionButton
+                  v-if="campaign.statusKey === 'sent'"
+                  variant="success"
+                  icon="copy"
+                  :disabled="isActionLoading(campaign.id)"
+                  @click="handleCopyToDraft(campaign.id)"
+              >
+                Copy to draft
+              </ActionButton>
+              <ActionButton
+                  v-if="campaign.statusKey === 'draft'"
+                  icon="edit"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleEdit(campaign.id)"
               >
-                <BaseIcon name="edit" class="w-3.5 h-3.5" />
                 Edit
-              </button>
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              </ActionButton>
+              <ActionButton
+                  icon="eye"
                   :disabled="isActionLoading(campaign.id)"
                   @click="handleView(campaign.id)"
               >
-                <BaseIcon name="eye" class="w-3.5 h-3.5" />
                 View
-              </button>
+              </ActionButton>
             </div>
             <p
               v-if="getActionFeedback(campaign.id)"
@@ -254,65 +246,57 @@
           </div>
 
           <div class="pt-2 flex flex-wrap gap-2">
-            <button
-              v-if="campaign.statusKey === 'draft'"
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleDelete(campaign)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5" />
-              Delete
-            </button>
-            <button
-              v-else-if="campaign.statusKey === 'active'"
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleSuspend(campaign.id)"
-            >
-              <BaseIcon name="pause" class="w-3.5 h-3.5" />
-              Suspend
-            </button>
-            <button
-              v-else
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleRequeue(campaign.id)"
-            >
-              <BaseIcon name="start" class="w-3.5 h-3.5" />
-              Requeue
-            </button>
-            <button
-              v-if="campaign.statusKey === 'sent'"
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleCopyToDraft(campaign.id)"
-            >
-              <BaseIcon name="copy" class="w-3.5 h-3.5" />
-              Copy to draft
-            </button>
-            <button
+            <ActionButton
                 v-if="campaign.statusKey === 'draft'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                variant="danger"
+                icon="delete"
+                :disabled="isActionLoading(campaign.id)"
+                @click="handleDelete(campaign)"
+            >
+              Delete
+            </ActionButton>
+            <ActionButton
+                v-else-if="campaign.statusKey === 'active'"
+                variant="danger"
+                icon="pause"
+                :disabled="isActionLoading(campaign.id)"
+                @click="handleSuspend(campaign.id)"
+            >
+              Suspend
+            </ActionButton>
+            <ActionButton
+                v-else
+                variant="warning"
+                icon="start"
+                :disabled="isActionLoading(campaign.id)"
+                @click="handleRequeue(campaign.id)"
+            >
+              Requeue
+            </ActionButton>
+            <ActionButton
+                v-if="campaign.statusKey === 'sent'"
+                variant="success"
+                icon="copy"
+                :disabled="isActionLoading(campaign.id)"
+                @click="handleCopyToDraft(campaign.id)"
+            >
+              Copy to draft
+            </ActionButton>
+            <ActionButton
+                v-if="campaign.statusKey === 'draft'"
+                icon="edit"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
-              <BaseIcon name="edit" class="w-3.5 h-3.5" />
               Edit
-            </button>
-            <button
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            </ActionButton>
+            <ActionButton
+                icon="eye"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
               View
-            </button>
+            </ActionButton>
           </div>
           <p
             v-if="getActionFeedback(campaign.id)"
@@ -373,6 +357,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 import BaseIcon from '../base/BaseIcon.vue'
+import ActionButton from '../base/ActionButton.vue'
 
 const pageSize = 5
 const route = useRoute()

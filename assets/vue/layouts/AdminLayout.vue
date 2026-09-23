@@ -65,11 +65,7 @@
           to="/campaigns/create"
           class="hidden sm:flex items-center gap-2 px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="M12 5v14"></path>
-          </svg>
+          <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
           Create Campaign
         </RouterLink>
 

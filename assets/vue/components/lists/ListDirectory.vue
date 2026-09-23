@@ -8,10 +8,7 @@
         class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
         @click="openCreateModal"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="M12 5v14"></path>
-        </svg>
+        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
         Add new list
       </button>
     </div>
@@ -35,59 +32,31 @@
           <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ list.id }}</td>
           <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ list.name }}</td>
           <td class="px-6 py-4">
-              <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-              >
+              <BaseBadge :variant="isPublic(list) ? 'success' : 'neutral'">
                 {{ isPublic(list) ? 'Yes' : 'No' }}
-              </span>
+              </BaseBadge>
           </td>
           <td class="px-6 py-4">
             <div class="flex flex-wrap justify-end gap-2">
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
-                  @click="handleDelete(list)"
-              >
-                <BaseIcon name="delete" class="w-3.5 h-3.5" />
+              <ActionButton variant="danger" icon="delete" @click="handleDelete(list)">
                 Delete
-              </button>
+              </ActionButton>
 
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
-                  @click="handleAddSubscriber(list)"
-              >
-                <BaseIcon name="addUser" class="w-3.5 h-3.5" />
+              <ActionButton variant="success" icon="addUser" @click="handleAddSubscriber(list)">
                 Add Subscribers
-              </button>
+              </ActionButton>
 
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  @click="handleEdit(list)"
-              >
-                <BaseIcon name="edit" class="w-3.5 h-3.5" />
+              <ActionButton icon="edit" @click="handleEdit(list)">
                 Edit
-              </button>
+              </ActionButton>
 
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors"
-                  @click="handleStartCampaign(list)"
-              >
-                <BaseIcon name="plane" class="w-3.5 h-3.5" />
+              <ActionButton variant="info" icon="plane" @click="handleStartCampaign(list)">
                 Start Campaign
-              </button>
+              </ActionButton>
 
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  @click="handleViewMembers(list)"
-              >
-                <BaseIcon name="eye" class="w-3.5 h-3.5" />
+              <ActionButton icon="eye" @click="handleViewMembers(list)">
                 View Members
-              </button>
+              </ActionButton>
             </div>
           </td>
         </tr>
@@ -129,59 +98,31 @@
               <p class="font-semibold text-slate-900 dark:text-slate-100">{{ list.name }}</p>
             </div>
 
-            <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-            >
+            <BaseBadge class="whitespace-nowrap" :variant="isPublic(list) ? 'success' : 'neutral'">
               {{ isPublic(list) ? 'Public' : 'Private' }}
-            </span>
+            </BaseBadge>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
-                @click="handleDelete(list)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5" />
+            <ActionButton block variant="danger" icon="delete" @click="handleDelete(list)">
               Delete
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
-                @click="handleAddSubscriber(list)"
-            >
-              <BaseIcon name="addUser" class="w-3.5 h-3.5" />
+            <ActionButton block variant="success" icon="addUser" @click="handleAddSubscriber(list)">
               Add Subscriber
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                @click="handleEdit(list)"
-            >
-              <BaseIcon name="edit" class="w-3.5 h-3.5" />
+            <ActionButton block icon="edit" @click="handleEdit(list)">
               Edit
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors"
-                @click="handleStartCampaign(list)"
-            >
-              <BaseIcon name="plane" class="w-3.5 h-3.5" />
+            <ActionButton block variant="info" icon="plane" @click="handleStartCampaign(list)">
               Start Campaign
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                @click="handleViewMembers(list)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton block class="col-span-2" icon="eye" @click="handleViewMembers(list)">
               View Members
-            </button>
+            </ActionButton>
           </div>
         </div>
 
@@ -234,6 +175,8 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseIcon from '../base/BaseIcon.vue'
+import BaseBadge from '../base/BaseBadge.vue'
+import ActionButton from '../base/ActionButton.vue'
 import CreateListModal from './CreateListModal.vue'
 import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'

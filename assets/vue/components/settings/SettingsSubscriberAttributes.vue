@@ -16,20 +16,7 @@
           class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
           @click="openCreateModal"
       >
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-          <path d="M5 12h14"/>
-          <path d="M12 5v14"/>
-        </svg>
+        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
 
         Add Attribute
       </button>
@@ -70,34 +57,21 @@
           </td>
 
           <td class="px-6 py-4">
-            <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="attribute.required
-                ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400'
-                : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-            >
+            <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
               {{ attribute.required ? 'Required' : 'Optional' }}
-            </span>
+            </BaseBadge>
           </td>
 
           <td class="px-6 py-4">
             <div class="flex justify-end gap-2">
 
-              <button
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
-                  @click="handleEdit(attribute)"
-              >
-                <BaseIcon name="edit" class="w-3.5 h-3.5"/>
+              <ActionButton icon="edit" @click="handleEdit(attribute)">
                 Edit
-              </button>
+              </ActionButton>
 
-              <button
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
-                  @click="handleDelete(attribute)"
-              >
-                <BaseIcon name="delete" class="w-3.5 h-3.5"/>
+              <ActionButton variant="danger" icon="delete" @click="handleDelete(attribute)">
                 Delete
-              </button>
+              </ActionButton>
 
             </div>
           </td>
@@ -149,34 +123,21 @@
               </p>
             </div>
 
-            <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="attribute.required
-                ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400'
-                : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-            >
+            <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
               {{ attribute.required ? 'Required' : 'Optional' }}
-            </span>
+            </BaseBadge>
 
           </div>
 
           <div class="grid grid-cols-2 gap-2">
 
-            <button
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200"
-                @click="handleEdit(attribute)"
-            >
-              <BaseIcon name="edit" class="w-3.5 h-3.5"/>
+            <ActionButton block icon="edit" @click="handleEdit(attribute)">
               Edit
-            </button>
+            </ActionButton>
 
-            <button
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
-                @click="handleDelete(attribute)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5"/>
+            <ActionButton block variant="danger" icon="delete" @click="handleDelete(attribute)">
               Delete
-            </button>
+            </ActionButton>
 
           </div>
         </div>
@@ -224,6 +185,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import BaseIcon from '../base/BaseIcon.vue'
+import BaseBadge from '../base/BaseBadge.vue'
+import ActionButton from '../base/ActionButton.vue'
 
 import CreateSubscriberAttributeModal from './CreateSubscriberAttributeModal.vue'
 import EditSubscriberAttributeModal from './EditSubscriberAttributeModal.vue'

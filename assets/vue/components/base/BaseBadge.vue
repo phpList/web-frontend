@@ -11,7 +11,7 @@ import { computed } from 'vue'
 const props = defineProps({
   variant: {
     type: String,
-    default: 'neutral', // neutral | counter
+    default: 'neutral', // neutral | counter | success | danger | info
   },
 })
 
@@ -20,6 +20,12 @@ const badgeClass = computed(() => {
   switch (props.variant) {
     case 'counter':
       return `${base} bg-indigo-50 dark:bg-indigo-500/10 text-ext-wf3 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/20`;
+    case 'success':
+      return `${base} bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400`;
+    case 'danger':
+      return `${base} bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400`;
+    case 'info':
+      return `${base} bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400`;
     case 'neutral':
     default:
       return `${base} bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-200`;

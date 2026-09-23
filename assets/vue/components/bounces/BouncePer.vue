@@ -34,20 +34,14 @@
               <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ subscriber.subscriberId }}</td>
               <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ subscriber.email }}</td>
               <td class="px-6 py-4">
-                <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-                >
+                <BaseBadge :variant="subscriber.confirmed ? 'success' : 'neutral'">
                   {{ subscriber.confirmed ? 'Yes' : 'No' }}
-                </span>
+                </BaseBadge>
               </td>
               <td class="px-6 py-4">
-                <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="subscriber.blacklisted ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-                >
+                <BaseBadge :variant="subscriber.blacklisted ? 'danger' : 'neutral'">
                   {{ subscriber.blacklisted ? 'Yes' : 'No' }}
-                </span>
+                </BaseBadge>
               </td>
               <td class="px-6 py-4 text-right text-slate-900 dark:text-slate-100 font-semibold">{{ subscriber.totalBounces }}</td>
             </tr>
@@ -159,6 +153,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { bouncesClient } from '../../api'
+import BaseBadge from '../base/BaseBadge.vue'
 
 const bouncesPerCampaign = ref([])
 const bouncesPerSubscriber = ref([])

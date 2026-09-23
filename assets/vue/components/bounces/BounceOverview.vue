@@ -49,9 +49,9 @@
               <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ bounce.email }}</td>
               <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ bounce.subject }}</td>
               <td class="px-6 py-4">
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize" :class="bounce.statusClass">
+                <BaseBadge class="capitalize" :variant="bounce.statusVariant">
                   {{ bounce.status }}
-                </span>
+                </BaseBadge>
               </td>
               <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.comment }}</td>
             </tr>
@@ -126,6 +126,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { bouncesClient } from '../../api'
+import BaseBadge from '../base/BaseBadge.vue'
 
 const pageSize = 5
 const currentPage = ref(1)
@@ -153,22 +154,22 @@ const formatDate = (dateValue) => {
   }).format(date)
 }
 
-const getStatusClass = (status) => {
+const getStatusVariant = (status) => {
   const normalized = String(status ?? '').toLowerCase()
 
   if (normalized.includes('blacklist')) {
-    return 'bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400'
+    return 'purple'
   }
 
   if (normalized.includes('retry') || normalized.includes('soft')) {
-    return 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'
+    return 'warning'
   }
 
   if (normalized.includes('process')) {
-    return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+    return 'success'
   }
 
-  return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+  return 'neutral'
 }
 
 const normalizedBounces = computed(() =>
@@ -179,7 +180,7 @@ const normalizedBounces = computed(() =>
       subject: item.message_subject ?? 'No subject',
       comment: item.comment ?? 'No comment',
       status: item.status ?? 'unknown',
-      statusClass: getStatusClass(item.status),
+      statusVariant: getStatusVariant(item.status),
     }))
 )
 

@@ -58,9 +58,9 @@
             </router-link>
           </td>
           <td class="px-6 py-4">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400">
+            <BaseBadge variant="warning">
               {{ campaign.statusLabel }}
-            </span>
+            </BaseBadge>
           </td>
           <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ campaign.stuckFor }}</td>
           <td class="px-6 py-4 text-right">
@@ -125,9 +125,9 @@
             >
               {{ campaign.subject || `Campaign #${campaign.id}` }}
             </router-link>
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400">
+            <BaseBadge class="whitespace-nowrap" variant="warning">
               {{ campaign.statusLabel }}
-            </span>
+            </BaseBadge>
           </div>
 
           <p class="text-xs text-slate-600 dark:text-slate-300">
@@ -166,6 +166,7 @@
 import { onMounted, ref } from 'vue'
 import { campaignClient } from '../../api'
 import BaseIcon from '../base/BaseIcon.vue'
+import BaseBadge from '../base/BaseBadge.vue'
 
 const campaigns = ref([])
 const isLoading = ref(false)

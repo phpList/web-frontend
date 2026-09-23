@@ -50,12 +50,9 @@
         >
           <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ campaign.subject }}</td>
           <td class="px-6 py-4">
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-              :class="statusClasses[campaign.statusKey] || statusClasses.unknown"
-            >
+            <BaseBadge :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
               {{ campaign.statusLabel }}
-            </span>
+            </BaseBadge>
           </td>
           <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
             <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
@@ -210,12 +207,9 @@
             <div>
               <p class="font-semibold text-slate-900 dark:text-slate-100">{{ campaign.subject }}</p>
             </div>
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-              :class="statusClasses[campaign.statusKey] || statusClasses.unknown"
-            >
+            <BaseBadge class="whitespace-nowrap" :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
               {{ campaign.statusLabel }}
-            </span>
+            </BaseBadge>
           </div>
 
           <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
@@ -356,8 +350,8 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
-import BaseIcon from '../base/BaseIcon.vue'
 import ActionButton from '../base/ActionButton.vue'
+import BaseBadge from '../base/BaseBadge.vue'
 
 const pageSize = 5
 const route = useRoute()
@@ -424,11 +418,11 @@ const filterOptions = [
   { id: 'draft', label: 'Draft' }
 ]
 
-const statusClasses = {
-  sent: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-  active: 'bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400',
-  draft: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
-  unknown: 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400'
+const statusVariants = {
+  sent: 'success',
+  active: 'info',
+  draft: 'neutral',
+  unknown: 'warning'
 }
 
 const activeStatuses = new Set(['submitted', 'prepared', 'inprocess'])

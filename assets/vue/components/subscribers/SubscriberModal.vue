@@ -74,13 +74,13 @@
                   <div v-if="subscriber && subscriber.subscribedLists" class="mt-4">
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Subscribed Lists</label>
                     <div class="flex flex-wrap gap-2">
-                      <span
+                      <BaseBadge
                         v-for="list in subscriber.subscribedLists"
                         :key="list.id"
-                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
+                        variant="info"
                       >
                         {{ list.name }}
-                      </span>
+                      </BaseBadge>
                       <span v-if="!subscriber.subscribedLists.length" class="text-xs text-slate-500 dark:text-slate-400">
                         No lists
                       </span>
@@ -119,6 +119,7 @@
 
 <script setup>
 import BaseModal from '../base/BaseModal.vue'
+import BaseBadge from '../base/BaseBadge.vue'
 import { ref, watch } from 'vue'
 import { subscribersClient } from '../../api'
 

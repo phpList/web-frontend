@@ -136,12 +136,9 @@
               <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ subscriber.id }}</td>
               <td class="px-6 py-4 font-mono text-slate-900 dark:text-slate-100">{{ subscriber.email }}</td>
               <td class="px-6 py-4">
-                  <span
-                      class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'"
-                  >
+                  <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
                     {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
-                  </span>
+                  </BaseBadge>
               </td>
               <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ formatDate(subscriber.createdAt) }}</td>
               <td class="px-6 py-4 text-right">
@@ -195,12 +192,9 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-3">
                     <p class="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{{ subscriber.email }}</p>
-                    <span
-                        class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                        :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'"
-                    >
+                    <BaseBadge class="whitespace-nowrap" :variant="subscriber.confirmed ? 'success' : 'warning'">
                       {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
-                    </span>
+                    </BaseBadge>
                   </div>
                   <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
                   <button
@@ -261,6 +255,7 @@ import {useRoute} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import ListSubscribersExportPanel from '../components/lists/ListSubscribersExportPanel.vue'
 import BaseIcon from '../components/base/BaseIcon.vue'
+import BaseBadge from '../components/base/BaseBadge.vue'
 import client, {subscriptionClient} from '../api'
 
 const route = useRoute()

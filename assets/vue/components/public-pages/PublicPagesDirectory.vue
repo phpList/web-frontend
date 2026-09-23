@@ -13,162 +13,117 @@
       </button>
     </header>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
-        <tr>
-          <th class="px-6 py-4">ID</th>
-          <th class="px-6 py-4">Title</th>
-          <th class="px-6 py-4">Owner</th>
-          <th class="px-6 py-4">Default</th>
-          <th class="px-6 py-4">Active</th>
-          <th class="px-6 py-4 text-right">Actions</th>
-        </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-        <template v-for="page in subscribePages" :key="page.id">
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ page.id }}</td>
-            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</td>
-            <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
-            <td class="px-6 py-4">
-              <label class="inline-flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  class="w-4 h-4 text-ext-wf1 border-slate-300 dark:border-slate-600 focus:ring-ext-wf2"
-                  :checked="page.isDefault"
-                  :disabled="isRowBusy(page.id)"
-                  @change="handleSetDefault(page)"
-                >
-              </label>
-            </td>
-            <td class="px-6 py-4">
-              <label class="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
-                  :checked="page.active"
-                  :disabled="isRowBusy(page.id)"
-                  @change="handleToggleActive(page, $event)"
-                >
-              </label>
-            </td>
-            <td colspan="5" class="px-6 py-3">
-              <div class="flex flex-wrap items-center justify-end gap-2">
-                <ActionButton variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
-                  Preview
-                </ActionButton>
+    <BaseDataTable
+        :items="subscribePages"
+        :is-loading="isLoading"
+        :load-error="loadError"
+        loading-message="Loading subscribe pages..."
+        empty-message="No subscribe pages found."
+        :colspan="6"
+    >
+      <template #head>
+        <th class="px-6 py-4">ID</th>
+        <th class="px-6 py-4">Title</th>
+        <th class="px-6 py-4">Owner</th>
+        <th class="px-6 py-4">Default</th>
+        <th class="px-6 py-4">Active</th>
+        <th class="px-6 py-4 text-right">Actions</th>
+      </template>
 
-                <ActionButton icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
-                  Edit
-                </ActionButton>
-
-                <ActionButton variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
-                  Delete
-                </ActionButton>
-              </div>
-            </td>
-          </tr>
-        </template>
-
-        <tr v-if="isLoading">
-          <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            Loading subscribe pages...
-          </td>
-        </tr>
-
-        <tr v-else-if="loadError">
-          <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
-            {{ loadError }}
-          </td>
-        </tr>
-
-        <tr v-else-if="subscribePages.length === 0">
-          <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            No subscribe pages found.
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-        <article
-          v-for="page in subscribePages"
-          :key="`mobile-${page.id}`"
-          class="p-4 space-y-3"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ page.id }}</p>
-              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</p>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
-            </div>
-            <div class="text-xs text-slate-500 dark:text-slate-400">
-              {{ isRowBusy(page.id) ? 'Updating...' : '' }}
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between gap-3">
-            <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
-              <input
-                type="radio"
-                class="w-4 h-4 text-ext-wf1 border-slate-300 dark:border-slate-600 focus:ring-ext-wf2"
-                :checked="page.isDefault"
-                :disabled="isRowBusy(page.id)"
-                @change="handleSetDefault(page)"
-              >
-              Default
-            </label>
-
-            <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
-              <input
-                type="checkbox"
-                class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
-                :checked="page.active"
-                :disabled="isRowBusy(page.id)"
-                @change="handleToggleActive(page, $event)"
-              >
-              Active
-            </label>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <ActionButton block variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
+      <template #row="{ item: page }">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ page.id }}</td>
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</td>
+        <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
+        <td class="px-6 py-4">
+          <label class="inline-flex items-center cursor-pointer">
+            <input
+              type="radio"
+              class="w-4 h-4 text-ext-wf1 border-slate-300 dark:border-slate-600 focus:ring-ext-wf2"
+              :checked="page.isDefault"
+              :disabled="isRowBusy(page.id)"
+              @change="handleSetDefault(page)"
+            >
+          </label>
+        </td>
+        <td class="px-6 py-4">
+          <label class="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+              :checked="page.active"
+              :disabled="isRowBusy(page.id)"
+              @change="handleToggleActive(page, $event)"
+            >
+          </label>
+        </td>
+        <td colspan="5" class="px-6 py-3">
+          <div class="flex flex-wrap items-center justify-end gap-2">
+            <ActionButton variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
               Preview
             </ActionButton>
 
-            <ActionButton block icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
+            <ActionButton icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
               Edit
             </ActionButton>
 
-            <ActionButton block variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
+            <ActionButton variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
               Delete
             </ActionButton>
           </div>
-        </article>
+        </td>
+      </template>
 
-        <div
-          v-if="isLoading"
-          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          Loading subscribe pages...
+      <template #card="{ item: page }">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ page.id }}</p>
+            <p class="font-semibold text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
+          </div>
+          <div class="text-xs text-slate-500 dark:text-slate-400">
+            {{ isRowBusy(page.id) ? 'Updating...' : '' }}
+          </div>
         </div>
 
-        <div
-          v-else-if="loadError"
-          class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
-        >
-          {{ loadError }}
+        <div class="flex items-center justify-between gap-3">
+          <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
+            <input
+              type="radio"
+              class="w-4 h-4 text-ext-wf1 border-slate-300 dark:border-slate-600 focus:ring-ext-wf2"
+              :checked="page.isDefault"
+              :disabled="isRowBusy(page.id)"
+              @change="handleSetDefault(page)"
+            >
+            Default
+          </label>
+
+          <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
+            <input
+              type="checkbox"
+              class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+              :checked="page.active"
+              :disabled="isRowBusy(page.id)"
+              @change="handleToggleActive(page, $event)"
+            >
+            Active
+          </label>
         </div>
 
-        <div
-          v-else-if="subscribePages.length === 0"
-          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          No subscribe pages found.
+        <div class="grid grid-cols-2 gap-2">
+          <ActionButton block variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
+            Preview
+          </ActionButton>
+
+          <ActionButton block icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
+            Edit
+          </ActionButton>
+
+          <ActionButton block variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
+            Delete
+          </ActionButton>
         </div>
-      </div>
-    </div>
+      </template>
+    </BaseDataTable>
   </section>
 </template>
 
@@ -178,6 +133,7 @@ import { useRouter } from 'vue-router'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseIcon from '../base/BaseIcon.vue'
 import ActionButton from '../base/ActionButton.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 import { subscribePagesClient } from '../../api'
 
 const router = useRouter()

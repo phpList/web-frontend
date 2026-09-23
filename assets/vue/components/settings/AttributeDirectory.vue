@@ -22,150 +22,86 @@
       </button>
     </div>
 
-    <div class="overflow-x-auto">
+    <BaseDataTable
+        :items="attributes"
+        :is-loading="isLoading"
+        :load-error="loadError"
+        loading-message="Loading attributes..."
+        empty-message="No attributes found."
+        :colspan="5"
+    >
+      <template #head>
+        <th class="px-6 py-4">ID</th>
+        <th class="px-6 py-4">Name</th>
+        <th class="px-6 py-4">Type</th>
+        <th class="px-6 py-4">Required</th>
+        <th class="px-6 py-4 text-right">Actions</th>
+      </template>
 
-      <!-- Desktop -->
+      <template #row="{ item: attribute }">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
+          {{ attribute.id }}
+        </td>
 
-      <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-        <tr>
-          <th class="px-6 py-4">ID</th>
-          <th class="px-6 py-4">Name</th>
-          <th class="px-6 py-4">Type</th>
-          <th class="px-6 py-4">Required</th>
-          <th class="px-6 py-4 text-right">Actions</th>
-        </tr>
-        </thead>
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
+          {{ attribute.name }}
+        </td>
 
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
+          {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
+        </td>
 
-        <tr
-            v-for="attribute in attributes"
-            :key="attribute.id"
-            class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
-            {{ attribute.id }}
-          </td>
+        <td class="px-6 py-4">
+          <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
+            {{ attribute.required ? 'Required' : 'Optional' }}
+          </BaseBadge>
+        </td>
 
-          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
-            {{ attribute.name }}
-          </td>
-
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
-            {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
-          </td>
-
-          <td class="px-6 py-4">
-            <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
-              {{ attribute.required ? 'Required' : 'Optional' }}
-            </BaseBadge>
-          </td>
-
-          <td class="px-6 py-4">
-            <div class="flex justify-end gap-2">
-
-              <ActionButton icon="edit" @click="handleEdit(attribute)">
-                Edit
-              </ActionButton>
-
-              <ActionButton variant="danger" icon="delete" @click="handleDelete(attribute)">
-                Delete
-              </ActionButton>
-
-            </div>
-          </td>
-        </tr>
-
-        <tr v-if="!isLoading && !loadError && attributes.length===0">
-          <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            No attributes found.
-          </td>
-        </tr>
-
-        <tr v-if="isLoading">
-          <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            Loading attributes...
-          </td>
-        </tr>
-
-        <tr v-else-if="loadError">
-          <td colspan="5" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
-            {{ loadError }}
-          </td>
-        </tr>
-
-        </tbody>
-      </table>
-
-      <!-- Mobile -->
-
-      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-
-        <div
-            v-for="attribute in attributes"
-            :key="attribute.id"
-            class="p-4 space-y-3"
-        >
-          <div class="flex justify-between items-start">
-
-            <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">
-                #{{ attribute.id }}
-              </p>
-
-              <p class="font-semibold text-slate-900 dark:text-slate-100">
-                {{ attribute.name }}
-              </p>
-
-              <p class="text-sm text-slate-500 dark:text-slate-400">
-                {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
-              </p>
-            </div>
-
-            <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
-              {{ attribute.required ? 'Required' : 'Optional' }}
-            </BaseBadge>
-
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-
-            <ActionButton block icon="edit" @click="handleEdit(attribute)">
+        <td class="px-6 py-4">
+          <div class="flex justify-end gap-2">
+            <ActionButton icon="edit" @click="handleEdit(attribute)">
               Edit
             </ActionButton>
 
-            <ActionButton block variant="danger" icon="delete" @click="handleDelete(attribute)">
+            <ActionButton variant="danger" icon="delete" @click="handleDelete(attribute)">
               Delete
             </ActionButton>
-
           </div>
+        </td>
+      </template>
+
+      <template #card="{ item: attribute }">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              #{{ attribute.id }}
+            </p>
+
+            <p class="font-semibold text-slate-900 dark:text-slate-100">
+              {{ attribute.name }}
+            </p>
+
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
+            </p>
+          </div>
+
+          <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
+            {{ attribute.required ? 'Required' : 'Optional' }}
+          </BaseBadge>
         </div>
 
-        <div
-            v-if="isLoading"
-            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400"
-        >
-          Loading attributes...
+        <div class="grid grid-cols-2 gap-2">
+          <ActionButton block icon="edit" @click="handleEdit(attribute)">
+            Edit
+          </ActionButton>
+
+          <ActionButton block variant="danger" icon="delete" @click="handleDelete(attribute)">
+            Delete
+          </ActionButton>
         </div>
-
-        <div
-            v-else-if="loadError"
-            class="px-4 py-8 text-center text-red-600 dark:text-red-400"
-        >
-          {{ loadError }}
-        </div>
-
-        <div
-            v-else-if="attributes.length===0"
-            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400"
-        >
-          No attributes found.
-        </div>
-
-      </div>
-
-    </div>
+      </template>
+    </BaseDataTable>
   </div>
 
   <slot
@@ -189,6 +125,7 @@ import { onMounted, ref } from 'vue'
 import BaseIcon from '../base/BaseIcon.vue'
 import BaseBadge from '../base/BaseBadge.vue'
 import ActionButton from '../base/ActionButton.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 
 const props = defineProps({
   title: { type: String, required: true },

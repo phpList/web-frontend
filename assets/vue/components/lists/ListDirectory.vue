@@ -3,14 +3,9 @@
     <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
       <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Mailing Lists</h2>
 
-      <button
-        type="button"
-        class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
-        @click="openCreateModal"
-      >
-        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
+      <BaseButton variant="accent" icon="plus" @click="openCreateModal">
         Add new list
-      </button>
+      </BaseButton>
     </div>
 
     <BaseDataTable
@@ -122,7 +117,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import BaseIcon from '../base/BaseIcon.vue'
+import BaseButton from '../base/BaseButton.vue'
 import BaseBadge from '../base/BaseBadge.vue'
 import ActionButton from '../base/ActionButton.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'

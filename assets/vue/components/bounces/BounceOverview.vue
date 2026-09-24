@@ -17,84 +17,49 @@
         </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm hidden md:table">
-          <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-            <tr>
-              <th class="px-6 py-4">ID</th>
-              <th class="px-6 py-4">Date</th>
-              <th class="px-6 py-4">Subscriber</th>
-              <th class="px-6 py-4">Campaign</th>
-              <th class="px-6 py-4">Status</th>
-              <th class="px-6 py-4">Comment</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-            <tr v-if="isLoading">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading bounces...</td>
-            </tr>
-            <tr v-else-if="errorMessage">
-              <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
-            </tr>
-            <tr v-else-if="paginatedBounces.length === 0">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No bounces found.</td>
-            </tr>
-            <tr
-              v-for="bounce in paginatedBounces"
-              :key="bounce.id"
-              class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ bounce.id }}</td>
-              <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.formattedDate }}</td>
-              <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ bounce.email }}</td>
-              <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ bounce.subject }}</td>
-              <td class="px-6 py-4">
-                <BaseBadge class="capitalize" :variant="bounce.statusVariant">
-                  {{ bounce.status }}
-                </BaseBadge>
-              </td>
-              <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.comment }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <BaseDataTable
+          :items="paginatedBounces"
+          :is-loading="isLoading"
+          :load-error="errorMessage"
+          loading-message="Loading bounces..."
+          empty-message="No bounces found."
+          :colspan="6"
+      >
+        <template #head>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Date</th>
+          <th class="px-6 py-4">Subscriber</th>
+          <th class="px-6 py-4">Campaign</th>
+          <th class="px-6 py-4">Status</th>
+          <th class="px-6 py-4">Comment</th>
+        </template>
 
-        <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-          <div
-            v-if="isLoading"
-            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-          >
-            Loading bounces...
+        <template #row="{ item: bounce }">
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ bounce.id }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.formattedDate }}</td>
+          <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ bounce.email }}</td>
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ bounce.subject }}</td>
+          <td class="px-6 py-4">
+            <BaseBadge class="capitalize" :variant="bounce.statusVariant">
+              {{ bounce.status }}
+            </BaseBadge>
+          </td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.comment }}</td>
+        </template>
+
+        <template #card="{ item: bounce }">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ bounce.id }}</p>
+            <BaseBadge class="capitalize" :variant="bounce.statusVariant">
+              {{ bounce.status }}
+            </BaseBadge>
           </div>
-          <div
-            v-else-if="errorMessage"
-            class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
-          >
-            {{ errorMessage }}
-          </div>
-          <div
-            v-else-if="paginatedBounces.length === 0"
-            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-          >
-            No bounces found.
-          </div>
-          <div
-            v-for="bounce in paginatedBounces"
-            :key="`mobile-${bounce.id}`"
-            class="p-4 space-y-2.5"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ bounce.id }}</p>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize" :class="bounce.statusClass">
-                {{ bounce.status }}
-              </span>
-            </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">{{ bounce.formattedDate }}</p>
-            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ bounce.email }}</p>
-            <p class="text-sm text-slate-700 dark:text-slate-200">{{ bounce.subject }}</p>
-            <p class="text-xs text-slate-600 dark:text-slate-300">{{ bounce.comment }}</p>
-          </div>
-        </div>
-      </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">{{ bounce.formattedDate }}</p>
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ bounce.email }}</p>
+          <p class="text-sm text-slate-700 dark:text-slate-200">{{ bounce.subject }}</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">{{ bounce.comment }}</p>
+        </template>
+      </BaseDataTable>
 
       <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
         <div class="text-center sm:text-left">
@@ -127,6 +92,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { bouncesClient } from '../../api'
 import BaseBadge from '../base/BaseBadge.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 
 const pageSize = 5
 const currentPage = ref(1)

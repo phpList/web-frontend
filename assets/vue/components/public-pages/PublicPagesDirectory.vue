@@ -2,15 +2,9 @@
   <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
     <header class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
       <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Subscribe Pages</h2>
-      <button
-        type="button"
-        class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20 disabled:opacity-60"
-        :disabled="isLoading"
-        @click="handleCreatePage"
-      >
-        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
+      <BaseButton variant="accent" icon="plus" :disabled="isLoading" @click="handleCreatePage">
         Add New Subscribe Page
-      </button>
+      </BaseButton>
     </header>
 
     <BaseDataTable
@@ -131,7 +125,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Requests } from '@tatevikgr/rest-api-client'
-import BaseIcon from '../base/BaseIcon.vue'
+import BaseButton from '../base/BaseButton.vue'
 import ActionButton from '../base/ActionButton.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'
 import { subscribePagesClient } from '../../api'

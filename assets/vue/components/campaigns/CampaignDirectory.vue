@@ -17,229 +17,84 @@
       </div>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-        <tr>
-          <th class="px-6 py-4">Subject</th>
-          <th class="px-6 py-4">Status</th>
-          <th class="px-6 py-4">Lists</th>
-          <th class="px-6 py-4">Processed</th>
-          <th class="px-6 py-4" v-if="showStatistics">Statistics</th>
-          <th class="px-6 py-4 text-right">Actions</th>
-        </tr>
-        </thead>
+    <BaseDataTable
+        :items="paginatedCampaigns"
+        :is-loading="isLoading"
+        :load-error="errorMessage"
+        loading-message="Loading campaigns..."
+        empty-message="No campaigns for this filter."
+        :colspan="showStatistics ? 6 : 5"
+    >
+      <template #head>
+        <th class="px-6 py-4">Subject</th>
+        <th class="px-6 py-4">Status</th>
+        <th class="px-6 py-4">Lists</th>
+        <th class="px-6 py-4">Processed</th>
+        <th class="px-6 py-4" v-if="showStatistics">Statistics</th>
+        <th class="px-6 py-4 text-right">Actions</th>
+      </template>
 
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-        <tr v-if="isLoading">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading campaigns...</td>
-        </tr>
-
-        <tr v-else-if="errorMessage">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
-        </tr>
-
-        <tr v-else-if="paginatedCampaigns.length === 0">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No campaigns for this filter.</td>
-        </tr>
-
-        <tr
-          v-for="campaign in paginatedCampaigns"
-          :key="campaign.id"
-          class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ campaign.subject }}</td>
-          <td class="px-6 py-4">
-            <BaseBadge :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
-              {{ campaign.statusLabel }}
-            </BaseBadge>
-          </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
-            <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
-            <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
-            <template v-else-if="campaign.lists.length <= 3">
-              <p
-                  v-for="list in campaign.lists"
-                  :key="`${campaign.id}-${list.id}`"
-                  class="text-xs leading-5"
-              >
-                <router-link
-                    :to="`/lists/${list.id}/subscribers`"
-                    class="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  {{ list.name }}
-                </router-link>
-              </p>
-            </template>
-            <template v-else>
-              <button
-                  type="button"
-                  class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                  @click="toggleListsExpanded(campaign.id)"
-              >
-                {{ isListsExpanded(campaign.id) ? '▼' : '▶' }} {{ campaign.lists.length }} lists
-              </button>
-              <p
-                  v-if="isListsExpanded(campaign.id)"
-                  v-for="list in campaign.lists"
-                  :key="`${campaign.id}-${list.id}`"
-                  class="text-xs leading-5"
-              >
-                - <router-link
-                    :to="`/lists/${list.id}/subscribers`"
-                    class="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  {{ list.name }}
-                </router-link>
-              </p>
-            </template>
-          </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total:</span> {{ campaign.processedTotal }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Text:</span> {{ campaign.processedText }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">HTML:</span> {{ campaign.processedHtml }}</p>
-          </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top" v-if="showStatistics">
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total views:</span> {{ campaign.totalViews }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Unique views:</span> {{ campaign.uniqueViews }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Bounced:</span> {{ campaign.bounced }}</p>
-          </td>
-          <td class="px-6 py-4 align-top text-right">
-            <div class="inline-flex flex-wrap justify-end gap-2">
-              <ActionButton
-                  v-if="campaign.statusKey === 'draft'"
-                  variant="danger"
-                  icon="delete"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleDelete(campaign)"
-              >
-                Delete
-              </ActionButton>
-              <ActionButton
-                  v-else-if="campaign.statusKey === 'active'"
-                  variant="danger"
-                  icon="pause"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleSuspend(campaign.id)"
-              >
-                Suspend
-              </ActionButton>
-              <ActionButton
-                  v-else
-                  variant="warning"
-                  icon="start"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleRequeue(campaign.id)"
-              >
-                Requeue
-              </ActionButton>
-              <ActionButton
-                  v-if="campaign.statusKey === 'sent'"
-                  variant="success"
-                  icon="copy"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleCopyToDraft(campaign.id)"
-              >
-                Copy to draft
-              </ActionButton>
-              <ActionButton
-                  v-if="campaign.statusKey === 'draft'"
-                  icon="edit"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleEdit(campaign.id)"
-              >
-                Edit
-              </ActionButton>
-              <ActionButton
-                  icon="eye"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleView(campaign.id)"
-              >
-                View
-              </ActionButton>
-            </div>
+      <template #row="{ item: campaign }">
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ campaign.subject }}</td>
+        <td class="px-6 py-4">
+          <BaseBadge :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
+            {{ campaign.statusLabel }}
+          </BaseBadge>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+          <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
+          <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
+          <template v-else-if="campaign.lists.length <= 3">
             <p
-              v-if="getActionFeedback(campaign.id)"
-              class="mt-2 text-xs"
-              :class="{
-                'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
-                'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-                'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
-              }"
+                v-for="list in campaign.lists"
+                :key="`${campaign.id}-${list.id}`"
+                class="text-xs leading-5"
             >
-              {{ getActionFeedback(campaign.id)?.message }}
+              <router-link
+                  :to="`/lists/${list.id}/subscribers`"
+                  class="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {{ list.name }}
+              </router-link>
             </p>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-        <div
-          v-if="isLoading"
-          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          Loading campaigns...
-        </div>
-
-        <div
-          v-else-if="errorMessage"
-          class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
-        >
-          {{ errorMessage }}
-        </div>
-
-        <div
-          v-else-if="paginatedCampaigns.length === 0"
-          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          No campaigns for this filter.
-        </div>
-
-        <div
-          v-for="campaign in paginatedCampaigns"
-          :key="`mobile-${campaign.id}`"
-          class="p-4 space-y-3"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ campaign.subject }}</p>
-            </div>
-            <BaseBadge class="whitespace-nowrap" :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
-              {{ campaign.statusLabel }}
-            </BaseBadge>
-          </div>
-
-          <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
-            <p>
-              <span class="font-medium text-slate-700 dark:text-slate-200">Lists: </span>
-              <template v-if="campaign.lists.length > 0">
-                <span
-                    v-for="(list, index) in campaign.lists"
-                    :key="list.id"
-                >
-                  <router-link
-                      :to="`/lists/${list.id}/subscribers`"
-                      class="text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    {{ list.name }}
-                  </router-link>
-                  <span v-if="index < campaign.lists.length - 1">, </span>
-                </span>
-              </template>
+          </template>
+          <template v-else>
+            <button
+                type="button"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                @click="toggleListsExpanded(campaign.id)"
+            >
+              {{ isListsExpanded(campaign.id) ? '▼' : '▶' }} {{ campaign.lists.length }} lists
+            </button>
+            <p
+                v-if="isListsExpanded(campaign.id)"
+                v-for="list in campaign.lists"
+                :key="`${campaign.id}-${list.id}`"
+                class="text-xs leading-5"
+            >
+              - <router-link
+                  :to="`/lists/${list.id}/subscribers`"
+                  class="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {{ list.name }}
+              </router-link>
             </p>
-            <p><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
-            <p><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
-            <p><span class="font-medium text-slate-700 dark:text-slate-200">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
-            <p v-if="showStatistics">
-              <span class="font-medium text-slate-700 dark:text-slate-200">Statistics:</span>
-              Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
-            </p>
-          </div>
-
-          <div class="pt-2 flex flex-wrap gap-2">
+          </template>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total:</span> {{ campaign.processedTotal }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Text:</span> {{ campaign.processedText }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">HTML:</span> {{ campaign.processedHtml }}</p>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top" v-if="showStatistics">
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total views:</span> {{ campaign.totalViews }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Unique views:</span> {{ campaign.uniqueViews }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Bounced:</span> {{ campaign.bounced }}</p>
+        </td>
+        <td class="px-6 py-4 align-top text-right">
+          <div class="inline-flex flex-wrap justify-end gap-2">
             <ActionButton
                 v-if="campaign.statusKey === 'draft'"
                 variant="danger"
@@ -294,7 +149,7 @@
           </div>
           <p
             v-if="getActionFeedback(campaign.id)"
-            class="text-xs"
+            class="mt-2 text-xs"
             :class="{
               'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
               'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
@@ -303,9 +158,112 @@
           >
             {{ getActionFeedback(campaign.id)?.message }}
           </p>
+        </td>
+      </template>
+
+      <template #card="{ item: campaign }">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="font-semibold text-slate-900 dark:text-slate-100">{{ campaign.subject }}</p>
+          </div>
+          <BaseBadge class="whitespace-nowrap" :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
+            {{ campaign.statusLabel }}
+          </BaseBadge>
         </div>
-      </div>
-    </div>
+
+        <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+          <p>
+            <span class="font-medium text-slate-700 dark:text-slate-200">Lists: </span>
+            <template v-if="campaign.lists.length > 0">
+              <span
+                  v-for="(list, index) in campaign.lists"
+                  :key="list.id"
+              >
+                <router-link
+                    :to="`/lists/${list.id}/subscribers`"
+                    class="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {{ list.name }}
+                </router-link>
+                <span v-if="index < campaign.lists.length - 1">, </span>
+              </span>
+            </template>
+          </p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
+          <p v-if="showStatistics">
+            <span class="font-medium text-slate-700 dark:text-slate-200">Statistics:</span>
+            Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
+          </p>
+        </div>
+
+        <div class="pt-2 flex flex-wrap gap-2">
+          <ActionButton
+              v-if="campaign.statusKey === 'draft'"
+              variant="danger"
+              icon="delete"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleDelete(campaign)"
+          >
+            Delete
+          </ActionButton>
+          <ActionButton
+              v-else-if="campaign.statusKey === 'active'"
+              variant="danger"
+              icon="pause"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleSuspend(campaign.id)"
+          >
+            Suspend
+          </ActionButton>
+          <ActionButton
+              v-else
+              variant="warning"
+              icon="start"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleRequeue(campaign.id)"
+          >
+            Requeue
+          </ActionButton>
+          <ActionButton
+              v-if="campaign.statusKey === 'sent'"
+              variant="success"
+              icon="copy"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleCopyToDraft(campaign.id)"
+          >
+            Copy to draft
+          </ActionButton>
+          <ActionButton
+              v-if="campaign.statusKey === 'draft'"
+              icon="edit"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleEdit(campaign.id)"
+          >
+            Edit
+          </ActionButton>
+          <ActionButton
+              icon="eye"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleView(campaign.id)"
+          >
+            View
+          </ActionButton>
+        </div>
+        <p
+          v-if="getActionFeedback(campaign.id)"
+          class="text-xs"
+          :class="{
+            'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
+            'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
+            'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+          }"
+        >
+          {{ getActionFeedback(campaign.id)?.message }}
+        </p>
+      </template>
+    </BaseDataTable>
 
     <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
       <div class="text-center sm:text-left">
@@ -352,6 +310,7 @@ import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } f
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 import ActionButton from '../base/ActionButton.vue'
 import BaseBadge from '../base/BaseBadge.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 
 const pageSize = 5
 const route = useRoute()

@@ -41,14 +41,9 @@
             {{ subscriber.createdAt }}
           </td>
           <td class="px-6 py-4 text-right">
-            <button
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-              @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton icon="eye" @click="emit('view', subscriber.id)">
               View
-            </button>
+            </ActionButton>
           </td>
         </tr>
       </tbody>
@@ -72,14 +67,9 @@
             <BaseBadge v-if="subscriber.blacklisted" variant="danger">
               blacklisted
             </BaseBadge>
-            <button
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton icon="eye" @click="emit('view', subscriber.id)">
               View
-            </button>
+            </ActionButton>
           </div>
         </div>
         <div class="flex flex-col gap-1">
@@ -102,7 +92,7 @@
 <script setup>
 import BaseIcon from '../base/BaseIcon.vue'
 import BaseBadge from '../base/BaseBadge.vue'
-import { inject } from 'vue'
+import ActionButton from '../base/ActionButton.vue'
 
 const props = defineProps({
   subscribers: {
@@ -112,15 +102,4 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['view'])
-
-const formatDate = (dateString, isIso = false) => {
-  if (!dateString) return '-'
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return '-'
-  
-  if (isIso) {
-    return date.toISOString().split('T')[0]
-  }
-  return date.toLocaleDateString()
-}
 </script>

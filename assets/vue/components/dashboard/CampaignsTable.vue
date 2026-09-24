@@ -21,12 +21,9 @@
       </td>
 
       <td class="py-3 px-4">
-          <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
-              :class="statusClass(row.status)"
-          >
-            {{ row.status }}
-          </span>
+        <BaseBadge :variant="statusVariant(row.status)">
+          {{ row.status }}
+        </BaseBadge>
       </td>
 
       <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-400">{{ row.date }}</td>
@@ -45,6 +42,8 @@
 </template>
 
 <script setup>
+import BaseBadge from '../base/BaseBadge.vue'
+
 const props = defineProps({
   rows: {
     type: Array,
@@ -52,13 +51,13 @@ const props = defineProps({
   },
 })
 
-const statusClass = (status) => {
+const statusVariant = (status) => {
   const s = status.toLowerCase()
 
   return {
-    sent: 'bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400',
-    scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400',
-    draft: 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300',
-  }[s] || 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300'
+    sent: 'success',
+    scheduled: 'info',
+    draft: 'neutral',
+  }[s] || 'neutral'
 }
 </script>

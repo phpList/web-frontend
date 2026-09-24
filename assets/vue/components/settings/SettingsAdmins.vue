@@ -6,14 +6,9 @@
         <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Manage administrator accounts and permissions</p>
       </div>
 
-      <button
-        type="button"
-        class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
-        @click="openCreateModal"
-      >
-        <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
+      <BaseButton variant="accent" icon="plus" @click="openCreateModal">
         Add Admin
-      </button>
+      </BaseButton>
     </div>
 
     <BaseDataTable
@@ -109,7 +104,7 @@ import { onMounted, ref } from 'vue'
 import CreateAdminModal from './CreateAdminModal.vue'
 import EditAdminModal from './EditAdminModal.vue'
 import { fetchAllAdmins, adminClient } from '../../api'
-import BaseIcon from "../base/BaseIcon.vue";
+import BaseButton from "../base/BaseButton.vue";
 import BaseBadge from "../base/BaseBadge.vue";
 import ActionButton from "../base/ActionButton.vue";
 import BaseDataTable from "../base/BaseDataTable.vue";

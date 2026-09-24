@@ -9692,6 +9692,17 @@
                                         "options": {
                                             "type": "array",
                                             "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "list_order": {
+                                                        "type": "integer"
+                                                    }
+                                                },
                                                 "type": "object"
                                             }
                                         }

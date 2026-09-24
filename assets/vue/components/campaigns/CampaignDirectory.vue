@@ -311,64 +311,74 @@ import ViewCampaignModal from "./ViewCampaignModal.vue";
 import ActionButton from '../base/ActionButton.vue'
 import BaseBadge from '../base/BaseBadge.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'
+import { useCampaignPagination } from '../../composables/useCampaignPagination'
+import { useCampaignStatistics } from '../../composables/useCampaignStatistics'
+import { useCampaignLists } from '../../composables/useCampaignLists'
 
 const pageSize = 5
 const route = useRoute()
 const router = useRouter()
-const rawCampaignsByPage = ref(new Map())
-const cursorsByPage = ref(new Map([[1, null]]))
-const totalForFilter = ref(0)
-const listsByCampaignId = ref({})
-const expandedListsByCampaignId = ref({})
-const statisticsByCampaignId = ref({})
-const loadingListsByCampaignId = ref({})
-const actionLoadingByCampaignId = ref({})
-const actionFeedbackByCampaignId = ref({})
-const isLoading = ref(false)
-const errorMessage = ref('')
-const mailingLists = ref([])
 
 const allowedStatuses = ['all', 'sent', 'active', 'draft']
+const activeStatuses = new Set(['submitted', 'prepared', 'inprocess'])
 
-const parseStatusQuery = (statusQuery) => {
-  const value = Array.isArray(statusQuery) ? statusQuery[0] : statusQuery
-  return allowedStatuses.includes(value) ? value : 'all'
-}
+// Maps a UI filter tab to the server-side `status` query param. 'active' groups several
+// raw statuses, sent as a comma-separated list the backend matches via IN(...).
+const statusParamForFilter = (filterId) => ({
+  sent: 'sent',
+  draft: 'draft',
+  active: Array.from(activeStatuses).join(','),
+}[filterId] ?? null)
 
-const parsePageQuery = (pageQuery) => {
-  const queryValue = Array.isArray(pageQuery) ? pageQuery[0] : pageQuery
-  const page = Number.parseInt(String(queryValue ?? ''), 10)
-  return Number.isNaN(page) || page < 1 ? 1 : page
-}
-
-const statusFilter = computed({
-  get() {
-    return parseStatusQuery(route.query.status)
-  },
-  async set(value) {
-    const normalized = allowedStatuses.includes(value) ? value : 'all'
-    const nextQuery = { ...route.query }
-
-    if (normalized === 'all') {
-      delete nextQuery.status
-    } else {
-      nextQuery.status = normalized
-    }
-
-    delete nextQuery.page
-
-    await router.replace({ query: nextQuery })
-  }
+const {
+  statusFilter,
+  currentPage,
+  rawItems: rawCampaigns,
+  total: totalForFilter,
+  isLoading,
+  errorMessage,
+  canGoPrevious,
+  canGoNext,
+  rangeStart,
+  rangeEnd,
+  setFilter,
+  previousPage,
+  nextPage,
+  loadUpToPage,
+  refreshCurrentPage,
+} = useCampaignPagination({
+  route,
+  router,
+  pageSize,
+  allowedStatuses,
+  fetchPage: (afterId, limit, status) =>
+      campaignClient.getCampaigns(afterId, limit, null, statusParamForFilter(status), 'desc'),
 })
 
-const currentPage = ref(parsePageQuery(route.query.page))
+const {
+  showStatistics,
+  getCampaignStatistics,
+  fetchCampaignStatistics,
+} = useCampaignStatistics(statisticsClient)
+
+const {
+  getCampaignLists,
+  isListsLoading,
+  isListsExpanded,
+  toggleListsExpanded,
+  fetchListsForVisibleCampaigns,
+} = useCampaignLists(listMessagesClient)
+
+const mailingLists = ref([])
+const actionLoadingByCampaignId = ref({})
+const actionFeedbackByCampaignId = ref({})
+
 const isViewModalOpen = ref(false)
 const isViewLoading = ref(false)
 const selectedCampaign = ref(null)
 const viewErrorMessage = ref('')
 const isResending = ref(false)
 const resendErrorMessage = ref('')
-const showStatistics = ref(true)
 
 const filterOptions = [
   { id: 'all', label: 'All' },
@@ -383,8 +393,6 @@ const statusVariants = {
   draft: 'neutral',
   unknown: 'warning'
 }
-
-const activeStatuses = new Set(['submitted', 'prepared', 'inprocess'])
 
 const resolveStatusKey = (statusRaw) => {
   if (statusRaw === 'sent') return 'sent'
@@ -440,13 +448,6 @@ const formatDuration = (fromValue, toValue) => {
   return `${hours}h ${minutes}m`
 }
 
-const getCampaignLists = (campaignId) => listsByCampaignId.value[campaignId] || []
-const getCampaignStatistics = (campaignId) => statisticsByCampaignId.value[campaignId] || {
-  bounces: 0,
-  sent: 0,
-  uniqueViews: 0,
-}
-
 const fetchMailingLists = async () => {
   try {
     mailingLists.value = await fetchAllLists()
@@ -456,14 +457,6 @@ const fetchMailingLists = async () => {
   }
 }
 
-const isListsLoading = (campaignId) => loadingListsByCampaignId.value[campaignId] === true
-const isListsExpanded = (campaignId) => expandedListsByCampaignId.value[campaignId] === true
-const toggleListsExpanded = (campaignId) => {
-  expandedListsByCampaignId.value = {
-    ...expandedListsByCampaignId.value,
-    [campaignId]: !isListsExpanded(campaignId)
-  }
-}
 const isActionLoading = (campaignId) => actionLoadingByCampaignId.value[campaignId] === true
 const getActionFeedback = (campaignId) => actionFeedbackByCampaignId.value[campaignId] || null
 
@@ -604,103 +597,6 @@ const handleCopyToDraft = async (campaignId) => {
   }
 }
 
-// Maps a UI filter tab to the server-side `status` query param. 'active' groups several
-// raw statuses, sent as a comma-separated list the backend matches via IN(...).
-const statusParamForFilter = (filterId) => ({
-  sent: 'sent',
-  draft: 'draft',
-  active: Array.from(activeStatuses).join(','),
-}[filterId] ?? null)
-
-// Bumped whenever the filter resets pagination, so a slow response from a since-abandoned
-// filter can never overwrite the current view after a newer request has already landed.
-let paginationGeneration = 0
-const pageRequestsInFlight = new Map()
-
-const resetPagination = () => {
-  paginationGeneration += 1
-  pageRequestsInFlight.clear()
-  rawCampaignsByPage.value = new Map()
-  cursorsByPage.value = new Map([[1, null]])
-}
-
-// Fetches and caches one page (5 campaigns) at a time, newest-first, filtered server-side by the
-// active status tab - no more draining the entire campaign list into memory up front. This only
-// fetches/caches; it never touches `currentPage` itself, so walking through intermediate pages
-// (see loadUpToPage) can't leak a transient wrong page number out to the URL-syncing watchers.
-const loadPage = (page) => {
-  if (rawCampaignsByPage.value.has(page)) {
-    return Promise.resolve()
-  }
-
-  const inFlight = pageRequestsInFlight.get(page)
-  if (inFlight) return inFlight
-
-  const generation = paginationGeneration
-  const request = (async () => {
-    isLoading.value = true
-    errorMessage.value = ''
-
-    try {
-      const afterId = cursorsByPage.value.get(page) ?? null
-      const response = await campaignClient.getCampaigns(
-        afterId,
-        pageSize,
-        null,
-        statusParamForFilter(statusFilter.value),
-        'desc'
-      )
-      if (generation !== paginationGeneration) return
-
-      const items = Array.isArray(response?.items) ? response.items : []
-
-      rawCampaignsByPage.value.set(page, items)
-      totalForFilter.value = Number(response?.pagination?.total ?? 0)
-
-      if (response?.pagination?.hasMore) {
-        cursorsByPage.value.set(page + 1, response?.pagination?.nextCursor ?? null)
-      }
-    } catch (error) {
-      if (generation === paginationGeneration) {
-        console.error(`Failed to load campaigns page ${page}:`, error)
-        errorMessage.value = 'Failed to load campaigns.'
-      }
-    } finally {
-      isLoading.value = false
-      pageRequestsInFlight.delete(page)
-    }
-  })()
-
-  pageRequestsInFlight.set(page, request)
-  return request
-}
-
-// Navigates to a page, fetching/caching every page from 1 up to it along the way (cursors for
-// unvisited pages aren't known ahead of time), then commits currentPage exactly once at the end.
-const loadUpToPage = async (targetPage) => {
-  for (let page = 1; page <= targetPage; page += 1) {
-    await loadPage(page)
-  }
-  currentPage.value = targetPage
-}
-
-// A mutation can shift which campaigns fall on the current page and every page after it
-// (but never on earlier pages), so drop those from the cache and refetch just the current one.
-const invalidateFromCurrentPage = () => {
-  const page = currentPage.value
-  for (const key of [...rawCampaignsByPage.value.keys()]) {
-    if (key >= page) rawCampaignsByPage.value.delete(key)
-  }
-  for (const key of [...cursorsByPage.value.keys()]) {
-    if (key > page) cursorsByPage.value.delete(key)
-  }
-}
-
-const refreshCurrentPage = async () => {
-  invalidateFromCurrentPage()
-  await loadPage(currentPage.value)
-}
-
 // Expensive (date formatting, statistics/lists lookups) — run only for the page being rendered.
 const normalizeCampaign = (campaign) => {
   const statusRaw = (campaign?.messageMetadata?.status || '').toLowerCase()
@@ -734,161 +630,7 @@ const normalizeCampaign = (campaign) => {
   }
 }
 
-const paginatedCampaigns = computed(() => (rawCampaignsByPage.value.get(currentPage.value) ?? []).map(normalizeCampaign))
-
-const totalPages = computed(() => Math.max(1, Math.ceil(totalForFilter.value / pageSize)))
-const canGoPrevious = computed(() => currentPage.value > 1)
-const canGoNext = computed(() => currentPage.value < totalPages.value)
-
-const rangeStart = computed(() => {
-  if (totalForFilter.value === 0) return 0
-  return (currentPage.value - 1) * pageSize + 1
-})
-
-const rangeEnd = computed(() => {
-  if (totalForFilter.value === 0) return 0
-  return Math.min(currentPage.value * pageSize, totalForFilter.value)
-})
-
-const setFilter = (filterId) => {
-  statusFilter.value = filterId
-}
-
-const previousPage = async () => {
-  if (canGoPrevious.value) {
-    const target = currentPage.value - 1
-    await loadPage(target)
-    currentPage.value = target
-  }
-}
-
-const nextPage = async () => {
-  if (canGoNext.value) {
-    const target = currentPage.value + 1
-    await loadPage(target)
-    currentPage.value = target
-  }
-}
-
-// maxPages is a safety net against runaway loops, not a functional cap - it's far above any
-// realistic dataset size, and hitting it logs a warning instead of silently truncating results.
-const drainPaginated = async (fetchPage, onItems, { limit = 100, maxPages = 500 } = {}) => {
-  let cursor = null
-  let pages = 0
-
-  while (pages < maxPages) {
-    const response = await fetchPage(cursor, limit)
-    const items = Array.isArray(response?.items) ? response.items : []
-    onItems(items)
-
-    const hasMore = Boolean(response?.pagination?.hasMore)
-    const nextCursor = response?.pagination?.nextCursor ?? null
-    // A cursor that doesn't advance (server pagination bug) would otherwise spin until maxPages,
-    // hammering the API with identical requests - bail out the moment it stops moving forward.
-    if (!hasMore || nextCursor === null || nextCursor === cursor) break
-
-    cursor = nextCursor
-    pages += 1
-  }
-
-  if (pages >= maxPages) {
-    console.warn('Pagination guard reached; results may be incomplete.')
-  }
-}
-
-const fetchCampaignStatistics = async () => {
-  try {
-    // Independent endpoints - written into separate maps so they can be fetched concurrently
-    // without one drain's pagination racing the other's, then merged once both are done.
-    const campaignStatsMap = {}
-    const viewOpensSentByCampaignId = {}
-
-    await Promise.all([
-      drainPaginated(
-        (cursor, limit) => statisticsClient.getCampaignStatistics(cursor, limit),
-        (items) => {
-          items.forEach((item) => {
-            campaignStatsMap[item.campaignId] = {
-              bounces: Number(item.bounces ?? 0),
-              sent: Number(item.sent ?? 0),
-              uniqueViews: Number(item.uniqueViews ?? 0),
-            }
-          })
-        },
-        { limit: 100 }
-      ),
-      drainPaginated(
-        (cursor, limit) => statisticsClient.getStatisticsOfViewOpens(cursor, limit),
-        (items) => {
-          items.forEach((item) => {
-            viewOpensSentByCampaignId[item.campaignId] = Number(item.sent ?? 0)
-          })
-        },
-        { limit: 100 }
-      )
-    ])
-
-    const statisticsMap = { ...campaignStatsMap }
-    Object.entries(viewOpensSentByCampaignId).forEach(([campaignId, sent]) => {
-      const existing = statisticsMap[campaignId] ?? { bounces: 0, sent: 0, uniqueViews: 0 }
-      statisticsMap[campaignId] = { ...existing, sent }
-    })
-
-    statisticsByCampaignId.value = statisticsMap
-    showStatistics.value = true
-  } catch (error) {
-    if (
-        error?.name === 'AuthorizationException' ||
-        error?.code === 'AuthorizationException' ||
-        error?.status === 403
-    ) {
-      showStatistics.value = false
-      statisticsByCampaignId.value = {}
-      return
-    }
-
-    throw error
-  }
-}
-
-const fetchListsForVisibleCampaigns = async () => {
-  const pending = paginatedCampaigns.value
-    .map((campaign) => campaign.id)
-    .filter((campaignId) => !(campaignId in listsByCampaignId.value) && !loadingListsByCampaignId.value[campaignId])
-
-  if (pending.length === 0) return
-
-  pending.forEach((campaignId) => {
-    loadingListsByCampaignId.value = { ...loadingListsByCampaignId.value, [campaignId]: true }
-  })
-
-  const results = await Promise.allSettled(
-    pending.map(async (campaignId) => {
-      const response = await listMessagesClient.getListsByMessage(campaignId)
-      return {
-        campaignId,
-        lists: Array.isArray(response?.items) ? response.items : []
-      }
-    })
-  )
-
-  const nextLists = { ...listsByCampaignId.value }
-  const nextLoading = { ...loadingListsByCampaignId.value }
-
-  results.forEach((result, index) => {
-    const campaignId = pending[index]
-    if (result.status === 'fulfilled') {
-      nextLists[campaignId] = result.value.lists
-    } else {
-      nextLists[campaignId] = []
-      console.error(`Failed to load lists for campaign ${campaignId}:`, result.reason)
-    }
-    nextLoading[campaignId] = false
-  })
-
-  listsByCampaignId.value = nextLists
-  loadingListsByCampaignId.value = nextLoading
-}
+const paginatedCampaigns = computed(() => rawCampaigns.value.map(normalizeCampaign))
 
 onMounted(() => {
   loadUpToPage(currentPage.value)
@@ -896,57 +638,7 @@ onMounted(() => {
   fetchMailingLists()
 })
 
-watch(statusFilter, () => {
-  resetPagination()
-  loadPage(1).then(() => {
-    currentPage.value = 1
-  })
-})
-
-watch(totalPages, (pages) => {
-  if (isLoading.value) return
-  if (currentPage.value > pages) {
-    loadPage(pages).then(() => {
-      currentPage.value = pages
-    })
-  }
-})
-
-watch(() => route.query.page, (pageQuery) => {
-  const nextPage = parsePageQuery(pageQuery)
-  if (nextPage !== currentPage.value) {
-    loadUpToPage(nextPage)
-  }
-})
-
-watch(currentPage, async (page) => {
-  const normalizedPage = isLoading.value
-    ? Math.max(1, page)
-    : Math.min(Math.max(1, page), totalPages.value)
-  if (normalizedPage !== page) {
-    currentPage.value = normalizedPage
-    return
-  }
-
-  const currentQueryPage = Array.isArray(route.query.page) ? route.query.page[0] : route.query.page
-  const desiredQueryPage = normalizedPage > 1 ? String(normalizedPage) : undefined
-  if (currentQueryPage === desiredQueryPage) {
-    return
-  }
-
-  const nextQuery = { ...route.query }
-  if (desiredQueryPage !== undefined) {
-    nextQuery.page = desiredQueryPage
-  } else {
-    delete nextQuery.page
-  }
-
-  await router.replace({
-    query: nextQuery
-  })
-})
-
 watch(paginatedCampaigns, () => {
-  fetchListsForVisibleCampaigns()
+  fetchListsForVisibleCampaigns(paginatedCampaigns.value.map((campaign) => campaign.id))
 }, { immediate: true })
 </script>

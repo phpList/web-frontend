@@ -5,92 +5,55 @@
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces By Subscriber</h3>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm hidden md:table">
-          <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-            <tr>
-              <th class="px-6 py-4">Subscriber</th>
-              <th class="px-6 py-4">Email</th>
-              <th class="px-6 py-4">Confirmed</th>
-              <th class="px-6 py-4">Blacklisted</th>
-              <th class="px-6 py-4 text-right">Total Bounces</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-            <tr v-if="isLoadingSubscribers">
-              <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading subscriber bounce data...</td>
-            </tr>
-            <tr v-else-if="subscriberErrorMessage">
-              <td colspan="5" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ subscriberErrorMessage }}</td>
-            </tr>
-            <tr v-else-if="normalizedSubscriberBounces.length === 0">
-              <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No subscriber bounce data found.</td>
-            </tr>
-            <tr
-              v-for="subscriber in normalizedSubscriberBounces"
-              :key="subscriber.subscriberId"
-              class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ subscriber.subscriberId }}</td>
-              <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ subscriber.email }}</td>
-              <td class="px-6 py-4">
-                <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-                >
-                  {{ subscriber.confirmed ? 'Yes' : 'No' }}
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="subscriber.blacklisted ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-                >
-                  {{ subscriber.blacklisted ? 'Yes' : 'No' }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-right text-slate-900 dark:text-slate-100 font-semibold">{{ subscriber.totalBounces }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <BaseDataTable
+          :items="normalizedSubscriberBounces"
+          :is-loading="isLoadingSubscribers"
+          :load-error="subscriberErrorMessage"
+          loading-message="Loading subscriber bounce data..."
+          empty-message="No subscriber bounce data found."
+          :colspan="5"
+          :row-key="(item) => item.subscriberId"
+      >
+        <template #head>
+          <th class="px-6 py-4">Subscriber</th>
+          <th class="px-6 py-4">Email</th>
+          <th class="px-6 py-4">Confirmed</th>
+          <th class="px-6 py-4">Blacklisted</th>
+          <th class="px-6 py-4 text-right">Total Bounces</th>
+        </template>
 
-        <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-          <div v-if="isLoadingSubscribers" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
-            Loading subscriber bounce data...
+        <template #row="{ item: subscriber }">
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ subscriber.subscriberId }}</td>
+          <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ subscriber.email }}</td>
+          <td class="px-6 py-4">
+            <BaseBadge :variant="subscriber.confirmed ? 'success' : 'neutral'">
+              {{ subscriber.confirmed ? 'Yes' : 'No' }}
+            </BaseBadge>
+          </td>
+          <td class="px-6 py-4">
+            <BaseBadge :variant="subscriber.blacklisted ? 'danger' : 'neutral'">
+              {{ subscriber.blacklisted ? 'Yes' : 'No' }}
+            </BaseBadge>
+          </td>
+          <td class="px-6 py-4 text-right text-slate-900 dark:text-slate-100 font-semibold">{{ subscriber.totalBounces }}</td>
+        </template>
+
+        <template #card="{ item: subscriber }">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ subscriber.subscriberId }}</p>
+            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ subscriber.totalBounces }}</p>
           </div>
-          <div v-else-if="subscriberErrorMessage" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">
-            {{ subscriberErrorMessage }}
+          <p class="text-sm text-slate-800 dark:text-slate-100">{{ subscriber.email }}</p>
+          <div class="flex items-center gap-2 text-xs">
+            <BaseBadge :variant="subscriber.confirmed ? 'success' : 'neutral'">
+              Confirmed: {{ subscriber.confirmed ? 'Yes' : 'No' }}
+            </BaseBadge>
+            <BaseBadge :variant="subscriber.blacklisted ? 'danger' : 'neutral'">
+              Blacklisted: {{ subscriber.blacklisted ? 'Yes' : 'No' }}
+            </BaseBadge>
           </div>
-          <div v-else-if="normalizedSubscriberBounces.length === 0" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
-            No subscriber bounce data found.
-          </div>
-          <div
-            v-for="subscriber in normalizedSubscriberBounces"
-            :key="`mobile-subscriber-${subscriber.subscriberId}`"
-            class="p-4 space-y-2"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ subscriber.subscriberId }}</p>
-              <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ subscriber.totalBounces }}</p>
-            </div>
-            <p class="text-sm text-slate-800 dark:text-slate-100">{{ subscriber.email }}</p>
-            <div class="flex items-center gap-2 text-xs">
-              <span
-                class="px-2 py-0.5 rounded-full font-medium"
-                :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-              >
-                Confirmed: {{ subscriber.confirmed ? 'Yes' : 'No' }}
-              </span>
-              <span
-                class="px-2 py-0.5 rounded-full font-medium"
-                :class="subscriber.blacklisted ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-              >
-                Blacklisted: {{ subscriber.blacklisted ? 'Yes' : 'No' }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+        </template>
+      </BaseDataTable>
     </div>
 
     <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
@@ -98,60 +61,35 @@
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces By Campaign</h3>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm hidden md:table">
-          <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-            <tr>
-              <th class="px-6 py-4">Campaign</th>
-              <th class="px-6 py-4">Subject</th>
-              <th class="px-6 py-4 text-right">Total Bounces</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-            <tr v-if="isLoadingCampaigns">
-              <td colspan="3" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading campaign bounce data...</td>
-            </tr>
-            <tr v-else-if="campaignErrorMessage">
-              <td colspan="3" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ campaignErrorMessage }}</td>
-            </tr>
-            <tr v-else-if="normalizedCampaignBounces.length === 0">
-              <td colspan="3" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No campaign bounce data found.</td>
-            </tr>
-            <tr
-              v-for="campaign in normalizedCampaignBounces"
-              :key="campaign.messageId"
-              class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ campaign.messageId }}</td>
-              <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ campaign.subject }}</td>
-              <td class="px-6 py-4 text-right text-slate-900 dark:text-slate-100 font-semibold">{{ campaign.totalBounces }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <BaseDataTable
+          :items="normalizedCampaignBounces"
+          :is-loading="isLoadingCampaigns"
+          :load-error="campaignErrorMessage"
+          loading-message="Loading campaign bounce data..."
+          empty-message="No campaign bounce data found."
+          :colspan="3"
+          :row-key="(item) => item.messageId"
+      >
+        <template #head>
+          <th class="px-6 py-4">Campaign</th>
+          <th class="px-6 py-4">Subject</th>
+          <th class="px-6 py-4 text-right">Total Bounces</th>
+        </template>
 
-        <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-          <div v-if="isLoadingCampaigns" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
-            Loading campaign bounce data...
+        <template #row="{ item: campaign }">
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ campaign.messageId }}</td>
+          <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ campaign.subject }}</td>
+          <td class="px-6 py-4 text-right text-slate-900 dark:text-slate-100 font-semibold">{{ campaign.totalBounces }}</td>
+        </template>
+
+        <template #card="{ item: campaign }">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ campaign.messageId }}</p>
+            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ campaign.totalBounces }}</p>
           </div>
-          <div v-else-if="campaignErrorMessage" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">
-            {{ campaignErrorMessage }}
-          </div>
-          <div v-else-if="normalizedCampaignBounces.length === 0" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
-            No campaign bounce data found.
-          </div>
-          <div
-            v-for="campaign in normalizedCampaignBounces"
-            :key="`mobile-campaign-${campaign.messageId}`"
-            class="p-4 space-y-2"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ campaign.messageId }}</p>
-              <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ campaign.totalBounces }}</p>
-            </div>
-            <p class="text-sm text-slate-800 dark:text-slate-100">{{ campaign.subject }}</p>
-          </div>
-        </div>
-      </div>
+          <p class="text-sm text-slate-800 dark:text-slate-100">{{ campaign.subject }}</p>
+        </template>
+      </BaseDataTable>
     </div>
   </div>
 </template>
@@ -159,6 +97,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { bouncesClient } from '../../api'
+import BaseBadge from '../base/BaseBadge.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 
 const bouncesPerCampaign = ref([])
 const bouncesPerSubscriber = ref([])

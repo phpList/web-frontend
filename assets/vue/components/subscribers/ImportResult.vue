@@ -1,20 +1,10 @@
 <template>
-<div
-    v-if="isImportResultOpen"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-    @click.self="$emit('close')"
->
-<div class="w-full max-w-md rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700">
-  <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-    <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Import Result</h3>
-    <button
-        class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-        @click="$emit('close')"
-    >
-      <BaseIcon name="x" class="w-5 h-5" />
-    </button>
-  </div>
-
+  <BaseModal
+      :is-open="isImportResultOpen"
+      title="Import Result"
+      max-width="md"
+      @close="$emit('close')"
+  >
   <div class="p-4 space-y-4">
     <div class="grid grid-cols-2 gap-3">
       <div class="rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3">
@@ -48,20 +38,19 @@
     </div>
   </div>
 
-  <div class="px-4 py-3 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+  <template #footer>
     <button
         class="px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg transition-colors"
         @click="$emit('close')"
     >
       Close
     </button>
-  </div>
-</div>
-</div>
+  </template>
+  </BaseModal>
 </template>
 
 <script setup>
-import BaseIcon from '../base/BaseIcon.vue'
+import BaseModal from '../base/BaseModal.vue'
 
 defineProps({
   isImportResultOpen: {

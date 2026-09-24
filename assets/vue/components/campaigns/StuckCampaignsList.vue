@@ -20,134 +20,50 @@
       </button>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-        <tr>
-          <th class="px-6 py-4">Subject</th>
-          <th class="px-6 py-4">Status</th>
-          <th class="px-6 py-4">Stuck for</th>
-          <th class="px-6 py-4 text-right">Actions</th>
-        </tr>
-        </thead>
+    <BaseDataTable
+        :items="campaigns"
+        :is-loading="isLoading"
+        :load-error="errorMessage"
+        loading-message="Loading stuck campaigns..."
+        empty-message="No stuck campaigns right now."
+        :colspan="4"
+    >
+      <template #head>
+        <th class="px-6 py-4">Subject</th>
+        <th class="px-6 py-4">Status</th>
+        <th class="px-6 py-4">Stuck for</th>
+        <th class="px-6 py-4 text-right">Actions</th>
+      </template>
 
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-        <tr v-if="isLoading">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading stuck campaigns...</td>
-        </tr>
-
-        <tr v-else-if="errorMessage">
-          <td colspan="4" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
-        </tr>
-
-        <tr v-else-if="campaigns.length === 0">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No stuck campaigns right now.</td>
-        </tr>
-
-        <tr
-          v-for="campaign in campaigns"
-          :key="campaign.id"
-          class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
-            <router-link
-              :to="`/campaigns/${campaign.id}/edit`"
-              class="hover:underline"
-            >
-              {{ campaign.subject || `Campaign #${campaign.id}` }}
-            </router-link>
-          </td>
-          <td class="px-6 py-4">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400">
-              {{ campaign.statusLabel }}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ campaign.stuckFor }}</td>
-          <td class="px-6 py-4 text-right">
-            <div class="inline-flex justify-end">
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
-                :disabled="isActionLoading(campaign.id)"
-                @click="handleResume(campaign.id)"
-              >
-                <BaseIcon name="start" class="w-3.5 h-3.5" />
-                Resume
-              </button>
-            </div>
-            <p
-              v-if="getActionFeedback(campaign.id)"
-              class="mt-2 text-xs"
-              :class="{
-                'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
-                'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-                'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
-              }"
-            >
-              {{ getActionFeedback(campaign.id)?.message }}
-            </p>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-        <div
-          v-if="isLoading"
-          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          Loading stuck campaigns...
-        </div>
-
-        <div
-          v-else-if="errorMessage"
-          class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
-        >
-          {{ errorMessage }}
-        </div>
-
-        <div
-          v-else-if="campaigns.length === 0"
-          class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          No stuck campaigns right now.
-        </div>
-
-        <div
-          v-for="campaign in campaigns"
-          :key="`mobile-${campaign.id}`"
-          class="p-4 space-y-3"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <router-link
-              :to="`/campaigns/${campaign.id}/edit`"
-              class="font-semibold text-slate-900 dark:text-slate-100 hover:underline"
-            >
-              {{ campaign.subject || `Campaign #${campaign.id}` }}
-            </router-link>
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400">
-              {{ campaign.statusLabel }}
-            </span>
-          </div>
-
-          <p class="text-xs text-slate-600 dark:text-slate-300">
-            <span class="font-medium text-slate-700 dark:text-slate-200">Stuck for:</span> {{ campaign.stuckFor }}
-          </p>
-
-          <div class="pt-2 flex flex-wrap gap-2">
-            <button
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
+      <template #row="{ item: campaign }">
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
+          <router-link
+            :to="`/campaigns/${campaign.id}/edit`"
+            class="hover:underline"
+          >
+            {{ campaign.subject || `Campaign #${campaign.id}` }}
+          </router-link>
+        </td>
+        <td class="px-6 py-4">
+          <BaseBadge variant="warning">
+            {{ campaign.statusLabel }}
+          </BaseBadge>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ campaign.stuckFor }}</td>
+        <td class="px-6 py-4 text-right">
+          <div class="inline-flex justify-end">
+            <ActionButton
+              variant="warning"
+              icon="start"
               :disabled="isActionLoading(campaign.id)"
               @click="handleResume(campaign.id)"
             >
-              <BaseIcon name="start" class="w-3.5 h-3.5" />
               Resume
-            </button>
+            </ActionButton>
           </div>
           <p
             v-if="getActionFeedback(campaign.id)"
-            class="text-xs"
+            class="mt-2 text-xs"
             :class="{
               'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
               'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
@@ -156,9 +72,49 @@
           >
             {{ getActionFeedback(campaign.id)?.message }}
           </p>
+        </td>
+      </template>
+
+      <template #card="{ item: campaign }">
+        <div class="flex items-start justify-between gap-3">
+          <router-link
+            :to="`/campaigns/${campaign.id}/edit`"
+            class="font-semibold text-slate-900 dark:text-slate-100 hover:underline"
+          >
+            {{ campaign.subject || `Campaign #${campaign.id}` }}
+          </router-link>
+          <BaseBadge class="whitespace-nowrap" variant="warning">
+            {{ campaign.statusLabel }}
+          </BaseBadge>
         </div>
-      </div>
-    </div>
+
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          <span class="font-medium text-slate-700 dark:text-slate-200">Stuck for:</span> {{ campaign.stuckFor }}
+        </p>
+
+        <div class="pt-2 flex flex-wrap gap-2">
+          <ActionButton
+            variant="warning"
+            icon="start"
+            :disabled="isActionLoading(campaign.id)"
+            @click="handleResume(campaign.id)"
+          >
+            Resume
+          </ActionButton>
+        </div>
+        <p
+          v-if="getActionFeedback(campaign.id)"
+          class="text-xs"
+          :class="{
+            'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
+            'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
+            'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+          }"
+        >
+          {{ getActionFeedback(campaign.id)?.message }}
+        </p>
+      </template>
+    </BaseDataTable>
   </div>
 </template>
 
@@ -166,6 +122,9 @@
 import { onMounted, ref } from 'vue'
 import { campaignClient } from '../../api'
 import BaseIcon from '../base/BaseIcon.vue'
+import BaseBadge from '../base/BaseBadge.vue'
+import ActionButton from '../base/ActionButton.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 
 const campaigns = ref([])
 const isLoading = ref(false)

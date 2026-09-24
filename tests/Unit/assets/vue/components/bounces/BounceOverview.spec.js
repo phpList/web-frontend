@@ -111,7 +111,7 @@ describe('BounceOverview.vue', () => {
         })
     })
 
-    describe('getStatusClass', () => {
+    describe('getStatusVariant', () => {
         const mountWithStatus = async (status) => {
             bouncesClient.list.mockResolvedValue(makeResponse([makeBounce({ status })]))
             const wrapper = mount(BounceOverview)
@@ -134,9 +134,9 @@ describe('BounceOverview.vue', () => {
             expect(wrapper.find('span.bg-emerald-100').exists()).toBe(true)
         })
 
-        it('applies slate classes for an unrecognised status', async () => {
+        it('applies neutral classes for an unrecognised status', async () => {
             const wrapper = await mountWithStatus('something-else')
-            expect(wrapper.find('span.bg-slate-100').exists()).toBe(true)
+            expect(wrapper.find('span.bg-gray-100').exists()).toBe(true)
         })
     })
 

@@ -18,6 +18,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+
+  // when true, skips the default slate/indigo color so the icon inherits
+  // currentColor from its parent (e.g. white text on a solid button)
+  inheritColor: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Simple internal SVG registry
@@ -99,6 +106,8 @@ const icons = {
   moon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>`,
 
   start: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4" rx="1"></polygon></svg>`,
+
+  plus: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>`,
 };
 
 const svg = computed(() => icons[props.name] || "");
@@ -111,7 +120,9 @@ const wrapperClass = computed(() => {
     "transition-colors",
   ];
 
-  if (props.active) {
+  if (props.inheritColor) {
+    // no color class: SVG's stroke="currentColor" picks up the parent's text color
+  } else if (props.active) {
     classes.push("text-ext-wf3 dark:text-indigo-400");
   } else {
     classes.push("text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300");

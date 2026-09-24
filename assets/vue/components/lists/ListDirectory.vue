@@ -3,210 +3,94 @@
     <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
       <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Mailing Lists</h2>
 
-      <button
-        type="button"
-        class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap min-w-max px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
-        @click="openCreateModal"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="M12 5v14"></path>
-        </svg>
+      <BaseButton variant="accent" icon="plus" @click="openCreateModal">
         Add new list
-      </button>
+      </BaseButton>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
-        <tr>
-          <th class="px-6 py-4">ID</th>
-          <th class="px-6 py-4">Name</th>
-          <th class="px-6 py-4">Public/Active</th>
-          <th class="px-6 py-4 text-right">Actions</th>
-        </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-        <tr
-            v-for="list in mailingLists"
-            :key="list.id"
-            class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ list.id }}</td>
-          <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ list.name }}</td>
-          <td class="px-6 py-4">
-              <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-              >
-                {{ isPublic(list) ? 'Yes' : 'No' }}
-              </span>
-          </td>
-          <td class="px-6 py-4">
-            <div class="flex flex-wrap justify-end gap-2">
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
-                  @click="handleDelete(list)"
-              >
-                <BaseIcon name="delete" class="w-3.5 h-3.5" />
-                Delete
-              </button>
+    <BaseDataTable
+        :items="mailingLists"
+        :is-loading="isLoading"
+        :load-error="loadError"
+        loading-message="Loading mailing lists..."
+        empty-message="No mailing lists found."
+        :colspan="4"
+    >
+      <template #head>
+        <th class="px-6 py-4">ID</th>
+        <th class="px-6 py-4">Name</th>
+        <th class="px-6 py-4">Public/Active</th>
+        <th class="px-6 py-4 text-right">Actions</th>
+      </template>
 
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
-                  @click="handleAddSubscriber(list)"
-              >
-                <BaseIcon name="addUser" class="w-3.5 h-3.5" />
-                Add Subscribers
-              </button>
-
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  @click="handleEdit(list)"
-              >
-                <BaseIcon name="edit" class="w-3.5 h-3.5" />
-                Edit
-              </button>
-
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors"
-                  @click="handleStartCampaign(list)"
-              >
-                <BaseIcon name="plane" class="w-3.5 h-3.5" />
-                Start Campaign
-              </button>
-
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  @click="handleViewMembers(list)"
-              >
-                <BaseIcon name="eye" class="w-3.5 h-3.5" />
-                View Members
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <tr v-if="!isLoading && !loadError && mailingLists.length === 0">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            No mailing lists found.
-          </td>
-        </tr>
-        <tr v-if="isLoading">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            Loading mailing lists...
-          </td>
-        </tr>
-
-        <tr v-else-if="loadError">
-          <td colspan="4" class="px-6 py-8 text-center text-red-600 dark:text-red-400">
-            {{ loadError }}
-          </td>
-        </tr>
-
-        <tr v-else-if="mailingLists.length === 0">
-          <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
-            No mailing lists found.
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-        <div
-            v-for="list in mailingLists"
-            :key="`mobile-${list.id}`"
-            class="p-4 space-y-3"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ list.id }}</p>
-              <p class="font-semibold text-slate-900 dark:text-slate-100">{{ list.name }}</p>
-            </div>
-
-            <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                :class="isPublic(list) ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
-            >
-              {{ isPublic(list) ? 'Public' : 'Private' }}
-            </span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
-                @click="handleDelete(list)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5" />
+      <template #row="{ item: list }">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ list.id }}</td>
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ list.name }}</td>
+        <td class="px-6 py-4">
+          <BaseBadge :variant="isPublic(list) ? 'success' : 'neutral'">
+            {{ isPublic(list) ? 'Yes' : 'No' }}
+          </BaseBadge>
+        </td>
+        <td class="px-6 py-4">
+          <div class="flex flex-wrap justify-end gap-2">
+            <ActionButton variant="danger" icon="delete" @click="handleDelete(list)">
               Delete
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
-                @click="handleAddSubscriber(list)"
-            >
-              <BaseIcon name="addUser" class="w-3.5 h-3.5" />
-              Add Subscriber
-            </button>
+            <ActionButton variant="success" icon="addUser" @click="handleAddSubscriber(list)">
+              Add Subscribers
+            </ActionButton>
 
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                @click="handleEdit(list)"
-            >
-              <BaseIcon name="edit" class="w-3.5 h-3.5" />
+            <ActionButton icon="edit" @click="handleEdit(list)">
               Edit
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors"
-                @click="handleStartCampaign(list)"
-            >
-              <BaseIcon name="plane" class="w-3.5 h-3.5" />
+            <ActionButton variant="info" icon="plane" @click="handleStartCampaign(list)">
               Start Campaign
-            </button>
+            </ActionButton>
 
-            <button
-                type="button"
-                class="col-span-2 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                @click="handleViewMembers(list)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton icon="eye" @click="handleViewMembers(list)">
               View Members
-            </button>
+            </ActionButton>
           </div>
+        </td>
+      </template>
+
+      <template #card="{ item: list }">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ list.id }}</p>
+            <p class="font-semibold text-slate-900 dark:text-slate-100">{{ list.name }}</p>
+          </div>
+
+          <BaseBadge class="whitespace-nowrap" :variant="isPublic(list) ? 'success' : 'neutral'">
+            {{ isPublic(list) ? 'Public' : 'Private' }}
+          </BaseBadge>
         </div>
 
-        <div
-            v-if="isLoading"
-            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          Loading mailing lists...
-        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <ActionButton block variant="danger" icon="delete" @click="handleDelete(list)">
+            Delete
+          </ActionButton>
 
-        <div
-            v-else-if="loadError"
-            class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm"
-        >
-          {{ loadError }}
-        </div>
+          <ActionButton block variant="success" icon="addUser" @click="handleAddSubscriber(list)">
+            Add Subscriber
+          </ActionButton>
 
-        <div
-            v-else-if="mailingLists.length === 0"
-            class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
-        >
-          No mailing lists found.
+          <ActionButton block icon="edit" @click="handleEdit(list)">
+            Edit
+          </ActionButton>
+
+          <ActionButton block variant="info" icon="plane" @click="handleStartCampaign(list)">
+            Start Campaign
+          </ActionButton>
+
+          <ActionButton block class="col-span-2" icon="eye" @click="handleViewMembers(list)">
+            View Members
+          </ActionButton>
         </div>
-      </div>
-    </div>
+      </template>
+    </BaseDataTable>
   </div>
 
   <CreateListModal
@@ -233,7 +117,10 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import BaseIcon from '../base/BaseIcon.vue'
+import BaseButton from '../base/BaseButton.vue'
+import BaseBadge from '../base/BaseBadge.vue'
+import ActionButton from '../base/ActionButton.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 import CreateListModal from './CreateListModal.vue'
 import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'

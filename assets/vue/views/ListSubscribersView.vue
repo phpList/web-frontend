@@ -1,33 +1,33 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500">Mailing List</p>
-            <h2 class="text-xl font-bold text-slate-900">
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Mailing List</p>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
               {{ listName || `List #${listId}` }}
             </h2>
           </div>
 
           <RouterLink
               to="/lists"
-              class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
+              class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             Back to Lists
           </RouterLink>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         <div
-            class="p-4 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h3 class="text-lg font-semibold text-slate-900">Subscribers</h3>
+            class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Subscribers</h3>
           <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
-            <label class="text-sm text-slate-600">Status</label>
+            <label class="text-sm text-slate-600 dark:text-slate-300">Status</label>
             <select
                 v-model="statusFilter"
-                class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="all">All</option>
               <option value="confirmed">Confirmed</option>
@@ -36,13 +36,13 @@
           </div>
         </div>
 
-        <div class="p-4 sm:p-6 border-b border-slate-200 bg-slate-50/50">
+        <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
           <div class="flex flex-col xl:flex-row xl:items-center gap-3">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="text-sm text-slate-600">Selected: {{ selectedSubscribers.length }}</span>
+              <span class="text-sm text-slate-600 dark:text-slate-300">Selected: {{ selectedSubscribers.length }}</span>
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
                   :disabled="!hasSelection || actionLoading"
                   @click="deleteSelectedSubscribers"
               >
@@ -54,7 +54,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-2 xl:ml-auto">
               <select
                   v-model="selectedTargetListId"
-                  class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                   :disabled="actionLoading"
               >
                 <option value="">Select target list</option>
@@ -65,7 +65,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                   :disabled="!hasSelection || !selectedTargetListId || actionLoading"
                   @click="copySelectedSubscribers"
               >
@@ -75,7 +75,7 @@
 
               <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 dark:border-amber-500/20 dark:text-amber-400 dark:hover:bg-amber-500/10 transition-colors disabled:opacity-50"
                   :disabled="!hasSelection || !selectedTargetListId || actionLoading"
                   @click="moveSelectedSubscribers"
               >
@@ -85,19 +85,19 @@
             </div>
           </div>
 
-          <p v-if="actionError" class="mt-3 text-sm text-red-600">{{ actionError }}</p>
-          <p v-if="actionMessage" class="mt-3 text-sm text-emerald-700">{{ actionMessage }}</p>
+          <p v-if="actionError" class="mt-3 text-sm text-red-600 dark:text-red-400">{{ actionError }}</p>
+          <p v-if="actionMessage" class="mt-3 text-sm text-emerald-700 dark:text-emerald-400">{{ actionMessage }}</p>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm hidden md:table">
-            <thead class="bg-slate-50 text-slate-500 font-medium">
+            <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
             <tr>
               <th class="px-4 py-4 w-10">
                 <input
                     ref="selectAllCheckbox"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300 accent-ext-wf1"
+                    class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 accent-ext-wf1"
                     :checked="allVisibleSelected"
                     :disabled="filteredSubscribers.length === 0"
                     @change="toggleSelectAllVisible"
@@ -110,44 +110,44 @@
               <th class="px-6 py-4 text-right">Actions</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200">
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
             <tr v-if="loading">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500">Loading...</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading...</td>
             </tr>
 
             <tr v-else-if="errorMessage">
-              <td colspan="6" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
+              <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
             </tr>
 
             <tr
                 v-for="subscriber in filteredSubscribers"
                 v-else
                 :key="subscriber.id"
-                class="hover:bg-slate-50 transition-colors"
+                class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               <td class="px-4 py-4">
                 <input
                     v-model="selectedIds"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300 accent-ext-wf1"
+                    class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 accent-ext-wf1"
                     :value="subscriber.id"
                 >
               </td>
-              <td class="px-6 py-4 text-slate-600">{{ subscriber.id }}</td>
-              <td class="px-6 py-4 font-mono text-slate-900">{{ subscriber.email }}</td>
+              <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ subscriber.id }}</td>
+              <td class="px-6 py-4 font-mono text-slate-900 dark:text-slate-100">{{ subscriber.email }}</td>
               <td class="px-6 py-4">
                   <span
                       class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                      :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'"
                   >
                     {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
                   </span>
               </td>
-              <td class="px-6 py-4 text-slate-600">{{ formatDate(subscriber.createdAt) }}</td>
+              <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ formatDate(subscriber.createdAt) }}</td>
               <td class="px-6 py-4 text-right">
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
                     :disabled="actionLoading"
                     @click="deleteSingleSubscriber(subscriber)"
                 >
@@ -158,20 +158,20 @@
             </tr>
 
             <tr v-if="!loading && !errorMessage && filteredSubscribers.length === 0">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500">No subscribers for this filter.</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No subscribers for this filter.</td>
             </tr>
             </tbody>
           </table>
 
-          <div class="block md:hidden divide-y divide-slate-100">
-            <div v-if="loading" class="px-4 py-8 text-center text-slate-500 text-sm">Loading...</div>
-            <div v-else-if="errorMessage" class="px-4 py-8 text-center text-red-600 text-sm">{{ errorMessage }}</div>
+          <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+            <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">Loading...</div>
+            <div v-else-if="errorMessage" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ errorMessage }}</div>
 
-            <div class="p-4 border-b border-slate-100" v-if="!loading && !errorMessage && filteredSubscribers.length">
-              <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !errorMessage && filteredSubscribers.length">
+              <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300 accent-ext-wf1"
+                    class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 accent-ext-wf1"
                     :checked="allVisibleSelected"
                     @change="toggleSelectAllVisible"
                 >
@@ -188,24 +188,24 @@
                 <input
                     v-model="selectedIds"
                     type="checkbox"
-                    class="mt-1 w-4 h-4 rounded border-slate-300 accent-ext-wf1"
+                    class="mt-1 w-4 h-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 accent-ext-wf1"
                     :value="subscriber.id"
                 >
 
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-3">
-                    <p class="text-sm font-medium text-slate-900 truncate">{{ subscriber.email }}</p>
+                    <p class="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{{ subscriber.email }}</p>
                     <span
                         class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                        :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                        :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'"
                     >
                       {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
                     </span>
                   </div>
-                  <p class="mt-2 text-xs text-slate-500">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
+                  <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
                   <button
                       type="button"
-                      class="mt-3 inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                      class="mt-3 inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
                       :disabled="actionLoading"
                       @click="deleteSingleSubscriber(subscriber)"
                   >
@@ -218,7 +218,7 @@
 
             <div
                 v-if="!loading && !errorMessage && filteredSubscribers.length === 0"
-                class="px-4 py-8 text-center text-slate-500 text-sm"
+                class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
             >
               No subscribers for this filter.
             </div>
@@ -226,12 +226,12 @@
         </div>
 
         <div
-            class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
-          <span class="text-slate-500">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
+            class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
+          <span class="text-slate-500 dark:text-slate-400">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
           <div class="flex gap-2 w-full sm:w-auto">
             <button
                 type="button"
-                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
                 :disabled="!canGoPrevious || loading || actionLoading"
                 @click="previousPage"
             >
@@ -239,7 +239,7 @@
             </button>
             <button
                 type="button"
-                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
                 :disabled="!canGoNext || loading || actionLoading"
                 @click="nextPage"
             >

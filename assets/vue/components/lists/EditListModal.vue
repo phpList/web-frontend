@@ -8,25 +8,25 @@
   >
     <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
     <form class="mt-4 space-y-4" @submit.prevent="submitEditList">
-      <div class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg md:min-w-xl sm:w-full z-10">
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+      <div class="relative bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg md:min-w-xl sm:w-full z-10">
+        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6">
           <div class="flex justify-between items-center">
-            <h3 id="edit-list-modal-title" class="text-lg leading-6 font-medium text-slate-900">
+            <h3 id="edit-list-modal-title" class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100">
               Edit List
             </h3>
-            <button type="button" class="text-slate-400 hover:text-slate-500" @click="close">
+            <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400" @click="close">
               <BaseIcon name="close" class="w-5 h-5" />
             </button>
           </div>
 
             <div>
-              <label for="list-name" class="block text-sm font-medium text-slate-700">Name</label>
+              <label for="list-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Name</label>
               <input
                 id="list-name"
                 v-model.trim="editForm.name"
                 type="text"
                 required
-                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
             </div>
 
@@ -35,15 +35,15 @@
                 id="list-public"
                 v-model="editForm.public"
                 type="checkbox"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded accent-ext-wf1"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800 rounded accent-ext-wf1"
               >
-              <label for="list-public" class="ml-2 block text-sm text-slate-900">
+              <label for="list-public" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
                 Public
               </label>
             </div>
 
             <div>
-              <label for="list-position" class="block text-sm font-medium text-slate-700">
+              <label for="list-position" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
                 List Position (optional)
               </label>
               <input
@@ -52,56 +52,56 @@
                 type="number"
                 min="0"
                 step="1"
-                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
             </div>
 
             <div>
-              <label for="list-description" class="block text-sm font-medium text-slate-700">
+              <label for="list-description" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
                 Description (optional)
               </label>
               <textarea
                 id="list-description"
                 v-model.trim="editForm.description"
                 rows="3"
-                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               ></textarea>
             </div>
 
             <div>
-              <label for="list-category" class="block text-sm font-medium text-slate-700">Category</label>
+              <label for="list-category" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Category</label>
               <input
                 id="list-category"
                 v-model.trim="editForm.category"
                 type="text"
-                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
             </div>
 
             <div>
-              <label for="list-rss" class="block text-sm font-medium text-slate-700">RssFeed url</label>
+              <label for="list-rss" class="block text-sm font-medium text-slate-700 dark:text-slate-200">RssFeed url</label>
               <input
                 id="list-rss"
                 v-model.trim="editForm.rssFeed"
                 type="text"
-                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
             </div>
 
             <div>
-              <label for="list-prefix" class="block text-sm font-medium text-slate-700">Subject Prefix</label>
+              <label for="list-prefix" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Subject Prefix</label>
               <input
                 id="list-prefix"
                 v-model.trim="editForm.subjectPrefix"
                 type="text"
-                class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
             </div>
 
-            <p v-if="editError" class="text-sm text-red-600">{{ editError }}</p>
+            <p v-if="editError" class="text-sm text-red-600 dark:text-red-400">{{ editError }}</p>
         </div>
 
-        <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
           <button
             type="submit"
             :disabled="updatingList || !editForm.name.trim()"
@@ -111,7 +111,7 @@
           </button>
           <button
             type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
             @click="close"
           >
             Cancel

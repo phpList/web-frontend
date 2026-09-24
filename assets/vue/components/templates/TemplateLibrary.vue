@@ -1,10 +1,10 @@
 <template>
-  <section class="bg-white rounded-xl border border-slate-200 shadow-sm">
-    <header class="p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <h2 class="text-xl font-bold text-slate-900">Templates</h2>
+  <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+    <header class="p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Templates</h2>
       <div class="flex gap-2">
         <button
-          class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors"
           type="button"
           @click="openDefaultTemplateModal"
         >
@@ -25,15 +25,15 @@
     </header>
 
     <div class="p-6">
-      <div v-if="isLoading" class="py-12 text-center text-slate-500">
+      <div v-if="isLoading" class="py-12 text-center text-slate-500 dark:text-slate-400">
         Loading templates...
       </div>
 
-      <div v-else-if="errorMessage" class="py-12 text-center text-red-600">
+      <div v-else-if="errorMessage" class="py-12 text-center text-red-600 dark:text-red-400">
         {{ errorMessage }}
       </div>
 
-      <div v-else-if="templates.length === 0" class="py-12 text-center text-slate-500">
+      <div v-else-if="templates.length === 0" class="py-12 text-center text-slate-500 dark:text-slate-400">
         No templates found.
       </div>
 
@@ -41,9 +41,9 @@
         <article
           v-for="templateItem in templates"
           :key="templateItem.id"
-          class="border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all"
+          class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden hover:shadow-lg transition-all"
         >
-          <div class="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-6xl">
+          <div class="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-6xl">
             <img
               :src="getTemplateImage(templateItem)"
               :alt="`T#${templateItem.id}`"
@@ -52,19 +52,19 @@
           </div>
 
           <div class="p-4">
-            <h3 class="font-semibold text-slate-900 mb-1">{{ templateItem.title || `Template #${templateItem.id}` }}</h3>
-            <p class="text-xs text-slate-500 mb-3">
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">{{ templateItem.title || `Template #${templateItem.id}` }}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
               {{ getTemplateType(templateItem) }}
             </p>
 
-            <div class="flex justify-between items-center text-xs text-slate-400">
+            <div class="flex justify-between items-center text-xs text-slate-400 dark:text-slate-500">
               <span>ID {{ templateItem.id }}</span>
               <span>Order {{ templateItem.listOrder ?? '-' }}</span>
             </div>
 
             <div class="mt-4 grid grid-cols-2 gap-2">
               <button
-                  class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+                  class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                   type="button"
                   @click="goToEditTemplate(templateItem.id)"
               >
@@ -73,7 +73,7 @@
               </button>
 
               <button
-                class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                 type="button"
                 aria-label="Delete template"
                 @click="deleteTemplate(templateItem.id)"
@@ -102,27 +102,27 @@
     ></div>
 
     <form class="w-full sm:max-w-lg z-10" @submit.prevent="submitCreateFromDefault">
-      <div class="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all">
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all">
+        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 space-y-4">
           <div class="flex justify-between items-center">
-            <h3 id="default-template-modal-title" class="text-lg leading-6 font-medium text-slate-900">
+            <h3 id="default-template-modal-title" class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100">
               Add Template From Default
             </h3>
-            <button type="button" class="text-slate-400 hover:text-slate-500" @click="closeDefaultTemplateModal">
+            <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400" @click="closeDefaultTemplateModal">
               <BaseIcon name="close" class="w-5 h-5" />
             </button>
           </div>
 
-          <div v-if="isDefaultTemplatesLoading" class="text-sm text-slate-500">
+          <div v-if="isDefaultTemplatesLoading" class="text-sm text-slate-500 dark:text-slate-400">
             Loading default templates...
           </div>
 
           <div v-else class="space-y-2">
-            <label for="default-template-select" class="block text-sm font-medium text-slate-700">Default template</label>
+            <label for="default-template-select" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Default template</label>
             <select
               id="default-template-select"
               v-model="selectedDefaultTemplateKey"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+              class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
               :disabled="isCreatingFromDefault || defaultTemplates.length === 0"
             >
               <option value="">Select a default template</option>
@@ -137,21 +137,21 @@
 
             <p
               v-if="selectedDefaultTemplateDescription"
-              class="text-xs text-slate-500"
+              class="text-xs text-slate-500 dark:text-slate-400"
             >
               {{ selectedDefaultTemplateDescription }}
             </p>
           </div>
 
-          <p v-if="defaultTemplatesError" class="text-sm text-red-600">
+          <p v-if="defaultTemplatesError" class="text-sm text-red-600 dark:text-red-400">
             {{ defaultTemplatesError }}
           </p>
-          <p v-if="createFromDefaultError" class="text-sm text-red-600">
+          <p v-if="createFromDefaultError" class="text-sm text-red-600 dark:text-red-400">
             {{ createFromDefaultError }}
           </p>
         </div>
 
-        <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
           <button
             type="submit"
             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none sm:w-auto sm:text-sm disabled:opacity-50"
@@ -161,7 +161,7 @@
           </button>
           <button
             type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
             :disabled="isCreatingFromDefault"
             @click="closeDefaultTemplateModal"
           >

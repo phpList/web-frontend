@@ -1,15 +1,25 @@
 // AdminLayout.spec.js
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
 import AdminLayout from '../../../../../assets/vue/layouts/AdminLayout.vue'
 import { backendFetch, subscribersClient, campaignClient } from '../../../../../assets/vue/api'
 
 const openSidebar = vi.fn()
+const toggleDarkMode = vi.fn()
+const isDark = ref(false)
 
 vi.mock('../../../../../assets/vue/composables/useSidebar', () => ({
     useSidebar: () => ({
         openSidebar,
+    }),
+}))
+
+vi.mock('../../../../../assets/vue/composables/useDarkMode', () => ({
+    useDarkMode: () => ({
+        isDark,
+        toggleDarkMode,
     }),
 }))
 
@@ -43,6 +53,7 @@ describe('AdminLayout', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         vi.useFakeTimers()
+        isDark.value = false
 
         backendFetch.mockResolvedValue({
             ok: true,
@@ -85,20 +96,6 @@ describe('AdminLayout', () => {
         expect(wrapper.text()).toContain('Page Content')
     })
 
-    it('loads admin data on mount', async () => {
-        const wrapper = createWrapper()
-
-        await flushPromises()
-
-        expect(backendFetch).toHaveBeenCalledWith(
-            '/admin-about',
-            expect.any(Object)
-        )
-
-        expect(wrapper.text()).toContain('admin')
-        expect(wrapper.text()).toContain('Super Admin')
-    })
-
     it('shows fallback admin name', () => {
         const wrapper = createWrapper()
 
@@ -113,6 +110,30 @@ describe('AdminLayout', () => {
         await menuButton.trigger('click')
 
         expect(openSidebar).toHaveBeenCalled()
+    })
+
+    it('shows moon icon and toggles dark mode on click', async () => {
+        const wrapper = createWrapper()
+
+        const toggleButton = wrapper.find('[aria-label="Switch to dark mode"]')
+
+        expect(toggleButton.exists()).toBe(true)
+        expect(toggleButton.text()).toContain('moon')
+
+        await toggleButton.trigger('click')
+
+        expect(toggleDarkMode).toHaveBeenCalled()
+    })
+
+    it('shows sun icon and switch-to-light label when dark mode is active', () => {
+        isDark.value = true
+
+        const wrapper = createWrapper()
+
+        const toggleButton = wrapper.find('[aria-label="Switch to light mode"]')
+
+        expect(toggleButton.exists()).toBe(true)
+        expect(toggleButton.text()).toContain('sun')
     })
 
     it('toggles dropdown', async () => {

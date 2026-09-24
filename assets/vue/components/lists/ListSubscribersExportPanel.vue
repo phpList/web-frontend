@@ -1,21 +1,21 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
     <div class="p-4 sm:p-6 space-y-5">
       <!-- Date type -->
       <div class="space-y-2">
-        <p class="text-sm font-medium text-slate-800">What date needs to be used:</p>
+        <p class="text-sm font-medium text-slate-800 dark:text-slate-100">What date needs to be used:</p>
 
         <div class="flex flex-wrap gap-x-5 gap-y-2">
           <label
               v-for="option in dateTypeOptions"
               :key="option.value"
-              class="inline-flex items-center gap-2 text-sm text-slate-700 cursor-pointer mr-2"
+              class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer mr-2"
           >
             <input
                 v-model="form.dateType"
                 type="radio"
                 name="list-export-date-type"
-                class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf1"
+                class="h-4 w-4 border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-ext-wf1 focus:ring-ext-wf1"
                 :value="option.value"
             >
             <span>{{ option.label }}</span>
@@ -26,19 +26,19 @@
       <!-- Date range -->
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-3 items-end">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1" for="list-export-date-from">
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1" for="list-export-date-from">
             Date From
           </label>
           <input
               id="list-export-date-from"
               v-model="form.dateFrom"
               type="date"
-              class="block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
+              class="block w-full rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
               :disabled="usesAnyDate"
           >
         </div>
 
-        <div class="hidden lg:flex items-center justify-center pb-2 text-slate-400">
+        <div class="hidden lg:flex items-center justify-center pb-2 text-slate-400 dark:text-slate-500">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path
                 fill-rule="evenodd"
@@ -49,14 +49,14 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1" for="list-export-date-to">
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1" for="list-export-date-to">
             Date To
           </label>
           <input
               id="list-export-date-to"
               v-model="form.dateTo"
               type="date"
-              class="block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
+              class="block w-full rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
               :disabled="usesAnyDate"
           >
         </div>
@@ -65,13 +65,13 @@
       <!-- Columns -->
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <p class="text-sm font-medium text-slate-800">Columns</p>
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-100">Columns</p>
 
-          <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-900 cursor-pointer">
+          <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100 cursor-pointer">
             <input
                 ref="selectAllColumnsCheckbox"
                 type="checkbox"
-                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
+                class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                 :checked="allColumnsSelected"
                 @change="toggleAllColumns"
             >
@@ -83,12 +83,12 @@
           <label
               v-for="column in columnOptions"
               :key="column.value"
-              class="inline-flex items-center gap-2 text-sm text-slate-700 cursor-pointer min-w-0"
+              class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer min-w-0"
           >
             <input
                 v-model="form.columns"
                 type="checkbox"
-                class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 shrink-0 accent-ext-wf1"
+                class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-ext-wf1 focus:ring-ext-wf1 shrink-0 accent-ext-wf1"
                 :value="column.value"
             >
             <span class="truncate">{{ column.label }}</span>
@@ -96,11 +96,11 @@
         </div>
       </div>
 
-      <p v-if="exportError" class="text-sm text-red-600">{{ exportError }}</p>
+      <p v-if="exportError" class="text-sm text-red-600 dark:text-red-400">{{ exportError }}</p>
     </div>
 
     <!-- Footer -->
-    <div class="px-4 sm:px-6 py-4 border-t border-slate-200 flex items-center justify-between gap-3">
+    <div class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
       <button
           type="button"
           class="inline-flex items-center justify-center rounded-md border border-transparent bg-ext-wf1 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-ext-wf3 disabled:opacity-50 disabled:cursor-not-allowed"

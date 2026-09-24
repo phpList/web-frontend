@@ -1,13 +1,13 @@
 <template>
   <section class="space-y-6">
-    <header class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <h1 class="text-xl font-bold text-slate-900">
+    <header class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100">
         {{ isEditMode ? 'Edit Subscribe Page' : 'Create Subscribe Page' }}
       </h1>
       <div class="flex gap-2">
         <button
           type="button"
-          class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg transition-colors"
           @click="goBack"
         >
           Back
@@ -23,19 +23,19 @@
       </div>
     </header>
 
-    <div v-if="isLoading" class="bg-white rounded-xl border border-slate-200 shadow-sm p-8 text-center text-slate-500">
+    <div v-if="isLoading" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 text-center text-slate-500 dark:text-slate-400">
       Loading public page data...
     </div>
 
-    <div v-else class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div class="border-b border-slate-200 px-4 pt-4 sm:px-6 sm:pt-6">
+    <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div class="border-b border-slate-200 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
         <div class="grid grid-cols-3 gap-2 sm:grid-cols-5">
           <button
             v-for="step in steps"
             :key="step.id"
             type="button"
             class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
-            :class="currentStep === step.id ? 'bg-ext-wf1 text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300'"
+            :class="currentStep === step.id ? 'bg-ext-wf1 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'"
             @click="goToStep(step.id)"
           >
             <span class="block text-base leading-none">{{ step.id }}</span>
@@ -46,71 +46,71 @@
 
       <div class="p-4 sm:p-6 space-y-5">
         <section v-if="currentStep === 1" class="space-y-4">
-          <h2 class="text-lg font-semibold text-slate-900">General settings</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">General settings</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="space-y-1 md:col-span-2">
-              <span class="text-sm font-medium text-slate-700">Title</span>
-              <input v-model="form.title" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Title</span>
+              <input v-model="form.title" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Language file to use</span>
-              <select v-model="form.languageFile" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Language file to use</span>
+              <select v-model="form.languageFile" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
                 <option v-for="option in languageOptions" :key="option" :value="option">{{ option }}</option>
               </select>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Text for button</span>
-              <input v-model="form.button" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Text for button</span>
+              <input v-model="form.button" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
             </label>
 
             <label class="space-y-1 md:col-span-2">
-              <span class="text-sm font-medium text-slate-700">Intro text</span>
-              <textarea v-model="form.introText" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Intro text</span>
+              <textarea v-model="form.introText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Header text</span>
-              <textarea v-model="form.headerText" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Header text</span>
+              <textarea v-model="form.headerText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Footer text</span>
-              <textarea v-model="form.footerText" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Footer text</span>
+              <textarea v-model="form.footerText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Thank you page text</span>
-              <textarea v-model="form.thankYouPageText" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Thank you page text</span>
+              <textarea v-model="form.thankYouPageText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700">Text for successful AJAX subscription</span>
-              <textarea v-model="form.ajaxSuccessText" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Text for successful AJAX subscription</span>
+              <textarea v-model="form.ajaxSuccessText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
           </div>
         </section>
 
         <section v-else-if="currentStep === 2" class="space-y-4">
-          <h2 class="text-lg font-semibold text-slate-900">Select the lists to offer</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Select the lists to offer</h2>
           <fieldset class="space-y-2">
-            <legend class="text-sm font-medium text-slate-700">Display list categories</legend>
-            <label class="flex items-center gap-2 text-sm text-slate-700">
-              <input v-model="form.displayListCategories" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+            <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">Display list categories</legend>
+            <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+              <input v-model="form.displayListCategories" type="radio" value="0" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
               Do not show list categories
             </label>
-            <label class="flex items-center gap-2 text-sm text-slate-700">
-              <input v-model="form.displayListCategories" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+            <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+              <input v-model="form.displayListCategories" type="radio" value="1" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
               Display lists in labelled categories
             </label>
           </fieldset>
 
-          <label class="flex items-center gap-2 text-sm text-slate-700">
+          <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
             <input
               :checked="form.noPreselectAnyList"
               type="checkbox"
-              class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+              class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
               @change="toggleNoPreselectAnyList($event)"
             >
             Do not preselect any list
@@ -120,23 +120,23 @@
             <article
               v-for="list in publicLists"
               :key="list.id"
-              class="rounded-lg border border-slate-200 p-3"
+              class="rounded-lg border border-slate-200 dark:border-slate-700 p-3"
             >
               <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <label class="flex items-center gap-2 text-sm font-medium text-slate-800">
+                <label class="flex items-center gap-2 text-sm font-medium text-slate-800 dark:text-slate-100">
                   <input
                     :checked="form.selectedListIds.includes(list.id)"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                     @change="toggleListSelection(list.id, $event)"
                   >
                   {{ list.name || `List #${list.id}` }}
                 </label>
-                <label class="flex items-center gap-2 text-sm text-slate-700">
+                <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     :checked="form.preselectedListId === list.id"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                     :disabled="!form.selectedListIds.includes(list.id)"
                     @change="toggleListPreselection(list.id, $event)"
                   >
@@ -148,62 +148,62 @@
         </section>
 
         <section v-else-if="currentStep === 3" class="space-y-4">
-          <h2 class="text-lg font-semibold text-slate-900">Select the attributes to use</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Select the attributes to use</h2>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:auto-rows-fr">
             <article
               v-for="attribute in attributes"
               :key="attribute.id"
-              class="h-full rounded-lg border border-slate-200 p-4"
+              class="h-full rounded-lg border border-slate-200 dark:border-slate-700 p-4"
             >
               <div class="flex h-full flex-col gap-3">
                 <div class="flex items-start justify-between gap-3">
-                  <p class="text-sm font-semibold text-slate-800">Attribute: {{ attribute.id }}</p>
+                  <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">Attribute: {{ attribute.id }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div class="min-w-0">
-                    <p class="text-xs text-slate-500">Name</p>
-                    <p class="truncate text-sm text-slate-800" :title="attribute.name">{{ attribute.name }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Name</p>
+                    <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.name">{{ attribute.name }}</p>
                   </div>
                   <div class="min-w-0">
-                    <p class="text-xs text-slate-500">Type</p>
-                    <p class="truncate text-sm text-slate-800" :title="attribute.type">{{ attribute.type }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Type</p>
+                    <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.type">{{ attribute.type }}</p>
                   </div>
                   <label class="space-y-1">
-                    <span class="text-sm font-medium text-slate-700">Default value</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Default value</span>
                     <input
                       :value="attributeState(attribute.id).defaultValue"
                       type="text"
-                      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                      class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
                       @input="updateAttributeState(attribute.id, 'defaultValue', $event.target.value)"
                     >
                   </label>
                   <label class="space-y-1">
-                    <span class="text-sm font-medium text-slate-700">Order of listing</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Order of listing</span>
                     <input
                       :value="attributeState(attribute.id).listOrder"
                       type="number"
                       min="0"
-                      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                      class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
                       @input="updateAttributeState(attribute.id, 'listOrder', $event.target.value)"
                     >
                   </label>
                 </div>
 
-                <label class="mt-auto flex items-center gap-2 pt-1 text-sm text-slate-700">
+                <label class="mt-auto flex items-center gap-2 pt-1 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     :checked="attributeState(attribute.id).required"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
                     @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
                   >
                   Is this attribute required?
                 </label>
-                <label class="flex items-center gap-2 text-sm text-slate-700">
+                <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     :checked="attributeState(attribute.id).use"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
                     @change="updateAttributeState(attribute.id, 'use', $event.target.checked)"
                   >
                   Use this attribute in the page
@@ -214,41 +214,41 @@
         </section>
 
         <section v-else-if="currentStep === 4" class="space-y-6">
-          <h2 class="text-lg font-semibold text-slate-900">Transaction messages</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Transaction messages</h2>
           <div class="grid gap-6 lg:grid-cols-3">
             <div class="space-y-3">
-              <h3 class="text-sm font-semibold text-slate-800">Message subscribers receive when they subscribe</h3>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Message subscribers receive when they subscribe</h3>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Subject</span>
-                <input v-model="form.subscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Subject</span>
+                <input v-model="form.subscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
               </label>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Message</span>
-                <textarea v-model="form.subscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
-              </label>
-            </div>
-
-            <div class="space-y-3">
-              <h3 class="text-sm font-semibold text-slate-800">Message they receive when they confirm their subscription</h3>
-              <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Subject</span>
-                <input v-model="form.confirmedSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
-              </label>
-              <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Message</span>
-                <textarea v-model="form.confirmedMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Message</span>
+                <textarea v-model="form.subscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
               </label>
             </div>
 
             <div class="space-y-3">
-              <h3 class="text-sm font-semibold text-slate-800">Content of the message they receive when they unsubscribe</h3>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Message they receive when they confirm their subscription</h3>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Subject</span>
-                <input v-model="form.unsubscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Subject</span>
+                <input v-model="form.confirmedSubject" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
               </label>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700">Message</span>
-                <textarea v-model="form.unsubscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Message</span>
+                <textarea v-model="form.confirmedMessage" rows="6" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
+              </label>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Content of the message they receive when they unsubscribe</h3>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Subject</span>
+                <input v-model="form.unsubscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+              </label>
+              <label class="space-y-1">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Message</span>
+                <textarea v-model="form.unsubscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
               </label>
             </div>
           </div>
@@ -257,50 +257,50 @@
         <section v-else class="space-y-4">
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700">HTML email choice</legend>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">HTML email choice</legend>
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Don't offer choice, default to text
               </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Don't offer choice, default to HTML
               </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Offer checkbox for text
               </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Offer checkbox for HTML
               </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Radio buttons, default to text
               </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Radio buttons, default to HTML
               </label>
             </fieldset>
 
             <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700">Display email address confirmation field</legend>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">Display email address confirmation field</legend>
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 Yes
               </label>
-              <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
+              <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
                 No
               </label>
             </fieldset>
           </div>
 
-          <h2 class="text-sm font-medium text-slate-700">Owner</h2>
+          <h2 class="text-sm font-medium text-slate-700 dark:text-slate-200">Owner</h2>
           <label class="space-y-1 block">
-            <span class="text-sm font-medium text-slate-700">Select admin</span>
-            <select v-model="form.ownerId" class="w-full md:max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Select admin</span>
+            <select v-model="form.ownerId" class="w-full md:max-w-md rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
               <option value="">No owner</option>
               <option v-for="admin in admins" :key="admin.id" :value="String(admin.id)">
                 {{ admin.loginName || admin.email || `Admin #${admin.id}` }}

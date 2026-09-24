@@ -4,14 +4,14 @@
         v-if="isOpen"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
     >
-      <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
-        <div class="border-b border-slate-200 px-6 py-4 flex justify-between items-center">
-          <h2 class="text-lg font-semibold">
+      <div class="w-full max-w-2xl rounded-xl bg-white dark:bg-slate-800 shadow-xl">
+        <div class="border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex justify-between items-center">
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Edit Subscriber Attribute
           </h2>
 
           <button
-              class="text-slate-500 hover:text-slate-800"
+              class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
               @click="close"
           >
             ✕
@@ -23,21 +23,21 @@
             @submit.prevent="save"
         >
           <div>
-            <label class="block mb-1">Name</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">Name</label>
 
             <input
                 v-model="form.name"
-                class="w-full rounded border border-slate-300 px-3 py-2"
+                class="w-full rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2"
                 required
             >
           </div>
 
           <div>
-            <label class="block mb-1">Type</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">Type</label>
 
             <select
                 v-model="form.type"
-                class="w-full rounded border border-slate-300 px-3 py-2"
+                class="w-full rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2"
             >
               <option
                   v-for="type in attributeTypes"
@@ -50,25 +50,25 @@
           </div>
 
           <div>
-            <label class="block mb-1">Order</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">Order</label>
 
             <input
                 v-model.number="form.order"
                 type="number"
-                class="w-full rounded border border-slate-300 px-3 py-2"
+                class="w-full rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2"
             >
           </div>
 
           <div>
-            <label class="block mb-1">Default value</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">Default value</label>
 
             <input
                 v-model="form.default_value"
-                class="w-full rounded border border-slate-300 px-3 py-2"
+                class="w-full rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2"
             >
           </div>
 
-          <label class="flex items-center gap-2">
+          <label class="flex items-center gap-2 text-slate-700 dark:text-slate-200">
             <input
                 v-model="form.required"
                 type="checkbox"
@@ -78,22 +78,22 @@
 
           <div v-if="supportsOptions">
             <div class="flex justify-between items-center mb-3">
-              <strong>Options</strong>
+              <strong class="text-slate-900 dark:text-slate-100">Options</strong>
 
               <button
                   type="button"
-                  class="rounded bg-slate-200 px-3 py-1"
+                  class="rounded bg-slate-200 dark:bg-slate-700 dark:text-slate-100 px-3 py-1"
                   @click="addOption"
               >
                 Add
               </button>
             </div>
 
-            <div class="max-h-64 overflow-y-auto space-y-2 pr-2 border rounded p-2 border-slate-300">
+            <div class="max-h-64 overflow-y-auto space-y-2 pr-2 border rounded p-2 border-slate-300 dark:border-slate-600">
               <div v-for="(option, index) in form.options" :key="index" class="flex gap-2">
-                <input v-model="option.name" class="flex-1 rounded border border-slate-300 px-3 py-2" placeholder="Option">
+                <input v-model="option.name" class="flex-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2" placeholder="Option">
 
-                <input v-model.number="option.list_order" type="number" class="w-24 rounded border border-slate-300 px-3 py-2">
+                <input v-model.number="option.list_order" type="number" class="w-24 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2">
 
                 <button type="button" class="rounded px-3 " @click="removeOption(index)">
                   <BaseIcon name="delete" class="w-4 h-4 cursor-pointer"/>
@@ -101,14 +101,14 @@
               </div>
             </div>
           </div>
-          <div v-if="error" class="text-red-600">
+          <div v-if="error" class="text-red-600 dark:text-red-400">
             {{ error }}
           </div>
 
           <div class="flex justify-end gap-3">
             <button
                 type="button"
-                class="rounded border px-4 py-2"
+                class="rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2"
                 @click="close"
             >
               Cancel

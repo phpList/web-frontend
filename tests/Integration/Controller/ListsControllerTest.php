@@ -10,6 +10,7 @@ use PhpList\WebFrontend\Controller\ListsController;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,7 +32,7 @@ class ListsControllerTest extends KernelTestCase
     public function testListsIndexRendersSpaForHtmlRequests(): void
     {
         self::bootKernel();
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $listClient = $this->createMock(ListClient::class);
         $listClient->expects(self::never())->method('getLists');
@@ -106,6 +107,7 @@ class ListsControllerTest extends KernelTestCase
         $session = new Session(new MockArraySessionStorage());
         $session->set('auth_token', 'integration-token');
         $request->setSession($session);
+        static::getContainer()->get(RequestStack::class)->push($request);
 
         return $request;
     }

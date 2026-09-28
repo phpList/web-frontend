@@ -5432,7 +5432,11 @@
                         "description": "emails of subscribers to delete from list.",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "format": "email"
+                            }
                         }
                     }
                 ],

@@ -1,4 +1,4 @@
-<!-- assets/vue/layouts/DashboardLayout.vue -->
+<!-- assets/vue/layouts/AdminLayout.vue -->
 <template>
   <div class="flex flex-col flex-1">
     <!-- Topbar -->

@@ -426,7 +426,8 @@ const refreshCurrentPage = async () => {
 const deleteEmailsFromCurrentList = async (emails) => {
   if (emails.length === 0) return
   // todo: check why subscription client delete is not working
-  await client.delete(`lists/${listId.value}/subscribers`, {emails})
+  await subscriptionClient.deleteSubscription({emails})
+  // await client.delete(`lists/${listId.value}/subscribers`, {emails})
 }
 
 const deleteSingleSubscriber = async (subscriber) => {

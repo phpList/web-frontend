@@ -62,10 +62,10 @@ class AuthController extends AbstractController
                 $request->getSession()->save();
 
                 return $this->redirectAfterLogin($redirectTarget);
-            } catch (Exception $e) {
-                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
+            } catch (Exception $e) {
+                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             }
         }
 

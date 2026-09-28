@@ -57,7 +57,20 @@ const chartAction = useAsyncAction(
       ],
     }
   },
-  { once: true, errorMessage: 'Unable to load campaign performance.', logLabel: 'Failed to load campaign performance:' }
+  {
+    once: true,
+    // Starts true (unlike the other two actions): PerformanceChartCard only mounts the
+    // <apexchart> child once `loading` is false, and vue3-apexcharts' own mount is async
+    // (awaits a tick before calling ApexCharts.render()). If `loading` started false, the
+    // chart would mount on first paint, then immediately unmount when this run() flips
+    // loading to true on DashboardView's onMounted - tearing down its DOM element while
+    // vue3-apexcharts' deferred render() is still in flight, which throws "Element not
+    // found" as an unhandled rejection. Starting true means <apexchart> is never created
+    // until data has actually loaded, so there is no mount/unmount race.
+    initialLoading: true,
+    errorMessage: 'Unable to load campaign performance.',
+    logLabel: 'Failed to load campaign performance:',
+  }
 )
 
 const load = () => {

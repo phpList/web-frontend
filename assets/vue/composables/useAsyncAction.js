@@ -6,18 +6,23 @@ export function useAsyncAction(action, options = {}) {
     errorMessage = 'Something went wrong.',
     logLabel,
     onError,
+    initialLoading = false,
   } = options
 
-  const loading = ref(false)
+  const loading = ref(initialLoading)
   const error = ref('')
   const loaded = ref(false)
   const settled = ref(false)
+  // Plain (non-reactive) re-entry guard, deliberately separate from `loading` - `loading`'s
+  // initial value is caller-configurable display state, not "a run is already in flight".
+  let inFlight = false
 
   const run = async (...args) => {
-    if (loading.value || (once && loaded.value)) {
+    if (inFlight || (once && loaded.value)) {
       return undefined
     }
 
+    inFlight = true
     loading.value = true
     error.value = ''
 
@@ -33,6 +38,7 @@ export function useAsyncAction(action, options = {}) {
       onError?.(err)
       return undefined
     } finally {
+      inFlight = false
       loading.value = false
       settled.value = true
     }

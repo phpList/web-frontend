@@ -257,6 +257,7 @@ import ListSubscribersExportPanel from '../components/lists/ListSubscribersExpor
 import BaseIcon from '../components/base/BaseIcon.vue'
 import BaseBadge from '../components/base/BaseBadge.vue'
 import client, {subscriptionClient} from '../api'
+import {useAsyncAction} from '../composables/useAsyncAction'
 
 const route = useRoute()
 const listId = computed(() => Number(route.params.listId))
@@ -265,9 +266,7 @@ const listName = ref(typeof route.query.listName === 'string' ? route.query.list
 const subscribers = ref([])
 const total = ref(0)
 const pageSize = ref(10)
-const loading = ref(false)
 const actionLoading = ref(false)
-const errorMessage = ref('')
 const actionError = ref('')
 const actionMessage = ref('')
 const nextCursor = ref(null)
@@ -387,6 +386,29 @@ const loadAvailableLists = async () => {
   availableLists.value = lists
 }
 
+const fetchSubscribersAction = useAsyncAction(
+  async (cursor = null) => {
+    const response = await subscriptionClient.getSubscribersOfList(listId.value, cursor, pageSize.value)
+    subscribers.value = Array.isArray(response.items) ? response.items : []
+    total.value = response.pagination?.total ?? subscribers.value.length
+    nextCursor.value = response.pagination?.nextCursor ?? null
+    clearSelection()
+    return true
+  },
+  {
+    errorMessage: 'Failed to load subscribers for this list.',
+    logLabel: 'Failed to load list subscribers:',
+    onError: () => {
+      subscribers.value = []
+      nextCursor.value = null
+      clearSelection()
+    },
+  }
+)
+
+const loading = fetchSubscribersAction.loading
+const errorMessage = fetchSubscribersAction.error
+
 const fetchSubscribers = async (cursor = null) => {
   if (!Number.isInteger(listId.value) || listId.value <= 0) {
     errorMessage.value = 'Invalid list ID.'
@@ -394,26 +416,7 @@ const fetchSubscribers = async (cursor = null) => {
     return
   }
 
-  loading.value = true
-  errorMessage.value = ''
-
-  try {
-    const response = await subscriptionClient.getSubscribersOfList(listId.value, cursor, pageSize.value)
-    subscribers.value = Array.isArray(response.items) ? response.items : []
-    total.value = response.pagination?.total ?? subscribers.value.length
-    nextCursor.value = response.pagination?.nextCursor ?? null
-    clearSelection()
-    return true
-  } catch (error) {
-    console.error('Failed to load list subscribers:', error)
-    errorMessage.value = 'Failed to load subscribers for this list.'
-    subscribers.value = []
-    nextCursor.value = null
-    clearSelection()
-    return false
-  } finally {
-    loading.value = false
-  }
+  return fetchSubscribersAction.run(cursor)
 }
 
 const refreshCurrentPage = async () => {

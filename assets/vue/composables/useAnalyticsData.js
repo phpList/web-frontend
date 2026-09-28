@@ -1,25 +1,15 @@
 import { ref } from 'vue'
 import { statisticsClient } from '../api'
+import { useAsyncAction } from './useAsyncAction'
 
-const isLoading = ref(true)
-const hasLoaded = ref(false)
-const errorMessage = ref('')
 const campaignStatistics = ref([])
 const viewOpens = ref([])
 const topDomains = ref([])
 const domainConfirmation = ref(null)
 const topLocalParts = ref([])
-const loaded = ref(false)
 
-const loadAnalytics = async () => {
-  if (loaded.value) {
-    return
-  }
-
-  isLoading.value = true
-  errorMessage.value = ''
-
-  try {
+const analyticsAction = useAsyncAction(
+  async () => {
     const [
       campaignResponse,
       viewOpensResponse,
@@ -39,26 +29,20 @@ const loadAnalytics = async () => {
     topDomains.value = topDomainsResponse?.items ?? []
     domainConfirmation.value = domainConfirmationResponse ?? null
     topLocalParts.value = topLocalPartsResponse?.items ?? []
-    loaded.value = true
-  } catch (error) {
-    errorMessage.value = 'Failed to load analytics.'
-    console.error('Failed to load analytics:', error)
-  } finally {
-    isLoading.value = false
-    hasLoaded.value = true
-  }
-}
+  },
+  { once: true, errorMessage: 'Failed to load analytics.', logLabel: 'Failed to load analytics:' }
+)
 
 export function useAnalyticsData() {
   return {
-    isLoading,
-    hasLoaded,
-    errorMessage,
+    isLoading: analyticsAction.loading,
+    hasLoaded: analyticsAction.settled,
+    errorMessage: analyticsAction.error,
     campaignStatistics,
     viewOpens,
     topDomains,
     domainConfirmation,
     topLocalParts,
-    loadAnalytics,
+    loadAnalytics: analyticsAction.run,
   }
 }

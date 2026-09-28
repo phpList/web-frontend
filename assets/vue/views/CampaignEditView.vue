@@ -396,6 +396,7 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
 import {campaignClient, fetchAllLists, listMessagesClient, templateClient} from '../api'
 import {useApiValidationErrors} from '../composables/useApiValidationErrors'
+import {useAsyncAction} from '../composables/useAsyncAction'
 
 const route = useRoute()
 const router = useRouter()
@@ -414,8 +415,6 @@ const isCreateMode = computed(() => route.name === 'campaign-create')
 const activeCampaignId = computed(() => Number(campaign.value?.id) || campaignIdFromRoute.value)
 const pageTitle = computed(() => isCreateMode.value ? 'Create Campaign' : `Edit Campaign #${campaignIdFromRoute.value}`)
 const currentStep = ref(1)
-const isLoading = ref(true)
-const loadError = ref('')
 const isSaving = ref(false)
 const isSendingTest = ref(false)
 const isQueueing = ref(false)
@@ -587,11 +586,8 @@ const fillForm = (campaignValue) => {
   }
 }
 
-const loadCampaignData = async () => {
-  isLoading.value = true
-  loadError.value = ''
-
-  try {
+const loadCampaignDataAction = useAsyncAction(
+  async () => {
     if (isCreateMode.value) {
       const mailingListsResponse = await fetchAllLists()
 
@@ -632,13 +628,17 @@ const loadCampaignData = async () => {
 
     associatedListIds.value = linkedIds
     selectedListIds.value = [...linkedIds]
-  } catch (error) {
-    console.error('Failed to load campaign data for editing:', error)
-    loadError.value = error?.message || 'Failed to load campaign data.'
-  } finally {
-    isLoading.value = false
+  },
+  {
+    errorMessage: (error) => error?.message || 'Failed to load campaign data.',
+    logLabel: 'Failed to load campaign data for editing:',
   }
-}
+)
+
+const isLoading = loadCampaignDataAction.loading
+const loadError = loadCampaignDataAction.error
+
+const loadCampaignData = () => loadCampaignDataAction.run()
 
 const buildCampaignPayload = () => {
   const currentCampaign = campaign.value

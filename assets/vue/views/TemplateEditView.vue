@@ -163,12 +163,11 @@ import CkEditorField from '../components/base/CkEditorField.vue'
 import { templateClient } from '../api'
 import { Requests } from "@tatevikgr/rest-api-client";
 import { useApiValidationErrors } from '../composables/useApiValidationErrors'
+import { useAsyncAction } from '../composables/useAsyncAction'
 
 const route = useRoute()
 const router = useRouter()
 
-const isLoading = ref(false)
-const loadError = ref('')
 const isSaving = ref(false)
 const saveError = ref('')
 const saveErrors = ref([])
@@ -195,6 +194,23 @@ const saveButtonLabel = computed(() => {
   return isCreateMode.value ? 'Create' : 'Save'
 })
 
+const loadTemplateAction = useAsyncAction(
+  async () => {
+    const template = await templateClient.getTemplate(templateId.value)
+    form.value.title = template?.title || ''
+    form.value.listOrder = template?.listOrder !== null && template?.listOrder !== undefined
+      ? String(template.listOrder)
+      : ''
+    form.value.content = template?.content || ''
+    form.value.text = template?.text || ''
+    form.value.file = null
+  },
+  { errorMessage: 'Failed to load template.', logLabel: 'Failed to load template:' }
+)
+
+const isLoading = loadTemplateAction.loading
+const loadError = loadTemplateAction.error
+
 const loadTemplate = async () => {
   if (isCreateMode.value) {
     form.value.title = ''
@@ -211,24 +227,7 @@ const loadTemplate = async () => {
     return
   }
 
-  isLoading.value = true
-  loadError.value = ''
-
-  try {
-    const template = await templateClient.getTemplate(templateId.value)
-    form.value.title = template?.title || ''
-    form.value.listOrder = template?.listOrder !== null && template?.listOrder !== undefined
-      ? String(template.listOrder)
-      : ''
-    form.value.content = template?.content || ''
-    form.value.text = template?.text || ''
-    form.value.file = null
-  } catch (error) {
-    console.error('Failed to load template:', error)
-    loadError.value = 'Failed to load template.'
-  } finally {
-    isLoading.value = false
-  }
+  await loadTemplateAction.run()
 }
 
 const populateTextFromContent = () => {

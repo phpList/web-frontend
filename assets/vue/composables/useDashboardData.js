@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { statisticsClient } from '../api'
+import { useAsyncAction } from './useAsyncAction'
 
 const defaultChart = () => ({
   labels: [],
@@ -10,19 +11,8 @@ const defaultChart = () => ({
 })
 
 const summary = ref(null)
-const summaryLoading = ref(false)
-const summaryError = ref('')
-const summaryLoaded = ref(false)
-
 const recentCampaigns = ref([])
-const recentCampaignsLoading = ref(false)
-const recentCampaignsError = ref('')
-const recentCampaignsLoaded = ref(false)
-
 const chart = ref(defaultChart())
-const chartLoading = ref(false)
-const chartError = ref('')
-const chartLoaded = ref(false)
 
 const formatChartLabel = (dateValue) => {
   if (!dateValue) {
@@ -40,54 +30,23 @@ const formatChartLabel = (dateValue) => {
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' }).format(date)
 }
 
-const loadSummary = async () => {
-  if (summaryLoaded.value || summaryLoading.value) {
-    return
-  }
-
-  summaryLoading.value = true
-  summaryError.value = ''
-
-  try {
+const summaryAction = useAsyncAction(
+  async () => {
     summary.value = await statisticsClient.getDashboardSummary()
-    summaryLoaded.value = true
-  } catch (err) {
-    summaryError.value = 'Unable to load dashboard summary.'
-    console.error('Failed to load dashboard summary:', err)
-  } finally {
-    summaryLoading.value = false
-  }
-}
+  },
+  { once: true, errorMessage: 'Unable to load dashboard summary.', logLabel: 'Failed to load dashboard summary:' }
+)
 
-const loadRecentCampaigns = async () => {
-  if (recentCampaignsLoaded.value || recentCampaignsLoading.value) {
-    return
-  }
-
-  recentCampaignsLoading.value = true
-  recentCampaignsError.value = ''
-
-  try {
+const recentCampaignsAction = useAsyncAction(
+  async () => {
     const response = await statisticsClient.getRecentCampaigns()
     recentCampaigns.value = response?.campaigns ?? []
-    recentCampaignsLoaded.value = true
-  } catch (err) {
-    recentCampaignsError.value = 'Unable to load recent campaigns.'
-    console.error('Failed to load recent campaigns:', err)
-  } finally {
-    recentCampaignsLoading.value = false
-  }
-}
+  },
+  { once: true, errorMessage: 'Unable to load recent campaigns.', logLabel: 'Failed to load recent campaigns:' }
+)
 
-const loadChart = async () => {
-  if (chartLoaded.value || chartLoading.value) {
-    return
-  }
-
-  chartLoading.value = true
-  chartError.value = ''
-
-  try {
+const chartAction = useAsyncAction(
+  async () => {
     const response = await statisticsClient.getCampaignPerformance()
     const points = response?.points ?? []
     chart.value = {
@@ -97,32 +56,27 @@ const loadChart = async () => {
         { name: 'Clicks', data: points.map((point) => point.clicks) },
       ],
     }
-    chartLoaded.value = true
-  } catch (err) {
-    chartError.value = 'Unable to load campaign performance.'
-    console.error('Failed to load campaign performance:', err)
-  } finally {
-    chartLoading.value = false
-  }
-}
+  },
+  { once: true, errorMessage: 'Unable to load campaign performance.', logLabel: 'Failed to load campaign performance:' }
+)
 
 const load = () => {
-  loadSummary()
-  loadRecentCampaigns()
-  loadChart()
+  summaryAction.run()
+  recentCampaignsAction.run()
+  chartAction.run()
 }
 
 export function useDashboardData() {
   return {
     summary,
-    summaryLoading,
-    summaryError,
+    summaryLoading: summaryAction.loading,
+    summaryError: summaryAction.error,
     recentCampaigns,
-    recentCampaignsLoading,
-    recentCampaignsError,
+    recentCampaignsLoading: recentCampaignsAction.loading,
+    recentCampaignsError: recentCampaignsAction.error,
     chart,
-    chartLoading,
-    chartError,
+    chartLoading: chartAction.loading,
+    chartError: chartAction.error,
     load,
   }
 }

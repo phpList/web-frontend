@@ -17,12 +17,12 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
         Loading template...
       </div>
 
-      <div v-else-if="loadError" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
-        {{ loadError }}
+      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+        {{ error }}
       </div>
 
       <section v-else class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
@@ -208,8 +208,8 @@ const loadTemplateAction = useAsyncAction(
   { errorMessage: 'Failed to load template.', logLabel: 'Failed to load template:' }
 )
 
-const isLoading = loadTemplateAction.loading
-const loadError = loadTemplateAction.error
+const loading = loadTemplateAction.loading
+const error = loadTemplateAction.error
 
 const loadTemplate = async () => {
   if (isCreateMode.value) {
@@ -218,12 +218,12 @@ const loadTemplate = async () => {
     form.value.content = ''
     form.value.text = ''
     form.value.file = null
-    loadError.value = ''
+    error.value = ''
     return
   }
 
   if (!Number.isFinite(templateId.value) || templateId.value <= 0) {
-    loadError.value = 'Template ID is invalid.'
+    error.value = 'Template ID is invalid.'
     return
   }
 

@@ -2,11 +2,11 @@
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
       <div
-        v-if="errorMessage"
+        v-if="error"
         class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
         role="alert"
       >
-        {{ errorMessage }}
+        {{ error }}
       </div>
 
       <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -42,7 +42,7 @@
             </p>
           </header>
 
-          <div v-if="isLoading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+          <div v-if="loading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
             Loading analytics...
           </div>
 
@@ -288,9 +288,9 @@ import { useAnalyticsData } from '../composables/useAnalyticsData'
 const { isDark } = useDarkMode()
 
 const {
-  isLoading,
+  loading,
   hasLoaded,
-  errorMessage,
+  error,
   campaignStatistics,
   viewOpens,
   topDomains,

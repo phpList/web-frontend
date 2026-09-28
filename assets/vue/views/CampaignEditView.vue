@@ -17,12 +17,12 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
         Loading campaign...
       </div>
 
-      <div v-else-if="loadError" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
-        {{ loadError }}
+      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+        {{ error }}
       </div>
 
       <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
@@ -607,7 +607,7 @@ const loadCampaignDataAction = useAsyncAction(
     }
 
     if (!Number.isFinite(campaignIdFromRoute.value) || campaignIdFromRoute.value <= 0) {
-      loadError.value = 'Invalid campaign ID.'
+      error.value = 'Invalid campaign ID.'
       return
     }
 
@@ -635,8 +635,8 @@ const loadCampaignDataAction = useAsyncAction(
   }
 )
 
-const isLoading = loadCampaignDataAction.loading
-const loadError = loadCampaignDataAction.error
+const loading = loadCampaignDataAction.loading
+const error = loadCampaignDataAction.error
 
 const loadCampaignData = () => loadCampaignDataAction.run()
 

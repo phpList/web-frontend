@@ -19,8 +19,8 @@
 
     <BaseDataTable
         :items="paginatedCampaigns"
-        :is-loading="isLoading"
-        :load-error="errorMessage"
+        :is-loading="loading"
+        :load-error="error"
         loading-message="Loading campaigns..."
         empty-message="No campaigns for this filter."
         :colspan="showStatistics ? 6 : 5"
@@ -335,8 +335,8 @@ const {
   currentPage,
   rawItems: rawCampaigns,
   total: totalForFilter,
-  isLoading,
-  errorMessage,
+  loading,
+  error,
   canGoPrevious,
   canGoNext,
   rangeStart,

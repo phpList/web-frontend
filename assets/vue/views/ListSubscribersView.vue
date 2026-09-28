@@ -115,8 +115,8 @@
               <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading...</td>
             </tr>
 
-            <tr v-else-if="errorMessage">
-              <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
+            <tr v-else-if="error">
+              <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ error }}</td>
             </tr>
 
             <tr
@@ -154,7 +154,7 @@
               </td>
             </tr>
 
-            <tr v-if="!loading && !errorMessage && filteredSubscribers.length === 0">
+            <tr v-if="!loading && !error && filteredSubscribers.length === 0">
               <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No subscribers for this filter.</td>
             </tr>
             </tbody>
@@ -162,9 +162,9 @@
 
           <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
             <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">Loading...</div>
-            <div v-else-if="errorMessage" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ errorMessage }}</div>
+            <div v-else-if="error" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ error }}</div>
 
-            <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !errorMessage && filteredSubscribers.length">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !error && filteredSubscribers.length">
               <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input
                     type="checkbox"
@@ -211,7 +211,7 @@
             </div>
 
             <div
-                v-if="!loading && !errorMessage && filteredSubscribers.length === 0"
+                v-if="!loading && !error && filteredSubscribers.length === 0"
                 class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
             >
               No subscribers for this filter.
@@ -407,11 +407,11 @@ const fetchSubscribersAction = useAsyncAction(
 )
 
 const loading = fetchSubscribersAction.loading
-const errorMessage = fetchSubscribersAction.error
+const error = fetchSubscribersAction.error
 
 const fetchSubscribers = async (cursor = null) => {
   if (!Number.isInteger(listId.value) || listId.value <= 0) {
-    errorMessage.value = 'Invalid list ID.'
+    error.value = 'Invalid list ID.'
     subscribers.value = []
     return
   }

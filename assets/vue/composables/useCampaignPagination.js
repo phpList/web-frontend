@@ -18,8 +18,8 @@ export function useCampaignPagination({ route, router, pageSize, allowedStatuses
   const rawItemsByPage = ref(new Map())
   const cursorsByPage = ref(new Map([[1, null]]))
   const total = ref(0)
-  const isLoading = ref(false)
-  const errorMessage = ref('')
+  const loading = ref(false)
+  const error = ref('')
 
   const statusFilter = computed({
     get() {
@@ -66,8 +66,8 @@ export function useCampaignPagination({ route, router, pageSize, allowedStatuses
 
     const thisGeneration = generation
     const request = (async () => {
-      isLoading.value = true
-      errorMessage.value = ''
+      loading.value = true
+      error.value = ''
 
       try {
         const afterId = cursorsByPage.value.get(page) ?? null
@@ -82,13 +82,13 @@ export function useCampaignPagination({ route, router, pageSize, allowedStatuses
         if (response?.pagination?.hasMore) {
           cursorsByPage.value.set(page + 1, response?.pagination?.nextCursor ?? null)
         }
-      } catch (error) {
+      } catch (err) {
         if (thisGeneration === generation) {
-          console.error(`Failed to load campaigns page ${page}:`, error)
-          errorMessage.value = 'Failed to load campaigns.'
+          console.error(`Failed to load campaigns page ${page}:`, err)
+          error.value = 'Failed to load campaigns.'
         }
       } finally {
-        isLoading.value = false
+        loading.value = false
         requestsInFlight.delete(page)
       }
     })()
@@ -158,7 +158,7 @@ export function useCampaignPagination({ route, router, pageSize, allowedStatuses
   })
 
   watch(totalPages, (pages) => {
-    if (isLoading.value) return
+    if (loading.value) return
     if (currentPage.value > pages) {
       loadPage(pages).then(() => {
         currentPage.value = pages
@@ -174,7 +174,7 @@ export function useCampaignPagination({ route, router, pageSize, allowedStatuses
   })
 
   watch(currentPage, async (page) => {
-    const normalizedPage = isLoading.value
+    const normalizedPage = loading.value
       ? Math.max(1, page)
       : Math.min(Math.max(1, page), totalPages.value)
     if (normalizedPage !== page) {
@@ -207,8 +207,8 @@ export function useCampaignPagination({ route, router, pageSize, allowedStatuses
     currentPage,
     rawItems,
     total,
-    isLoading,
-    errorMessage,
+    loading,
+    error,
     totalPages,
     canGoPrevious,
     canGoNext,

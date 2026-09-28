@@ -35,9 +35,9 @@ const analyticsAction = useAsyncAction(
 
 export function useAnalyticsData() {
   return {
-    isLoading: analyticsAction.loading,
+    loading: analyticsAction.loading,
     hasLoaded: analyticsAction.settled,
-    errorMessage: analyticsAction.error,
+    error: analyticsAction.error,
     campaignStatistics,
     viewOpens,
     topDomains,

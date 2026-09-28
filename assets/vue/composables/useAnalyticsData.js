@@ -30,7 +30,18 @@ const analyticsAction = useAsyncAction(
     domainConfirmation.value = domainConfirmationResponse ?? null
     topLocalParts.value = topLocalPartsResponse?.items ?? []
   },
-  { once: true, errorMessage: 'Failed to load analytics.', logLabel: 'Failed to load analytics:' }
+  {
+    once: true,
+    // Starts true: AnalyticsView only mounts its <VueApexCharts> once `loading` is false, and
+    // vue3-apexcharts' own mount is async (awaits a tick before calling ApexCharts.render()).
+    // If `loading` started false, the chart would mount on first paint, then immediately
+    // unmount when this run() flips loading to true on the view's onMounted - tearing down its
+    // DOM element while vue3-apexcharts' deferred render() is still in flight, which throws
+    // "Element not found" as an unhandled rejection (same bug fixed for the dashboard chart).
+    initialLoading: true,
+    errorMessage: 'Failed to load analytics.',
+    logLabel: 'Failed to load analytics:',
+  }
 )
 
 export function useAnalyticsData() {

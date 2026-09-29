@@ -26,18 +26,12 @@
           </td>
           <td class="px-6 py-4">
             <div class="flex flex-wrap gap-2">
-              <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="subscriber.confirmed ? statusClasses.active : statusClasses.unconfirmed"
-              >
+              <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
                 {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
-              </span>
-              <span
-                v-if="subscriber.blacklisted"
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400"
-              >
+              </BaseBadge>
+              <BaseBadge v-if="subscriber.blacklisted" variant="danger">
                 Blacklisted
-              </span>
+              </BaseBadge>
             </div>
           </td>
           <td class="px-6 py-4 text-right text-slate-600 dark:text-slate-300">
@@ -47,14 +41,9 @@
             {{ subscriber.createdAt }}
           </td>
           <td class="px-6 py-4 text-right">
-            <button
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-              @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton icon="eye" @click="emit('view', subscriber.id)">
               View
-            </button>
+            </ActionButton>
           </td>
         </tr>
       </tbody>
@@ -72,26 +61,15 @@
             {{ subscriber.email.split('@')[0] }}
           </span>
           <div class="flex items-center gap-2">
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-              :class="subscriber.confirmed ? statusClasses.active : statusClasses.unconfirmed"
-            >
+            <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
               {{ subscriber.confirmed ? 'active' : 'unconfirmed' }}
-            </span>
-            <span
-              v-if="subscriber.blacklisted"
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400"
-            >
+            </BaseBadge>
+            <BaseBadge v-if="subscriber.blacklisted" variant="danger">
               blacklisted
-            </span>
-            <button
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            </BaseBadge>
+            <ActionButton icon="eye" @click="emit('view', subscriber.id)">
               View
-            </button>
+            </ActionButton>
           </div>
         </div>
         <div class="flex flex-col gap-1">
@@ -113,14 +91,8 @@
 
 <script setup>
 import BaseIcon from '../base/BaseIcon.vue'
-import { inject } from 'vue'
-
-const statusClasses = {
-  active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
-  unconfirmed: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-  bounced: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
-  unsubscribed: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
-}
+import BaseBadge from '../base/BaseBadge.vue'
+import ActionButton from '../base/ActionButton.vue'
 
 const props = defineProps({
   subscribers: {
@@ -130,15 +102,4 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['view'])
-
-const formatDate = (dateString, isIso = false) => {
-  if (!dateString) return '-'
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return '-'
-  
-  if (isIso) {
-    return date.toISOString().split('T')[0]
-  }
-  return date.toLocaleDateString()
-}
 </script>

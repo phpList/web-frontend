@@ -114,18 +114,17 @@
 
 <script setup>
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-// todo: check why subscriberAttributesClient was not working
-import client, { subscriberAttributesClient } from '../../api'
+import { subscriberAttributesClient } from '../../api'
 
 onMounted(async () => {
-  try {
-    const allAttributes = []
-    let offset = 0
-    const limit = 100
-    let hasMore = true
+  const allAttributes = []
+  let offset = 0
+  const limit = 100
+  let hasMore = true
 
+  try {
     while (hasMore) {
-      const data = await client.get('attributes', { limit, offset })
+      const data = await subscriberAttributesClient.getAttributeDefinitions(offset, limit)
       const items = Array.isArray(data?.items) ? data.items : []
 
       allAttributes.push(...items)

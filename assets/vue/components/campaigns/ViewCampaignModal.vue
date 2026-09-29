@@ -1,22 +1,10 @@
 <template>
-  <div
-      v-if="isViewModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
-      @click.self="emit('close')"
+  <BaseModal
+      :is-open="isViewModalOpen"
+      :title="`Campaign details: ${campaign?.id || '-'}`"
+      max-width="2xl"
+      @close="emit('close')"
   >
-    <div class="w-full max-w-2xl rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
-      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-5 py-4">
-        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Campaign details: {{ campaign?.id || '-' }}</h3>
-        <button
-            type="button"
-            class="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-            @click="emit('close')"
-            data-testid="close-btn"
-        >
-          Close
-        </button>
-      </div>
-
       <div class="p-5">
         <p v-if="isViewLoading" class="text-sm text-slate-500 dark:text-slate-400">
           Loading campaign...
@@ -123,12 +111,12 @@
           No campaign selected.
         </p>
       </div>
-    </div>
-  </div>
+  </BaseModal>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
+import BaseModal from '../base/BaseModal.vue'
 
 const props = defineProps({
   isViewModalOpen: {

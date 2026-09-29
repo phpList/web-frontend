@@ -319,9 +319,9 @@ describe('status badge classes', () => {
         expect(wrapper.find('span.bg-blue-100').exists()).toBe(true)
     })
 
-    it('applies slate classes for draft', async () => {
+    it('applies neutral classes for draft', async () => {
         const { wrapper } = await mountWithStatus('draft')
-        expect(wrapper.find('span.bg-slate-100').exists()).toBe(true)
+        expect(wrapper.find('span.bg-gray-100').exists()).toBe(true)
     })
 
     it('applies amber classes for unknown status', async () => {

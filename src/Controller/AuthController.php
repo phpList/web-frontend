@@ -6,6 +6,7 @@ namespace PhpList\WebFrontend\Controller;
 
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use PhpList\RestApiClient\Client;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
@@ -23,6 +24,7 @@ class AuthController extends AbstractController
 
     public function __construct(
         private readonly AuthClient $authClient,
+        private readonly Client $apiClient,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -62,10 +64,10 @@ class AuthController extends AbstractController
                 $request->getSession()->save();
 
                 return $this->redirectAfterLogin($redirectTarget);
-            } catch (Exception $e) {
-                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
+            } catch (Exception $e) {
+                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             }
         }
 
@@ -86,8 +88,16 @@ class AuthController extends AbstractController
     }
 
     #[Route('/admin-about', name: 'admin_about')]
-    public function about(): JsonResponse
+    public function about(Request $request): JsonResponse
     {
+        // ApiSessionListener sets this on the shared Client for every request, but on
+        // concurrent XHR requests sharing one PHP session it can race - re-set it here from
+        // this request's own session so getSessionUser() never fails purely on a timing gap.
+        $authToken = $request->getSession()->get('auth_token');
+        if ($authToken) {
+            $this->apiClient->setSessionId((string) $authToken);
+        }
+
         try {
             $user = $this->authClient->getSessionUser();
         } catch (AuthenticationException) {

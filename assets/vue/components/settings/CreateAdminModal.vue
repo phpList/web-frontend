@@ -1,24 +1,11 @@
 <template>
-  <div
-    v-if="isOpen"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0"
-    aria-labelledby="create-admin-modal-title"
-    role="dialog"
-    aria-modal="true"
+  <BaseModal
+      :is-open="isOpen"
+      title="Create New Administrator"
+      max-width="xl"
+      @close="close"
   >
-    <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
-    <form class="mt-4 space-y-4" @submit.prevent="submitCreateAdmin">
-      <div class="relative bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg md:min-w-xl sm:w-full z-10 max-h-[90vh] overflow-y-auto">
-        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 space-y-4">
-          <div class="flex justify-between items-center">
-            <h3 id="create-admin-modal-title" class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100">
-              Create New Administrator
-            </h3>
-            <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400" @click="close">
-              <BaseIcon name="close" class="w-3.5 h-3.5" />
-            </button>
-          </div>
-
+    <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitCreateAdmin">
           <!-- Login Name -->
           <div>
             <label for="admin-login-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Login Name</label>
@@ -132,34 +119,33 @@
           </div>
 
           <p v-if="createError" class="text-sm text-red-600 dark:text-red-400">{{ createError }}</p>
-        </div>
-
-        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-          <button
-            type="submit"
-            :disabled="isCreating || !isFormValid"
-            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50 transition-colors"
-          >
-            {{ isCreating ? 'Creating...' : 'Create' }}
-          </button>
-          <button
-            type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm transition-colors"
-            @click="close"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
     </form>
-  </div>
+
+    <template #footer>
+      <button
+          type="button"
+          :disabled="isCreating || !isFormValid"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50 transition-colors"
+          @click="submitCreateAdmin"
+      >
+        {{ isCreating ? 'Creating...' : 'Create' }}
+      </button>
+      <button
+          type="button"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm transition-colors"
+          @click="close"
+      >
+        Cancel
+      </button>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { Requests } from '@tatevikgr/rest-api-client'
 import { adminClient } from '../../api'
-import BaseIcon from "../base/BaseIcon.vue";
+import BaseModal from '../base/BaseModal.vue'
 
 const props = defineProps({
   isOpen: Boolean

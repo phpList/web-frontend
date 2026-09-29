@@ -96,6 +96,20 @@ describe('AdminLayout', () => {
         expect(wrapper.text()).toContain('Page Content')
     })
 
+    it('loads admin data on mount', async () => {
+        const wrapper = createWrapper()
+
+        await flushPromises()
+
+        expect(backendFetch).toHaveBeenCalledWith(
+            '/admin-about',
+            expect.any(Object)
+        )
+
+        expect(wrapper.text()).toContain('admin')
+        expect(wrapper.text()).toContain('Super Admin')
+    })
+
     it('shows fallback admin name', () => {
         const wrapper = createWrapper()
 

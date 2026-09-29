@@ -1,23 +1,10 @@
 <template>
-  <Teleport to="body">
-    <div
-        v-if="isOpen && attribute"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-    >
-      <div class="w-full max-w-lg rounded-xl bg-white dark:bg-slate-800 shadow-xl">
-        <div class="border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex justify-between items-center">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Edit Attribute
-          </h2>
-
-          <button
-              class="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              @click="$emit('close')"
-          >
-            ✕
-          </button>
-        </div>
-
+  <BaseModal
+      :is-open="isOpen && !!attribute"
+      title="Edit Attribute"
+      max-width="lg"
+      @close="$emit('close')"
+  >
         <form
             class="p-6 space-y-5"
             @submit.prevent="submit"
@@ -83,13 +70,12 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  </Teleport>
+  </BaseModal>
 </template>
 
 <script setup>
 import { reactive, ref, watch } from 'vue'
+import BaseModal from '../base/BaseModal.vue'
 import { adminAttributeClient } from '../../api'
 
 const props = defineProps({

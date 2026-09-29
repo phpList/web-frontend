@@ -67,27 +67,13 @@
 <!--      </div>-->
     </div>
 
-    <div
-      v-if="isCreateModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0"
-      aria-labelledby="create-bounce-rule-modal-title"
-      role="dialog"
-      aria-modal="true"
+    <BaseModal
+        :is-open="isCreateModalOpen"
+        title="New Bounce Rule"
+        max-width="lg"
+        @close="closeCreateModal"
     >
-      <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="closeCreateModal"></div>
-
-      <form class="w-full sm:max-w-lg z-10" @submit.prevent="submitCreateRule">
-        <div class="bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all">
-          <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 space-y-4">
-            <div class="flex justify-between items-center">
-              <h3 id="create-bounce-rule-modal-title" class="text-lg leading-6 font-medium text-slate-900 dark:text-slate-100">
-                New Bounce Rule
-              </h3>
-              <button type="button" class="text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400" :disabled="isCreatingRule" @click="closeCreateModal" data-testid="modal-close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-
+      <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitCreateRule">
             <div>
               <label for="bounce-rule-regex" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Regex</label>
               <input
@@ -207,35 +193,35 @@
             </div>
 
             <p v-if="createError" class="text-sm text-red-600 dark:text-red-400">{{ createError }}</p>
-          </div>
-
-          <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-            <button
-              type="submit"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:w-auto sm:text-sm disabled:opacity-50"
-              :disabled="isCreatingRule"
-              data-testid="modal-submit"
-            >
-              {{ isCreatingRule ? 'Creating...' : 'Create Rule' }}
-            </button>
-            <button
-              type="button"
-              class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
-              :disabled="isCreatingRule"
-              @click="closeCreateModal"
-              data-testid="modal-cancel"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
       </form>
-    </div>
+
+      <template #footer>
+        <button
+            type="button"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:w-auto sm:text-sm disabled:opacity-50"
+            :disabled="isCreatingRule"
+            data-testid="modal-submit"
+            @click="submitCreateRule"
+        >
+          {{ isCreatingRule ? 'Creating...' : 'Create Rule' }}
+        </button>
+        <button
+            type="button"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+            :disabled="isCreatingRule"
+            data-testid="modal-cancel"
+            @click="closeCreateModal"
+        >
+          Cancel
+        </button>
+      </template>
+    </BaseModal>
   </div>
 </template>
 
 <script setup>
 import {onMounted, ref} from "vue";
+import BaseModal from '../base/BaseModal.vue'
 import { bouncesClient} from "../../api";
 
 const allBounceRules = ref([])

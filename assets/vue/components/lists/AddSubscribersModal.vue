@@ -1,26 +1,11 @@
 <template>
-  <div
-      v-if="isOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0"
-      aria-labelledby="add-subscribers-modal-title"
-      role="dialog"
-      aria-modal="true"
+  <BaseModal
+      :is-open="isOpen"
+      title="Add subscribers"
+      max-width="lg"
+      @close="close"
   >
-    <div class="fixed inset-0 bg-slate-900/50 transition-opacity" aria-hidden="true" @click="close"></div>
-
-    <div class="relative z-10 w-full overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:w-full">
-      <form class="mt-4 space-y-4" @submit.prevent="submitAddSubscribers">
-        <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6">
-          <div class="flex items-center justify-between">
-            <h3 id="add-subscribers-modal-title" class="text-lg font-medium leading-6 text-slate-900 dark:text-slate-100">
-              Add subscribers
-            </h3>
-
-            <button type="button" class="text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400" @click="close">
-              <BaseIcon name="close" class="w-5 h-5" />
-            </button>
-          </div>
-
+      <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitAddSubscribers">
             <div>
               <label for="subscriber-emails" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
                 Email addresses
@@ -49,33 +34,32 @@
             <p v-if="addSubsError" class="text-sm text-red-600 dark:text-red-400">
               {{ addSubsError }}
             </p>
-        </div>
-
-        <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
-        <button
-            type="submit"
-            :disabled="addingSubscribers || !addSubsForm.emails.trim()"
-            class="w-full inline-flex justify-center rounded-md border border-transparent bg-ext-wf1 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto sm:text-sm disabled:opacity-50"
-        >
-          {{ addingSubscribers ? 'Adding...' : 'Add subscribers' }}
-        </button>
-
-        <button
-            type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-base font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-            @click="close"
-        >
-          Cancel
-        </button>
-      </div>
       </form>
-    </div>
-  </div>
+
+    <template #footer>
+      <button
+          type="button"
+          :disabled="addingSubscribers || !addSubsForm.emails.trim()"
+          class="w-full inline-flex justify-center rounded-md border border-transparent bg-ext-wf1 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto sm:text-sm disabled:opacity-50"
+          @click="submitAddSubscribers"
+      >
+        {{ addingSubscribers ? 'Adding...' : 'Add subscribers' }}
+      </button>
+
+      <button
+          type="button"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-base font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+          @click="close"
+      >
+        Cancel
+      </button>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
-import BaseIcon from '../base/BaseIcon.vue'
+import BaseModal from '../base/BaseModal.vue'
 import { subscriptionClient } from '../../api'
 
 const props = defineProps({

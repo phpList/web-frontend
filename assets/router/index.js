@@ -1,39 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import DashboardView from '../vue/views/DashboardView.vue'
-import SubscribersView from '../vue/views/SubscribersView.vue'
-import ListsView from '../vue/views/ListsView.vue'
-import ListSubscribersView from '../vue/views/ListSubscribersView.vue'
-import CampaignsView from '../vue/views/CampaignsView.vue'
-import CampaignEditView from '../vue/views/CampaignEditView.vue'
-import StuckCampaignsView from '../vue/views/StuckCampaignsView.vue'
-import TemplatesView from '../vue/views/TemplatesView.vue'
-import TemplateEditView from '../vue/views/TemplateEditView.vue'
-import BouncesView from '../vue/views/BouncesView.vue'
-import AnalyticsView from '../vue/views/AnalyticsView.vue'
-import PublicPagesView from '../vue/views/PublicPagesView.vue'
-import PublicPageEditView from '../vue/views/PublicPageEditView.vue'
-import SettingsView from '../vue/views/SettingsView.vue'
 
 export const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/', name: 'dashboard', component: DashboardView, meta: { title: 'Dashboard' } },
-        { path: '/subscribers', name: 'subscribers', component: SubscribersView, meta: { title: 'Subscribers' } },
-        { path: '/lists', name: 'lists', component: ListsView, meta: { title: 'Lists' } },
-        { path: '/campaigns', name: 'campaigns', component: CampaignsView, meta: { title: 'Campaigns' } },
-        { path: '/campaigns/stuck', name: 'stuck-campaigns', component: StuckCampaignsView, meta: { title: 'Stuck Campaigns' } },
-        { path: '/templates', name: 'templates', component: TemplatesView, meta: { title: 'Templates' } },
-        { path: '/templates/create', name: 'template-create', component: TemplateEditView, meta: { title: 'Create Template' } },
-        { path: '/templates/:templateId/edit', name: 'template-edit', component: TemplateEditView, meta: { title: 'Edit Template' } },
-        { path: '/campaigns/create', name: 'campaign-create', component: CampaignEditView, meta: { title: 'Create Campaign' } },
-        { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: CampaignEditView, meta: { title: 'Edit Campaign' } },
-        { path: '/lists/:listId/subscribers', name: 'list-subscribers', component: ListSubscribersView, meta: { title: 'List Subscribers' } },
-        { path: '/bounces', name: 'bounces', component: BouncesView, meta: { title: 'Bounces' } },
-        { path: '/analytics', name: 'analytics', component: AnalyticsView, meta: { title: 'Analytics' } },
-        { path: '/public', name: 'public-pages', component: PublicPagesView, meta: { title: 'Public Pages' } },
-        { path: '/public/create', name: 'public-page-create', component: PublicPageEditView, meta: { title: 'Create Public Page' } },
-        { path: '/public/:pageId/edit', name: 'public-page-edit', component: PublicPageEditView, meta: { title: 'Edit Public Page' } },
-        { path: '/settings', name: 'settings', component: SettingsView, meta: { title: 'Settings' } },
+        { path: '/', name: 'dashboard', component: () => import('../vue/views/DashboardView.vue'), meta: { title: 'Dashboard' } },
+        { path: '/subscribers', name: 'subscribers', component: () => import('../vue/views/SubscribersView.vue'), meta: { title: 'Subscribers' } },
+        { path: '/lists', name: 'lists', component: () => import('../vue/views/ListsView.vue'), meta: { title: 'Lists' } },
+        { path: '/campaigns', name: 'campaigns', component: () => import('../vue/views/CampaignsView.vue'), meta: { title: 'Campaigns' } },
+        { path: '/campaigns/stuck', name: 'stuck-campaigns', component: () => import('../vue/views/StuckCampaignsView.vue'), meta: { title: 'Stuck Campaigns' } },
+        { path: '/templates', name: 'templates', component: () => import('../vue/views/TemplatesView.vue'), meta: { title: 'Templates' } },
+        { path: '/templates/create', name: 'template-create', component: () => import('../vue/views/TemplateEditView.vue'), meta: { title: 'Create Template' } },
+        { path: '/templates/:templateId/edit', name: 'template-edit', component: () => import('../vue/views/TemplateEditView.vue'), meta: { title: 'Edit Template' } },
+        { path: '/campaigns/create', name: 'campaign-create', component: () => import('../vue/views/CampaignEditView.vue'), meta: { title: 'Create Campaign' } },
+        { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: () => import('../vue/views/CampaignEditView.vue'), meta: { title: 'Edit Campaign' } },
+        { path: '/lists/:listId/subscribers', name: 'list-subscribers', component: () => import('../vue/views/ListSubscribersView.vue'), meta: { title: 'List Subscribers' } },
+        { path: '/bounces', name: 'bounces', component: () => import('../vue/views/BouncesView.vue'), meta: { title: 'Bounces' } },
+        { path: '/analytics', name: 'analytics', component: () => import('../vue/views/AnalyticsView.vue'), meta: { title: 'Analytics' } },
+        { path: '/public', name: 'public-pages', component: () => import('../vue/views/PublicPagesView.vue'), meta: { title: 'Public Pages' } },
+        { path: '/public/create', name: 'public-page-create', component: () => import('../vue/views/PublicPageEditView.vue'), meta: { title: 'Create Public Page' } },
+        { path: '/public/:pageId/edit', name: 'public-page-edit', component: () => import('../vue/views/PublicPageEditView.vue'), meta: { title: 'Edit Public Page' } },
+        { path: '/settings', name: 'settings', component: () => import('../vue/views/SettingsView.vue'), meta: { title: 'Settings' } },
         { path: '/:pathMatch(.*)*', redirect: '/' },
     ],
 });

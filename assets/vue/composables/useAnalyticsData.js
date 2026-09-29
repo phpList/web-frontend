@@ -1,25 +1,15 @@
 import { ref } from 'vue'
 import { statisticsClient } from '../api'
+import { useAsyncAction } from './useAsyncAction'
 
-const isLoading = ref(true)
-const hasLoaded = ref(false)
-const errorMessage = ref('')
 const campaignStatistics = ref([])
 const viewOpens = ref([])
 const topDomains = ref([])
 const domainConfirmation = ref(null)
 const topLocalParts = ref([])
-const loaded = ref(false)
 
-const loadAnalytics = async () => {
-  if (loaded.value) {
-    return
-  }
-
-  isLoading.value = true
-  errorMessage.value = ''
-
-  try {
+const analyticsAction = useAsyncAction(
+  async () => {
     const [
       campaignResponse,
       viewOpensResponse,
@@ -39,26 +29,31 @@ const loadAnalytics = async () => {
     topDomains.value = topDomainsResponse?.items ?? []
     domainConfirmation.value = domainConfirmationResponse ?? null
     topLocalParts.value = topLocalPartsResponse?.items ?? []
-    loaded.value = true
-  } catch (error) {
-    errorMessage.value = 'Failed to load analytics.'
-    console.error('Failed to load analytics:', error)
-  } finally {
-    isLoading.value = false
-    hasLoaded.value = true
+  },
+  {
+    once: true,
+    // Starts true: AnalyticsView only mounts its <VueApexCharts> once `loading` is false, and
+    // vue3-apexcharts' own mount is async (awaits a tick before calling ApexCharts.render()).
+    // If `loading` started false, the chart would mount on first paint, then immediately
+    // unmount when this run() flips loading to true on the view's onMounted - tearing down its
+    // DOM element while vue3-apexcharts' deferred render() is still in flight, which throws
+    // "Element not found" as an unhandled rejection (same bug fixed for the dashboard chart).
+    initialLoading: true,
+    errorMessage: 'Failed to load analytics.',
+    logLabel: 'Failed to load analytics:',
   }
-}
+)
 
 export function useAnalyticsData() {
   return {
-    isLoading,
-    hasLoaded,
-    errorMessage,
+    loading: analyticsAction.loading,
+    hasLoaded: analyticsAction.settled,
+    error: analyticsAction.error,
     campaignStatistics,
     viewOpens,
     topDomains,
     domainConfirmation,
     topLocalParts,
-    loadAnalytics,
+    loadAnalytics: analyticsAction.run,
   }
 }

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Security;
 
+use PhpList\WebFrontend\Trait\LoginUrlBuilderTrait;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use PhpList\WebFrontend\Trait\SessionExpiredResponseTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,9 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class SessionAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
+    use LoginUrlBuilderTrait;
     use RedirectValidationTrait;
+    use SessionExpiredResponseTrait;
 
     private const NOT_SUPPORTED_PATHS = [
         '/login',
@@ -94,25 +97,10 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
         $loginUrl = $this->buildLoginUrl($request->getRequestUri());
 
         if ($request->isXmlHttpRequest()) {
-            return new JsonResponse([
-                'error' => 'session_expired',
-                'message' => 'Your session has expired. Please log in again.',
-                'redirect' => $loginUrl,
-            ], 401);
+            return $this->sessionExpiredJsonResponse($loginUrl);
         }
 
         return new RedirectResponse($loginUrl);
-    }
-
-    private function buildLoginUrl(string $redirectTarget): string
-    {
-        $loginUrl = $this->urlGenerator->generate('login');
-
-        if (!$this->isSafeRedirectTarget($redirectTarget)) {
-            return $loginUrl;
-        }
-
-        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
     }
 
     private function matchesPrefix(string $path, string $prefix): bool

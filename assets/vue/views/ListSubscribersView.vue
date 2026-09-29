@@ -115,8 +115,8 @@
               <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading...</td>
             </tr>
 
-            <tr v-else-if="errorMessage">
-              <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ errorMessage }}</td>
+            <tr v-else-if="error">
+              <td colspan="6" class="px-6 py-8 text-center text-red-600 dark:text-red-400">{{ error }}</td>
             </tr>
 
             <tr
@@ -136,12 +136,9 @@
               <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ subscriber.id }}</td>
               <td class="px-6 py-4 font-mono text-slate-900 dark:text-slate-100">{{ subscriber.email }}</td>
               <td class="px-6 py-4">
-                  <span
-                      class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'"
-                  >
+                  <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
                     {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
-                  </span>
+                  </BaseBadge>
               </td>
               <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ formatDate(subscriber.createdAt) }}</td>
               <td class="px-6 py-4 text-right">
@@ -157,7 +154,7 @@
               </td>
             </tr>
 
-            <tr v-if="!loading && !errorMessage && filteredSubscribers.length === 0">
+            <tr v-if="!loading && !error && filteredSubscribers.length === 0">
               <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No subscribers for this filter.</td>
             </tr>
             </tbody>
@@ -165,9 +162,9 @@
 
           <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
             <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">Loading...</div>
-            <div v-else-if="errorMessage" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ errorMessage }}</div>
+            <div v-else-if="error" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ error }}</div>
 
-            <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !errorMessage && filteredSubscribers.length">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !error && filteredSubscribers.length">
               <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input
                     type="checkbox"
@@ -195,12 +192,9 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-3">
                     <p class="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{{ subscriber.email }}</p>
-                    <span
-                        class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-                        :class="subscriber.confirmed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'"
-                    >
+                    <BaseBadge class="whitespace-nowrap" :variant="subscriber.confirmed ? 'success' : 'warning'">
                       {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
-                    </span>
+                    </BaseBadge>
                   </div>
                   <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
                   <button
@@ -217,7 +211,7 @@
             </div>
 
             <div
-                v-if="!loading && !errorMessage && filteredSubscribers.length === 0"
+                v-if="!loading && !error && filteredSubscribers.length === 0"
                 class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
             >
               No subscribers for this filter.
@@ -261,7 +255,9 @@ import {useRoute} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import ListSubscribersExportPanel from '../components/lists/ListSubscribersExportPanel.vue'
 import BaseIcon from '../components/base/BaseIcon.vue'
+import BaseBadge from '../components/base/BaseBadge.vue'
 import client, {subscriptionClient} from '../api'
+import {useAsyncAction} from '../composables/useAsyncAction'
 
 const route = useRoute()
 const listId = computed(() => Number(route.params.listId))
@@ -270,9 +266,7 @@ const listName = ref(typeof route.query.listName === 'string' ? route.query.list
 const subscribers = ref([])
 const total = ref(0)
 const pageSize = ref(10)
-const loading = ref(false)
 const actionLoading = ref(false)
-const errorMessage = ref('')
 const actionError = ref('')
 const actionMessage = ref('')
 const nextCursor = ref(null)
@@ -392,33 +386,37 @@ const loadAvailableLists = async () => {
   availableLists.value = lists
 }
 
-const fetchSubscribers = async (cursor = null) => {
-  if (!Number.isInteger(listId.value) || listId.value <= 0) {
-    errorMessage.value = 'Invalid list ID.'
-    subscribers.value = []
-    return
-  }
-
-  loading.value = true
-  errorMessage.value = ''
-
-  try {
+const fetchSubscribersAction = useAsyncAction(
+  async (cursor = null) => {
     const response = await subscriptionClient.getSubscribersOfList(listId.value, cursor, pageSize.value)
     subscribers.value = Array.isArray(response.items) ? response.items : []
     total.value = response.pagination?.total ?? subscribers.value.length
     nextCursor.value = response.pagination?.nextCursor ?? null
     clearSelection()
     return true
-  } catch (error) {
-    console.error('Failed to load list subscribers:', error)
-    errorMessage.value = 'Failed to load subscribers for this list.'
-    subscribers.value = []
-    nextCursor.value = null
-    clearSelection()
-    return false
-  } finally {
-    loading.value = false
+  },
+  {
+    errorMessage: 'Failed to load subscribers for this list.',
+    logLabel: 'Failed to load list subscribers:',
+    onError: () => {
+      subscribers.value = []
+      nextCursor.value = null
+      clearSelection()
+    },
   }
+)
+
+const loading = fetchSubscribersAction.loading
+const error = fetchSubscribersAction.error
+
+const fetchSubscribers = async (cursor = null) => {
+  if (!Number.isInteger(listId.value) || listId.value <= 0) {
+    error.value = 'Invalid list ID.'
+    subscribers.value = []
+    return
+  }
+
+  return fetchSubscribersAction.run(cursor)
 }
 
 const refreshCurrentPage = async () => {
@@ -427,8 +425,8 @@ const refreshCurrentPage = async () => {
 
 const deleteEmailsFromCurrentList = async (emails) => {
   if (emails.length === 0) return
-  // todo: check why subscription client delete is not working
-  await client.delete(`lists/${listId.value}/subscribers`, {emails})
+
+  await subscriptionClient.deleteSubscription(emails, listId.value)
 }
 
 const deleteSingleSubscriber = async (subscriber) => {

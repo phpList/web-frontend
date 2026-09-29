@@ -17,12 +17,12 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
         Loading template...
       </div>
 
-      <div v-else-if="loadError" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
-        {{ loadError }}
+      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+        {{ error }}
       </div>
 
       <section v-else class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
@@ -162,12 +162,12 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
 import { templateClient } from '../api'
 import { Requests } from "@tatevikgr/rest-api-client";
+import { useApiValidationErrors } from '../composables/useApiValidationErrors'
+import { useAsyncAction } from '../composables/useAsyncAction'
 
 const route = useRoute()
 const router = useRouter()
 
-const isLoading = ref(false)
-const loadError = ref('')
 const isSaving = ref(false)
 const saveError = ref('')
 const saveErrors = ref([])
@@ -194,26 +194,8 @@ const saveButtonLabel = computed(() => {
   return isCreateMode.value ? 'Create' : 'Save'
 })
 
-const loadTemplate = async () => {
-  if (isCreateMode.value) {
-    form.value.title = ''
-    form.value.listOrder = ''
-    form.value.content = ''
-    form.value.text = ''
-    form.value.file = null
-    loadError.value = ''
-    return
-  }
-
-  if (!Number.isFinite(templateId.value) || templateId.value <= 0) {
-    loadError.value = 'Template ID is invalid.'
-    return
-  }
-
-  isLoading.value = true
-  loadError.value = ''
-
-  try {
+const loadTemplateAction = useAsyncAction(
+  async () => {
     const template = await templateClient.getTemplate(templateId.value)
     form.value.title = template?.title || ''
     form.value.listOrder = template?.listOrder !== null && template?.listOrder !== undefined
@@ -222,12 +204,30 @@ const loadTemplate = async () => {
     form.value.content = template?.content || ''
     form.value.text = template?.text || ''
     form.value.file = null
-  } catch (error) {
-    console.error('Failed to load template:', error)
-    loadError.value = 'Failed to load template.'
-  } finally {
-    isLoading.value = false
+  },
+  { errorMessage: 'Failed to load template.', logLabel: 'Failed to load template:' }
+)
+
+const loading = loadTemplateAction.loading
+const error = loadTemplateAction.error
+
+const loadTemplate = async () => {
+  if (isCreateMode.value) {
+    form.value.title = ''
+    form.value.listOrder = ''
+    form.value.content = ''
+    form.value.text = ''
+    form.value.file = null
+    error.value = ''
+    return
   }
+
+  if (!Number.isFinite(templateId.value) || templateId.value <= 0) {
+    error.value = 'Template ID is invalid.'
+    return
+  }
+
+  await loadTemplateAction.run()
 }
 
 const populateTextFromContent = () => {
@@ -258,35 +258,7 @@ const validationFieldLabels = {
   check_external_images: 'Check external images'
 }
 
-const normalizeFieldName = (fieldPath = '') => {
-  if (validationFieldLabels[fieldPath]) return validationFieldLabels[fieldPath]
-
-  const fallback = String(fieldPath)
-    .split('.')
-    .pop()
-    ?.replace(/\[\d+]/g, '')
-    ?.replace(/_/g, ' ')
-    ?.replace(/([a-z])([A-Z])/g, '$1 $2')
-    ?.trim()
-
-  if (!fallback) return 'Field'
-  return fallback.charAt(0).toUpperCase() + fallback.slice(1)
-}
-
-const formatValidationErrors = (error) => {
-  const responseData = error?.responseData
-  const messages = []
-
-  if (responseData && typeof responseData === 'object' && !Array.isArray(responseData)) {
-    Object.entries(responseData).forEach(([field, rawMessage]) => {
-      if (!rawMessage) return
-      const text = Array.isArray(rawMessage) ? rawMessage.join(' ') : String(rawMessage)
-      messages.push(`${normalizeFieldName(field)}: ${text}`)
-    })
-  }
-
-  return [...new Set(messages)]
-}
+const {formatValidationErrors} = useApiValidationErrors(validationFieldLabels)
 
 const saveTemplate = async () => {
   if (!isCreateMode.value && (!Number.isFinite(templateId.value) || templateId.value <= 0)) {

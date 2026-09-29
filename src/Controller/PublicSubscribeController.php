@@ -24,8 +24,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class PublicSubscribeController extends BaseController
 {
     public function __construct(
-        private readonly SubscribePagesClient $subscribePagesClient,
         protected AuthClient $authClient,
+        private readonly SubscribePagesClient $subscribePagesClient,
         private readonly LanguageService $languageService,
         private readonly PublicSubscribeFormBuilder $formBuilder,
         private readonly PublicSubscribeFormValidator $formValidator,

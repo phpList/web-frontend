@@ -17,12 +17,12 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
         Loading campaign...
       </div>
 
-      <div v-else-if="loadError" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
-        {{ loadError }}
+      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+        {{ error }}
       </div>
 
       <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
@@ -395,6 +395,8 @@ import {RouterLink, useRoute, useRouter} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
 import {campaignClient, fetchAllLists, listMessagesClient, templateClient} from '../api'
+import {useApiValidationErrors} from '../composables/useApiValidationErrors'
+import {useAsyncAction} from '../composables/useAsyncAction'
 
 const route = useRoute()
 const router = useRouter()
@@ -413,8 +415,6 @@ const isCreateMode = computed(() => route.name === 'campaign-create')
 const activeCampaignId = computed(() => Number(campaign.value?.id) || campaignIdFromRoute.value)
 const pageTitle = computed(() => isCreateMode.value ? 'Create Campaign' : `Edit Campaign #${campaignIdFromRoute.value}`)
 const currentStep = ref(1)
-const isLoading = ref(true)
-const loadError = ref('')
 const isSaving = ref(false)
 const isSendingTest = ref(false)
 const isQueueing = ref(false)
@@ -498,37 +498,7 @@ const validationFieldLabels = {
   'schedule.embargo': 'Embargo until'
 }
 
-const normalizeFieldName = (fieldPath = '') => {
-  if (validationFieldLabels[fieldPath]) return validationFieldLabels[fieldPath]
-
-  const fallback = String(fieldPath)
-    .split('.')
-    .pop()
-    ?.replace(/\[\d+]/g, '')
-    ?.replace(/_/g, ' ')
-    ?.replace(/([a-z])([A-Z])/g, '$1 $2')
-    ?.trim()
-
-  if (!fallback) return 'Field'
-  return fallback.charAt(0).toUpperCase() + fallback.slice(1)
-}
-
-const formatValidationErrors = (error) => {
-  const responseData = error?.responseData
-  const fromObject = []
-
-  if (responseData && typeof responseData === 'object' && !Array.isArray(responseData)) {
-    Object.entries(responseData).forEach(([field, rawMessage]) => {
-      if (!rawMessage) return
-      const text = Array.isArray(rawMessage) ? rawMessage.join(' ') : String(rawMessage)
-      fromObject.push(`${normalizeFieldName(field)}: ${text}`)
-    })
-  }
-
-  if (fromObject.length > 0) return [...new Set(fromObject)]
-  console.log('Failed to format validation errors:', error)
-  return []
-}
+const {formatValidationErrors} = useApiValidationErrors(validationFieldLabels)
 
 const normalizeListIds = (values) =>
   values
@@ -616,11 +586,8 @@ const fillForm = (campaignValue) => {
   }
 }
 
-const loadCampaignData = async () => {
-  isLoading.value = true
-  loadError.value = ''
-
-  try {
+const loadCampaignDataAction = useAsyncAction(
+  async () => {
     if (isCreateMode.value) {
       const mailingListsResponse = await fetchAllLists()
 
@@ -640,7 +607,7 @@ const loadCampaignData = async () => {
     }
 
     if (!Number.isFinite(campaignIdFromRoute.value) || campaignIdFromRoute.value <= 0) {
-      loadError.value = 'Invalid campaign ID.'
+      error.value = 'Invalid campaign ID.'
       return
     }
 
@@ -661,13 +628,17 @@ const loadCampaignData = async () => {
 
     associatedListIds.value = linkedIds
     selectedListIds.value = [...linkedIds]
-  } catch (error) {
-    console.error('Failed to load campaign data for editing:', error)
-    loadError.value = error?.message || 'Failed to load campaign data.'
-  } finally {
-    isLoading.value = false
+  },
+  {
+    errorMessage: (error) => error?.message || 'Failed to load campaign data.',
+    logLabel: 'Failed to load campaign data for editing:',
   }
-}
+)
+
+const loading = loadCampaignDataAction.loading
+const error = loadCampaignDataAction.error
+
+const loadCampaignData = () => loadCampaignDataAction.run()
 
 const buildCampaignPayload = () => {
   const currentCampaign = campaign.value

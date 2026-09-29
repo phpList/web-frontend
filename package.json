@@ -34,6 +34,9 @@
   },
   "scripts": {
     "prepare": "husky install",
+    "build": "encore production",
+    "watch": "encore dev --watch",
+    "build:dist": "BUILD_TARGET=dist encore production",
     "test:vue": "vitest run",
     "test:vue:watch": "vitest"
   }

@@ -17,11 +17,11 @@ const analyticsAction = useAsyncAction(
       domainConfirmationResponse,
       topLocalPartsResponse,
     ] = await Promise.all([
-      statisticsClient.getCampaignStatistics(null, 100),
-      statisticsClient.getStatisticsOfViewOpens(null, 100),
-      statisticsClient.getTopDomains(20, 5),
-      statisticsClient.getDomainConfirmationStatistics(50),
-      statisticsClient.getTopLocalParts(25),
+      statisticsClient.getCampaignStatistics(null, 10),
+      statisticsClient.getStatisticsOfViewOpens(null, 10),
+      statisticsClient.getTopDomains(5, 5),
+      statisticsClient.getDomainConfirmationStatistics(5),
+      statisticsClient.getTopLocalParts(5),
     ])
 
     campaignStatistics.value = campaignResponse?.items ?? []

@@ -16,8 +16,8 @@ const props = defineProps({
 })
 
 const cardVariantMap = {
-  default: 'rounded-lg shadow-sm border border-gray-100 bg-white',
-  subtle: 'rounded-lg shadow-sm border-0 bg-gray-50',
+  default: 'rounded-lg shadow-sm border border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800',
+  subtle: 'rounded-lg shadow-sm border-0 bg-gray-50 dark:bg-slate-800',
   danger: 'rounded-lg shadow-sm border-0 bg-red-600 text-white',
   success: 'rounded-lg shadow-sm border-0 bg-green-600 text-white',
 }

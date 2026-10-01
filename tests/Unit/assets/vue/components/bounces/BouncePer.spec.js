@@ -212,34 +212,34 @@ describe('normalizeBoolean', () => {
             expect(wrapper.findAll('span.bg-emerald-100').length).toBeGreaterThan(0)
         })
 
-        it('shows slate badge for confirmed=false', async () => {
+        it('shows neutral badge for confirmed=false', async () => {
             const wrapper = await mountWithSubscriber({ confirmed: false, blacklisted: false })
-            // both badges are slate when both are false
-            const slateBadges = wrapper.findAll('span.bg-slate-100')
-            expect(slateBadges.length).toBeGreaterThanOrEqual(2)
+            // both badges are neutral when both are false
+            const neutralBadges = wrapper.findAll('span.bg-gray-100')
+            expect(neutralBadges.length).toBeGreaterThanOrEqual(2)
         })
     })
 
     describe('blacklisted badge', () => {
-        it('shows rose badge for blacklisted=true', async () => {
+        it('shows danger badge for blacklisted=true', async () => {
             const wrapper = await mountWithSubscriber({ blacklisted: true })
-            expect(wrapper.findAll('span.bg-rose-100').length).toBeGreaterThan(0)
+            expect(wrapper.findAll('span.bg-red-100').length).toBeGreaterThan(0)
         })
 
         it('treats blacklisted=1 as truthy', async () => {
             const wrapper = await mountWithSubscriber({ blacklisted: 1 })
-            expect(wrapper.findAll('span.bg-rose-100').length).toBeGreaterThan(0)
+            expect(wrapper.findAll('span.bg-red-100').length).toBeGreaterThan(0)
         })
 
         it('treats blacklisted="1" as truthy', async () => {
             const wrapper = await mountWithSubscriber({ blacklisted: '1' })
-            expect(wrapper.findAll('span.bg-rose-100').length).toBeGreaterThan(0)
+            expect(wrapper.findAll('span.bg-red-100').length).toBeGreaterThan(0)
         })
 
-        it('shows slate badge for blacklisted=false', async () => {
+        it('shows neutral badge for blacklisted=false', async () => {
             const wrapper = await mountWithSubscriber({ confirmed: false, blacklisted: false })
-            const slateBadges = wrapper.findAll('span.bg-slate-100')
-            expect(slateBadges.length).toBeGreaterThanOrEqual(2)
+            const neutralBadges = wrapper.findAll('span.bg-gray-100')
+            expect(neutralBadges.length).toBeGreaterThanOrEqual(2)
         })
     })
 })

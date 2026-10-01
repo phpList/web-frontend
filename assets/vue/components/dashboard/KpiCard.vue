@@ -3,15 +3,15 @@
   <BaseCard>
     <header class="flex items-center mb-2">
       <div
-        class="inline-flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-2"
+        class="inline-flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-2 dark:bg-slate-700 dark:text-slate-400"
         style="width: 40px; height: 40px;"
       >
         <BaseIcon :name="icon" />
       </div>
-      <p class="mb-0 text-gray-500 uppercase text-xs font-semibold">{{ label }}</p>
+      <p class="mb-0 text-gray-500 uppercase text-xs font-semibold dark:text-slate-400">{{ label }}</p>
     </header>
 
-    <p class="mb-1 text-2xl font-bold">{{ value }}</p>
+    <p class="mb-1 text-2xl font-bold dark:text-slate-100">{{ value }}</p>
 
     <p class="mb-0 text-sm" :class="trendClass">
       {{ change }} vs last month
@@ -36,5 +36,5 @@ const props = defineProps({
   icon: String,
 })
 
-const trendClass = computed(() => (props.trend === 'down' ? 'text-red-600' : 'text-green-600'))
+const trendClass = computed(() => (props.trend === 'down' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'))
 </script>

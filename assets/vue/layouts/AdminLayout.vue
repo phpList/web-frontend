@@ -1,11 +1,11 @@
-<!-- assets/vue/layouts/DashboardLayout.vue -->
+<!-- assets/vue/layouts/AdminLayout.vue -->
 <template>
   <div class="flex flex-col flex-1">
     <!-- Topbar -->
-    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
+    <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
       <div class="flex items-center gap-4 flex-1">
         <button
-            class="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-600 transition-colors"
+            class="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
             @click="openSidebar"
         >
           <BaseIcon name="menu" />
@@ -15,44 +15,44 @@
           <input
               v-model.trim="searchQuery"
               placeholder="Search subscribers, campaigns..."
-              class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
               type="text"
               @focus="showSearchResults = true"
               @input="handleSearchInput"
           >
           <div
               v-if="showSearchResults && searchQuery"
-              class="absolute top-full mt-2 w-full rounded-lg border border-slate-200 bg-white shadow-lg z-50 overflow-hidden"
+              class="absolute top-full mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg z-50 overflow-hidden"
           >
-            <div v-if="isSearching" class="px-3 py-2 text-sm text-slate-500">
+            <div v-if="isSearching" class="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
               Searching...
             </div>
             <template v-else>
-              <div v-if="searchResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 bg-slate-50 border-b border-slate-100">
+              <div v-if="searchResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700">
                 Subscribers
               </div>
               <a
                   v-for="subscriber in searchResults"
                   :key="subscriber.id"
                   :href="`/subscribers?findColumn=email&findValue=${encodeURIComponent(subscriber.email)}`"
-                  class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b last:border-b-0 border-slate-100"
+                  class="block px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 border-b last:border-b-0 border-slate-100 dark:border-slate-700"
               >
                 {{ subscriber.email }}
               </a>
 
-              <div v-if="campaignResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 bg-slate-50 border-y border-slate-100">
+              <div v-if="campaignResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-700">
                 Campaigns
               </div>
               <a
                   v-for="campaign in campaignResults"
                   :key="`campaign-${campaign.id}`"
                   :href="`/campaigns/${campaign.id}/edit`"
-                  class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b last:border-b-0 border-slate-100"
+                  class="block px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 border-b last:border-b-0 border-slate-100 dark:border-slate-700"
               >
                 {{ campaign.messageContent?.subject || `Campaign #${campaign.id}` }}
               </a>
 
-              <div v-if="!searchResults.length && !campaignResults.length" class="px-3 py-2 text-sm text-slate-500">
+              <div v-if="!searchResults.length && !campaignResults.length" class="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
                 No results found
               </div>
             </template>
@@ -65,13 +65,18 @@
           to="/campaigns/create"
           class="hidden sm:flex items-center gap-2 px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="M12 5v14"></path>
-          </svg>
+          <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
           Create Campaign
         </RouterLink>
+
+        <button
+            type="button"
+            class="p-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleDarkMode"
+        >
+          <BaseIcon :name="isDark ? 'sun' : 'moon'" />
+        </button>
 
         <!-- User dropdown -->
         <div class="relative">
@@ -80,10 +85,10 @@
               @click="toggleDropdown"
           >
             <div class="flex flex-col items-end hidden sm:flex">
-              <span class="text-sm font-bold text-slate-800 leading-none">
+              <span class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-none">
                 {{ adminData.login_name || 'Admin User' }}
               </span>
-              <span class="text-[10px] text-slate-500 mt-0.5">
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                 {{ adminData.super_user ? 'Super Admin' : 'Administrator' }}
               </span>
             </div>
@@ -94,11 +99,11 @@
           <!-- Dropdown -->
           <div
               v-if="dropdownOpen"
-              class="absolute right-0 mt-2 w-40 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50"
+              class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50"
           >
             <a
                 href="/logout"
-                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
             >
               Logout
             </a>
@@ -117,12 +122,14 @@
 <script setup>
 import BaseIcon from "../components/base/BaseIcon.vue";
 import { useSidebar } from "../composables/useSidebar";
+import { useDarkMode } from "../composables/useDarkMode";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { RouterLink } from 'vue-router';
 import { Requests } from "@tatevikgr/rest-api-client";
 import { backendFetch, subscribersClient, campaignClient } from "../api";
 
 const { openSidebar } = useSidebar();
+const { isDark, toggleDarkMode } = useDarkMode();
 
 const adminData = ref({});
 const dropdownOpen = ref(false);

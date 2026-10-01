@@ -9184,9 +9184,65 @@
                 "type": "object",
                 "nullable": true
             },
+            "DomainConfirmationStats": {
+                "properties": {
+                    "domain": {
+                        "type": "string"
+                    },
+                    "confirmed": {
+                        "properties": {
+                            "count": {
+                                "type": "integer"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "format": "float"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "unconfirmed": {
+                        "properties": {
+                            "count": {
+                                "type": "integer"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "format": "float"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "blacklisted": {
+                        "properties": {
+                            "count": {
+                                "type": "integer"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "format": "float"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "total": {
+                        "properties": {
+                            "count": {
+                                "type": "integer"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "format": "float"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "TopDomainStats": {
                 "properties": {
-                    "domains": {
+                    "items": {
                         "type": "array",
                         "items": {
                             "properties": {
@@ -9209,7 +9265,7 @@
             },
             "LocalPartsStats": {
                 "properties": {
-                    "local_parts": {
+                    "items": {
                         "type": "array",
                         "items": {
                             "properties": {

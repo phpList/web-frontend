@@ -61,63 +61,74 @@
         </BaseCard>
 
         <BaseCard>
-          <header class="mb-4">
-            <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Domain confirmation</h2>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Confirmation coverage for the configured sending domain.
+          <header class="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Domain confirmation</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                Confirmation coverage by sending domain.
+              </p>
+            </div>
+            <p class="text-xs text-slate-400 dark:text-slate-500">
+              {{ formatCount(domainConfirmationItems.length) }} domains
             </p>
           </header>
 
-          <div v-if="domainConfirmation" class="space-y-4">
-            <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Domain</p>
-              <p class="mt-1 break-all text-sm font-semibold text-slate-900 dark:text-slate-100">
-                {{ domainConfirmation.domain || 'Unknown domain' }}
-              </p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div class="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 px-3 py-3">
-                <p class="text-xs uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Confirmed</p>
-                <p class="mt-1 text-lg font-bold text-emerald-900 dark:text-emerald-400">
-                  {{ formatCount(domainConfirmation.confirmed) }}
+          <div v-if="domainConfirmationItems.length" class="space-y-5">
+            <div v-for="item in domainConfirmationItems" :key="item.domain" class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <p class="break-all text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {{ item.domain || 'Unknown domain' }}
+                </p>
+                <p class="whitespace-nowrap text-xs text-slate-400 dark:text-slate-500">
+                  {{ formatCount(item.total?.count) }} total
                 </p>
               </div>
-              <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 px-3 py-3">
-                <p class="text-xs uppercase tracking-wide text-amber-700 dark:text-amber-400">Unconfirmed</p>
-                <p class="mt-1 text-lg font-bold text-amber-900 dark:text-amber-400">
-                  {{ formatCount(domainConfirmation.unconfirmed) }}
-                </p>
-              </div>
-            </div>
 
-            <div>
-              <div class="mb-2 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span>Confirmation rate</span>
-                <span>{{ formatPercentage(domainConfirmation.confirmationRate) }}</span>
-              </div>
-              <div class="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+              <div class="flex h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                 <div
-                  class="h-full rounded-full bg-emerald-500"
-                  :style="{ width: `${clampPercentage(domainConfirmation.confirmationRate)}%` }"
+                  class="h-full bg-emerald-500"
+                  :style="{ width: `${clampPercentage(item.confirmed?.percentage)}%` }"
+                />
+                <div
+                  class="h-full bg-amber-500"
+                  :style="{ width: `${clampPercentage(item.unconfirmed?.percentage)}%` }"
+                />
+                <div
+                  class="h-full bg-rose-500"
+                  :style="{ width: `${clampPercentage(item.blacklisted?.percentage)}%` }"
                 />
               </div>
-            </div>
 
-            <dl class="grid grid-cols-3 gap-3 text-sm">
-              <div class="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-3">
-                <dt class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Total</dt>
-                <dd class="mt-1 font-semibold text-slate-900 dark:text-slate-100">{{ formatCount(domainConfirmation.total) }}</dd>
+              <div class="grid grid-cols-3 gap-2 text-xs">
+                <div class="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 px-2 py-2">
+                  <p class="uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Confirmed</p>
+                  <p class="mt-1 font-semibold text-emerald-900 dark:text-emerald-400">
+                    {{ formatCount(item.confirmed?.count) }}
+                  </p>
+                  <p class="text-emerald-700/70 dark:text-emerald-400/70">
+                    {{ formatPercentage(item.confirmed?.percentage) }}
+                  </p>
+                </div>
+                <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 px-2 py-2">
+                  <p class="uppercase tracking-wide text-amber-700 dark:text-amber-400">Unconfirmed</p>
+                  <p class="mt-1 font-semibold text-amber-900 dark:text-amber-400">
+                    {{ formatCount(item.unconfirmed?.count) }}
+                  </p>
+                  <p class="text-amber-700/70 dark:text-amber-400/70">
+                    {{ formatPercentage(item.unconfirmed?.percentage) }}
+                  </p>
+                </div>
+                <div class="rounded-lg bg-rose-50 dark:bg-rose-500/10 px-2 py-2">
+                  <p class="uppercase tracking-wide text-rose-700 dark:text-rose-400">Blacklisted</p>
+                  <p class="mt-1 font-semibold text-rose-900 dark:text-rose-400">
+                    {{ formatCount(item.blacklisted?.count) }}
+                  </p>
+                  <p class="text-rose-700/70 dark:text-rose-400/70">
+                    {{ formatPercentage(item.blacklisted?.percentage) }}
+                  </p>
+                </div>
               </div>
-              <div class="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-3">
-                <dt class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Confirmed</dt>
-                <dd class="mt-1 font-semibold text-slate-900 dark:text-slate-100">{{ formatCount(domainConfirmation.confirmed) }}</dd>
-              </div>
-              <div class="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-3">
-                <dt class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Unconfirmed</dt>
-                <dd class="mt-1 font-semibold text-slate-900 dark:text-slate-100">{{ formatCount(domainConfirmation.unconfirmed) }}</dd>
-              </div>
-            </dl>
+            </div>
           </div>
 
           <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
@@ -391,6 +402,8 @@ const metrics = computed(() => {
     },
   ]
 })
+
+const domainConfirmationItems = computed(() => domainConfirmation.value?.items ?? [])
 
 const campaignChartItems = computed(() =>
   [...campaignStatistics.value]

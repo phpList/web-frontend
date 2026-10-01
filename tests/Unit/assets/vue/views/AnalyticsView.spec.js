@@ -54,11 +54,15 @@ const mockStatisticsResponses = () => {
     items: [{ domain: 'example.com', subscribers: 42 }],
   })
   statisticsClient.getDomainConfirmationStatistics.mockResolvedValue({
-    domain: 'example.com',
-    total: 100,
-    confirmed: 80,
-    unconfirmed: 20,
-    confirmationRate: 80,
+    items: [
+      {
+        domain: 'example.com',
+        total: { count: 10 },
+        confirmed: { count: 8, percentage: 80 },
+        unconfirmed: { count: 2, percentage: 20 },
+        blacklisted: { count: 0, percentage: 0 },
+      },
+    ],
   })
   statisticsClient.getTopLocalParts.mockResolvedValue({
     items: [{ localPart: 'alex', count: 12, percentage: 24 }],
@@ -87,7 +91,7 @@ describe('AnalyticsView', () => {
 
     await flushPromises()
 
-    expect(statisticsClient.getCampaignStatistics).toHaveBeenCalledWith(null, 100)
+    expect(statisticsClient.getCampaignStatistics).toHaveBeenCalledWith(null, 10)
     expect(wrapper.text()).toContain('Campaigns tracked')
     expect(wrapper.text()).toContain('Summer launch')
     expect(wrapper.text()).toContain('example.com')

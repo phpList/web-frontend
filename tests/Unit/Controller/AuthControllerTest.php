@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Unit\Controller;
 
+use PhpList\RestApiClient\Client;
 use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\WebFrontend\Controller\AuthController;
@@ -22,14 +23,16 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class AuthControllerTest extends TestCase
 {
     private AuthClient&MockObject $authClient;
+    private Client&MockObject $apiClient;
     private AuthController $controller;
 
     protected function setUp(): void
     {
         $this->authClient = $this->createMock(AuthClient::class);
+        $this->apiClient = $this->createMock(Client::class);
 
         $this->controller = $this->getMockBuilder(AuthController::class)
-            ->setConstructorArgs([$this->authClient, $this->createMock(LoggerInterface::class)])
+            ->setConstructorArgs([$this->authClient, $this->apiClient, $this->createMock(LoggerInterface::class)])
             ->onlyMethods(['render', 'redirectToRoute', 'generateUrl'])
             ->getMock();
 
@@ -309,7 +312,67 @@ class AuthControllerTest extends TestCase
             ->method('getSessionUser')
             ->willReturn($adminMock);
 
-        $response = $this->controller->about();
+        $this->apiClient->expects($this->once())
+            ->method('setSessionId')
+            ->with('session-token');
+
+        $this->apiClient->expects($this->once())
+            ->method('get')
+            ->with('administrators/123')
+            ->willReturn(['privileges' => ['statistics' => true]]);
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')
+            ->willReturnMap([
+                ['auth_token', null, 'session-token'],
+            ]);
+
+        $request = $this->createMock(Request::class);
+        $request->method('getSession')
+            ->willReturn($session);
+
+        $response = $this->controller->about($request);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(
+            '{"id":123,"login_name":"testadmin","email":"admin@example.com",'
+            . '"super_user":true,"privileges":{"statistics":true}}',
+            $response->getContent()
+        );
+    }
+
+    public function testAboutOmitsPrivilegesWhenAdministratorFetchFails(): void
+    {
+        $adminMock = $this->createMock(Administrator::class);
+        $adminMock->method('toArray')
+            ->willReturn([
+                'id' => 123,
+                'login_name' => 'testadmin',
+                'email' => 'admin@example.com',
+                'super_user' => true
+            ]);
+
+        $this->authClient->expects($this->once())
+            ->method('getSessionUser')
+            ->willReturn($adminMock);
+
+        $this->apiClient->expects($this->once())
+            ->method('get')
+            ->with('administrators/123')
+            ->willThrowException(new ApiException('not found', 404));
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')
+            ->willReturnMap([
+                ['auth_token', null, 'session-token'],
+            ]);
+
+        $request = $this->createMock(Request::class);
+        $request->method('getSession')
+            ->willReturn($session);
+
+        $response = $this->controller->about($request);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
@@ -325,7 +388,16 @@ class AuthControllerTest extends TestCase
             ->method('getSessionUser')
             ->willThrowException(new ApiException('upstream down', 500));
 
-        $response = $this->controller->about();
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')
+            ->with('auth_token')
+            ->willReturn('session-token');
+
+        $request = $this->createMock(Request::class);
+        $request->method('getSession')
+            ->willReturn($session);
+
+        $response = $this->controller->about($request);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(Response::HTTP_BAD_GATEWAY, $response->getStatusCode());

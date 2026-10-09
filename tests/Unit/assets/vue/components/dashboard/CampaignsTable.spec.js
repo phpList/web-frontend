@@ -85,46 +85,46 @@ describe('row rendering', () => {
     })
 })
 
-describe('statusClass', () => {
+describe('status badge', () => {
     const mountWithStatus = (status) =>
         mount(CampaignsTable, { props: { rows: [makeRow({ status })] } })
 
-    it('applies green classes for "sent"', () => {
+    it('applies the success (emerald) variant for "sent"', () => {
         const wrapper = mountWithStatus('sent')
-        expect(wrapper.find('span.bg-green-100').exists()).toBe(true)
-        expect(wrapper.find('span.text-green-800').exists()).toBe(true)
+        expect(wrapper.find('span.bg-emerald-100').exists()).toBe(true)
+        expect(wrapper.find('span.text-emerald-700').exists()).toBe(true)
     })
 
-    it('applies blue classes for "scheduled"', () => {
+    it('applies the info (blue) variant for "scheduled"', () => {
         const wrapper = mountWithStatus('scheduled')
         expect(wrapper.find('span.bg-blue-100').exists()).toBe(true)
-        expect(wrapper.find('span.text-blue-800').exists()).toBe(true)
+        expect(wrapper.find('span.text-blue-700').exists()).toBe(true)
     })
 
-    it('applies gray classes for "draft"', () => {
+    it('applies the neutral (gray) variant for "draft"', () => {
         const wrapper = mountWithStatus('draft')
         expect(wrapper.find('span.bg-gray-100').exists()).toBe(true)
         expect(wrapper.find('span.text-gray-800').exists()).toBe(true)
     })
 
-    it('applies gray fallback classes for an unknown status', () => {
+    it('applies the neutral (gray) fallback variant for an unknown status', () => {
         const wrapper = mountWithStatus('paused')
         expect(wrapper.find('span.bg-gray-100').exists()).toBe(true)
         expect(wrapper.find('span.text-gray-800').exists()).toBe(true)
     })
 
-    it('is case-insensitive — "Sent" resolves to green', () => {
+    it('is case-insensitive — "Sent" resolves to the success variant', () => {
         const wrapper = mountWithStatus('Sent')
-        expect(wrapper.find('span.bg-green-100').exists()).toBe(true)
+        expect(wrapper.find('span.bg-emerald-100').exists()).toBe(true)
     })
 
-    it('is case-insensitive — "SCHEDULED" resolves to blue', () => {
+    it('is case-insensitive — "SCHEDULED" resolves to the info variant', () => {
         const wrapper = mountWithStatus('SCHEDULED')
         expect(wrapper.find('span.bg-blue-100').exists()).toBe(true)
     })
 
     it('renders the status label inside the badge', () => {
         const wrapper = mountWithStatus('sent')
-        expect(wrapper.find('span.bg-green-100').text()).toBe('sent')
+        expect(wrapper.find('span.bg-emerald-100').text()).toBe('sent')
     })
 })

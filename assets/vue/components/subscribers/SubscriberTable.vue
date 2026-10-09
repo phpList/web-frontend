@@ -2,7 +2,7 @@
   <div class="overflow-x-auto">
     <!-- Desktop Table -->
     <table class="w-full text-left text-sm hidden md:table">
-      <thead class="bg-slate-50 text-slate-500 font-medium">
+      <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
         <tr>
           <th class="px-6 py-4">ID</th>
           <th class="px-6 py-4">Email</th>
@@ -12,91 +12,69 @@
           <th class="px-6 py-4 text-right">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-200">
+      <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
         <tr
           v-for="subscriber in props.subscribers"
           :key="subscriber.id"
-          class="hover:bg-slate-50  transition-colors group"
+          class="hover:bg-slate-50 dark:hover:bg-slate-800  transition-colors group"
         >
-          <td class="px-6 py-4 text-slate-600 ">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 ">
             {{ subscriber.id }}
           </td>
-          <td class="px-6 py-4 font-mono text-sm text-slate-900">
+          <td class="px-6 py-4 font-mono text-sm text-slate-900 dark:text-slate-100">
             {{ subscriber.email }}
           </td>
           <td class="px-6 py-4">
             <div class="flex flex-wrap gap-2">
-              <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="subscriber.confirmed ? statusClasses.active : statusClasses.unconfirmed"
-              >
+              <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
                 {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
-              </span>
-              <span
-                v-if="subscriber.blacklisted"
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"
-              >
+              </BaseBadge>
+              <BaseBadge v-if="subscriber.blacklisted" variant="danger">
                 Blacklisted
-              </span>
+              </BaseBadge>
             </div>
           </td>
-          <td class="px-6 py-4 text-right text-slate-600">
+          <td class="px-6 py-4 text-right text-slate-600 dark:text-slate-300">
             {{ subscriber.listCount }}
           </td>
-          <td class="px-6 py-4 text-slate-600">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
             {{ subscriber.createdAt }}
           </td>
           <td class="px-6 py-4 text-right">
-            <button
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
-              @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            <ActionButton icon="eye" @click="emit('view', subscriber.id)">
               View
-            </button>
+            </ActionButton>
           </td>
         </tr>
       </tbody>
     </table>
 
     <!-- Mobile Card View -->
-    <div class="block md:hidden divide-y divide-slate-100">
+    <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
       <div
         v-for="subscriber in props.subscribers"
         :key="subscriber.id"
-        class="p-4 hover:bg-slate-50 transition-colors"
+        class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         <div class="flex justify-between items-center mb-1">
-          <span class="font-medium text-slate-900 truncate max-w-[180px]">
+          <span class="font-medium text-slate-900 dark:text-slate-100 truncate max-w-[180px]">
             {{ subscriber.email.split('@')[0] }}
           </span>
           <div class="flex items-center gap-2">
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-              :class="subscriber.confirmed ? statusClasses.active : statusClasses.unconfirmed"
-            >
+            <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
               {{ subscriber.confirmed ? 'active' : 'unconfirmed' }}
-            </span>
-            <span
-              v-if="subscriber.blacklisted"
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"
-            >
+            </BaseBadge>
+            <BaseBadge v-if="subscriber.blacklisted" variant="danger">
               blacklisted
-            </span>
-            <button
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
-                @click="emit('view', subscriber.id)"
-            >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
+            </BaseBadge>
+            <ActionButton icon="eye" @click="emit('view', subscriber.id)">
               View
-            </button>
+            </ActionButton>
           </div>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="text-xs font-mono text-slate-500 break-all">{{ subscriber.email }}</p>
-          <div class="flex items-center gap-4 mt-2 text-[11px] text-slate-400 uppercase tracking-tight">
+          <p class="text-xs font-mono text-slate-500 dark:text-slate-400 break-all">{{ subscriber.email }}</p>
+          <div class="flex items-center gap-4 mt-2 text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-tight">
             <span class="flex items-center gap-1">
               <BaseIcon name="list" class="w-3 h-3" />
               {{ subscriber.listCount }} Lists
@@ -113,14 +91,8 @@
 
 <script setup>
 import BaseIcon from '../base/BaseIcon.vue'
-import { inject } from 'vue'
-
-const statusClasses = {
-  active: 'bg-emerald-100 text-emerald-700',
-  unconfirmed: 'bg-amber-100 text-amber-700',
-  bounced: 'bg-red-100 text-red-700',
-  unsubscribed: 'bg-slate-100 text-slate-600',
-}
+import BaseBadge from '../base/BaseBadge.vue'
+import ActionButton from '../base/ActionButton.vue'
 
 const props = defineProps({
   subscribers: {
@@ -130,15 +102,4 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['view'])
-
-const formatDate = (dateString, isIso = false) => {
-  if (!dateString) return '-'
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return '-'
-  
-  if (isIso) {
-    return date.toISOString().split('T')[0]
-  }
-  return date.toLocaleDateString()
-}
 </script>

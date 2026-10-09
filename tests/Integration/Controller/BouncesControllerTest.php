@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Tests\Integration\Controller;
 use PhpList\WebFrontend\Controller\BouncesController;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\RouterInterface;
@@ -27,12 +28,13 @@ class BouncesControllerTest extends KernelTestCase
         self::bootKernel();
         /** @var BouncesController $controller */
         $controller = static::getContainer()->get(BouncesController::class);
-        $apiBaseUrl = (string) static::getContainer()->getParameter('api_base_url');
+        $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
         $request = Request::create('/bounces/');
         $session = new Session(new MockArraySessionStorage());
         $session->set('auth_token', 'integration-token');
         $request->setSession($session);
+        static::getContainer()->get(RequestStack::class)->push($request);
 
         $response = $controller->index($request);
         $content = (string) $response->getContent();

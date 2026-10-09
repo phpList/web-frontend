@@ -1,54 +1,54 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500">Template</p>
-            <h2 class="text-xl font-bold text-slate-900">{{ pageTitle }}</h2>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Template</p>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ pageTitle }}</h2>
           </div>
 
           <RouterLink
             to="/templates"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             Back to Templates
           </RouterLink>
         </div>
       </div>
 
-      <div v-if="isLoading" class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
         Loading template...
       </div>
 
-      <div v-else-if="loadError" class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-600 shadow-sm">
-        {{ loadError }}
+      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+        {{ error }}
       </div>
 
-      <section v-else class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8">
+      <section v-else class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
         <form class="space-y-6" @submit.prevent="saveTemplate">
             <div class="grid gap-6 lg:grid-cols-2">
               <div class="space-y-2">
-                <label for="template-title" class="block text-sm font-medium text-slate-700">Title</label>
+                <label for="template-title" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Title</label>
                 <input
                   id="template-title"
                   v-model.trim="form.title"
                   type="text"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
                   placeholder="Enter template title"
                   required
                 >
               </div>
 
               <div class="space-y-2">
-                <label for="template-list-order" class="block text-sm font-medium text-slate-700">List order</label>
+                <label for="template-list-order" class="block text-sm font-medium text-slate-700 dark:text-slate-200">List order</label>
                 <input
                   id="template-list-order"
                   v-model.trim="form.listOrder"
                   type="number"
                   min="0"
                   step="1"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
                   placeholder="Optional (e.g. 10)"
                 >
               </div>
@@ -62,10 +62,10 @@
 
             <div class="space-y-2">
               <div class="flex items-center justify-between gap-2">
-                <label for="template-text" class="block text-sm font-medium text-slate-700">Text version</label>
+                <label for="template-text" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Text version</label>
                 <button
                   type="button"
-                  class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 text-xs text-slate-700 transition-colors"
+                  class="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-200 transition-colors"
                   @click="populateTextFromContent"
                 >
                   Use HTML as plain text
@@ -75,63 +75,69 @@
                 id="template-text"
                 v-model="form.text"
                 rows="7"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
+                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
                 placeholder="[CONTENT]"
               />
             </div>
 
             <div class="space-y-2">
-              <label for="template-file" class="block text-sm font-medium text-slate-700">Template file</label>
+              <label for="template-file" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Template file</label>
               <input
                 id="template-file"
                 type="file"
                 accept=".html,.htm,.txt"
-                class="block w-full text-sm text-slate-700 file:mr-4 file:rounded-lg file:border-0 file:bg-ext-wf2 file:px-3 file:py-2 file:text-ext-wf3 hover:file:bg-indigo-100"
+                class="block w-full text-sm text-slate-700 dark:text-slate-200 file:mr-4 file:rounded-lg file:border-0 file:bg-ext-wf2 file:px-3 file:py-2 file:text-ext-wf3 hover:file:bg-indigo-100"
                 @change="handleFileChange"
               >
             </div>
 
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-slate-700">Checks</label>
-              <div class="space-y-2 rounded-lg border border-slate-200 p-4">
-                <label class="flex items-center gap-2 text-sm text-slate-700">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Checks</label>
+              <div class="space-y-2 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+                <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     v-model="form.checkLinks"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                   >
                   Check that all links have a full URL
                 </label>
-                <label class="flex items-center gap-2 text-sm text-slate-700">
+                <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     v-model="form.checkImages"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                   >
                   Check that all images have a full URL
                 </label>
-                <label class="flex items-center gap-2 text-sm text-slate-700">
+                <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     v-model="form.checkExternalImages"
                     type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
+                    class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf1 accent-ext-wf1"
                   >
                   Check that all external images exist
                 </label>
               </div>
             </div>
 
-            <div v-if="saveError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div v-if="saveErrors.length" class="rounded-lg border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+              <p class="font-medium">Please fix the following fields:</p>
+              <ul class="mt-1 list-disc pl-5 space-y-1">
+                <li v-for="errorItem in saveErrors" :key="errorItem">{{ errorItem }}</li>
+              </ul>
+            </div>
+            <div v-else-if="saveError" class="rounded-lg border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-400">
               {{ saveError }}
             </div>
-            <div v-if="saveSuccess" class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            <div v-if="saveSuccess" class="rounded-lg border border-green-200 bg-green-50 dark:border-green-500/20 dark:bg-green-500/10 px-4 py-3 text-sm text-green-700 dark:text-green-400">
               {{ saveSuccess }}
             </div>
 
             <div class="flex items-center justify-end gap-2">
               <RouterLink
                 to="/templates"
-                class="px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-sm text-slate-700 transition-colors"
+                class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </RouterLink>
@@ -156,14 +162,15 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
 import { templateClient } from '../api'
 import { Requests } from "@tatevikgr/rest-api-client";
+import { useApiValidationErrors } from '../composables/useApiValidationErrors'
+import { useAsyncAction } from '../composables/useAsyncAction'
 
 const route = useRoute()
 const router = useRouter()
 
-const isLoading = ref(false)
-const loadError = ref('')
 const isSaving = ref(false)
 const saveError = ref('')
+const saveErrors = ref([])
 const saveSuccess = ref('')
 const form = ref({
   title: '',
@@ -187,26 +194,8 @@ const saveButtonLabel = computed(() => {
   return isCreateMode.value ? 'Create' : 'Save'
 })
 
-const loadTemplate = async () => {
-  if (isCreateMode.value) {
-    form.value.title = ''
-    form.value.listOrder = ''
-    form.value.content = ''
-    form.value.text = ''
-    form.value.file = null
-    loadError.value = ''
-    return
-  }
-
-  if (!Number.isFinite(templateId.value) || templateId.value <= 0) {
-    loadError.value = 'Template ID is invalid.'
-    return
-  }
-
-  isLoading.value = true
-  loadError.value = ''
-
-  try {
+const loadTemplateAction = useAsyncAction(
+  async () => {
     const template = await templateClient.getTemplate(templateId.value)
     form.value.title = template?.title || ''
     form.value.listOrder = template?.listOrder !== null && template?.listOrder !== undefined
@@ -215,12 +204,30 @@ const loadTemplate = async () => {
     form.value.content = template?.content || ''
     form.value.text = template?.text || ''
     form.value.file = null
-  } catch (error) {
-    console.error('Failed to load template:', error)
-    loadError.value = 'Failed to load template.'
-  } finally {
-    isLoading.value = false
+  },
+  { errorMessage: 'Failed to load template.', logLabel: 'Failed to load template:' }
+)
+
+const loading = loadTemplateAction.loading
+const error = loadTemplateAction.error
+
+const loadTemplate = async () => {
+  if (isCreateMode.value) {
+    form.value.title = ''
+    form.value.listOrder = ''
+    form.value.content = ''
+    form.value.text = ''
+    form.value.file = null
+    error.value = ''
+    return
   }
+
+  if (!Number.isFinite(templateId.value) || templateId.value <= 0) {
+    error.value = 'Template ID is invalid.'
+    return
+  }
+
+  await loadTemplateAction.run()
 }
 
 const populateTextFromContent = () => {
@@ -240,19 +247,35 @@ const handleFileChange = (event) => {
   form.value.file = file || null
 }
 
+const validationFieldLabels = {
+  title: 'Title',
+  content: 'Content',
+  text: 'Text version',
+  file: 'Template file',
+  list_order: 'List order',
+  check_links: 'Check links',
+  check_images: 'Check images',
+  check_external_images: 'Check external images'
+}
+
+const {formatValidationErrors} = useApiValidationErrors(validationFieldLabels)
+
 const saveTemplate = async () => {
   if (!isCreateMode.value && (!Number.isFinite(templateId.value) || templateId.value <= 0)) {
     saveError.value = 'Template ID is invalid.'
+    saveErrors.value = []
     return
   }
 
   if (!form.value.title) {
     saveError.value = 'Title is required.'
+    saveErrors.value = []
     return
   }
 
   isSaving.value = true
   saveError.value = ''
+  saveErrors.value = []
   saveSuccess.value = ''
 
   try {
@@ -292,7 +315,14 @@ const saveTemplate = async () => {
     saveSuccess.value = 'Template updated successfully.'
   } catch (error) {
     console.error('Failed to save template:', error)
-    saveError.value = error?.message || 'Failed to save template.'
+    const formattedErrors = formatValidationErrors(error)
+    if (formattedErrors.length > 0) {
+      saveErrors.value = formattedErrors
+      saveError.value = ''
+    } else {
+      saveError.value = error?.message || 'Failed to save template.'
+      saveErrors.value = []
+    }
   } finally {
     isSaving.value = false
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-1">
-    <p class="px-4 mt-8 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest first:mt-0">{{ label }}</p>
+    <p class="px-4 mt-8 mb-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest first:mt-0">{{ label }}</p>
 
     <SidebarNavItem
         v-for="item in items"

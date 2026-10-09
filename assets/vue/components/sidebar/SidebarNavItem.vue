@@ -8,7 +8,7 @@
         :href="href"
         @click="(e) => { navigate(e); closeSidebar(); }"
         class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors group no-underline"
-        :class="isActive ? 'bg-indigo-50 text-ext-wf3' : 'text-slate-600 hover:bg-slate-50'"
+        :class="isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-ext-wf3 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'"
     >
       <div class="flex items-center gap-3">
         <BaseIcon

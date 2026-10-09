@@ -11,7 +11,7 @@ use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\RestApiClient\Exception\AuthorizationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class BaseController extends AbstractController
+abstract class BaseController extends AbstractController
 {
     public function __construct(
         protected AuthClient $authClient,

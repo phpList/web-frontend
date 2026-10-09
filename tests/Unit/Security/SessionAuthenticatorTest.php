@@ -7,6 +7,7 @@ namespace PhpList\WebFrontend\Tests\Unit\Security;
 use PhpList\WebFrontend\Security\SessionAuthenticator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -141,5 +142,22 @@ class SessionAuthenticatorTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login?redirect=%2Fdashboard%3Ftab%3Doverview', $response->getTargetUrl());
+    }
+
+    public function testStartReturnsJsonForXmlHttpRequest(): void
+    {
+        $this->urlGenerator->method('generate')->with('login')->willReturn('/login');
+
+        $request = Request::create('/subscribers?tab=overview');
+        $request->headers->set('X-Requested-With', 'XMLHttpRequest');
+
+        $response = $this->authenticator->start($request);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(401, $response->getStatusCode());
+
+        $payload = json_decode($response->getContent(), true);
+        $this->assertEquals('session_expired', $payload['error']);
+        $this->assertEquals('/login?redirect=%2Fsubscribers%3Ftab%3Doverview', $payload['redirect']);
     }
 }

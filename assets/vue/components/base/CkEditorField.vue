@@ -3,7 +3,7 @@
     <label
         v-if="label"
         :for="fieldId"
-        class="mb-1 block text-sm font-medium text-slate-700"
+        class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
     >
       {{ label }}
     </label>
@@ -22,8 +22,8 @@
         :config="config"
     />
 
-    <p v-if="helperText" class="mt-1 text-xs text-slate-500">{{ helperText }}</p>
-    <p v-if="errorMessage" class="mt-1 text-xs text-red-600">{{ errorMessage }}</p>
+    <p v-if="helperText" class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ helperText }}</p>
+    <p v-if="errorMessage" class="mt-1 text-xs text-red-600 dark:text-red-400">{{ errorMessage }}</p>
   </div>
 </template>
 

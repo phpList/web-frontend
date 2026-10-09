@@ -2,8 +2,8 @@
   <section class="space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Bounce Management</h2>
-        <p class="mt-0.5 text-sm text-slate-500">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Bounce Management</h2>
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
           Monitor, process and automate bounce handling across all campaigns
         </p>
       </div>
@@ -20,15 +20,15 @@
         type="button"
         class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap shrink-0"
         :class="activeTab === tab.id
-          ? 'bg-white text-slate-900 shadow-sm border border-slate-300'
-          : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'"
+          ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm border border-slate-300 dark:border-slate-600'
+          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60'"
         @click="setActiveTab(tab.id)"
       >
         <span>{{ tab.label }}</span>
         <span
           v-if="tab.count"
           class="ml-2 text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
-          :class="activeTab === tab.id ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'"
+          :class="activeTab === tab.id ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'"
         >
           {{ tab.count }}
         </span>
@@ -48,9 +48,9 @@
     </template>
 
     <template v-else>
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 class="text-base font-semibold text-slate-900">{{ currentTabLabel }}</h3>
-        <p class="mt-1 text-sm text-slate-500">This panel matches the template navigation and can be expanded next.</p>
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ currentTabLabel }}</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">This panel matches the template navigation and can be expanded next.</p>
       </div>
     </template>
   </section>

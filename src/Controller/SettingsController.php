@@ -17,8 +17,6 @@ class SettingsController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Settings',
-            'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
         ]);
     }
 }

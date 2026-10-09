@@ -22,8 +22,9 @@
               minlength="3"
               maxlength="255"
               placeholder="admin"
-              class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              :class="fieldInputClass('login_name', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
+            <FieldError :messages="fieldErrors('login_name')" />
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Leave empty to keep current value. Minimum 3 characters.</p>
           </div>
 
@@ -35,8 +36,9 @@
               v-model.trim="form.email"
               type="email"
               placeholder="admin@example.com"
-              class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              :class="fieldInputClass('email', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
+            <FieldError :messages="fieldErrors('email')" />
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Leave empty to keep current value.</p>
           </div>
 
@@ -50,8 +52,9 @@
               minlength="6"
               maxlength="255"
               placeholder="••••••••"
-              class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              :class="fieldInputClass('password', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
+            <FieldError :messages="fieldErrors('password')" />
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Leave empty to keep current password. Minimum 6 characters if setting new password.</p>
           </div>
 
@@ -123,6 +126,7 @@
           </div>
 
           <p v-if="updateError" class="text-sm text-red-600 dark:text-red-400">{{ updateError }}</p>
+          <FieldError :messages="generalErrors(KNOWN_FIELDS)" />
     </form>
 
     <template #footer>
@@ -150,6 +154,8 @@ import { ref, watch } from 'vue'
 import { Requests } from '@tatevikgr/rest-api-client'
 import { adminClient } from '../../api'
 import BaseModal from '../base/BaseModal.vue'
+import FieldError from '../base/FieldError.vue'
+import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -163,6 +169,11 @@ const emit = defineEmits(['close', 'updated'])
 
 const isUpdating = ref(false)
 const updateError = ref('')
+
+const KNOWN_FIELDS = ['login_name', 'email', 'password']
+
+const { fieldErrors, fieldInputClass, generalErrors, setErrorsFromError, clearErrors, hasFieldErrors } =
+  useApiValidationErrors()
 
 const form = ref({
   loginName: '',
@@ -193,6 +204,7 @@ const resetForm = () => {
     }
   }
   updateError.value = ''
+  clearErrors()
 }
 
 watch(
@@ -220,6 +232,7 @@ const submitUpdateAdmin = async () => {
 
   isUpdating.value = true
   updateError.value = ''
+  clearErrors()
 
   try {
     const updateData = {}
@@ -252,7 +265,8 @@ const submitUpdateAdmin = async () => {
     emit('close')
   } catch (error) {
     console.error('Update admin failed:', error)
-    updateError.value = error?.message || 'Failed to update administrator.'
+    setErrorsFromError(error)
+    updateError.value = hasFieldErrors.value ? '' : (error?.message || 'Failed to update administrator.')
   } finally {
     isUpdating.value = false
   }

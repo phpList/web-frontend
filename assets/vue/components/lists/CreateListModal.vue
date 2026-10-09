@@ -13,8 +13,9 @@
                 v-model.trim="createForm.name"
                 type="text"
                 required
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('name', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('name')" />
             </div>
 
             <div class="flex items-center">
@@ -37,8 +38,9 @@
                 type="number"
                 min="0"
                 step="1"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('list_position', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('list_position')" />
             </div>
 
             <div>
@@ -47,11 +49,13 @@
                 id="list-description"
                 v-model.trim="createForm.description"
                 rows="3"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('description', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               ></textarea>
+              <FieldError :messages="fieldErrors('description')" />
             </div>
 
             <p v-if="createError" class="text-sm text-red-600 dark:text-red-400">{{ createError }}</p>
+            <FieldError :messages="generalErrors(KNOWN_FIELDS)" />
     </form>
 
     <template #footer>
@@ -78,7 +82,9 @@
 import { ref, watch } from 'vue'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseModal from '../base/BaseModal.vue'
+import FieldError from '../base/FieldError.vue'
 import { listClient } from '../../api'
+import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
 
 const props = defineProps({
   isOpen: Boolean
@@ -88,6 +94,11 @@ const emit = defineEmits(['close', 'created'])
 
 const creatingList = ref(false)
 const createError = ref('')
+
+const KNOWN_FIELDS = ['name', 'list_position', 'description']
+
+const { fieldErrors, fieldInputClass, generalErrors, setErrorsFromError, clearErrors, hasFieldErrors } =
+  useApiValidationErrors()
 const createForm = ref({
   name: '',
   public: false,
@@ -103,6 +114,7 @@ const resetCreateForm = () => {
     description: ''
   }
   createError.value = ''
+  clearErrors()
 }
 
 watch(
@@ -142,6 +154,7 @@ const submitCreateList = async () => {
 
   creatingList.value = true
   createError.value = ''
+  clearErrors()
 
   try {
     const request = new Requests.CreateSubscriberListRequest(
@@ -155,7 +168,8 @@ const submitCreateList = async () => {
     emit('created', createdList)
     emit('close')
   } catch (error) {
-    createError.value = error?.message || 'Failed to create list.'
+    setErrorsFromError(error)
+    createError.value = hasFieldErrors.value ? '' : (error?.message || 'Failed to create list.')
   } finally {
     creatingList.value = false
   }

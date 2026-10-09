@@ -81,20 +81,9 @@
                 v-model.trim="createForm.regex"
                 type="text"
                 required
-                :class="[
-                  'mt-1 block w-full rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm bg-white dark:bg-slate-800 dark:text-slate-100',
-                  fieldHasError('regex')
-                    ? 'border border-red-300 dark:border-red-500/40 focus:ring-red-500 focus:border-red-500'
-                    : 'border border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500'
-                ]"
+                :class="fieldInputClass('regex', 'mt-1 block w-full rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm bg-white dark:bg-slate-800 dark:text-slate-100')"
               >
-              <p
-                v-for="message in fieldErrors('regex')"
-                :key="`regex-${message}`"
-                class="mt-1 text-sm text-red-600 dark:text-red-400"
-              >
-                {{ message }}
-              </p>
+              <FieldError :messages="fieldErrors('regex')" />
             </div>
 
             <div>
@@ -103,20 +92,9 @@
                 id="bounce-rule-comment"
                 v-model.trim="createForm.comment"
                 type="text"
-                :class="[
-                  'mt-1 block w-full rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm bg-white dark:bg-slate-800 dark:text-slate-100',
-                  fieldHasError('comment')
-                    ? 'border border-red-300 dark:border-red-500/40 focus:ring-red-500 focus:border-red-500'
-                    : 'border border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500'
-                ]"
+                :class="fieldInputClass('comment', 'mt-1 block w-full rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm bg-white dark:bg-slate-800 dark:text-slate-100')"
               >
-              <p
-                v-for="message in fieldErrors('comment')"
-                :key="`comment-${message}`"
-                class="mt-1 text-sm text-red-600 dark:text-red-400"
-              >
-                {{ message }}
-              </p>
+              <FieldError :messages="fieldErrors('comment')" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -125,22 +103,11 @@
                 <select
                   id="bounce-rule-action"
                   v-model="createForm.action"
-                  :class="[
-                    'mt-1 block w-full rounded-md shadow-sm py-2 px-3 bg-white dark:bg-slate-800 dark:text-slate-100 focus:outline-none sm:text-sm',
-                    fieldHasError('action')
-                      ? 'border border-red-300 dark:border-red-500/40 focus:ring-red-500 focus:border-red-500'
-                      : 'border border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500'
-                  ]"
+                  :class="fieldInputClass('action', 'mt-1 block w-full rounded-md shadow-sm py-2 px-3 bg-white dark:bg-slate-800 dark:text-slate-100 focus:outline-none sm:text-sm')"
                 >
                   <option v-for="bounceAction in bounceActions" :key="bounceAction" :value="bounceAction">{{ bounceAction }}</option>
                 </select>
-                <p
-                  v-for="message in fieldErrors('action')"
-                  :key="`action-${message}`"
-                  class="mt-1 text-sm text-red-600 dark:text-red-400"
-                >
-                  {{ message }}
-                </p>
+                <FieldError :messages="fieldErrors('action')" />
               </div>
 
               <div>
@@ -148,23 +115,12 @@
                 <select
                   id="bounce-rule-status"
                   v-model="createForm.status"
-                  :class="[
-                    'mt-1 block w-full rounded-md shadow-sm py-2 px-3 bg-white dark:bg-slate-800 dark:text-slate-100 focus:outline-none sm:text-sm',
-                    fieldHasError('status')
-                      ? 'border border-red-300 dark:border-red-500/40 focus:ring-red-500 focus:border-red-500'
-                      : 'border border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500'
-                  ]"
+                  :class="fieldInputClass('status', 'mt-1 block w-full rounded-md shadow-sm py-2 px-3 bg-white dark:bg-slate-800 dark:text-slate-100 focus:outline-none sm:text-sm')"
                 >
                   <option value="active">active</option>
                   <option value="inactive">inactive</option>
                 </select>
-                <p
-                  v-for="message in fieldErrors('status')"
-                  :key="`status-${message}`"
-                  class="mt-1 text-sm text-red-600 dark:text-red-400"
-                >
-                  {{ message }}
-                </p>
+                <FieldError :messages="fieldErrors('status')" />
               </div>
             </div>
 
@@ -176,23 +132,13 @@
                 type="number"
                 min="0"
                 step="1"
-                :class="[
-                  'mt-1 block w-full rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm bg-white dark:bg-slate-800 dark:text-slate-100',
-                  fieldHasError('list_order')
-                    ? 'border border-red-300 dark:border-red-500/40 focus:ring-red-500 focus:border-red-500'
-                    : 'border border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500'
-                ]"
+                :class="fieldInputClass('list_order', 'mt-1 block w-full rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm bg-white dark:bg-slate-800 dark:text-slate-100')"
               >
-              <p
-                v-for="message in fieldErrors('list_order')"
-                :key="`list-order-${message}`"
-                class="mt-1 text-sm text-red-600 dark:text-red-400"
-              >
-                {{ message }}
-              </p>
+              <FieldError :messages="fieldErrors('list_order')" />
             </div>
 
             <p v-if="createError" class="text-sm text-red-600 dark:text-red-400">{{ createError }}</p>
+            <FieldError :messages="generalErrors(KNOWN_FIELDS)" />
       </form>
 
       <template #footer>
@@ -222,13 +168,18 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import BaseModal from '../base/BaseModal.vue'
+import FieldError from '../base/FieldError.vue'
 import { bouncesClient} from "../../api";
+import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
+
+const KNOWN_FIELDS = ['regex', 'comment', 'action', 'status', 'list_order']
+
+const { fieldErrors, fieldInputClass, generalErrors, fieldErrorsMap, setErrorsFromError, clearErrors, hasFieldErrors } = useApiValidationErrors()
 
 const allBounceRules = ref([])
 const isCreateModalOpen = ref(false)
 const isCreatingRule = ref(false)
 const createError = ref('')
-const createFieldErrors = ref({})
 const createForm = ref({
   regex: '',
   comment: '',
@@ -261,47 +212,8 @@ const resetCreateForm = () => {
     list_order: '',
   }
   createError.value = ''
-  createFieldErrors.value = {}
+  clearErrors()
 }
-
-const normalizeValidationErrors = (error) => {
-  const responseData = error?.responseData
-  if (!responseData || typeof responseData !== 'object' || Array.isArray(responseData)) {
-    return {}
-  }
-
-  const sourceErrors =
-    responseData.errors && typeof responseData.errors === 'object' && !Array.isArray(responseData.errors)
-      ? responseData.errors
-      : responseData
-
-  const normalized = {}
-
-  Object.entries(sourceErrors).forEach(([field, messages]) => {
-    if (!field || messages === null || messages === undefined) {
-      return
-    }
-
-    const key = String(field)
-    const list = Array.isArray(messages) ? messages : [messages]
-    const textMessages = list
-      .map((message) => String(message).trim())
-      .filter(Boolean)
-
-    if (textMessages.length > 0) {
-      normalized[key] = textMessages
-    }
-  })
-
-  return normalized
-}
-
-const fieldErrors = (field) => {
-  const messages = createFieldErrors.value?.[field]
-  return Array.isArray(messages) ? messages : []
-}
-
-const fieldHasError = (field) => fieldErrors(field).length > 0
 
 const loadBounceRules = async () => {
   try {
@@ -332,7 +244,7 @@ const submitCreateRule = async () => {
 
   const regex = createForm.value.regex.trim()
   if (!regex) {
-    createFieldErrors.value = { regex: ['Regex is required.'] }
+    fieldErrorsMap.value = { regex: ['Regex is required.'] }
     createError.value = ''
     return
   }
@@ -355,8 +267,8 @@ const submitCreateRule = async () => {
   if (createForm.value.list_order !== '') {
     const parsedListOrder = Number(createForm.value.list_order)
     if (!Number.isInteger(parsedListOrder) || parsedListOrder < 0) {
-      createFieldErrors.value = {
-        ...createFieldErrors.value,
+      fieldErrorsMap.value = {
+        ...fieldErrorsMap.value,
         list_order: ['List Order must be a whole number greater than or equal to 0.']
       }
       createError.value = ''
@@ -367,17 +279,15 @@ const submitCreateRule = async () => {
 
   isCreatingRule.value = true
   createError.value = ''
-  createFieldErrors.value = {}
+  clearErrors()
 
   try {
     await bouncesClient.upsertRegex(payload)
     isCreateModalOpen.value = false
     await loadBounceRules()
   } catch (error) {
-    createFieldErrors.value = normalizeValidationErrors(error)
-    createError.value = Object.keys(createFieldErrors.value).length > 0
-      ? ''
-      : error?.message ?? 'Failed to create rule.'
+    setErrorsFromError(error)
+    createError.value = hasFieldErrors.value ? '' : (error?.message ?? 'Failed to create rule.')
   } finally {
     isCreatingRule.value = false
   }

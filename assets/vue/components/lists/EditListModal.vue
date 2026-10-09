@@ -13,8 +13,9 @@
                 v-model.trim="editForm.name"
                 type="text"
                 required
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('name', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('name')" />
             </div>
 
             <div class="flex items-center">
@@ -39,8 +40,9 @@
                 type="number"
                 min="0"
                 step="1"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('list_position', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('list_position')" />
             </div>
 
             <div>
@@ -51,8 +53,9 @@
                 id="list-description"
                 v-model.trim="editForm.description"
                 rows="3"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('description', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               ></textarea>
+              <FieldError :messages="fieldErrors('description')" />
             </div>
 
             <div>
@@ -61,8 +64,9 @@
                 id="list-category"
                 v-model.trim="editForm.category"
                 type="text"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('category', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('category')" />
             </div>
 
             <div>
@@ -71,8 +75,9 @@
                 id="list-rss"
                 v-model.trim="editForm.rssFeed"
                 type="text"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('rss_feed', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('rss_feed')" />
             </div>
 
             <div>
@@ -81,11 +86,13 @@
                 id="list-prefix"
                 v-model.trim="editForm.subjectPrefix"
                 type="text"
-                class="mt-1 block w-full border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                :class="fieldInputClass('subject_prefix', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
               >
+              <FieldError :messages="fieldErrors('subject_prefix')" />
             </div>
 
             <p v-if="editError" class="text-sm text-red-600 dark:text-red-400">{{ editError }}</p>
+            <FieldError :messages="generalErrors(KNOWN_FIELDS)" />
     </form>
 
     <template #footer>
@@ -112,7 +119,9 @@
 import { ref, watch } from 'vue'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseModal from '../base/BaseModal.vue'
+import FieldError from '../base/FieldError.vue'
 import { listClient } from '../../api'
+import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -126,6 +135,11 @@ const emit = defineEmits(['close', 'updated'])
 
 const updatingList = ref(false)
 const editError = ref('')
+
+const KNOWN_FIELDS = ['name', 'list_position', 'description', 'category', 'rss_feed', 'subject_prefix']
+
+const { fieldErrors, fieldInputClass, generalErrors, setErrorsFromError, clearErrors, hasFieldErrors } =
+  useApiValidationErrors()
 const editForm = ref({
   name: '',
   public: false,
@@ -149,6 +163,7 @@ const fillEditForm = () => {
     subjectPrefix: props.list?.subject_prefix || ''
   }
   editError.value = ''
+  clearErrors()
 }
 
 watch(
@@ -192,6 +207,7 @@ const submitEditList = async () => {
 
   updatingList.value = true
   editError.value = ''
+  clearErrors()
 
   try {
     const request = new Requests.CreateSubscriberListRequest(
@@ -208,7 +224,8 @@ const submitEditList = async () => {
     emit('updated', updatedList)
     emit('close')
   } catch (error) {
-    editError.value = error?.message || 'Failed to update list.'
+    setErrorsFromError(error)
+    editError.value = hasFieldErrors.value ? '' : (error?.message || 'Failed to update list.')
   } finally {
     updatingList.value = false
   }

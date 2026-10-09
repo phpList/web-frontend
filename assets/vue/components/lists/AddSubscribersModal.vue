@@ -15,8 +15,9 @@
                   v-model.trim="addSubsForm.emails"
                   rows="8"
                   placeholder="john@example.com&#10;jane@example.com&#10;team@example.com"
-                  class="mt-1 block w-full rounded-md border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  :class="fieldInputClass('emails', 'mt-1 block w-full rounded-md dark:bg-slate-800 dark:text-slate-100 px-3 py-2 shadow-sm focus:outline-none sm:text-sm')"
               ></textarea>
+              <FieldError :messages="fieldErrors('emails')" />
               <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Enter one email per line, or separate multiple emails with commas.
               </p>
@@ -34,6 +35,7 @@
             <p v-if="addSubsError" class="text-sm text-red-600 dark:text-red-400">
               {{ addSubsError }}
             </p>
+            <FieldError :messages="generalErrors(KNOWN_FIELDS)" />
       </form>
 
     <template #footer>
@@ -60,7 +62,9 @@
 <script setup>
 import { ref, watch } from 'vue'
 import BaseModal from '../base/BaseModal.vue'
+import FieldError from '../base/FieldError.vue'
 import { subscriptionClient } from '../../api'
+import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -74,6 +78,10 @@ const emit = defineEmits(['close', 'added'])
 
 const addingSubscribers = ref(false)
 const addSubsError = ref('')
+
+const KNOWN_FIELDS = ['emails']
+
+const { fieldErrors, fieldInputClass, generalErrors, setErrorsFromError, clearErrors, hasFieldErrors } = useApiValidationErrors()
 const addSubsForm = ref({
   emails: '',
   autoConfirm: false
@@ -85,6 +93,7 @@ const resetAddSubsForm = () => {
     autoConfirm: false
   }
   addSubsError.value = ''
+  clearErrors()
 }
 
 watch(
@@ -135,13 +144,15 @@ const submitAddSubscribers = async () => {
 
   addingSubscribers.value = true
   addSubsError.value = ''
+  clearErrors()
 
   try {
     await subscriptionClient.createSubscriptions(emails, props.list.id, addSubsForm.value.autoConfirm)
     emit('added')
     emit('close')
   } catch (error) {
-    addSubsError.value = error?.message || 'Failed to add subscribers to the list.'
+    setErrorsFromError(error)
+    addSubsError.value = hasFieldErrors.value ? '' : (error?.message || 'Failed to add subscribers to the list.')
   } finally {
     addingSubscribers.value = false
   }

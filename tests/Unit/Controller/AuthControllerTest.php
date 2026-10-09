@@ -316,10 +316,57 @@ class AuthControllerTest extends TestCase
             ->method('setSessionId')
             ->with('session-token');
 
+        $this->apiClient->expects($this->once())
+            ->method('get')
+            ->with('administrators/123')
+            ->willReturn(['privileges' => ['statistics' => true]]);
+
         $session = $this->createMock(SessionInterface::class);
         $session->method('get')
-            ->with('auth_token')
-            ->willReturn('session-token');
+            ->willReturnMap([
+                ['auth_token', null, 'session-token'],
+            ]);
+
+        $request = $this->createMock(Request::class);
+        $request->method('getSession')
+            ->willReturn($session);
+
+        $response = $this->controller->about($request);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(
+            '{"id":123,"login_name":"testadmin","email":"admin@example.com",'
+            . '"super_user":true,"privileges":{"statistics":true}}',
+            $response->getContent()
+        );
+    }
+
+    public function testAboutOmitsPrivilegesWhenAdministratorFetchFails(): void
+    {
+        $adminMock = $this->createMock(Administrator::class);
+        $adminMock->method('toArray')
+            ->willReturn([
+                'id' => 123,
+                'login_name' => 'testadmin',
+                'email' => 'admin@example.com',
+                'super_user' => true
+            ]);
+
+        $this->authClient->expects($this->once())
+            ->method('getSessionUser')
+            ->willReturn($adminMock);
+
+        $this->apiClient->expects($this->once())
+            ->method('get')
+            ->with('administrators/123')
+            ->willThrowException(new ApiException('not found', 404));
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')
+            ->willReturnMap([
+                ['auth_token', null, 'session-token'],
+            ]);
 
         $request = $this->createMock(Request::class);
         $request->method('getSession')

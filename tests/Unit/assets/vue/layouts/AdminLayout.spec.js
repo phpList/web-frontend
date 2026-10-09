@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
 import AdminLayout from '../../../../../assets/vue/layouts/AdminLayout.vue'
 import { backendFetch, subscribersClient, campaignClient } from '../../../../../assets/vue/api'
+import { __resetCurrentAdminForTests } from '../../../../../assets/vue/composables/useCurrentAdmin'
 
 const openSidebar = vi.fn()
 const toggleDarkMode = vi.fn()
@@ -54,6 +55,7 @@ describe('AdminLayout', () => {
         vi.clearAllMocks()
         vi.useFakeTimers()
         isDark.value = false
+        __resetCurrentAdminForTests()
 
         backendFetch.mockResolvedValue({
             ok: true,

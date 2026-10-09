@@ -123,15 +123,16 @@
 import BaseIcon from "../components/base/BaseIcon.vue";
 import { useSidebar } from "../composables/useSidebar";
 import { useDarkMode } from "../composables/useDarkMode";
+import { useCurrentAdmin } from "../composables/useCurrentAdmin";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { RouterLink } from 'vue-router';
 import { Requests } from "@tatevikgr/rest-api-client";
-import { backendFetch, subscribersClient, campaignClient } from "../api";
+import { subscribersClient, campaignClient } from "../api";
 
 const { openSidebar } = useSidebar();
 const { isDark, toggleDarkMode } = useDarkMode();
+const { adminData, loadCurrentAdmin } = useCurrentAdmin();
 
-const adminData = ref({});
 const dropdownOpen = ref(false);
 const searchQuery = ref('');
 const searchResults = ref([]);
@@ -206,23 +207,9 @@ const closeSearchResultsOnOutsideClick = (event) => {
   showSearchResults.value = false;
 };
 
-onMounted(async () => {
+onMounted(() => {
   document.addEventListener('click', closeSearchResultsOnOutsideClick);
-
-  try {
-    const response = await backendFetch('/admin-about', {
-      headers: {
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
-
-    if (response.ok) {
-      adminData.value = await response.json();
-    }
-  } catch (error) {
-    console.error('Failed to fetch admin data:', error);
-  }
+  loadCurrentAdmin();
 });
 
 onBeforeUnmount(() => {

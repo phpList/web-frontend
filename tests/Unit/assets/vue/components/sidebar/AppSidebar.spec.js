@@ -7,11 +7,20 @@ import AppSidebar from '../../../../../../assets/vue/components/sidebar/AppSideb
 
 const isSidebarOpen = ref(false)
 const closeSidebar = vi.fn()
+const loadCurrentAdmin = vi.fn()
+let hasPrivilege = vi.fn(() => true)
 
 vi.mock('../../../../../../assets/vue/composables/useSidebar', () => ({
     useSidebar: () => ({
         isSidebarOpen,
         closeSidebar,
+    }),
+}))
+
+vi.mock('../../../../../../assets/vue/composables/useCurrentAdmin', () => ({
+    useCurrentAdmin: () => ({
+        loadCurrentAdmin,
+        hasPrivilege: (...args) => hasPrivilege(...args),
     }),
 }))
 
@@ -46,6 +55,7 @@ describe('AppSidebar', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         isSidebarOpen.value = false
+        hasPrivilege = vi.fn(() => true)
     })
 
     it('renders logo', () => {
@@ -92,6 +102,38 @@ describe('AppSidebar', () => {
                 route: '/',
                 badge: null,
             })
+    })
+
+    it('hides a privileged item when the admin lacks the privilege', () => {
+        hasPrivilege = vi.fn((privilege) => privilege !== 'subscribers')
+
+        const wrapper = createWrapper()
+
+        const generalSection = wrapper.findAllComponents(
+            SidebarNavSectionStub
+        )[0]
+
+        expect(generalSection.props('items').map(item => item.label))
+            .toEqual(['Dashboard', 'Lists'])
+    })
+
+    it('hides all campaign items but keeps unprivileged ones in the same section', () => {
+        hasPrivilege = vi.fn((privilege) => privilege !== 'campaigns')
+
+        const wrapper = createWrapper()
+
+        const marketingSection = wrapper.findAllComponents(
+            SidebarNavSectionStub
+        )[1]
+
+        expect(marketingSection.props('items').map(item => item.label))
+            .toEqual(['Templates'])
+    })
+
+    it('loads current admin data on mount', () => {
+        createWrapper()
+
+        expect(loadCurrentAdmin).toHaveBeenCalledTimes(1)
     })
 
     it('hides backdrop when sidebar is closed', () => {

@@ -137,13 +137,15 @@ const toStatusLabel = (statusRaw) => (statusRaw ? statusRaw.replace(/_/g, ' ') :
 const formatStuckDuration = (totalSeconds) => {
   if (totalSeconds === null || totalSeconds === undefined || Number.isNaN(totalSeconds)) return 'Unknown'
   const seconds = Math.max(0, Math.floor(totalSeconds))
-  const hours = Math.floor(seconds / 3600)
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = seconds % 60
 
-  if (hours === 0 && minutes === 0) return `${secs}s`
-  if (hours === 0) return `${minutes}m ${secs}s`
-  return `${hours}h ${minutes}m`
+  if (days === 0 && hours === 0 && minutes === 0) return `${secs}s`
+  if (days === 0 && hours === 0) return `${minutes}m ${secs}s`
+  if (days === 0) return `${hours}h ${minutes}m`
+  return `${days}d ${hours}h ${minutes}m`
 }
 
 const isActionLoading = (campaignId) => actionLoadingByCampaignId.value[campaignId] === true

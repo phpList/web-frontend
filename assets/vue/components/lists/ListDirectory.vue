@@ -37,7 +37,7 @@
               Delete
             </ActionButton>
 
-            <ActionButton variant="success" icon="addUser" @click="handleAddSubscriber(list)">
+            <ActionButton v-if="hasPrivilege('subscribers')" variant="success" icon="addUser" @click="handleAddSubscriber(list)">
               Add Subscribers
             </ActionButton>
 
@@ -45,11 +45,11 @@
               Edit
             </ActionButton>
 
-            <ActionButton variant="info" icon="plane" @click="handleStartCampaign(list)">
+            <ActionButton v-if="hasPrivilege('campaigns')" variant="info" icon="plane" @click="handleStartCampaign(list)">
               Start Campaign
             </ActionButton>
 
-            <ActionButton icon="eye" @click="handleViewMembers(list)">
+            <ActionButton v-if="hasPrivilege('subscribers')" icon="eye" @click="handleViewMembers(list)">
               View Members
             </ActionButton>
           </div>
@@ -73,7 +73,7 @@
             Delete
           </ActionButton>
 
-          <ActionButton block variant="success" icon="addUser" @click="handleAddSubscriber(list)">
+          <ActionButton v-if="hasPrivilege('subscribers')" block variant="success" icon="addUser" @click="handleAddSubscriber(list)">
             Add Subscriber
           </ActionButton>
 
@@ -81,11 +81,11 @@
             Edit
           </ActionButton>
 
-          <ActionButton block variant="info" icon="plane" @click="handleStartCampaign(list)">
+          <ActionButton v-if="hasPrivilege('campaigns')" block variant="info" icon="plane" @click="handleStartCampaign(list)">
             Start Campaign
           </ActionButton>
 
-          <ActionButton block class="col-span-2" icon="eye" @click="handleViewMembers(list)">
+          <ActionButton v-if="hasPrivilege('subscribers')" block class="col-span-2" icon="eye" @click="handleViewMembers(list)">
             View Members
           </ActionButton>
         </div>
@@ -125,8 +125,10 @@ import CreateListModal from './CreateListModal.vue'
 import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'
 import { fetchAllLists, listClient } from '../../api'
+import { useCurrentAdmin } from '../../composables/useCurrentAdmin'
 
 const router = useRouter()
+const { loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
 
 const mailingLists = ref([])
 const isLoading = ref(false)
@@ -153,6 +155,7 @@ const fetchMailingLists = async () => {
 
 onMounted(() => {
   fetchMailingLists()
+  loadCurrentAdmin()
 })
 
 const emit = defineEmits([

@@ -22,6 +22,10 @@
                             Enter your credentials to access your dashboard.
                         </p>
 
+                        {% if success %}
+                            <div class="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-green-600 dark:text-green-400 px-4 py-3 rounded mb-4 text-sm">{{ success }}</div>
+                        {% endif %}
+
                         {% if error %}
                             <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 px-4 py-3 rounded mb-4 text-sm">{{ error }}</div>
                         {% endif %}
@@ -38,7 +42,7 @@
                             <div class="mb-6">
                                 <div class="flex justify-between items-center mb-1">
                                     <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-slate-200">Password</label>
-                                    <a href="#" class="text-xs text-ext-wf1 hover:text-ext-wf3 no-underline">Forgot password?</a>
+                                    <a href="{{ path('forgot_password') }}" class="text-xs text-ext-wf1 hover:text-ext-wf3 no-underline">Forgot password?</a>
                                 </div>
                                 <div class="relative">
                                     <input type="password" class="block w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 pr-10 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" id="password" name="password" required/>

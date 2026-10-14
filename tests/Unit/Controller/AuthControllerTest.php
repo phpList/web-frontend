@@ -402,4 +402,238 @@ class AuthControllerTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(Response::HTTP_BAD_GATEWAY, $response->getStatusCode());
     }
+
+    public function testForgotPasswordRedirectsWhenAlreadyAuthenticated(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(true);
+
+        $request = Request::create('/forgot-password', 'GET');
+        $request->setSession($session);
+
+        $response = $this->controller->forgotPassword($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
+    }
+
+    public function testForgotPasswordWithGetRequestShowsForm(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $request = Request::create('/forgot-password', 'GET');
+        $request->setSession($session);
+
+        $response = $this->controller->forgotPassword($request);
+
+        $this->assertStringContainsString('auth/forgot_password.html.twig', $response->getContent());
+        $this->assertStringContainsString('"error":null', $response->getContent());
+        $this->assertStringContainsString('"success":null', $response->getContent());
+    }
+
+    public function testForgotPasswordWithInvalidEmailShowsError(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->never())->method('post');
+
+        $request = Request::create('/forgot-password', 'POST', ['email' => 'not-an-email']);
+        $request->setSession($session);
+
+        $response = $this->controller->forgotPassword($request);
+
+        $this->assertStringContainsString('Please enter a valid email address.', $response->getContent());
+    }
+
+    public function testForgotPasswordWithValidEmailShowsGenericSuccessMessage(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->once())
+            ->method('post')
+            ->with('password-reset/request', ['email' => 'admin@example.com']);
+
+        $request = Request::create('/forgot-password', 'POST', ['email' => 'admin@example.com']);
+        $request->setSession($session);
+
+        $response = $this->controller->forgotPassword($request);
+
+        $this->assertStringContainsString(
+            'If an account exists for that email address',
+            $response->getContent()
+        );
+    }
+
+    public function testForgotPasswordShowsGenericSuccessMessageEvenWhenApiFails(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->once())
+            ->method('post')
+            ->with('password-reset/request', ['email' => 'unknown@example.com'])
+            ->willThrowException(new ApiException('not found', 404));
+
+        $request = Request::create('/forgot-password', 'POST', ['email' => 'unknown@example.com']);
+        $request->setSession($session);
+
+        $response = $this->controller->forgotPassword($request);
+
+        $this->assertStringContainsString(
+            'If an account exists for that email address',
+            $response->getContent()
+        );
+    }
+
+    public function testResetPasswordRedirectsWhenAlreadyAuthenticated(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(true);
+
+        $request = Request::create('/reset-password', 'GET');
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
+    }
+
+    public function testResetPasswordWithMissingTokenShowsError(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $request = Request::create('/reset-password', 'GET');
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertStringContainsString('invalid or has expired', $response->getContent());
+        $this->assertStringContainsString('"token":null', $response->getContent());
+    }
+
+    public function testResetPasswordWithInvalidTokenShowsError(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->once())
+            ->method('post')
+            ->with('password-reset/validate', ['token' => 'bad-token'])
+            ->willReturn(['valid' => false]);
+
+        $request = Request::create('/reset-password', 'GET', ['token' => 'bad-token']);
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertStringContainsString('invalid or has expired', $response->getContent());
+        $this->assertStringContainsString('"token":null', $response->getContent());
+    }
+
+    public function testResetPasswordWithValidTokenShowsForm(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->once())
+            ->method('post')
+            ->with('password-reset/validate', ['token' => 'good-token'])
+            ->willReturn(['valid' => true]);
+
+        $request = Request::create('/reset-password', 'GET', ['token' => 'good-token']);
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertStringContainsString('"error":null', $response->getContent());
+        $this->assertStringContainsString('"token":"good-token"', $response->getContent());
+    }
+
+    public function testResetPasswordPostWithMismatchedPasswordsShowsError(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->never())->method('post');
+
+        $request = Request::create('/reset-password', 'POST', [
+            'token' => 'good-token',
+            'newPassword' => 'password123',
+            'confirmPassword' => 'password456',
+        ]);
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertStringContainsString('Passwords do not match.', $response->getContent());
+    }
+
+    public function testResetPasswordPostWithShortPasswordShowsError(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->never())->method('post');
+
+        $request = Request::create('/reset-password', 'POST', [
+            'token' => 'good-token',
+            'newPassword' => 'short',
+            'confirmPassword' => 'short',
+        ]);
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertStringContainsString('Password must be at least 8 characters long.', $response->getContent());
+    }
+
+    public function testResetPasswordPostSuccessRedirectsToLogin(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->once())
+            ->method('post')
+            ->with('password-reset/reset', ['token' => 'good-token', 'newPassword' => 'password123'])
+            ->willReturn(['message' => 'Password updated successfully']);
+
+        $request = Request::create('/reset-password', 'POST', [
+            'token' => 'good-token',
+            'newPassword' => 'password123',
+            'confirmPassword' => 'password123',
+        ]);
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('mocked-route-to-login', $response->getTargetUrl());
+    }
+
+    public function testResetPasswordPostWithApiExceptionShowsError(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(false);
+
+        $this->apiClient->expects($this->once())
+            ->method('post')
+            ->with('password-reset/reset', ['token' => 'expired-token', 'newPassword' => 'password123'])
+            ->willThrowException(new ApiException('invalid token', 400));
+
+        $request = Request::create('/reset-password', 'POST', [
+            'token' => 'expired-token',
+            'newPassword' => 'password123',
+            'confirmPassword' => 'password123',
+        ]);
+        $request->setSession($session);
+
+        $response = $this->controller->resetPassword($request);
+
+        $this->assertStringContainsString('invalid or has expired', $response->getContent());
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Controller;
 
 use PhpList\RestApiClient\Endpoint\ListClient;
+use PhpList\WebFrontend\Trait\WantsJsonTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/lists', name: 'list_')]
 class ListsController extends AbstractController
 {
+    use WantsJsonTrait;
+
     public function __construct(private readonly ListClient $listClient)
     {
     }
@@ -21,13 +24,9 @@ class ListsController extends AbstractController
     #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {
-        $accept = (string) $request->headers->get('Accept', '');
-        $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
-        if (! $wantsJson) {
+        if (! $this->wantsJson($request)) {
             return $this->render('@PhpListFrontend/spa.html.twig', [
                 'page' => 'Lists',
-                'api_token' => $request->getSession()->get('auth_token'),
-                'api_base_url' => $this->getParameter('api_base_url'),
             ]);
         }
         $initialData = $this->listClient->getLists();
@@ -40,8 +39,6 @@ class ListsController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'List Subscribers',
-            'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
         ]);
     }
 }

@@ -1,15 +1,15 @@
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <h2 class="text-xl font-bold text-slate-900">Campaigns</h2>
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Campaigns</h2>
 
-      <div class="inline-flex rounded-lg border border-slate-200 p-1 bg-slate-50 w-full sm:w-auto">
+      <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-slate-50 dark:bg-slate-900 w-full sm:w-auto">
         <button
           v-for="option in filterOptions"
           :key="option.id"
           type="button"
           class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-          :class="statusFilter === option.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+          :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
           @click="setFilter(option.id)"
         >
           {{ option.label }}
@@ -17,49 +17,34 @@
       </div>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm hidden md:table">
-        <thead class="bg-slate-50 text-slate-500 font-medium">
-        <tr>
-          <th class="px-6 py-4">Subject</th>
-          <th class="px-6 py-4">Status</th>
-          <th class="px-6 py-4">Lists</th>
-          <th class="px-6 py-4">Processed</th>
-          <th class="px-6 py-4" v-if="showStatistics">Statistics</th>
-          <th class="px-6 py-4 text-right">Actions</th>
-        </tr>
-        </thead>
+    <BaseDataTable
+        :items="paginatedCampaigns"
+        :is-loading="loading"
+        :load-error="error"
+        loading-message="Loading campaigns..."
+        empty-message="No campaigns for this filter."
+        :colspan="showStatistics ? 6 : 5"
+    >
+      <template #head>
+        <th class="px-6 py-4">Subject</th>
+        <th class="px-6 py-4">Status</th>
+        <th class="px-6 py-4">Lists</th>
+        <th class="px-6 py-4">Processed</th>
+        <th class="px-6 py-4" v-if="showStatistics">Statistics</th>
+        <th class="px-6 py-4 text-right">Actions</th>
+      </template>
 
-        <tbody class="divide-y divide-slate-200">
-        <tr v-if="isLoading">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500">Loading campaigns...</td>
-        </tr>
-
-        <tr v-else-if="errorMessage">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
-        </tr>
-
-        <tr v-else-if="paginatedCampaigns.length === 0">
-          <td :colspan="showStatistics ? 6 : 5" class="px-6 py-8 text-center text-slate-500">No campaigns for this filter.</td>
-        </tr>
-
-        <tr
-          v-for="campaign in paginatedCampaigns"
-          :key="campaign.id"
-          class="hover:bg-slate-50 transition-colors"
-        >
-          <td class="px-6 py-4 font-medium text-slate-900">{{ campaign.subject }}</td>
-          <td class="px-6 py-4">
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-              :class="statusClasses[campaign.statusKey] || statusClasses.unknown"
-            >
-              {{ campaign.statusLabel }}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-slate-600 align-top">
-            <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
-            <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
+      <template #row="{ item: campaign }">
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ campaign.subject }}</td>
+        <td class="px-6 py-4">
+          <BaseBadge :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
+            {{ campaign.statusLabel }}
+          </BaseBadge>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+          <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
+          <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
+          <template v-else-if="campaign.lists.length <= 3">
             <p
                 v-for="list in campaign.lists"
                 :key="`${campaign.id}-${list.id}`"
@@ -67,252 +52,227 @@
             >
               <router-link
                   :to="`/lists/${list.id}/subscribers`"
-                  class="text-blue-600 hover:underline"
+                  class="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 {{ list.name }}
               </router-link>
             </p>
-          </td>
-          <td class="px-6 py-4 text-slate-600 align-top">
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Started:</span> {{ campaign.startedAt }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Time to send:</span> {{ campaign.timeToSend }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Total:</span> {{ campaign.processedTotal }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Text:</span> {{ campaign.processedText }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">HTML:</span> {{ campaign.processedHtml }}</p>
-          </td>
-          <td class="px-6 py-4 text-slate-600 align-top" v-if="showStatistics">
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Total views:</span> {{ campaign.totalViews }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Unique views:</span> {{ campaign.uniqueViews }}</p>
-            <p class="text-xs leading-5"><span class="font-medium text-slate-700">Bounced:</span> {{ campaign.bounced }}</p>
-          </td>
-          <td class="px-6 py-4 align-top text-right">
-            <div class="inline-flex flex-wrap justify-end gap-2">
-              <button
-                v-if="campaign.statusKey === 'draft'"
+          </template>
+          <template v-else>
+            <button
                 type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                @click="toggleListsExpanded(campaign.id)"
+            >
+              {{ isListsExpanded(campaign.id) ? '▼' : '▶' }} {{ campaign.lists.length }} lists
+            </button>
+            <p
+                v-if="isListsExpanded(campaign.id)"
+                v-for="list in campaign.lists"
+                :key="`${campaign.id}-${list.id}`"
+                class="text-xs leading-5"
+            >
+              - <router-link
+                  :to="`/lists/${list.id}/subscribers`"
+                  class="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {{ list.name }}
+              </router-link>
+            </p>
+          </template>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total:</span> {{ campaign.processedTotal }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Text:</span> {{ campaign.processedText }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">HTML:</span> {{ campaign.processedHtml }}</p>
+        </td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top" v-if="showStatistics">
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total views:</span> {{ campaign.totalViews }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Unique views:</span> {{ campaign.uniqueViews }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Bounced:</span> {{ campaign.bounced }}</p>
+        </td>
+        <td class="px-6 py-4 align-top text-right">
+          <div class="inline-flex flex-wrap justify-end gap-2">
+            <ActionButton
+                v-if="campaign.statusKey === 'draft'"
+                variant="danger"
+                icon="delete"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleDelete(campaign)"
-              >
-                <BaseIcon name="delete" class="w-3.5 h-3.5" />
-                Delete
-              </button>
-              <button
+            >
+              Delete
+            </ActionButton>
+            <ActionButton
                 v-else-if="campaign.statusKey === 'active'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                variant="danger"
+                icon="pause"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleSuspend(campaign.id)"
-              >
-                <BaseIcon name="pause" class="w-3.5 h-3.5" />
-                Suspend
-              </button>
-              <button
+            >
+              Suspend
+            </ActionButton>
+            <ActionButton
                 v-else
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                variant="warning"
+                icon="start"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleRequeue(campaign.id)"
-              >
-                <BaseIcon name="start" class="w-3.5 h-3.5" />
-                Requeue
-              </button>
-              <button
+            >
+              Requeue
+            </ActionButton>
+            <ActionButton
                 v-if="campaign.statusKey === 'sent'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors"
+                variant="success"
+                icon="copy"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleCopyToDraft(campaign.id)"
-              >
-                <BaseIcon name="copy" class="w-3.5 h-3.5" />
-                Copy to draft
-              </button>
-              <button
-                  v-if="campaign.statusKey === 'draft'"
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleEdit(campaign.id)"
-              >
-                <BaseIcon name="edit" class="w-3.5 h-3.5" />
-                Edit
-              </button>
-              <button
-                  type="button"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
-                  :disabled="isActionLoading(campaign.id)"
-                  @click="handleView(campaign.id)"
-              >
-                <BaseIcon name="eye" class="w-3.5 h-3.5" />
-                View
-              </button>
-            </div>
-            <p
-              v-if="getActionFeedback(campaign.id)"
-              class="mt-2 text-xs"
-              :class="{
-                'text-emerald-700': getActionFeedback(campaign.id)?.type === 'success',
-                'text-red-700': getActionFeedback(campaign.id)?.type === 'error',
-                'text-slate-500': getActionFeedback(campaign.id)?.type === 'info'
-              }"
             >
-              {{ getActionFeedback(campaign.id)?.message }}
-            </p>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="block md:hidden divide-y divide-slate-100">
-        <div
-          v-if="isLoading"
-          class="px-4 py-8 text-center text-slate-500 text-sm"
-        >
-          Loading campaigns...
-        </div>
-
-        <div
-          v-else-if="errorMessage"
-          class="px-4 py-8 text-center text-red-600 text-sm"
-        >
-          {{ errorMessage }}
-        </div>
-
-        <div
-          v-else-if="paginatedCampaigns.length === 0"
-          class="px-4 py-8 text-center text-slate-500 text-sm"
-        >
-          No campaigns for this filter.
-        </div>
-
-        <div
-          v-for="campaign in paginatedCampaigns"
-          :key="`mobile-${campaign.id}`"
-          class="p-4 space-y-3"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <p class="font-semibold text-slate-900">{{ campaign.subject }}</p>
-            </div>
-            <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-              :class="statusClasses[campaign.statusKey] || statusClasses.unknown"
-            >
-              {{ campaign.statusLabel }}
-            </span>
-          </div>
-
-          <div class="text-xs text-slate-600 space-y-1">
-            <p>
-              <span class="font-medium text-slate-700">Lists: </span>
-              <template v-if="campaign.lists.length > 0">
-                <span
-                    v-for="(list, index) in campaign.lists"
-                    :key="list.id"
-                >
-                  <router-link
-                      :to="`/lists/${list.id}/subscribers`"
-                      class="text-blue-600 hover:underline"
-                  >
-                    {{ list.name }}
-                  </router-link>
-                  <span v-if="index < campaign.lists.length - 1">, </span>
-                </span>
-              </template>
-            </p>
-            <p><span class="font-medium text-slate-700">Started:</span> {{ campaign.startedAt }}</p>
-            <p><span class="font-medium text-slate-700">Time to send:</span> {{ campaign.timeToSend }}</p>
-            <p><span class="font-medium text-slate-700">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
-            <p v-if="showStatistics">
-              <span class="font-medium text-slate-700">Statistics:</span>
-              Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
-            </p>
-          </div>
-
-          <div class="pt-2 flex flex-wrap gap-2">
-            <button
-              v-if="campaign.statusKey === 'draft'"
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleDelete(campaign)"
-            >
-              <BaseIcon name="delete" class="w-3.5 h-3.5" />
-              Delete
-            </button>
-            <button
-              v-else-if="campaign.statusKey === 'active'"
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleSuspend(campaign.id)"
-            >
-              <BaseIcon name="pause" class="w-3.5 h-3.5" />
-              Suspend
-            </button>
-            <button
-              v-else
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleRequeue(campaign.id)"
-            >
-              <BaseIcon name="start" class="w-3.5 h-3.5" />
-              Requeue
-            </button>
-            <button
-              v-if="campaign.statusKey === 'sent'"
-              type="button"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-green-200 text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50"
-              :disabled="isActionLoading(campaign.id)"
-              @click="handleCopyToDraft(campaign.id)"
-            >
-              <BaseIcon name="copy" class="w-3.5 h-3.5" />
               Copy to draft
-            </button>
-            <button
+            </ActionButton>
+            <ActionButton
                 v-if="campaign.statusKey === 'draft'"
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                icon="edit"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
-              <BaseIcon name="edit" class="w-3.5 h-3.5" />
               Edit
-            </button>
-            <button
-                type="button"
-                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+            </ActionButton>
+            <ActionButton
+                icon="eye"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
-              <BaseIcon name="eye" class="w-3.5 h-3.5" />
               View
-            </button>
+            </ActionButton>
           </div>
           <p
             v-if="getActionFeedback(campaign.id)"
-            class="text-xs"
+            class="mt-2 text-xs"
             :class="{
-              'text-emerald-700': getActionFeedback(campaign.id)?.type === 'success',
-              'text-red-700': getActionFeedback(campaign.id)?.type === 'error',
-              'text-slate-500': getActionFeedback(campaign.id)?.type === 'info'
+              'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
+              'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
+              'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
             }"
           >
             {{ getActionFeedback(campaign.id)?.message }}
           </p>
-        </div>
-      </div>
-    </div>
+        </td>
+      </template>
 
-    <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+      <template #card="{ item: campaign }">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="font-semibold text-slate-900 dark:text-slate-100">{{ campaign.subject }}</p>
+          </div>
+          <BaseBadge class="whitespace-nowrap" :variant="statusVariants[campaign.statusKey] || statusVariants.unknown">
+            {{ campaign.statusLabel }}
+          </BaseBadge>
+        </div>
+
+        <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+          <p>
+            <span class="font-medium text-slate-700 dark:text-slate-200">Lists: </span>
+            <template v-if="campaign.lists.length > 0">
+              <span
+                  v-for="(list, index) in campaign.lists"
+                  :key="list.id"
+              >
+                <router-link
+                    :to="`/lists/${list.id}/subscribers`"
+                    class="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {{ list.name }}
+                </router-link>
+                <span v-if="index < campaign.lists.length - 1">, </span>
+              </span>
+            </template>
+          </p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
+          <p v-if="showStatistics">
+            <span class="font-medium text-slate-700 dark:text-slate-200">Statistics:</span>
+            Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
+          </p>
+        </div>
+
+        <div class="pt-2 flex flex-wrap gap-2">
+          <ActionButton
+              v-if="campaign.statusKey === 'draft'"
+              variant="danger"
+              icon="delete"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleDelete(campaign)"
+          >
+            Delete
+          </ActionButton>
+          <ActionButton
+              v-else-if="campaign.statusKey === 'active'"
+              variant="danger"
+              icon="pause"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleSuspend(campaign.id)"
+          >
+            Suspend
+          </ActionButton>
+          <ActionButton
+              v-else
+              variant="warning"
+              icon="start"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleRequeue(campaign.id)"
+          >
+            Requeue
+          </ActionButton>
+          <ActionButton
+              v-if="campaign.statusKey === 'sent'"
+              variant="success"
+              icon="copy"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleCopyToDraft(campaign.id)"
+          >
+            Copy to draft
+          </ActionButton>
+          <ActionButton
+              v-if="campaign.statusKey === 'draft'"
+              icon="edit"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleEdit(campaign.id)"
+          >
+            Edit
+          </ActionButton>
+          <ActionButton
+              icon="eye"
+              :disabled="isActionLoading(campaign.id)"
+              @click="handleView(campaign.id)"
+          >
+            View
+          </ActionButton>
+        </div>
+        <p
+          v-if="getActionFeedback(campaign.id)"
+          class="text-xs"
+          :class="{
+            'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
+            'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
+            'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+          }"
+        >
+          {{ getActionFeedback(campaign.id)?.message }}
+        </p>
+      </template>
+    </BaseDataTable>
+
+    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
       <div class="text-center sm:text-left">
-        Showing <span class="font-medium text-slate-900">{{ rangeStart }}</span>-<span class="font-medium text-slate-900">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900">{{ filteredCampaigns.length }}</span>
+        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeStart }}</span>-<span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ totalForFilter }}</span>
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           :disabled="!canGoPrevious"
           @click="previousPage"
         >
@@ -320,7 +280,7 @@
         </button>
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           :disabled="!canGoNext"
           @click="nextPage"
         >
@@ -348,62 +308,77 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
-import BaseIcon from '../base/BaseIcon.vue'
+import ActionButton from '../base/ActionButton.vue'
+import BaseBadge from '../base/BaseBadge.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
+import { useCampaignPagination } from '../../composables/useCampaignPagination'
+import { useCampaignStatistics } from '../../composables/useCampaignStatistics'
+import { useCampaignLists } from '../../composables/useCampaignLists'
 
 const pageSize = 5
 const route = useRoute()
 const router = useRouter()
-const allCampaigns = ref([])
-const listsByCampaignId = ref({})
-const statisticsByCampaignId = ref({})
-const loadingListsByCampaignId = ref({})
-const actionLoadingByCampaignId = ref({})
-const actionFeedbackByCampaignId = ref({})
-const isLoading = ref(false)
-const errorMessage = ref('')
-const mailingLists = ref([])
 
 const allowedStatuses = ['all', 'sent', 'active', 'draft']
+const activeStatuses = new Set(['submitted', 'prepared', 'inprocess'])
 
-const parseStatusQuery = (statusQuery) => {
-  const value = Array.isArray(statusQuery) ? statusQuery[0] : statusQuery
-  return allowedStatuses.includes(value) ? value : 'all'
-}
+// Maps a UI filter tab to the server-side `status` query param. 'active' groups several
+// raw statuses, sent as a comma-separated list the backend matches via IN(...).
+const statusParamForFilter = (filterId) => ({
+  sent: 'sent',
+  draft: 'draft',
+  active: Array.from(activeStatuses).join(','),
+}[filterId] ?? null)
 
-const parsePageQuery = (pageQuery) => {
-  const queryValue = Array.isArray(pageQuery) ? pageQuery[0] : pageQuery
-  const page = Number.parseInt(String(queryValue ?? ''), 10)
-  return Number.isNaN(page) || page < 1 ? 1 : page
-}
-
-const statusFilter = computed({
-  get() {
-    return parseStatusQuery(route.query.status)
-  },
-  async set(value) {
-    const normalized = allowedStatuses.includes(value) ? value : 'all'
-    const nextQuery = { ...route.query }
-
-    if (normalized === 'all') {
-      delete nextQuery.status
-    } else {
-      nextQuery.status = normalized
-    }
-
-    delete nextQuery.page
-
-    await router.replace({ query: nextQuery })
-  }
+const {
+  statusFilter,
+  currentPage,
+  rawItems: rawCampaigns,
+  total: totalForFilter,
+  loading,
+  error,
+  canGoPrevious,
+  canGoNext,
+  rangeStart,
+  rangeEnd,
+  setFilter,
+  previousPage,
+  nextPage,
+  loadUpToPage,
+  refreshCurrentPage,
+} = useCampaignPagination({
+  route,
+  router,
+  pageSize,
+  allowedStatuses,
+  fetchPage: (afterId, limit, status) =>
+      campaignClient.getCampaigns(afterId, limit, null, statusParamForFilter(status), 'desc'),
 })
 
-const currentPage = ref(parsePageQuery(route.query.page))
+const {
+  showStatistics,
+  getCampaignStatistics,
+  fetchCampaignStatistics,
+} = useCampaignStatistics(statisticsClient)
+
+const {
+  getCampaignLists,
+  isListsLoading,
+  isListsExpanded,
+  toggleListsExpanded,
+  fetchListsForVisibleCampaigns,
+} = useCampaignLists(listMessagesClient)
+
+const mailingLists = ref([])
+const actionLoadingByCampaignId = ref({})
+const actionFeedbackByCampaignId = ref({})
+
 const isViewModalOpen = ref(false)
 const isViewLoading = ref(false)
 const selectedCampaign = ref(null)
 const viewErrorMessage = ref('')
 const isResending = ref(false)
 const resendErrorMessage = ref('')
-const showStatistics = ref(true)
 
 const filterOptions = [
   { id: 'all', label: 'All' },
@@ -412,14 +387,12 @@ const filterOptions = [
   { id: 'draft', label: 'Draft' }
 ]
 
-const statusClasses = {
-  sent: 'bg-emerald-100 text-emerald-700',
-  active: 'bg-blue-100 text-blue-700',
-  draft: 'bg-slate-100 text-slate-700',
-  unknown: 'bg-amber-100 text-amber-700'
+const statusVariants = {
+  sent: 'success',
+  active: 'info',
+  draft: 'neutral',
+  unknown: 'warning'
 }
-
-const activeStatuses = new Set(['active', 'submitted', 'prepared', 'inprocess', 'requeued', 'scheduled'])
 
 const resolveStatusKey = (statusRaw) => {
   if (statusRaw === 'sent') return 'sent'
@@ -475,13 +448,6 @@ const formatDuration = (fromValue, toValue) => {
   return `${hours}h ${minutes}m`
 }
 
-const getCampaignLists = (campaignId) => listsByCampaignId.value[campaignId] || []
-const getCampaignStatistics = (campaignId) => statisticsByCampaignId.value[campaignId] || {
-  bounces: 0,
-  sent: 0,
-  uniqueViews: 0,
-}
-
 const fetchMailingLists = async () => {
   try {
     mailingLists.value = await fetchAllLists()
@@ -491,7 +457,6 @@ const fetchMailingLists = async () => {
   }
 }
 
-const isListsLoading = (campaignId) => loadingListsByCampaignId.value[campaignId] === true
 const isActionLoading = (campaignId) => actionLoadingByCampaignId.value[campaignId] === true
 const getActionFeedback = (campaignId) => actionFeedbackByCampaignId.value[campaignId] || null
 
@@ -509,9 +474,9 @@ const handleRequeue = async (campaignId) => {
   setActionFeedback(campaignId, 'Requeueing campaign...')
 
   try {
-    await campaignClient.updateCampaignStatus(campaignId, 'requeued')
+    await campaignClient.updateCampaignStatus(campaignId, 'submitted')
     setActionFeedback(campaignId, 'Campaign requeued.', 'success')
-    await fetchCampaigns()
+    await refreshCurrentPage()
   } catch (error) {
     console.error(`Failed to requeue campaign ${campaignId}:`, error)
     setActionFeedback(campaignId, error?.message || 'Failed to requeue campaign.', 'error')
@@ -528,7 +493,7 @@ const handleSuspend = async (campaignId) => {
   try {
     await campaignClient.updateCampaignStatus(campaignId, 'suspended')
     setActionFeedback(campaignId, 'Campaign suspended.', 'success')
-    await fetchCampaigns()
+    await refreshCurrentPage()
   } catch (error) {
     console.error(`Failed to suspend campaign ${campaignId}:`, error)
     setActionFeedback(campaignId, error?.message || 'Failed to suspend campaign.', 'error')
@@ -552,7 +517,10 @@ const handleDelete = async (campaign) => {
   try {
     await campaignClient.deleteCampaign(campaign.id)
     setActionFeedback(campaign.id, 'Campaign deleted.', 'success')
-    await fetchCampaigns()
+    // Delay the refresh so the success feedback is visible before the row disappears.
+    setTimeout(() => {
+      refreshCurrentPage()
+    }, 1500)
   } catch (error) {
     console.error(`Failed to delete campaign ${campaign.id}:`, error)
     setActionFeedback(campaign.id, error?.message || 'Failed to delete campaign.', 'error')
@@ -619,7 +587,7 @@ const handleCopyToDraft = async (campaignId) => {
 
   try {
     await campaignClient.copyCampaign(campaignId)
-    await fetchCampaigns()
+    await refreshCurrentPage()
     setActionFeedback(campaignId, 'Created draft copy')
   } catch (error) {
     console.error(`Failed to copy campaign ${campaignId} to draft:`, error)
@@ -629,289 +597,48 @@ const handleCopyToDraft = async (campaignId) => {
   }
 }
 
-const normalizedCampaigns = computed(() =>
-    allCampaigns.value.map((campaign) => {
-      const statusRaw = (campaign?.messageMetadata?.status || '').toLowerCase()
-      const statusKey = resolveStatusKey(statusRaw)
-      const subject = campaign?.messageContent?.subject || `Campaign #${campaign.id}`
-      const enteredAt = campaign?.messageMetadata?.entered || null
-      const sentAt = campaign?.messageMetadata?.sent || null
-      const statistics = getCampaignStatistics(campaign.id)
-      const processedTotal = Number(campaign?.messageMetadata?.processed ?? 0)
-      const isTextFormat = (campaign?.messageFormat?.sendFormat || '').toLowerCase() === 'text'
-      const processedText = isTextFormat ? processedTotal : 0
-      const processedHtml = isTextFormat ? 0 : processedTotal
-      const lists = getCampaignLists(campaign.id)
-      const sendStart = campaign?.messageMetadata?.sendStart || null
+// Expensive (date formatting, statistics/lists lookups) — run only for the page being rendered.
+const normalizeCampaign = (campaign) => {
+  const statusRaw = (campaign?.messageMetadata?.status || '').toLowerCase()
+  const statusKey = resolveStatusKey(statusRaw)
+  const subject = campaign?.messageContent?.subject || `Campaign #${campaign.id}`
+  const enteredAt = campaign?.messageMetadata?.entered || null
+  const sentAt = campaign?.messageMetadata?.sent || null
+  const statistics = getCampaignStatistics(campaign.id)
+  const processedTotal = Number(campaign?.messageMetadata?.processed ?? 0)
+  const isTextFormat = (campaign?.messageFormat?.sendFormat || '').toLowerCase() === 'text'
+  const processedText = isTextFormat ? processedTotal : 0
+  const processedHtml = isTextFormat ? 0 : processedTotal
+  const lists = getCampaignLists(campaign.id)
+  const sendStart = campaign?.messageMetadata?.sendStart || null
 
-      return {
-        id: campaign.id,
-        subject,
-        statusKey,
-        statusLabel: toStatusLabel(statusKey, statusRaw),
-        startedAt: formatDate(enteredAt),
-        timeToSend: formatDuration(sendStart, sentAt),
-        processedTotal,
-        processedText,
-        processedHtml,
-        totalViews: Number(campaign?.messageMetadata?.views ?? 0),
-        uniqueViews: Number(statistics?.uniqueViews ?? 0),
-        bounced: Number(statistics?.bounces ?? 0),
-        lists,
-        listSummary: lists.length > 0 ? lists.map((item) => item.name).join(', ') : '-'
-      }
-    })
-)
-
-const filteredCampaigns = computed(() => {
-  if (statusFilter.value === 'all') return normalizedCampaigns.value
-  return normalizedCampaigns.value.filter((campaign) => campaign.statusKey === statusFilter.value)
-})
-
-const totalPages = computed(() => {
-  const pages = Math.ceil(filteredCampaigns.value.length / pageSize)
-  return Math.max(1, pages)
-})
-
-const paginatedCampaigns = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  const end = start + pageSize
-  return filteredCampaigns.value.slice(start, end)
-})
-
-const canGoPrevious = computed(() => currentPage.value > 1)
-const canGoNext = computed(() => currentPage.value < totalPages.value)
-
-const rangeStart = computed(() => {
-  if (filteredCampaigns.value.length === 0) return 0
-  return (currentPage.value - 1) * pageSize + 1
-})
-
-const rangeEnd = computed(() => {
-  if (filteredCampaigns.value.length === 0) return 0
-  return Math.min(currentPage.value * pageSize, filteredCampaigns.value.length)
-})
-
-const setFilter = async (filterId) => {
-  currentPage.value = 1
-  statusFilter.value = filterId
-}
-
-const previousPage = () => {
-  if (canGoPrevious.value) {
-    currentPage.value -= 1
+  return {
+    id: campaign.id,
+    subject,
+    statusKey,
+    statusLabel: toStatusLabel(statusKey, statusRaw),
+    startedAt: formatDate(enteredAt),
+    timeToSend: formatDuration(sendStart, sentAt),
+    processedTotal,
+    processedText,
+    processedHtml,
+    totalViews: Number(campaign?.messageMetadata?.views ?? 0),
+    uniqueViews: Number(statistics?.uniqueViews ?? 0),
+    bounced: Number(statistics?.bounces ?? 0),
+    lists,
+    listSummary: lists.length > 0 ? lists.map((item) => item.name).join(', ') : '-'
   }
 }
 
-const nextPage = () => {
-  if (canGoNext.value) {
-    currentPage.value += 1
-  }
-}
-
-const fetchAllCampaigns = async () => {
-  let cursor = null
-  let guard = 0
-  const campaigns = []
-
-  while (guard < 200) {
-    const response = await campaignClient.getCampaigns(cursor, 50)
-    const items = Array.isArray(response?.items) ? response.items : []
-    campaigns.push(...items)
-
-    const hasMore = Boolean(response?.pagination?.hasMore)
-    const nextCursor = response?.pagination?.nextCursor ?? null
-    if (!hasMore || nextCursor === null) {
-      break
-    }
-
-    cursor = nextCursor
-    guard += 1
-  }
-
-  campaigns.sort((a, b) => Number(b.id) - Number(a.id))
-  return campaigns
-}
-
-const fetchCampaignStatistics = async () => {
-  const statisticsMap = {}
-
-  try {
-    let cursor = null
-    let guard = 0
-
-    while (guard < 200) {
-      const response = await statisticsClient.getCampaignStatistics(cursor, 100)
-      const items = Array.isArray(response?.items) ? response.items : []
-
-      items.forEach((item) => {
-        statisticsMap[item.campaignId] = {
-          bounces: Number(item.bounces ?? 0),
-          sent: Number(item.sent ?? 0),
-          uniqueViews: Number(item.uniqueViews ?? 0),
-        }
-      })
-
-      const hasMore = Boolean(response?.pagination?.hasMore)
-      const nextCursor = response?.pagination?.nextCursor ?? null
-
-      if (!hasMore || nextCursor === null) break
-
-      cursor = nextCursor
-      guard++
-    }
-
-    cursor = null
-    guard = 0
-
-    while (guard < 200) {
-      const response = await statisticsClient.getStatisticsOfViewOpens(cursor, 100)
-      const items = Array.isArray(response?.items) ? response.items : []
-
-      items.forEach((item) => {
-        const existing = statisticsMap[item.campaignId] ?? {
-          bounces: 0,
-          sent: 0,
-          uniqueViews: 0,
-        }
-
-        statisticsMap[item.campaignId] = {
-          ...existing,
-          sent: Number(item.sent ?? existing.sent),
-        }
-      })
-
-      const hasMore = Boolean(response?.pagination?.hasMore)
-      const nextCursor = response?.pagination?.nextCursor ?? null
-
-      if (!hasMore || nextCursor === null) break
-
-      cursor = nextCursor
-      guard++
-    }
-
-    statisticsByCampaignId.value = statisticsMap
-    showStatistics.value = true
-  } catch (error) {
-    if (
-        error?.name === 'AuthorizationException' ||
-        error?.code === 'AuthorizationException' ||
-        error?.status === 403
-    ) {
-      showStatistics.value = false
-      statisticsByCampaignId.value = {}
-      return
-    }
-
-    throw error
-  }
-}
-
-const fetchListsForVisibleCampaigns = async () => {
-  const pending = paginatedCampaigns.value
-    .map((campaign) => campaign.id)
-    .filter((campaignId) => !(campaignId in listsByCampaignId.value) && !loadingListsByCampaignId.value[campaignId])
-
-  if (pending.length === 0) return
-
-  pending.forEach((campaignId) => {
-    loadingListsByCampaignId.value = { ...loadingListsByCampaignId.value, [campaignId]: true }
-  })
-
-  const results = await Promise.allSettled(
-    pending.map(async (campaignId) => {
-      const response = await listMessagesClient.getListsByMessage(campaignId)
-      return {
-        campaignId,
-        lists: Array.isArray(response?.items) ? response.items : []
-      }
-    })
-  )
-
-  const nextLists = { ...listsByCampaignId.value }
-  const nextLoading = { ...loadingListsByCampaignId.value }
-
-  results.forEach((result, index) => {
-    const campaignId = pending[index]
-    if (result.status === 'fulfilled') {
-      nextLists[campaignId] = result.value.lists
-    } else {
-      nextLists[campaignId] = []
-      console.error(`Failed to load lists for campaign ${campaignId}:`, result.reason)
-    }
-    nextLoading[campaignId] = false
-  })
-
-  listsByCampaignId.value = nextLists
-  loadingListsByCampaignId.value = nextLoading
-}
-
-const fetchCampaigns = async () => {
-  isLoading.value = true
-  errorMessage.value = ''
-
-  try {
-    const [campaigns] = await Promise.all([
-      fetchAllCampaigns(),
-      fetchCampaignStatistics()
-    ])
-    allCampaigns.value = campaigns
-  } catch (error) {
-    console.error('Failed to load campaigns:', error)
-    errorMessage.value = 'Failed to load campaigns.'
-    allCampaigns.value = []
-  } finally {
-    isLoading.value = false
-  }
-}
+const paginatedCampaigns = computed(() => rawCampaigns.value.map(normalizeCampaign))
 
 onMounted(() => {
-  fetchCampaigns()
+  loadUpToPage(currentPage.value)
+  fetchCampaignStatistics()
   fetchMailingLists()
 })
 
-watch(totalPages, (pages) => {
-  if (isLoading.value) return
-  if (currentPage.value > pages) {
-    currentPage.value = pages
-  }
-})
-
-watch(() => route.query.page, (pageQuery) => {
-  const nextPage = parsePageQuery(pageQuery)
-  if (nextPage !== currentPage.value) {
-    currentPage.value = nextPage
-  }
-})
-
-watch(currentPage, async (page) => {
-  const normalizedPage = isLoading.value
-    ? Math.max(1, page)
-    : Math.min(Math.max(1, page), totalPages.value)
-  if (normalizedPage !== page) {
-    currentPage.value = normalizedPage
-    return
-  }
-
-  const currentQueryPage = Array.isArray(route.query.page) ? route.query.page[0] : route.query.page
-  const desiredQueryPage = normalizedPage > 1 ? String(normalizedPage) : undefined
-  if (currentQueryPage === desiredQueryPage) {
-    return
-  }
-
-  const nextQuery = { ...route.query }
-  if (desiredQueryPage !== undefined) {
-    nextQuery.page = desiredQueryPage
-  } else {
-    delete nextQuery.page
-  }
-
-  await router.replace({
-    query: nextQuery
-  })
-})
-
 watch(paginatedCampaigns, () => {
-  fetchListsForVisibleCampaigns()
+  fetchListsForVisibleCampaigns(paginatedCampaigns.value.map((campaign) => campaign.id))
 }, { immediate: true })
 </script>

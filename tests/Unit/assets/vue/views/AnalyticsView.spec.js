@@ -25,52 +25,59 @@ const layoutStub = {
   template: '<div class="admin-layout"><slot /></div>',
 }
 
+const mockStatisticsResponses = () => {
+  statisticsClient.getCampaignStatistics.mockResolvedValue({
+    items: [
+      {
+        campaignId: 7,
+        subject: 'Summer launch',
+        dateSent: '2026-06-01',
+        sent: 200,
+        bounces: 4,
+        uniqueViews: 120,
+        totalClicks: 33,
+      },
+    ],
+  })
+  statisticsClient.getStatisticsOfViewOpens.mockResolvedValue({
+    items: [
+      {
+        campaignId: 7,
+        subject: 'Summer launch',
+        sent: 200,
+        uniqueViews: 120,
+        rate: 60,
+      },
+    ],
+  })
+  statisticsClient.getTopDomains.mockResolvedValue({
+    items: [{ domain: 'example.com', subscribers: 42 }],
+  })
+  statisticsClient.getDomainConfirmationStatistics.mockResolvedValue({
+    items: [
+      {
+        domain: 'example.com',
+        total: { count: 10 },
+        confirmed: { count: 8, percentage: 80 },
+        unconfirmed: { count: 2, percentage: 20 },
+        blacklisted: { count: 0, percentage: 0 },
+      },
+    ],
+  })
+  statisticsClient.getTopLocalParts.mockResolvedValue({
+    items: [{ localPart: 'alex', count: 12, percentage: 24 }],
+  })
+}
+
 describe('AnalyticsView', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
     vi.clearAllMocks()
+    vi.resetModules()
   })
 
   it('loads analytics data from the statistics client and renders summary cards', async () => {
-    statisticsClient.getCampaignStatistics.mockResolvedValue({
-      items: [
-        {
-          campaignId: 7,
-          subject: 'Summer launch',
-          dateSent: '2026-06-01',
-          sent: 200,
-          bounces: 4,
-          uniqueViews: 120,
-          totalClicks: 33,
-        },
-      ],
-    })
-    statisticsClient.getStatisticsOfViewOpens.mockResolvedValue({
-      items: [
-        {
-          campaignId: 7,
-          subject: 'Summer launch',
-          sent: 200,
-          uniqueViews: 120,
-          rate: 60,
-        },
-      ],
-    })
-    statisticsClient.getTopDomains.mockResolvedValue({
-      items: [{ domain: 'example.com', subscribers: 42 }],
-    })
-    statisticsClient.getDomainConfirmationStatistics.mockResolvedValue({
-      domain: 'example.com',
-      total: 100,
-      confirmed: 80,
-      unconfirmed: 20,
-      confirmationRate: 80,
-    })
-    statisticsClient.getTopLocalParts.mockResolvedValue({
-      items: [{ localPart: 'alex', count: 12, percentage: 24 }],
-    })
-
-    vi.resetModules()
+    mockStatisticsResponses()
 
     const { default: AnalyticsView } = await import('../../../../../assets/vue/views/AnalyticsView.vue')
 
@@ -84,11 +91,35 @@ describe('AnalyticsView', () => {
 
     await flushPromises()
 
-    expect(statisticsClient.getCampaignStatistics).toHaveBeenCalledWith(null, 100)
+    expect(statisticsClient.getCampaignStatistics).toHaveBeenCalledWith(null, 10)
     expect(wrapper.text()).toContain('Campaigns tracked')
     expect(wrapper.text()).toContain('Summer launch')
     expect(wrapper.text()).toContain('example.com')
     expect(wrapper.text()).toContain('alex')
     expect(wrapper.text()).toContain('80.0%')
+  })
+
+  it('does not re-fetch analytics data when the view is remounted', async () => {
+    mockStatisticsResponses()
+
+    const { default: AnalyticsView } = await import('../../../../../assets/vue/views/AnalyticsView.vue')
+
+    const firstMount = mount(AnalyticsView, {
+      global: { stubs: { AdminLayout: layoutStub } },
+    })
+    await flushPromises()
+    firstMount.unmount()
+
+    const secondMount = mount(AnalyticsView, {
+      global: { stubs: { AdminLayout: layoutStub } },
+    })
+    await flushPromises()
+
+    expect(statisticsClient.getCampaignStatistics).toHaveBeenCalledTimes(1)
+    expect(statisticsClient.getStatisticsOfViewOpens).toHaveBeenCalledTimes(1)
+    expect(statisticsClient.getTopDomains).toHaveBeenCalledTimes(1)
+    expect(statisticsClient.getDomainConfirmationStatistics).toHaveBeenCalledTimes(1)
+    expect(statisticsClient.getTopLocalParts).toHaveBeenCalledTimes(1)
+    expect(secondMount.text()).toContain('Summer launch')
   })
 })

@@ -1,14 +1,14 @@
 <template>
   <div class="space-y-6">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h3 class="text-base font-semibold text-slate-900">Bounces</h3>
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces</h3>
         <div class="flex items-center gap-2">
-          <label class="text-sm text-slate-600" for="bounce-status-filter">Status</label>
+          <label class="text-sm text-slate-600 dark:text-slate-300" for="bounce-status-filter">Status</label>
           <select
             id="bounce-status-filter"
             v-model="statusFilter"
-            class="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+            class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
             :disabled="isLoading"
           >
             <option value="identified">Processed</option>
@@ -17,93 +17,58 @@
         </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm hidden md:table">
-          <thead class="bg-slate-50 text-slate-500 font-medium">
-            <tr>
-              <th class="px-6 py-4">ID</th>
-              <th class="px-6 py-4">Date</th>
-              <th class="px-6 py-4">Subscriber</th>
-              <th class="px-6 py-4">Campaign</th>
-              <th class="px-6 py-4">Status</th>
-              <th class="px-6 py-4">Comment</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <tr v-if="isLoading">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500">Loading bounces...</td>
-            </tr>
-            <tr v-else-if="errorMessage">
-              <td colspan="6" class="px-6 py-8 text-center text-red-600">{{ errorMessage }}</td>
-            </tr>
-            <tr v-else-if="paginatedBounces.length === 0">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500">No bounces found.</td>
-            </tr>
-            <tr
-              v-for="bounce in paginatedBounces"
-              :key="bounce.id"
-              class="hover:bg-slate-50 transition-colors"
-            >
-              <td class="px-6 py-4 text-slate-700 font-mono">#{{ bounce.id }}</td>
-              <td class="px-6 py-4 text-slate-600">{{ bounce.formattedDate }}</td>
-              <td class="px-6 py-4 text-slate-900 font-medium">{{ bounce.email }}</td>
-              <td class="px-6 py-4 text-slate-700">{{ bounce.subject }}</td>
-              <td class="px-6 py-4">
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize" :class="bounce.statusClass">
-                  {{ bounce.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-slate-600">{{ bounce.comment }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <BaseDataTable
+          :items="paginatedBounces"
+          :is-loading="isLoading"
+          :load-error="errorMessage"
+          loading-message="Loading bounces..."
+          empty-message="No bounces found."
+          :colspan="6"
+      >
+        <template #head>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Date</th>
+          <th class="px-6 py-4">Subscriber</th>
+          <th class="px-6 py-4">Campaign</th>
+          <th class="px-6 py-4">Status</th>
+          <th class="px-6 py-4">Comment</th>
+        </template>
 
-        <div class="block md:hidden divide-y divide-slate-100">
-          <div
-            v-if="isLoading"
-            class="px-4 py-8 text-center text-slate-500 text-sm"
-          >
-            Loading bounces...
-          </div>
-          <div
-            v-else-if="errorMessage"
-            class="px-4 py-8 text-center text-red-600 text-sm"
-          >
-            {{ errorMessage }}
-          </div>
-          <div
-            v-else-if="paginatedBounces.length === 0"
-            class="px-4 py-8 text-center text-slate-500 text-sm"
-          >
-            No bounces found.
-          </div>
-          <div
-            v-for="bounce in paginatedBounces"
-            :key="`mobile-${bounce.id}`"
-            class="p-4 space-y-2.5"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <p class="font-semibold text-slate-900">#{{ bounce.id }}</p>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize" :class="bounce.statusClass">
-                {{ bounce.status }}
-              </span>
-            </div>
-            <p class="text-xs text-slate-500">{{ bounce.formattedDate }}</p>
-            <p class="text-sm font-medium text-slate-800">{{ bounce.email }}</p>
-            <p class="text-sm text-slate-700">{{ bounce.subject }}</p>
-            <p class="text-xs text-slate-600">{{ bounce.comment }}</p>
-          </div>
-        </div>
-      </div>
+        <template #row="{ item: bounce }">
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ bounce.id }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.formattedDate }}</td>
+          <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ bounce.email }}</td>
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ bounce.subject }}</td>
+          <td class="px-6 py-4">
+            <BaseBadge class="capitalize" :variant="bounce.statusVariant">
+              {{ bounce.status }}
+            </BaseBadge>
+          </td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.comment }}</td>
+        </template>
 
-      <div class="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+        <template #card="{ item: bounce }">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-semibold text-slate-900 dark:text-slate-100">#{{ bounce.id }}</p>
+            <BaseBadge class="capitalize" :variant="bounce.statusVariant">
+              {{ bounce.status }}
+            </BaseBadge>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">{{ bounce.formattedDate }}</p>
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ bounce.email }}</p>
+          <p class="text-sm text-slate-700 dark:text-slate-200">{{ bounce.subject }}</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">{{ bounce.comment }}</p>
+        </template>
+      </BaseDataTable>
+
+      <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
         <div class="text-center sm:text-left">
-          Page <span class="font-medium text-slate-900">{{ currentPage }}</span>
+          Page <span class="font-medium text-slate-900 dark:text-slate-100">{{ currentPage }}</span>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
           <button
             type="button"
-            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
             :disabled="!canGoPrevious"
             @click="previousPage"
           >
@@ -111,7 +76,7 @@
           </button>
           <button
             type="button"
-            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
             :disabled="!canGoNext"
             @click="nextPage"
           >
@@ -126,6 +91,8 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { bouncesClient } from '../../api'
+import BaseBadge from '../base/BaseBadge.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 
 const pageSize = 5
 const currentPage = ref(1)
@@ -153,22 +120,22 @@ const formatDate = (dateValue) => {
   }).format(date)
 }
 
-const getStatusClass = (status) => {
+const getStatusVariant = (status) => {
   const normalized = String(status ?? '').toLowerCase()
 
   if (normalized.includes('blacklist')) {
-    return 'bg-purple-100 text-purple-700'
+    return 'purple'
   }
 
   if (normalized.includes('retry') || normalized.includes('soft')) {
-    return 'bg-amber-100 text-amber-700'
+    return 'warning'
   }
 
   if (normalized.includes('process')) {
-    return 'bg-emerald-100 text-emerald-700'
+    return 'success'
   }
 
-  return 'bg-slate-100 text-slate-700'
+  return 'neutral'
 }
 
 const normalizedBounces = computed(() =>
@@ -179,7 +146,7 @@ const normalizedBounces = computed(() =>
       subject: item.message_subject ?? 'No subject',
       comment: item.comment ?? 'No comment',
       status: item.status ?? 'unknown',
-      statusClass: getStatusClass(item.status),
+      statusVariant: getStatusVariant(item.status),
     }))
 )
 

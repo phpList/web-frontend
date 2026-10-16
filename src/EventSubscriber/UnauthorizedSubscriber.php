@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Trait\LoginUrlBuilderTrait;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
+use PhpList\WebFrontend\Trait\SessionExpiredResponseTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,7 +19,9 @@ use PhpList\RestApiClient\Exception\AuthorizationException;
 
 class UnauthorizedSubscriber implements EventSubscriberInterface
 {
+    use LoginUrlBuilderTrait;
     use RedirectValidationTrait;
+    use SessionExpiredResponseTrait;
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -65,11 +69,7 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
             $loginUrl = $this->buildLoginUrl($request->getRequestUri());
 
             if ($request->isXmlHttpRequest()) {
-                $event->setResponse(new JsonResponse([
-                    'error' => 'session_expired',
-                    'message' => 'Your session has expired. Please log in again.',
-                    'redirect' => $loginUrl,
-                ], 401));
+                $event->setResponse($this->sessionExpiredJsonResponse($loginUrl));
 
                 return;
             }
@@ -84,16 +84,5 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
 
             $event->setResponse(new RedirectResponse($loginUrl));
         }
-    }
-
-    private function buildLoginUrl(string $redirectTarget): string
-    {
-        $loginUrl = $this->urlGenerator->generate('login');
-
-        if (!$this->isSafeRedirectTarget($redirectTarget)) {
-            return $loginUrl;
-        }
-
-        return $loginUrl . '?' . http_build_query(['redirect' => $redirectTarget]);
     }
 }

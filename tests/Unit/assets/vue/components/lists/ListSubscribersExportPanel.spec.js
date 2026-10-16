@@ -3,13 +3,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import ListSubscribersExportPanel from '../../../../../../assets/vue/components/lists/ListSubscribersExportPanel.vue'
-import client from '../../../../../../assets/vue/api'
+import { subscriberAttributesClient } from '../../../../../../assets/vue/api'
 
 vi.mock('../../../../../../assets/vue/api', () => ({
     default: {
         get: vi.fn(),
     },
-    subscriberAttributesClient: {},
+    subscriberAttributesClient: {
+        getAttributeDefinitions: vi.fn(),
+    },
 }))
 
 describe('ListSubscribersExportPanel', () => {
@@ -21,7 +23,7 @@ describe('ListSubscribersExportPanel', () => {
     beforeEach(() => {
         vi.clearAllMocks()
 
-        client.get.mockResolvedValue({
+        subscriberAttributesClient.getAttributeDefinitions.mockResolvedValue({
             items: [],
         })
 
@@ -32,7 +34,7 @@ describe('ListSubscribersExportPanel', () => {
     })
 
     it('loads attribute definitions on mount', async () => {
-        client.get.mockResolvedValue({
+        subscriberAttributesClient.getAttributeDefinitions.mockResolvedValue({
             items: [
                 { name: 'firstName' },
                 { name: 'lastName' },
@@ -43,13 +45,8 @@ describe('ListSubscribersExportPanel', () => {
 
         await flushPromises()
 
-        expect(client.get).toHaveBeenCalledWith(
-            'attributes',
-            {
-                limit: 100,
-                offset: 0,
-            }
-        )
+        expect(subscriberAttributesClient.getAttributeDefinitions)
+            .toHaveBeenCalledWith(0, 100)
 
         expect(wrapper.text()).toContain('FirstName')
         expect(wrapper.text()).toContain('LastName')
@@ -261,7 +258,7 @@ describe('ListSubscribersExportPanel', () => {
     })
 
     it('loads multiple attribute pages', async () => {
-        client.get
+        subscriberAttributesClient.getAttributeDefinitions
             .mockResolvedValueOnce({
                 items: Array.from({ length: 100 }, (_, i) => ({
                     name: `field${i}`,
@@ -277,6 +274,7 @@ describe('ListSubscribersExportPanel', () => {
 
         await flushPromises()
 
-        expect(client.get).toHaveBeenCalledTimes(2)
+        expect(subscriberAttributesClient.getAttributeDefinitions)
+            .toHaveBeenCalledTimes(2)
     })
 })

@@ -64,7 +64,6 @@ final class EditorUploadControllerTest extends KernelTestCase
         $uploadsClient->expects(self::never())->method('upload');
 
         $controller = new EditorUploadController(new EditorUploadService($uploadsClient));
-
         $response = $controller->upload(Request::create('/editor/upload', 'POST'));
 
         self::assertSame(400, $response->getStatusCode());
@@ -79,7 +78,6 @@ final class EditorUploadControllerTest extends KernelTestCase
             ->willThrowException(new ApiException('boom', 500));
 
         $controller = new EditorUploadController(new EditorUploadService($uploadsClient));
-
         $response = $controller->upload($this->createUploadRequest());
 
         self::assertSame(502, $response->getStatusCode());
@@ -106,7 +104,6 @@ final class EditorUploadControllerTest extends KernelTestCase
             ]);
 
         $controller = new EditorUploadController(new EditorUploadService($uploadsClient));
-
         $response = $controller->assets();
         self::assertSame(200, $response->getStatusCode());
 
@@ -123,7 +120,6 @@ final class EditorUploadControllerTest extends KernelTestCase
             ->willThrowException(new ApiException('unavailable', 500));
 
         $controller = new EditorUploadController(new EditorUploadService($uploadsClient));
-
         $response = $controller->assets();
 
         self::assertSame(502, $response->getStatusCode());

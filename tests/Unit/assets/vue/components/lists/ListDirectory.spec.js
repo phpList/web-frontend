@@ -20,6 +20,15 @@ vi.mock('../../../../../../assets/vue/api', () => ({
     },
 }))
 
+const hasPrivilegeMock = vi.fn(() => true)
+
+vi.mock('../../../../../../assets/vue/composables/useCurrentAdmin', () => ({
+    useCurrentAdmin: () => ({
+        loadCurrentAdmin: vi.fn(),
+        hasPrivilege: hasPrivilegeMock,
+    }),
+}))
+
 const BaseIconStub = {
     template: '<span />',
 }
@@ -71,6 +80,7 @@ describe('ListDirectory', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         window.confirm = vi.fn()
+        hasPrivilegeMock.mockReturnValue(true)
     })
 
     it('loads mailing lists on mount', async () => {
@@ -305,6 +315,25 @@ describe('ListDirectory', () => {
 
         expect(fetchAllLists)
             .toHaveBeenCalledTimes(2)
+    })
+
+    it('hides privilege-gated buttons when admin lacks subscribers and campaigns privileges', async () => {
+        fetchAllLists.mockResolvedValue(lists)
+        hasPrivilegeMock.mockImplementation(
+            (privilege) => privilege !== 'subscribers' && privilege !== 'campaigns'
+        )
+
+        const wrapper = createWrapper()
+
+        await flushPromises()
+
+        const buttonTexts = wrapper
+            .findAll('button')
+            .map((btn) => btn.text())
+
+        expect(buttonTexts.some((text) => text.includes('Add Subscribers'))).toBe(false)
+        expect(buttonTexts.some((text) => text.includes('View Members'))).toBe(false)
+        expect(buttonTexts.some((text) => text.includes('Start Campaign'))).toBe(false)
     })
 
     it('correctly identifies public lists', async () => {

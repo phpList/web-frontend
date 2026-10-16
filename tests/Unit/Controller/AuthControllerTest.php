@@ -9,6 +9,7 @@ use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\WebFrontend\Service\AuthenticationService;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,12 @@ class AuthControllerTest extends TestCase
         $this->apiClient = $this->createMock(Client::class);
 
         $this->controller = $this->getMockBuilder(AuthController::class)
-            ->setConstructorArgs([$this->authClient, $this->apiClient, $this->createMock(LoggerInterface::class)])
+            ->setConstructorArgs([
+                $this->authClient,
+                $this->apiClient,
+                new AuthenticationService($this->apiClient),
+                $this->createMock(LoggerInterface::class)
+            ])
             ->onlyMethods(['render', 'redirectToRoute', 'generateUrl'])
             ->getMock();
 

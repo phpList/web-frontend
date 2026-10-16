@@ -8130,8 +8130,8 @@
                     "password": {
                         "type": "string",
                         "format": "password",
-                        "maxLength": 255,
-                        "minLength": 6,
+                        "maxLength": 55,
+                        "minLength": 5,
                         "example": "StrongP@ssw0rd"
                     },
                     "email": {

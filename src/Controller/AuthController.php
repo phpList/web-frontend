@@ -8,6 +8,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use PhpList\RestApiClient\Client;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\WebFrontend\Service\AuthenticationService;
@@ -25,6 +26,7 @@ class AuthController extends AbstractController
 
     public function __construct(
         private readonly AuthClient $authClient,
+        private readonly PasswordResetClient $passwordResetClient,
         private readonly Client $apiClient,
         private readonly AuthenticationService $authenticationService,
         private readonly LoggerInterface $logger
@@ -92,7 +94,7 @@ class AuthController extends AbstractController
                 $error = 'Please enter a valid email address.';
             } else {
                 try {
-                    $this->apiClient->post('password-reset/request', ['email' => $email]);
+                    $this->passwordResetClient->request($email);
                 } catch (ApiException $e) {
                     $this->logger->error('Password reset request failed: ' . $e->getMessage());
                 }
@@ -128,10 +130,7 @@ class AuthController extends AbstractController
 
             if ($error === null) {
                 try {
-                    $this->apiClient->post('password-reset/reset', [
-                        'token' => $token,
-                        'newPassword' => $newPassword,
-                    ]);
+                    $this->passwordResetClient->reset($token, $newPassword);
 
                     return $this->redirectToRoute('login', ['reset' => 'success']);
                 } catch (ApiException $e) {
@@ -145,7 +144,7 @@ class AuthController extends AbstractController
             ]);
         }
 
-        $token = (string) $request->get('token', '');
+        $token = (string) $request->get('uniqueId', '');
         if ($token === '' || !$this->authenticationService->isPasswordResetTokenValid($token)) {
             return $this->render('@PhpListFrontend/auth/reset_password.html.twig', [
                 'error' => $invalidTokenError,

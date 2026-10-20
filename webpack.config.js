@@ -29,4 +29,9 @@ Encore
     })
 ;
 
+// Hashed filenames change on every content change; drop old bundles so the tracked dist/ doesn't accumulate them.
+if (isDistBuild) {
+    Encore.cleanupOutputBeforeBuild();
+}
+
 module.exports = Encore.getWebpackConfig();

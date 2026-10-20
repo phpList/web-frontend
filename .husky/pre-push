@@ -4,7 +4,8 @@
 echo "🏗  Rebuilding dist to verify it's up to date..."
 yarn build:dist || exit 1
 
-if ! git diff --quiet -- dist/ || [ -n "$(git ls-files --others --exclude-standard dist/)" ]; then
+# status (not diff) so staged-but-uncommitted, deleted and untracked files all count as out of date
+if [ -n "$(git status --porcelain -- dist/)" ]; then
   echo "❌ dist/ is out of date. Rebuild produced changes:"
   git status --porcelain -- dist/
   echo "Commit the updated dist/ before pushing."

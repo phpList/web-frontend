@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: Install JS dependencies
@@ -46,6 +46,15 @@ jobs:
 
       - name: Build frontend assets
         run: yarn encore dev
+
+      - name: Verify dist/ is up to date
+        run: |
+          yarn build:dist
+          if [ -n "$(git status --porcelain -- dist/)" ]; then
+            echo "dist/ is out of date. Rebuild produced changes:"
+            git status --porcelain -- dist/
+            exit 1
+          fi
 
       - name: Install Symfony CLI
         run: |

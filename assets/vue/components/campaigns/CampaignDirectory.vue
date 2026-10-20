@@ -314,10 +314,12 @@ import BaseDataTable from '../base/BaseDataTable.vue'
 import { useCampaignPagination } from '../../composables/useCampaignPagination'
 import { useCampaignStatistics } from '../../composables/useCampaignStatistics'
 import { useCampaignLists } from '../../composables/useCampaignLists'
+import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
 
 const pageSize = 5
 const route = useRoute()
 const router = useRouter()
+const { formatValidationErrors } = useApiValidationErrors()
 
 const allowedStatuses = ['all', 'sent', 'active', 'draft']
 const activeStatuses = new Set(['submitted', 'prepared', 'inprocess'])
@@ -574,6 +576,12 @@ const handleResend = async (listIds) => {
     closeViewModal()
   } catch (error) {
     console.error(`Failed to resend campaign ${campaignId}:`, error)
+    const validationErrors = formatValidationErrors(error)
+    if (validationErrors.length > 0) {
+      closeViewModal()
+      await router.push({ name: 'campaign-edit', params: { campaignId }, state: { validationErrors } })
+      return
+    }
     resendErrorMessage.value = error?.message || 'Failed to resend campaign.'
   } finally {
     isResending.value = false

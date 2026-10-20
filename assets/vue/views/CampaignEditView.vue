@@ -887,8 +887,14 @@ const sendTestCampaign = async () => {
     saveSuccess.value = 'Test campaign sent successfully.'
   } catch (error) {
     console.error('Failed to send test campaign:', error?.message ?? error)
-    saveError.value = error?.message?.slice(0, 100) || 'Failed to send test campaign.'
-    saveErrors.value = []
+    const formattedErrors = formatValidationErrors(error)
+    if (formattedErrors.length > 0) {
+      saveErrors.value = formattedErrors
+      saveError.value = ''
+    } else {
+      saveError.value = error?.message?.slice(0, 100) || 'Failed to send test campaign.'
+      saveErrors.value = []
+    }
   } finally {
     isSendingTest.value = false
   }
@@ -977,5 +983,11 @@ watch(
 
 onMounted(() => {
   loadTemplates()
+
+  const redirectedErrors = window.history.state?.validationErrors
+  if (Array.isArray(redirectedErrors) && redirectedErrors.length > 0) {
+    saveErrors.value = redirectedErrors
+    saveError.value = ''
+  }
 })
 </script>

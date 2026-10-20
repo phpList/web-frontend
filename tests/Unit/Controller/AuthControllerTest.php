@@ -9,6 +9,7 @@ use PhpList\RestApiClient\Entity\Administrator;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\WebFrontend\Service\AuthenticationService;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -35,6 +36,7 @@ class AuthControllerTest extends TestCase
         $this->controller = $this->getMockBuilder(AuthController::class)
             ->setConstructorArgs([
                 $this->authClient,
+                new PasswordResetClient($this->apiClient),
                 $this->apiClient,
                 new AuthenticationService($this->apiClient),
                 $this->createMock(LoggerInterface::class)
@@ -532,7 +534,7 @@ class AuthControllerTest extends TestCase
             ->with('password-reset/validate', ['token' => 'bad-token'])
             ->willReturn(['valid' => false]);
 
-        $request = Request::create('/reset-password', 'GET', ['token' => 'bad-token']);
+        $request = Request::create('/reset-password', 'GET', ['uniqueId' => 'bad-token']);
         $request->setSession($session);
 
         $response = $this->controller->resetPassword($request);
@@ -551,7 +553,7 @@ class AuthControllerTest extends TestCase
             ->with('password-reset/validate', ['token' => 'good-token'])
             ->willReturn(['valid' => true]);
 
-        $request = Request::create('/reset-password', 'GET', ['token' => 'good-token']);
+        $request = Request::create('/reset-password', 'GET', ['uniqueId' => 'good-token']);
         $request->setSession($session);
 
         $response = $this->controller->resetPassword($request);

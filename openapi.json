@@ -8440,7 +8440,7 @@
                 "properties": {
                     "from_field": {
                         "type": "string",
-                        "example": "info@example.com"
+                        "example": "Jane Doe jane@example.com"
                     },
                     "to_field": {
                         "type": "string",

@@ -6,7 +6,6 @@ namespace PhpList\WebFrontend\Controller;
 
 use PhpList\WebFrontend\Exception\UpstreamServiceException;
 use PhpList\WebFrontend\Service\EditorUploadService;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,21 +25,13 @@ final class EditorUploadController
         $uploadedFile = $request->files->get('upload');
 
         if (!$uploadedFile) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => 'No file was provided.',
-                ],
-            ], Response::HTTP_BAD_REQUEST);
+            return $this->jsonError('No file was provided.', Response::HTTP_BAD_REQUEST);
         }
 
         try {
             $result = $this->editorUploadService->storeImage($uploadedFile);
         } catch (UpstreamServiceException $exception) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => $exception->getMessage(),
-                ],
-            ], Response::HTTP_BAD_GATEWAY);
+            return $this->jsonError($exception->getMessage(), Response::HTTP_BAD_GATEWAY);
         }
 
         return new JsonResponse([
@@ -55,11 +46,7 @@ final class EditorUploadController
         try {
             $assets = $this->editorUploadService->listAssets();
         } catch (UpstreamServiceException $exception) {
-            return new JsonResponse([
-                'error' => [
-                    'message' => $exception->getMessage(),
-                ],
-            ], Response::HTTP_BAD_GATEWAY);
+            return $this->jsonError($exception->getMessage(), Response::HTTP_BAD_GATEWAY);
         }
 
         return new JsonResponse([
@@ -68,5 +55,14 @@ final class EditorUploadController
                 $assets
             ),
         ]);
+    }
+
+    private function jsonError(string $message, int $statusCode): JsonResponse
+    {
+        return new JsonResponse([
+            'error' => [
+                'message' => $message,
+            ],
+        ], $statusCode);
     }
 }

@@ -1,9 +1,16 @@
 const Encore = require('@symfony/webpack-encore');
 const path = require('path');
 
+// `dist/` is a git-tracked, pre-built bundle published for consumers (e.g.
+// phplist/base-distribution) so they don't need Node.js/Yarn or a duplicated
+// dependency list to use this package's frontend assets. `public/build/` stays
+// the untracked output used for local development of this package itself.
+const isDistBuild = process.env.BUILD_TARGET === 'dist';
+
 Encore
-    .setOutputPath('public/build/')
+    .setOutputPath(isDistBuild ? 'dist/' : 'public/build/')
     .setPublicPath('/build')
+    .setManifestKeyPrefix('build/')
     .addEntry('app', './assets/app.js')
     .addStyleEntry('styles', './assets/styles/app.css')
     .addStyleEntry('color', './assets/styles/color.css')
@@ -11,6 +18,7 @@ Encore
     .enableVueLoader(() => {}, { version: 3 })
     .enableSingleRuntimeChunk()
     .enablePostCssLoader()
+    .enableVersioning(Encore.isProduction())
     .copyFiles({
         from: './assets/images',
         to: 'images/[path][name].[hash:8].[ext]',
@@ -20,5 +28,10 @@ Encore
         '@images': path.resolve(__dirname, 'assets/images'),
     })
 ;
+
+// Hashed filenames change on every content change; drop old bundles so the tracked dist/ doesn't accumulate them.
+if (isDistBuild) {
+    Encore.cleanupOutputBeforeBuild();
+}
 
 module.exports = Encore.getWebpackConfig();

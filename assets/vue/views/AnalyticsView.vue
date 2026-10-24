@@ -2,27 +2,27 @@
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
       <div
-        v-if="errorMessage"
-        class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+        v-if="error"
+        class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400"
         role="alert"
       >
-        {{ errorMessage }}
+        {{ error }}
       </div>
 
       <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <BaseCard v-for="metric in metrics" :key="metric.id" class="h-full">
           <header class="mb-2 flex items-center gap-3">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
               <BaseIcon :name="metric.icon" />
             </span>
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               {{ metric.label }}
             </p>
           </header>
-          <p class="mb-1 text-2xl font-bold text-slate-900">
+          <p class="mb-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
             {{ metric.value }}
           </p>
-          <p class="text-sm text-slate-500">
+          <p class="text-sm text-slate-500 dark:text-slate-400">
             {{ metric.description }}
           </p>
         </BaseCard>
@@ -32,21 +32,21 @@
         <BaseCard class="xl:col-span-2">
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900">Campaign performance</h2>
-              <p class="mt-1 text-xs text-slate-500">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Campaign performance</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Top campaigns ranked by unique views and click volume.
               </p>
             </div>
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-slate-400 dark:text-slate-500">
               {{ formatCount(campaignStatistics.length) }} campaigns
             </p>
           </header>
 
-          <div v-if="isLoading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
+          <div v-if="loading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
             Loading analytics...
           </div>
 
-          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
+          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
             No campaign statistics found.
           </div>
 
@@ -61,66 +61,77 @@
         </BaseCard>
 
         <BaseCard>
-          <header class="mb-4">
-            <h2 class="text-sm font-bold text-slate-900">Domain confirmation</h2>
-            <p class="mt-1 text-xs text-slate-500">
-              Confirmation coverage for the configured sending domain.
+          <header class="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Domain confirmation</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                Confirmation coverage by sending domain.
+              </p>
+            </div>
+            <p class="text-xs text-slate-400 dark:text-slate-500">
+              {{ formatCount(domainConfirmationItems.length) }} domains
             </p>
           </header>
 
-          <div v-if="domainConfirmation" class="space-y-4">
-            <div>
-              <p class="text-xs uppercase tracking-wide text-slate-500">Domain</p>
-              <p class="mt-1 break-all text-sm font-semibold text-slate-900">
-                {{ domainConfirmation.domain || 'Unknown domain' }}
-              </p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div class="rounded-lg bg-emerald-50 px-3 py-3">
-                <p class="text-xs uppercase tracking-wide text-emerald-700">Confirmed</p>
-                <p class="mt-1 text-lg font-bold text-emerald-900">
-                  {{ formatCount(domainConfirmation.confirmed) }}
+          <div v-if="domainConfirmationItems.length" class="space-y-5">
+            <div v-for="item in domainConfirmationItems" :key="item.domain" class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <p class="break-all text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {{ item.domain || 'Unknown domain' }}
+                </p>
+                <p class="whitespace-nowrap text-xs text-slate-400 dark:text-slate-500">
+                  {{ formatCount(item.total?.count) }} total
                 </p>
               </div>
-              <div class="rounded-lg bg-amber-50 px-3 py-3">
-                <p class="text-xs uppercase tracking-wide text-amber-700">Unconfirmed</p>
-                <p class="mt-1 text-lg font-bold text-amber-900">
-                  {{ formatCount(domainConfirmation.unconfirmed) }}
-                </p>
-              </div>
-            </div>
 
-            <div>
-              <div class="mb-2 flex items-center justify-between text-xs text-slate-500">
-                <span>Confirmation rate</span>
-                <span>{{ formatPercentage(domainConfirmation.confirmationRate) }}</span>
-              </div>
-              <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+              <div class="flex h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                 <div
-                  class="h-full rounded-full bg-emerald-500"
-                  :style="{ width: `${clampPercentage(domainConfirmation.confirmationRate)}%` }"
+                  class="h-full bg-emerald-500"
+                  :style="{ width: `${clampPercentage(item.confirmed?.percentage)}%` }"
+                />
+                <div
+                  class="h-full bg-amber-500"
+                  :style="{ width: `${clampPercentage(item.unconfirmed?.percentage)}%` }"
+                />
+                <div
+                  class="h-full bg-rose-500"
+                  :style="{ width: `${clampPercentage(item.blacklisted?.percentage)}%` }"
                 />
               </div>
-            </div>
 
-            <dl class="grid grid-cols-3 gap-3 text-sm">
-              <div class="rounded-lg bg-slate-50 px-3 py-3">
-                <dt class="text-xs uppercase tracking-wide text-slate-500">Total</dt>
-                <dd class="mt-1 font-semibold text-slate-900">{{ formatCount(domainConfirmation.total) }}</dd>
+              <div class="grid grid-cols-3 gap-2 text-xs">
+                <div class="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 px-2 py-2">
+                  <p class="uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Confirmed</p>
+                  <p class="mt-1 font-semibold text-emerald-900 dark:text-emerald-400">
+                    {{ formatCount(item.confirmed?.count) }}
+                  </p>
+                  <p class="text-emerald-700/70 dark:text-emerald-400/70">
+                    {{ formatPercentage(item.confirmed?.percentage) }}
+                  </p>
+                </div>
+                <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 px-2 py-2">
+                  <p class="uppercase tracking-wide text-amber-700 dark:text-amber-400">Unconfirmed</p>
+                  <p class="mt-1 font-semibold text-amber-900 dark:text-amber-400">
+                    {{ formatCount(item.unconfirmed?.count) }}
+                  </p>
+                  <p class="text-amber-700/70 dark:text-amber-400/70">
+                    {{ formatPercentage(item.unconfirmed?.percentage) }}
+                  </p>
+                </div>
+                <div class="rounded-lg bg-rose-50 dark:bg-rose-500/10 px-2 py-2">
+                  <p class="uppercase tracking-wide text-rose-700 dark:text-rose-400">Blacklisted</p>
+                  <p class="mt-1 font-semibold text-rose-900 dark:text-rose-400">
+                    {{ formatCount(item.blacklisted?.count) }}
+                  </p>
+                  <p class="text-rose-700/70 dark:text-rose-400/70">
+                    {{ formatPercentage(item.blacklisted?.percentage) }}
+                  </p>
+                </div>
               </div>
-              <div class="rounded-lg bg-slate-50 px-3 py-3">
-                <dt class="text-xs uppercase tracking-wide text-slate-500">Confirmed</dt>
-                <dd class="mt-1 font-semibold text-slate-900">{{ formatCount(domainConfirmation.confirmed) }}</dd>
-              </div>
-              <div class="rounded-lg bg-slate-50 px-3 py-3">
-                <dt class="text-xs uppercase tracking-wide text-slate-500">Unconfirmed</dt>
-                <dd class="mt-1 font-semibold text-slate-900">{{ formatCount(domainConfirmation.unconfirmed) }}</dd>
-              </div>
-            </dl>
+            </div>
           </div>
 
-          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500">
+          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
             No confirmation data found.
           </div>
         </BaseCard>
@@ -130,35 +141,35 @@
         <BaseCard>
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900">Top domains</h2>
-              <p class="mt-1 text-xs text-slate-500">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Top domains</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Subscriber counts by email domain.
               </p>
             </div>
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-slate-400 dark:text-slate-500">
               {{ formatCount(topDomains.length) }} domains
             </p>
           </header>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 <tr>
                   <th class="px-4 py-3">Domain</th>
                   <th class="px-4 py-3 text-right">Subscribers</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-100">
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <tr v-if="hasLoaded && topDomains.length === 0">
-                  <td colspan="2" class="px-4 py-6 text-center text-slate-500">
+                  <td colspan="2" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
                     No domain statistics found.
                   </td>
                 </tr>
                 <tr v-for="domain in topDomains" :key="domain.domain">
-                  <td class="px-4 py-3 font-medium text-slate-900">
+                  <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                     {{ domain.domain || 'Unknown domain' }}
                   </td>
-                  <td class="px-4 py-3 text-right text-slate-700">
+                  <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                     {{ formatCount(domain.subscribers) }}
                   </td>
                 </tr>
@@ -170,39 +181,39 @@
         <BaseCard>
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900">Top local parts</h2>
-              <p class="mt-1 text-xs text-slate-500">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Top local parts</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Most common subscriber usernames.
               </p>
             </div>
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-slate-400 dark:text-slate-500">
               {{ formatCount(topLocalParts.length) }} values
             </p>
           </header>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 <tr>
                   <th class="px-4 py-3">Local part</th>
                   <th class="px-4 py-3 text-right">Count</th>
                   <th class="px-4 py-3 text-right">Share</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-100">
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <tr v-if="hasLoaded && topLocalParts.length === 0">
-                  <td colspan="3" class="px-4 py-6 text-center text-slate-500">
+                  <td colspan="3" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
                     No local-part statistics found.
                   </td>
                 </tr>
                 <tr v-for="part in topLocalParts" :key="part.localPart">
-                  <td class="px-4 py-3 font-medium text-slate-900">
+                  <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                     {{ part.localPart || 'Unknown' }}
                   </td>
-                  <td class="px-4 py-3 text-right text-slate-700">
+                  <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                     {{ formatCount(part.count) }}
                   </td>
-                  <td class="px-4 py-3 text-right text-slate-600">
+                  <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-300">
                     {{ formatPercentage(part.percentage) }}
                   </td>
                 </tr>
@@ -215,19 +226,19 @@
       <BaseCard>
         <header class="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 class="text-sm font-bold text-slate-900">Campaign breakdown</h2>
-            <p class="mt-1 text-xs text-slate-500">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Campaign breakdown</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Open and click activity by campaign.
             </p>
           </div>
-          <p class="text-xs text-slate-400">
+          <p class="text-xs text-slate-400 dark:text-slate-500">
             {{ formatCount(campaignStatistics.length) }} records
           </p>
         </header>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               <tr>
                 <th class="px-4 py-3">Campaign</th>
                 <th class="px-4 py-3 text-right">Sent</th>
@@ -237,34 +248,34 @@
                 <th class="px-4 py-3 text-right">Bounce</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               <tr v-if="hasLoaded && campaignStatistics.length === 0">
-                <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
                   No campaign statistics found.
                 </td>
               </tr>
               <tr v-for="campaign in campaignStatistics" :key="campaign.campaignId">
                 <td class="px-4 py-3">
-                  <div class="font-medium text-slate-900">
+                  <div class="font-medium text-slate-900 dark:text-slate-100">
                     {{ campaign.subject || `Campaign #${campaign.campaignId}` }}
                   </div>
-                  <div class="mt-1 text-xs text-slate-500">
+                  <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     Sent {{ campaign.dateSent ? formatDate(campaign.dateSent) : 'unknown date' }}
                   </div>
                 </td>
-                <td class="px-4 py-3 text-right text-slate-700">
+                <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                   {{ formatCount(campaign.sent) }}
                 </td>
-                <td class="px-4 py-3 text-right text-slate-700">
+                <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                   {{ formatCount(campaign.uniqueViews) }}
                 </td>
-                <td class="px-4 py-3 text-right text-slate-700">
+                <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                   {{ formatPercentage(calcRate(campaign.uniqueViews, campaign.sent)) }}
                 </td>
-                <td class="px-4 py-3 text-right text-slate-700">
+                <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                   {{ formatCount(campaign.totalClicks) }}
                 </td>
-                <td class="px-4 py-3 text-right text-slate-700">
+                <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                   {{ formatCount(campaign.bounces) }}
                 </td>
               </tr>
@@ -277,21 +288,27 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import BaseCard from '../components/base/BaseCard.vue'
 import BaseIcon from '../components/base/BaseIcon.vue'
-import { statisticsClient } from '../api'
+import { useDarkMode } from '../composables/useDarkMode'
+import { useAnalyticsData } from '../composables/useAnalyticsData'
 
-const isLoading = ref(false)
-const hasLoaded = ref(false)
-const errorMessage = ref('')
-const campaignStatistics = ref([])
-const viewOpens = ref([])
-const topDomains = ref([])
-const domainConfirmation = ref(null)
-const topLocalParts = ref([])
+const { isDark } = useDarkMode()
+
+const {
+  loading,
+  hasLoaded,
+  error,
+  campaignStatistics,
+  viewOpens,
+  topDomains,
+  domainConfirmation,
+  topLocalParts,
+  loadAnalytics,
+} = useAnalyticsData()
 
 const formatCount = (value) => new Intl.NumberFormat().format(Number(value) || 0)
 
@@ -386,6 +403,8 @@ const metrics = computed(() => {
   ]
 })
 
+const domainConfirmationItems = computed(() => domainConfirmation.value?.items ?? [])
+
 const campaignChartItems = computed(() =>
   [...campaignStatistics.value]
     .sort((left, right) => (Number(right.uniqueViews) || 0) - (Number(left.uniqueViews) || 0))
@@ -422,7 +441,7 @@ const campaignChartOptions = computed(() => ({
   },
   colors: ['#2563eb', '#10b981'],
   grid: {
-    borderColor: '#e5e7eb',
+    borderColor: isDark.value ? '#334155' : '#e5e7eb',
     strokeDashArray: 4,
   },
   legend: {
@@ -430,6 +449,9 @@ const campaignChartOptions = computed(() => ({
     position: 'top',
     horizontalAlign: 'right',
     fontSize: '12px',
+    labels: {
+      colors: isDark.value ? '#cbd5e1' : '#374151',
+    },
   },
   xaxis: {
     categories: campaignChartItems.value.map((item) => item.subject || `#${item.campaignId}`),
@@ -454,44 +476,12 @@ const campaignChartOptions = computed(() => ({
   tooltip: {
     shared: true,
     intersect: false,
+    theme: isDark.value ? 'dark' : 'light',
     y: {
       formatter: (value) => new Intl.NumberFormat().format(Number(value) || 0),
     },
   },
 }))
-
-const loadAnalytics = async () => {
-  isLoading.value = true
-  errorMessage.value = ''
-
-  try {
-    const [
-      campaignResponse,
-      viewOpensResponse,
-      topDomainsResponse,
-      domainConfirmationResponse,
-      topLocalPartsResponse,
-    ] = await Promise.all([
-      statisticsClient.getCampaignStatistics(null, 100),
-      statisticsClient.getStatisticsOfViewOpens(null, 100),
-      statisticsClient.getTopDomains(20, 5),
-      statisticsClient.getDomainConfirmationStatistics(50),
-      statisticsClient.getTopLocalParts(25),
-    ])
-
-    campaignStatistics.value = campaignResponse?.items ?? []
-    viewOpens.value = viewOpensResponse?.items ?? []
-    topDomains.value = topDomainsResponse?.items ?? []
-    domainConfirmation.value = domainConfirmationResponse ?? null
-    topLocalParts.value = topLocalPartsResponse?.items ?? []
-  } catch (error) {
-    errorMessage.value = 'Failed to load analytics.'
-    console.error('Failed to load analytics:', error)
-  } finally {
-    isLoading.value = false
-    hasLoaded.value = true
-  }
-}
 
 onMounted(loadAnalytics)
 </script>

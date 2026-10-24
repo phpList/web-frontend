@@ -189,7 +189,7 @@ describe('EditAdminModal', () => {
     it('emits close when the close button is clicked', async () => {
         const wrapper = mountComponent()
 
-        await wrapper.find('button[aria-label="Close edit administrator modal"]').trigger('click')
+        await wrapper.find('button[aria-label="Close"]').trigger('click')
 
         expect(wrapper.emitted('close')).toHaveLength(1)
     })

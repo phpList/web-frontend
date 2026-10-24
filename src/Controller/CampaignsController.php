@@ -17,8 +17,6 @@ class CampaignsController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Campaigns',
-            'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
         ]);
     }
 
@@ -27,8 +25,14 @@ class CampaignsController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => 'Create Campaign',
-            'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
+        ]);
+    }
+
+    #[Route('/stuck', name: 'stuck', methods: ['GET'])]
+    public function stuck(Request $request): Response
+    {
+        return $this->render('@PhpListFrontend/spa.html.twig', [
+            'page' => 'Stuck Campaigns',
         ]);
     }
 
@@ -37,8 +41,6 @@ class CampaignsController extends AbstractController
     {
         return $this->render('@PhpListFrontend/spa.html.twig', [
             'page' => sprintf('Edit Campaign #%d', $campaignId),
-            'api_token' => $request->getSession()->get('auth_token'),
-            'api_base_url' => $this->getParameter('api_base_url'),
         ]);
     }
 }

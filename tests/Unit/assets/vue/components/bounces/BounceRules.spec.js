@@ -122,7 +122,7 @@ describe('create modal', () => {
         const wrapper = mountComponent()
         await flushPromises()
         await openModal(wrapper)
-        await wrapper.find('[aria-hidden="true"]').trigger('click')
+        await wrapper.find('[role="dialog"]').trigger('click')
         expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
     })
 
@@ -295,7 +295,7 @@ describe('successful submission', () => {
         await openModal(wrapper)
         await fillRegex(wrapper, 'test.*')
         await submitForm(wrapper)
-        expect(wrapper.find('button[type="submit"]').text()).toBe('Creating...')
+        expect(wrapper.find('[data-testid="modal-submit"]').text()).toBe('Creating...')
         resolve({})
     })
 
@@ -322,7 +322,7 @@ describe('successful submission', () => {
         await fillRegex(wrapper, 'test.*')
         await submitForm(wrapper)
         // attempt to close via backdrop
-        await wrapper.find('[aria-hidden="true"]').trigger('click')
+        await wrapper.find('[role="dialog"]').trigger('click')
         expect(wrapper.find('[role="dialog"]').exists()).toBe(true)
         resolve({})
     })
@@ -396,7 +396,7 @@ describe('failed submission', () => {
         await fillRegex(wrapper, 'test.*')
         await submitForm(wrapper)
         await flushPromises()
-        expect(wrapper.find('button[type="submit"]').element.disabled).toBe(false)
+        expect(wrapper.find('[data-testid="modal-submit"]').element.disabled).toBe(false)
     })
 })
 

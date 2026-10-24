@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🏗  Rebuilding dist to verify it's up to date..."
+yarn build:dist || exit 1
+
+# status (not diff) so staged-but-uncommitted, deleted and untracked files all count as out of date
+if [ -n "$(git status --porcelain -- dist/)" ]; then
+  echo "❌ dist/ is out of date. Rebuild produced changes:"
+  git status --porcelain -- dist/
+  echo "Commit the updated dist/ before pushing."
+  exit 1
+fi
+
+echo "✅ dist/ is up to date."

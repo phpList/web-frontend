@@ -7,7 +7,7 @@
         :class="[
         activeFilter === filter.id
           ? 'bg-ext-wf2 text-ext-wf1'
-          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
       ]"
         @click="toggleFilter(filter.id)"
     >

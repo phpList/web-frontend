@@ -1,5 +1,5 @@
 // KpiGrid.spec.js
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 
 vi.mock('./KpiCard.vue', () => ({
@@ -17,39 +17,30 @@ vi.mock('./KpiCard.vue', () => ({
     },
 }))
 
-const createDashboardStats = () => ({
-    total_subscribers: {
+const createSummary = () => ({
+    totalSubscribers: {
         value: 12345,
-        change_vs_last_month: 5.2,
+        changeVsLastMonth: 5.2,
     },
-    active_campaigns: {
+    activeCampaigns: {
         value: 42,
-        change_vs_last_month: -3.5,
+        changeVsLastMonth: -3.5,
     },
-    open_rate: {
+    openRate: {
         value: 28,
-        change_vs_last_month: 1.1,
+        changeVsLastMonth: 1.1,
     },
-    bounce_rate: {
+    bounceRate: {
         value: 4,
-        change_vs_last_month: -0.7,
+        changeVsLastMonth: -0.7,
     },
 })
 
 describe('KpiGrid', () => {
-    beforeEach(() => {
-        document.body.innerHTML = `
-      <div
-        id="vue-app"
-        data-dashboard-stats='${JSON.stringify(createDashboardStats())}'
-      ></div>
-    `
-    })
-
     it('renders four KPI cards', async () => {
         const { default: KpiGrid } = await import('../../../../../../assets/vue/components/dashboard/KpiGrid.vue')
 
-        const wrapper = mount(KpiGrid)
+        const wrapper = mount(KpiGrid, { props: { summary: createSummary() } })
 
         const cards = wrapper.findAllComponents({ name: 'KpiCard' })
 
@@ -59,7 +50,7 @@ describe('KpiGrid', () => {
     it('passes formatted props to KPI cards', async () => {
         const { default: KpiGrid } = await import('../../../../../../assets/vue/components/dashboard/KpiGrid.vue')
 
-        const wrapper = mount(KpiGrid)
+        const wrapper = mount(KpiGrid, { props: { summary: createSummary() } })
 
         const cards = wrapper.findAllComponents({ name: 'KpiCard' })
 
@@ -100,38 +91,15 @@ describe('KpiGrid', () => {
         })
     })
 
-    it('falls back to zero values when dashboard stats are missing', async () => {
-        document.body.innerHTML = `
-      <div id="vue-app" data-dashboard-stats="{}"></div>
-    `
-
-        vi.resetModules()
-
+    it('falls back to zero values when the summary is missing', async () => {
         const { default: KpiGrid } = await import('../../../../../../assets/vue/components/dashboard/KpiGrid.vue')
 
-        const wrapper = mount(KpiGrid)
+        const wrapper = mount(KpiGrid, { props: { summary: null } })
 
         const cards = wrapper.findAllComponents({ name: 'KpiCard' })
 
         expect(cards[0].props().value).toBe('0')
         expect(cards[0].props().change).toBe('0.0%')
         expect(cards[0].props().trend).toBe('up')
-    })
-
-    it('handles invalid JSON in dashboard stats', async () => {
-        document.body.innerHTML = `
-      <div id="vue-app" data-dashboard-stats="invalid-json"></div>
-    `
-
-        vi.resetModules()
-
-        const { default: KpiGrid } = await import('../../../../../../assets/vue/components/dashboard/KpiGrid.vue')
-
-        const wrapper = mount(KpiGrid)
-
-        const cards = wrapper.findAllComponents({ name: 'KpiCard' })
-
-        expect(cards).toHaveLength(4)
-        expect(cards[0].props().value).toBe('0')
     })
 })

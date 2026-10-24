@@ -33,6 +33,18 @@ which also has more detailed installation instructions in the README.
 php bin/console assets:install public --symlink --relative
 ```
 
+### Frontend (Vue/CKEditor) assets
+
+The compiled JS/CSS for this module's Vue components live in the git-tracked
+[`dist/`](dist) directory, built with `yarn build:dist` (Symfony Webpack
+Encore, output path `dist/`, public path `/build`). Consumers do not need
+Node.js/Yarn or this package's JS dependencies (Vue, CKEditor, etc.) — just
+copy `dist/` into the host application's `public/build/` directory as part of
+the host's Composer install/update step.
+
+`dist/` must be rebuilt (`yarn build:dist`) and committed whenever
+`assets/` changes, before tagging a release.
+
 This module serves its frontend files from `/`.
 
 

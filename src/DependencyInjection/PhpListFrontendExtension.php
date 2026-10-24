@@ -50,6 +50,7 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
                 'packages' => [
                     self::ASSET_PACKAGE_NAME => [
                         'base_path' => '/',
+                        'json_manifest_path' => '%kernel.application_dir%/public/build/manifest.json',
                     ],
                 ],
             ],
@@ -76,6 +77,8 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
             ],
             'access_control' => [
                 ['path' => '^/login', 'roles' => 'PUBLIC_ACCESS'],
+                ['path' => '^/forgot-password', 'roles' => 'PUBLIC_ACCESS'],
+                ['path' => '^/reset-password', 'roles' => 'PUBLIC_ACCESS'],
                 ['path' => '^/subscribe/', 'roles' => 'PUBLIC_ACCESS'],
                 ['path' => '^/unsubscribe/', 'roles' => 'PUBLIC_ACCESS'],
                 ['path' => '^/api/v2', 'roles' => 'PUBLIC_ACCESS'],

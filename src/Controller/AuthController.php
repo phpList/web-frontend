@@ -6,9 +6,12 @@ namespace PhpList\WebFrontend\Controller;
 
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use PhpList\RestApiClient\Client;
 use PhpList\RestApiClient\Endpoint\AuthClient;
+use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\WebFrontend\Service\AuthenticationService;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,6 +26,9 @@ class AuthController extends AbstractController
 
     public function __construct(
         private readonly AuthClient $authClient,
+        private readonly PasswordResetClient $passwordResetClient,
+        private readonly Client $apiClient,
+        private readonly AuthenticationService $authenticationService,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -36,12 +42,10 @@ class AuthController extends AbstractController
             return $this->redirectAfterLogin($redirectTarget);
         }
 
-        $error = null;
-        $session = $request->getSession();
-        if ($session->has('login_error')) {
-            $error = $session->get('login_error');
-            $session->remove('login_error');
-        }
+        $error = $this->authenticationService->consumeLoginError($request);
+        $success = $request->get('reset') === 'success'
+            ? 'Your password has been reset successfully. Please sign in.'
+            : null;
 
         if ($request->isMethod('POST')) {
             $username = trim((string) $request->request->get('username', ''));
@@ -56,22 +60,101 @@ class AuthController extends AbstractController
 
             try {
                 $authData = $this->authClient->login($username, $password);
-                $request->getSession()->set('auth_token', $authData['key']);
-                $request->getSession()->set('auth_expiry_date', $authData['expiry_date']);
-                $request->getSession()->set('auth_id', (int) $authData['id']);
-                $request->getSession()->save();
+                $this->authenticationService->storeAuthentication($request, $authData);
 
                 return $this->redirectAfterLogin($redirectTarget);
-            } catch (Exception $e) {
-                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             } catch (GuzzleException $e) {
                 $error = 'Invalid credentials or server error: ' . $e->getMessage();
+            } catch (Exception $e) {
+                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
             }
         }
 
         return $this->render('@PhpListFrontend/auth/login.html.twig', [
             'error' => $error,
+            'success' => $success,
             'redirect' => $redirectTarget,
+        ]);
+    }
+
+    #[Route('/forgot-password', name: 'forgot_password', methods: ['GET', 'POST'])]
+    public function forgotPassword(Request $request): Response
+    {
+        if ($request->getSession()->has('auth_token')) {
+            return $this->redirectToRoute('home');
+        }
+
+        $error = null;
+        $success = null;
+
+        if ($request->isMethod('POST')) {
+            $email = trim((string) $request->request->get('email', ''));
+
+            if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Please enter a valid email address.';
+            } else {
+                try {
+                    $this->passwordResetClient->request($email);
+                } catch (ApiException $e) {
+                    $this->logger->error('Password reset request failed: ' . $e->getMessage());
+                }
+
+                // Always show the same message, whether or not the email is registered,
+                // so this endpoint can't be used to enumerate administrator accounts.
+                $success = 'If an account exists for that email address, '
+                    . 'a password reset link has been sent to it.';
+            }
+        }
+
+        return $this->render('@PhpListFrontend/auth/forgot_password.html.twig', [
+            'error' => $error,
+            'success' => $success,
+        ]);
+    }
+
+    #[Route('/reset-password', name: 'reset_password', methods: ['GET', 'POST'])]
+    public function resetPassword(Request $request): Response
+    {
+        if ($request->getSession()->has('auth_token')) {
+            return $this->redirectToRoute('home');
+        }
+
+        $invalidTokenError = 'This password reset link is invalid or has expired. Please request a new one.';
+
+        if ($request->isMethod('POST')) {
+            $token = (string) $request->request->get('token', '');
+            $newPassword = (string) $request->request->get('newPassword', '');
+            $confirmPassword = (string) $request->request->get('confirmPassword', '');
+
+            $error = $this->authenticationService->validateNewPassword($token, $newPassword, $confirmPassword);
+
+            if ($error === null) {
+                try {
+                    $this->passwordResetClient->reset($token, $newPassword);
+
+                    return $this->redirectToRoute('login', ['reset' => 'success']);
+                } catch (ApiException $e) {
+                    $error = $invalidTokenError;
+                }
+            }
+
+            return $this->render('@PhpListFrontend/auth/reset_password.html.twig', [
+                'error' => $error,
+                'token' => $token,
+            ]);
+        }
+
+        $token = (string) $request->get('uniqueId', '');
+        if ($token === '' || !$this->authenticationService->isPasswordResetTokenValid($token)) {
+            return $this->render('@PhpListFrontend/auth/reset_password.html.twig', [
+                'error' => $invalidTokenError,
+                'token' => null,
+            ]);
+        }
+
+        return $this->render('@PhpListFrontend/auth/reset_password.html.twig', [
+            'error' => null,
+            'token' => $token,
         ]);
     }
 
@@ -86,8 +169,16 @@ class AuthController extends AbstractController
     }
 
     #[Route('/admin-about', name: 'admin_about')]
-    public function about(): JsonResponse
+    public function about(Request $request): JsonResponse
     {
+        // ApiSessionListener sets this on the shared Client for every request, but on
+        // concurrent XHR requests sharing one PHP session it can race - re-set it here from
+        // this request's own session so getSessionUser() never fails purely on a timing gap.
+        $authToken = $request->getSession()->get('auth_token');
+        if ($authToken) {
+            $this->apiClient->setSessionId((string) $authToken);
+        }
+
         try {
             $user = $this->authClient->getSessionUser();
         } catch (AuthenticationException) {
@@ -104,7 +195,25 @@ class AuthController extends AbstractController
             );
         }
 
-        return new JsonResponse($user->toArray());
+
+        $userData = $user->toArray();
+
+        // The Administrator response entity used by getSessionUser() doesn't parse
+        // privileges, so fetch the raw administrator record to expose them to the frontend.
+        // Note: the session's "auth_id" is actually the session ID returned by the login
+        // endpoint (see Client::login()), not the administrator ID - use the admin's own
+        // id from getSessionUser() instead.
+        $adminId = $userData['id'] ?? null;
+        if ($adminId !== null) {
+            try {
+                $administrator = $this->apiClient->get('administrators/' . $adminId);
+                $userData['privileges'] = $administrator['privileges'] ?? [];
+            } catch (ApiException $e) {
+                $this->logger->error('Unable to load administrator privileges: ' . $e->getMessage());
+            }
+        }
+
+        return new JsonResponse($userData);
     }
 
     private function redirectAfterLogin(?string $redirectTarget): Response

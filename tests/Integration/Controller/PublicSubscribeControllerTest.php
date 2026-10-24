@@ -61,8 +61,8 @@ class PublicSubscribeControllerTest extends KernelTestCase
             ]);
 
         $controller = new PublicSubscribeController(
-            $subscribePagesClient,
             $authClient,
+            $subscribePagesClient,
             new LanguageService(),
             $formBuilder,
             $this->createMock(PublicSubscribeFormValidator::class),

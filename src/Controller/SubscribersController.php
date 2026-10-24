@@ -8,6 +8,7 @@ use PhpList\RestApiClient\Endpoint\SubscribersClient;
 use PhpList\RestApiClient\Request\Subscriber\SubscribersFilterRequest;
 use PhpList\WebFrontend\Service\SubscriberCollectionNormalizer;
 use PhpList\WebFrontend\Service\SubscriberExportRequestFactory;
+use PhpList\WebFrontend\Trait\WantsJsonTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/subscribers', name: 'subscriber_')]
 class SubscribersController extends AbstractController
 {
+    use WantsJsonTrait;
+
     public function __construct(
         private readonly SubscribersClient $subscribersClient,
         private readonly SubscriberCollectionNormalizer $subscriberCollectionNormalizer,
@@ -32,13 +35,9 @@ class SubscribersController extends AbstractController
     #[Route('/', name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse|Response
     {
-        $accept = (string) $request->headers->get('Accept', '');
-        $wantsJson = $request->isXmlHttpRequest() || str_contains($accept, 'application/json');
-        if (! $wantsJson) {
+        if (! $this->wantsJson($request)) {
             return $this->render('@PhpListFrontend/spa.html.twig', [
                 'page' => 'Subscribers',
-                'api_token' => $request->getSession()->get('auth_token'),
-                'api_base_url' => $this->getParameter('api_base_url'),
             ]);
         }
 

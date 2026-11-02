@@ -4888,6 +4888,44 @@
                 }
             }
         },
+        "/api/v2/lt": {
+            "get": {
+                "tags": [
+                    "tracking"
+                ],
+                "summary": "Track a link click and redirect",
+                "description": "Click-tracking endpoint that campaign links point to. Records the click for the subscriber and redirects to the original url. Requires the `tid` token that is part of the link, and `hm` when signed links are enabled.",
+                "operationId": "a39734bfad61875e1e57cbd98ddf9f59",
+                "parameters": [
+                    {
+                        "name": "tid",
+                        "in": "query",
+                        "description": "Token identifying the link, the campaign and the subscriber",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "hm",
+                        "in": "query",
+                        "description": "Signature of the token, required when signed links are enabled",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "303": {
+                        "description": "Redirect to the original url"
+                    },
+                    "404": {
+                        "description": "Invalid token or unknown link"
+                    }
+                }
+            }
+        },
         "/api/v2/t/open.gif": {
             "get": {
                 "tags": [

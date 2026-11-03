@@ -3199,6 +3199,16 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
                     "403": {
                         "description": "Failure",
                         "content": {
@@ -5005,6 +5015,9 @@
                     },
                     "404": {
                         "description": "Invalid token or unknown link"
+                    },
+                    "500": {
+                        "description": "The click could not be stored"
                     }
                 }
             }

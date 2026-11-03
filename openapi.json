@@ -3149,6 +3149,89 @@
                 }
             }
         },
+        "/api/v2/campaigns/{messageId}/message-data": {
+            "patch": {
+                "tags": [
+                    "campaigns"
+                ],
+                "summary": "Set campaign message data.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Sets campaign settings that are not part of the campaign itself: analytics tracking, notification addresses and excluded lists. Only the fields that are sent are changed.",
+                "operationId": "59b99a4e9dbdb523a2dd4a8a4a5fdcb9",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "path",
+                        "description": "message ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "The settings to change.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateMessageDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success, returns all the settings of the campaign",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageData"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/editor-uploads": {
             "get": {
                 "tags": [
@@ -8567,6 +8650,62 @@
                 },
                 "type": "object"
             },
+            "UpdateMessageDataRequest": {
+                "properties": {
+                    "google_track": {
+                        "description": "Add analytics tracking parameters to the links of the campaign.",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "utm_source": {
+                        "description": "Google Analytics source.",
+                        "type": "string"
+                    },
+                    "utm_medium": {
+                        "description": "Google Analytics medium.",
+                        "type": "string"
+                    },
+                    "utm_campaign": {
+                        "description": "Google Analytics campaign.",
+                        "type": "string"
+                    },
+                    "pk_source": {
+                        "description": "Matomo source.",
+                        "type": "string"
+                    },
+                    "pk_medium": {
+                        "description": "Matomo medium.",
+                        "type": "string"
+                    },
+                    "pk_campaign": {
+                        "description": "Matomo campaign.",
+                        "type": "string"
+                    },
+                    "notify_start": {
+                        "description": "Email addresses, separated by a comma, to alert when sending starts.",
+                        "type": "string",
+                        "example": "admin@example.com"
+                    },
+                    "notify_end": {
+                        "description": "Email addresses, separated by a comma, to alert when sending finishes.",
+                        "type": "string",
+                        "example": "admin@example.com"
+                    },
+                    "exclude_lists": {
+                        "description": "IDs of the lists whose subscribers are left out of the campaign.",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "example": [
+                            4,
+                            5
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "UpdateTemplateRequest": {
                 "required": [
                     "title"
@@ -8831,6 +8970,52 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-12-01T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "MessageData": {
+                "properties": {
+                    "google_track": {
+                        "type": "boolean"
+                    },
+                    "utm_source": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "utm_medium": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "utm_campaign": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "pk_source": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "pk_medium": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "pk_campaign": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notify_start": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notify_end": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "exclude_lists": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
                     }
                 },
                 "type": "object"

@@ -94,8 +94,8 @@ describe('PerformanceChartCard', () => {
         })
 
         expect(options.colors).toEqual([
-            '#10b981',
-            '#3b82f6',
+            '#22AE8A',
+            '#418FFD',
         ])
 
         expect(options.legend.show).toBe(true)

@@ -439,9 +439,9 @@ const campaignChartOptions = computed(() => ({
   dataLabels: {
     enabled: false,
   },
-  colors: ['#2563eb', '#10b981'],
+  colors: ['#418FFD', '#22AE8A'],
   grid: {
-    borderColor: isDark.value ? '#334155' : '#e5e7eb',
+    borderColor: isDark.value ? '#253746' : '#e5e7eb',
     strokeDashArray: 4,
   },
   legend: {
@@ -450,7 +450,7 @@ const campaignChartOptions = computed(() => ({
     horizontalAlign: 'right',
     fontSize: '12px',
     labels: {
-      colors: isDark.value ? '#cbd5e1' : '#374151',
+      colors: isDark.value ? '#81B3E0' : '#253746',
     },
   },
   xaxis: {
@@ -459,7 +459,7 @@ const campaignChartOptions = computed(() => ({
       rotate: -30,
       trim: true,
       style: {
-        colors: '#64748b',
+        colors: '#3F607A',
         fontSize: '12px',
       },
     },
@@ -467,7 +467,7 @@ const campaignChartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        colors: '#64748b',
+        colors: '#3F607A',
         fontSize: '12px',
       },
       formatter: (value) => Math.round(value).toLocaleString(),

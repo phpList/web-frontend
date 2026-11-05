@@ -1,6 +1,6 @@
 <template>
   <RouterLink to="/" class="flex items-center gap-2 no-underline">
-    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white">
       <img
           class="w-full h-full max-w-full h-auto block"
           :src="logo"

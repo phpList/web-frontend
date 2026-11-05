@@ -2,32 +2,32 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.ae7bba29.js",
+        "/build/runtime.1faad810.js",
         "/build/app.a7c73afe.js"
       ],
       "css": [
-        "/build/app.aef555ee.css"
+        "/build/app.f7f42b7a.css"
       ]
     },
     "styles": {
       "js": [
-        "/build/runtime.ae7bba29.js"
+        "/build/runtime.1faad810.js"
       ],
       "css": [
-        "/build/styles.aef555ee.css"
+        "/build/styles.f7f42b7a.css"
       ]
     },
     "color": {
       "js": [
-        "/build/runtime.ae7bba29.js"
+        "/build/runtime.1faad810.js"
       ],
       "css": [
-        "/build/color.7bdea9b1.css"
+        "/build/color.01206175.css"
       ]
     },
     "subscribe": {
       "js": [
-        "/build/runtime.ae7bba29.js"
+        "/build/runtime.1faad810.js"
       ],
       "css": [
         "/build/subscribe.f3c3dcbd.css"

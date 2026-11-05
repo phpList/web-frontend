@@ -3,10 +3,10 @@
     "app": {
       "js": [
         "/build/runtime.ae7bba29.js",
-        "/build/app.aeff44d7.js"
+        "/build/app.a7c73afe.js"
       ],
       "css": [
-        "/build/app.6bce9055.css"
+        "/build/app.aef555ee.css"
       ]
     },
     "styles": {
@@ -14,7 +14,7 @@
         "/build/runtime.ae7bba29.js"
       ],
       "css": [
-        "/build/styles.6bce9055.css"
+        "/build/styles.aef555ee.css"
       ]
     },
     "color": {

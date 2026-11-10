@@ -3,11 +3,8 @@
   <BaseCard>
     <header class="mb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold text-gray-900 dark:text-slate-100">
-        Campaign Performance
-      </h2>
-      <p class="text-gray-500 text-xs mb-0 dark:text-slate-400">
         Daily opens and clicks for the last 30 days
-      </p>
+      </h2>
     </header>
 
     <div

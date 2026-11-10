@@ -5,7 +5,7 @@
         Help
       </h2>
       <p class="text-gray-500 text-xs mt-1 mb-0 dark:text-slate-400">
-        Useful pages from the phpList manual
+        Useful pages from the phpList manual and community
       </p>
     </header>
 
@@ -36,15 +36,20 @@ const links = [
     description: 'Create, preview and send your first message.',
     href: `${MANUAL}/composing-your-first-campaign`,
   },
-  {
-    label: 'Basic campaign statistics',
-    description: 'Understand opens, clicks and bounces.',
-    href: `${MANUAL}/basic-campaign-statistics`,
-  },
+  // {
+  //   label: 'Basic campaign statistics',
+  //   description: 'Understand opens, clicks and bounces.',
+  //   href: `${MANUAL}/basic-campaign-statistics`,
+  // },
   {
     label: 'System overview',
     description: 'How the pieces of phpList fit together.',
     href: `${MANUAL}/system-overview`,
+  },
+  {
+    label: 'Community forum',
+    description: 'Ask questions and read the latest discussions.',
+    href: 'https://discuss.phplist.org/latest',
   },
 ]
 </script>

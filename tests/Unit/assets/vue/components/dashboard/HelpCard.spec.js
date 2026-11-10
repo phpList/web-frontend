@@ -16,8 +16,9 @@ describe('HelpCard', () => {
 
         expect(hrefs).toEqual([
             'https://www.phplist.org/manual/books/phplist-manual/page/composing-your-first-campaign',
-            'https://www.phplist.org/manual/books/phplist-manual/page/basic-campaign-statistics',
+            // 'https://www.phplist.org/manual/books/phplist-manual/page/basic-campaign-statistics',
             'https://www.phplist.org/manual/books/phplist-manual/page/system-overview',
+            'https://discuss.phplist.org/latest',
         ])
     })
 

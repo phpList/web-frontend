@@ -79,15 +79,26 @@ export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);
 export const configClient = new ConfigClient(client);
 
-export const backendFetch = async (input, init = undefined) => {
-    const response = await fetch(input, init);
+// Requests to the PHP backend are run one at a time: the shared PHP session is not safe against
+// concurrent requests (one can read it mid-write, see no auth token and answer 401, which sends
+// the user back to the login page).
+let backendQueue = Promise.resolve()
 
-    if (response.status === 401) {
-        redirectToLogin();
+export const backendFetch = (input, init = undefined) => {
+    const run = async () => {
+        const response = await fetch(input, init)
+
+        if (response.status === 401) {
+            redirectToLogin()
+        }
+
+        return response
     }
+    const result = backendQueue.then(run, run)
+    backendQueue = result.catch(() => {})
 
-    return response;
-};
+    return result
+}
 
 export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
     const lists = [];

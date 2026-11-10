@@ -1022,27 +1022,7 @@
                                         "items": {
                                             "type": "array",
                                             "items": {
-                                                "properties": {
-                                                    "code": {
-                                                        "type": "string",
-                                                        "example": "campaigns_in_queue"
-                                                    },
-                                                    "level": {
-                                                        "type": "string",
-                                                        "enum": [
-                                                            "info",
-                                                            "warning",
-                                                            "error"
-                                                        ]
-                                                    },
-                                                    "message": {
-                                                        "type": "string"
-                                                    },
-                                                    "context": {
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "type": "object"
+                                                "$ref": "#/components/schemas/AdminNotification"
                                             }
                                         }
                                     },
@@ -5086,9 +5066,6 @@
                     },
                     "404": {
                         "description": "Invalid token or unknown link"
-                    },
-                    "500": {
-                        "description": "The click could not be stored"
                     }
                 }
             }
@@ -8419,6 +8396,29 @@
                     "value": {
                         "type": "string",
                         "example": "United States"
+                    }
+                },
+                "type": "object"
+            },
+            "AdminNotification": {
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "example": "campaigns_in_queue"
+                    },
+                    "level": {
+                        "type": "string",
+                        "enum": [
+                            "info",
+                            "warning",
+                            "error"
+                        ]
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "context": {
+                        "type": "object"
                     }
                 },
                 "type": "object"

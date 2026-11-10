@@ -2,20 +2,20 @@
 <template>
   <div class="flex flex-col flex-1">
     <!-- Topbar -->
-    <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
+    <header class="h-16 bg-slate-500 dark:bg-slate-950 border-b border-slate-600 dark:border-slate-800 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
       <div class="flex items-center gap-4 flex-1">
         <button
-            class="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+            class="lg:hidden p-2 -ml-2 text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
             @click="openSidebar"
         >
-          <BaseIcon name="menu" />
+          <BaseIcon name="menu" inherit-color />
         </button>
         <div class="topbar-search-container relative max-w-md w-full transition-all">
           <BaseIcon name="search" />
           <input
               v-model.trim="searchQuery"
               placeholder="Search subscribers, campaigns..."
-              class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              class="w-full pl-10 pr-4 py-2 bg-slate-700 dark:bg-slate-800 border border-slate-600 dark:border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-300 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
               type="text"
               @focus="showSearchResults = true"
               @input="handleSearchInput"
@@ -71,11 +71,11 @@
 
         <button
             type="button"
-            class="p-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+            class="p-2 text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
             :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
             @click="toggleDarkMode"
         >
-          <BaseIcon :name="isDark ? 'sun' : 'moon'" />
+          <BaseIcon :name="isDark ? 'sun' : 'moon'" inherit-color />
         </button>
 
         <!-- User dropdown -->
@@ -85,15 +85,15 @@
               @click="toggleDropdown"
           >
             <div class="flex flex-col items-end hidden sm:flex">
-              <span class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-none">
+              <span class="text-sm font-bold text-slate-100 leading-none">
                 {{ adminData.login_name || 'Admin User' }}
               </span>
-              <span class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+              <span class="text-[10px] text-slate-100 dark:text-slate-400 mt-0.5">
                 {{ adminData.super_user ? 'Super Admin' : 'Administrator' }}
               </span>
             </div>
 
-            <BaseIcon name="chevronDown" />
+            <BaseIcon name="chevronDown" class="text-slate-100 dark:text-slate-300" inherit-color />
           </div>
 
           <!-- Dropdown -->

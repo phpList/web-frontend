@@ -84,6 +84,6 @@ const quickActions = [
   { id: 'campaign', label: 'New Campaign', href: '/campaigns/create' },
   { id: 'subscribers', label: 'Add Subscribers', href: '/subscribers' },
   { id: 'import', label: 'Import List', href: '/lists' },
-  { id: 'templates', label: 'Manage Templates', href: '/templates' },
+  { id: 'templates', label: 'New Template', href: '/templates/create' },
 ]
 </script>

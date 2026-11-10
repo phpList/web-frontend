@@ -42,7 +42,7 @@ describe('QuickActionsCard', () => {
             'New Campaign',
             'Add Subscribers',
             'Import List',
-            'Manage Templates',
+            'New Template',
         ])
     })
 
@@ -54,7 +54,7 @@ describe('QuickActionsCard', () => {
         expect(links[0].attributes('href')).toBe('/campaigns/create')
         expect(links[1].attributes('href')).toBe('/subscribers')
         expect(links[2].attributes('href')).toBe('/lists')
-        expect(links[3].attributes('href')).toBe('/templates')
+        expect(links[3].attributes('href')).toBe('/templates/create')
     })
 
     it('renders one icon per action', () => {
@@ -73,7 +73,7 @@ describe('QuickActionsCard', () => {
         expect(links[0].text()).toContain('New Campaign')
         expect(links[1].text()).toContain('Add Subscribers')
         expect(links[2].text()).toContain('Import List')
-        expect(links[3].text()).toContain('Manage Templates')
+        expect(links[3].text()).toContain('New Template')
     })
 
     it('applies the expected styling classes to action links', () => {

@@ -30,6 +30,35 @@
               v-bind="section"
           />
         </nav>
+
+        <!-- Current admin + logout -->
+        <div class="border-t border-slate-600 dark:border-slate-800 px-4 py-4" data-testid="sidebar-user">
+          <div class="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-600 dark:hover:bg-slate-800">
+            <div
+                class="shrink-0 h-9 w-9 rounded-full bg-slate-700 dark:bg-slate-800 border border-slate-400/40 dark:border-slate-700 flex items-center justify-center text-sm font-bold text-white uppercase transition-colors group-hover:border-slate-300"
+                data-testid="sidebar-avatar"
+                aria-hidden="true"
+            >
+              {{ adminInitial }}
+            </div>
+            <div class="min-w-0 flex-1 flex flex-col">
+              <span class="text-sm font-bold text-slate-100 leading-none truncate">
+                {{ adminName }}
+              </span>
+              <span class="text-[10px] text-slate-100 dark:text-slate-400 mt-1">
+                {{ adminData.super_user ? 'Super Admin' : 'Administrator' }}
+              </span>
+            </div>
+            <a
+                href="/logout"
+                class="shrink-0 p-2 rounded-lg no-underline text-slate-100 hover:text-white hover:bg-slate-500 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
+                aria-label="Logout"
+                title="Logout"
+            >
+              <BaseIcon name="logout" inherit-color />
+            </a>
+          </div>
+        </div>
       </div>
     </aside>
   </div>
@@ -44,9 +73,12 @@ import { useSidebar } from '../../composables/useSidebar'
 import { useCurrentAdmin } from '../../composables/useCurrentAdmin'
 
 const { isSidebarOpen, closeSidebar } = useSidebar()
-const { loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
+const { adminData, loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
 
 onMounted(loadCurrentAdmin)
+
+const adminName = computed(() => adminData.value?.login_name || 'Admin User')
+const adminInitial = computed(() => adminName.value.trim().charAt(0) || 'A')
 
 const sections = [
   {

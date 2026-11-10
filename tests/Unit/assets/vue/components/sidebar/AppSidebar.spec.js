@@ -9,6 +9,7 @@ const isSidebarOpen = ref(false)
 const closeSidebar = vi.fn()
 const loadCurrentAdmin = vi.fn()
 let hasPrivilege = vi.fn(() => true)
+const adminData = ref({ login_name: 'jane', super_user: true })
 
 vi.mock('../../../../../../assets/vue/composables/useSidebar', () => ({
     useSidebar: () => ({
@@ -19,6 +20,7 @@ vi.mock('../../../../../../assets/vue/composables/useSidebar', () => ({
 
 vi.mock('../../../../../../assets/vue/composables/useCurrentAdmin', () => ({
     useCurrentAdmin: () => ({
+        adminData,
         loadCurrentAdmin,
         hasPrivilege: (...args) => hasPrivilege(...args),
     }),
@@ -212,5 +214,16 @@ describe('AppSidebar', () => {
         expect(
             wrapper.find('aside').classes()
         ).toContain('translate-x-0')
+    })
+
+    it('shows the admin name, role and logout link at the bottom', () => {
+        const wrapper = mount(AppSidebar, { global: { stubs: { SidebarLogo: SidebarLogoStub, BaseIcon: BaseIconStub, SidebarNavSection: SidebarNavSectionStub } } })
+        const user = wrapper.find('[data-testid="sidebar-user"]')
+
+        expect(user.text()).toContain('jane')
+        expect(user.text()).toContain('Super Admin')
+        expect(user.find('[data-testid="sidebar-avatar"]').text()).toBe('j')
+        expect(user.find('a[href="/logout"]').attributes('aria-label')).toBe('Logout')
+        expect(user.find('a[href="/logout"] .base-icon').exists()).toBe(true)
     })
 })

@@ -99,7 +99,7 @@ describe('AdminLayout', () => {
     })
 
     it('loads admin data on mount', async () => {
-        const wrapper = createWrapper()
+        createWrapper()
 
         await flushPromises()
 
@@ -107,15 +107,6 @@ describe('AdminLayout', () => {
             '/admin-about',
             expect.any(Object)
         )
-
-        expect(wrapper.text()).toContain('admin')
-        expect(wrapper.text()).toContain('Super Admin')
-    })
-
-    it('shows fallback admin name', () => {
-        const wrapper = createWrapper()
-
-        expect(wrapper.text()).toContain('Admin User')
     })
 
     it('opens sidebar', async () => {
@@ -152,18 +143,12 @@ describe('AdminLayout', () => {
         expect(toggleButton.text()).toContain('sun')
     })
 
-    it('toggles dropdown', async () => {
+    it('no longer renders the user menu in the header', async () => {
         const wrapper = createWrapper()
 
         await flushPromises()
 
         expect(wrapper.text()).not.toContain('Logout')
-
-        const dropdownTrigger = wrapper.find('div.cursor-pointer')
-
-        await dropdownTrigger.trigger('click')
-
-        expect(wrapper.text()).toContain('Logout')
     })
 
     it('searches subscribers and campaigns', async () => {

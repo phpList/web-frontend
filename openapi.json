@@ -5066,6 +5066,9 @@
                     },
                     "404": {
                         "description": "Invalid token or unknown link"
+                    },
+                    "500": {
+                        "description": "The click could not be tracked"
                     }
                 }
             }

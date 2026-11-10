@@ -69,6 +69,8 @@
           Create Campaign
         </RouterLink>
 
+        <AdminNotifications />
+
         <button
             type="button"
             class="p-2 text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
@@ -121,6 +123,7 @@
 
 <script setup>
 import BaseIcon from "../components/base/BaseIcon.vue";
+import AdminNotifications from "../components/notifications/AdminNotifications.vue";
 import { useSidebar } from "../composables/useSidebar";
 import { useDarkMode } from "../composables/useDarkMode";
 import { useCurrentAdmin } from "../composables/useCurrentAdmin";

@@ -993,6 +993,77 @@
                 }
             }
         },
+        "/api/v2/notifications": {
+            "get": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Gets admin notifications.",
+                "description": "🚧 **Status: Beta** – This method is under development. Avoid using in production. Returns the in-app notifications for the authenticated administrator.",
+                "operationId": "ae8d6747f5bedfa217ac8323d485bcf8",
+                "parameters": [
+                    {
+                        "name": "php-auth-pw",
+                        "in": "header",
+                        "description": "Session key obtained from login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "code": {
+                                                        "type": "string",
+                                                        "example": "campaigns_in_queue"
+                                                    },
+                                                    "level": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "info",
+                                                            "warning",
+                                                            "error"
+                                                        ]
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    },
+                                                    "context": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/administrators": {
             "get": {
                 "tags": [
@@ -10223,6 +10294,10 @@
         {
             "name": "admin-attributes",
             "description": "admin-attributes"
+        },
+        {
+            "name": "notifications",
+            "description": "notifications"
         },
         {
             "name": "administrators",

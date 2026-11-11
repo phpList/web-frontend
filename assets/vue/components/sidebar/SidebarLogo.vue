@@ -15,4 +15,5 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import logo from '../../../images/logo-48.png'
+
 </script>

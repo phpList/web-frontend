@@ -28,14 +28,19 @@
         </BaseCard>
       </section>
 
+      <PerformanceChartCard
+        :chart="performanceChart"
+        :loading="performanceLoading"
+        :error="performanceError"
+      />
+
       <section class="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <BaseCard class="xl:col-span-2">
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Campaign performance</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Top campaigns ranked by unique views and click volume.
-              </p>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">
+                Top campaigns ranked by unique views and click volume
+              </h2>
             </div>
             <p class="text-xs text-slate-400 dark:text-slate-500">
               {{ formatCount(campaignStatistics.length) }} campaigns
@@ -293,8 +298,10 @@ import VueApexCharts from 'vue3-apexcharts'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import BaseCard from '../components/base/BaseCard.vue'
 import BaseIcon from '../components/base/BaseIcon.vue'
+import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAnalyticsData } from '../composables/useAnalyticsData'
+import { useCampaignPerformance } from '../composables/useCampaignPerformance'
 
 const { isDark } = useDarkMode()
 
@@ -309,6 +316,13 @@ const {
   topLocalParts,
   loadAnalytics,
 } = useAnalyticsData()
+
+const {
+  chart: performanceChart,
+  chartLoading: performanceLoading,
+  chartError: performanceError,
+  load: loadPerformance,
+} = useCampaignPerformance()
 
 const formatCount = (value) => new Intl.NumberFormat().format(Number(value) || 0)
 
@@ -439,9 +453,9 @@ const campaignChartOptions = computed(() => ({
   dataLabels: {
     enabled: false,
   },
-  colors: ['#2563eb', '#10b981'],
+  colors: ['#418FFD', '#22AE8A'],
   grid: {
-    borderColor: isDark.value ? '#334155' : '#e5e7eb',
+    borderColor: isDark.value ? '#253746' : '#e5e7eb',
     strokeDashArray: 4,
   },
   legend: {
@@ -450,7 +464,7 @@ const campaignChartOptions = computed(() => ({
     horizontalAlign: 'right',
     fontSize: '12px',
     labels: {
-      colors: isDark.value ? '#cbd5e1' : '#374151',
+      colors: isDark.value ? '#81B3E0' : '#253746',
     },
   },
   xaxis: {
@@ -459,7 +473,7 @@ const campaignChartOptions = computed(() => ({
       rotate: -30,
       trim: true,
       style: {
-        colors: '#64748b',
+        colors: '#3F607A',
         fontSize: '12px',
       },
     },
@@ -467,7 +481,7 @@ const campaignChartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        colors: '#64748b',
+        colors: '#3F607A',
         fontSize: '12px',
       },
       formatter: (value) => Math.round(value).toLocaleString(),
@@ -483,5 +497,8 @@ const campaignChartOptions = computed(() => ({
   },
 }))
 
-onMounted(loadAnalytics)
+onMounted(() => {
+  loadAnalytics()
+  loadPerformance()
+})
 </script>

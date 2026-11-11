@@ -11,19 +11,19 @@
         :error="summaryError"
       />
 
-      <!-- Chart + Overview -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="w-full lg:col-span-2">
-          <PerformanceChartCard
-            :chart="chart"
-            :loading="chartLoading"
-            :error="chartError"
-            class="h-full"
-          />
-        </div>
-        <div class="w-full lg:col-span-1">
-          <QuickActionsCard class="h-full" />
-        </div>
+      <!-- Quick actions + help -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <QuickActionsCard class="h-full" />
+        <HelpCard class="h-full" />
+      </section>
+
+      <!-- Community news -->
+      <section class="mb-6">
+        <CommunityNewsCard
+          :items="newsItems"
+          :loading="newsLoading"
+          :error="newsError"
+        />
       </section>
 
       <!-- Recent items list -->
@@ -44,10 +44,12 @@
 import { onMounted } from 'vue'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import KpiGrid from '../components/dashboard/KpiGrid.vue'
-import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
 import QuickActionsCard from '../components/dashboard/QuickActionsCard.vue'
 import RecentCampaignsCard from '../components/dashboard/RecentCampaignsCard.vue'
+import HelpCard from '../components/dashboard/HelpCard.vue'
+import CommunityNewsCard from '../components/dashboard/CommunityNewsCard.vue'
 import { useDashboardData } from '../composables/useDashboardData'
+import { useCommunityNews } from '../composables/useCommunityNews'
 
 const {
   summary,
@@ -56,11 +58,18 @@ const {
   recentCampaigns,
   recentCampaignsLoading,
   recentCampaignsError,
-  chart,
-  chartLoading,
-  chartError,
   load,
 } = useDashboardData()
 
-onMounted(load)
+const {
+  items: newsItems,
+  loading: newsLoading,
+  error: newsError,
+  load: loadNews,
+} = useCommunityNews()
+
+onMounted(() => {
+  load()
+  loadNews()
+})
 </script>

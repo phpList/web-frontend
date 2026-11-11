@@ -1,14 +1,14 @@
 :root {
     --page-bg: #e5e7eb;
-    --primary-text: #374151;
+    --primary-text: #253746;
 
-    --header-bg: #1e1b4b;
-    --logo-color: #c7d2fe;
+    --header-bg: #141D24;
+    --logo-color: #81B3E0;
 
-    --topbar-gradient-start: #312e81;
-    --topbar-gradient-middle: #3730a3;
-    --topbar-gradient-end: #4338ca;
-    --topbar-border: #4f46e5;
+    --topbar-gradient-start: #2068AF;
+    --topbar-gradient-middle: #2E73BA;
+    --topbar-gradient-end: #3C7DC0;
+    --topbar-border: #418FFD;
 
     --card-bg: #ffffff;
     --card-border: #e5e7eb;
@@ -25,9 +25,9 @@
     --error-border: #fca5a5;
     --error-text: #dc2626;
 
-    --success-bg: #f0fdf4;
-    --success-border: #86efac;
-    --success-text: #16a34a;
+    --success-bg: #eef9f6;
+    --success-border: #60C3AA;
+    --success-text: #189979;
 
     --footer-border: #e5e7eb;
 }

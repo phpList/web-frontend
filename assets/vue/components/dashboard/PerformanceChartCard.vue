@@ -3,11 +3,8 @@
   <BaseCard>
     <header class="mb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold text-gray-900 dark:text-slate-100">
-        Campaign Performance
-      </h2>
-      <p class="text-gray-500 text-xs mb-0 dark:text-slate-400">
         Daily opens and clicks for the last 30 days
-      </p>
+      </h2>
     </header>
 
     <div
@@ -93,12 +90,12 @@ const chartOptions = computed(() => ({
       stops: [0, 100],
     },
   },
-  colors: ['#10b981', '#3b82f6'],
+  colors: ['#22AE8A', '#418FFD'],
   dataLabels: {
     enabled: false,
   },
   grid: {
-    borderColor: isDark.value ? '#334155' : '#e5e7eb',
+    borderColor: isDark.value ? '#253746' : '#e5e7eb',
     strokeDashArray: 4,
     padding: {
       left: 8,
@@ -113,7 +110,7 @@ const chartOptions = computed(() => ({
     horizontalAlign: 'right',
     fontSize: '12px',
     labels: {
-      colors: isDark.value ? '#cbd5e1' : '#374151',
+      colors: isDark.value ? '#81B3E0' : '#253746',
     },
     markers: {
       width: 8,
@@ -127,7 +124,7 @@ const chartOptions = computed(() => ({
     axisTicks: { show: false },
     labels: {
       style: {
-        colors: isDark.value ? '#64748b' : '#9ca3af',
+        colors: isDark.value ? '#6BA5D9' : '#3F607A',
         fontSize: '12px',
       },
     },
@@ -135,7 +132,7 @@ const chartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        colors: isDark.value ? '#64748b' : '#9ca3af',
+        colors: isDark.value ? '#6BA5D9' : '#3F607A',
         fontSize: '12px',
       },
       formatter: (value) => Math.round(value).toLocaleString(),

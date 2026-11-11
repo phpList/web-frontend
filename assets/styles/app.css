@@ -4,14 +4,112 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #2563eb;
-  --color-secondary: #6b7280;
-  --color-success: #16a34a;
+  /* Brand palette. Shades run light -> dark. */
+
+  /* Blue (also replaces indigo) */
+  --color-blue-50: #eef5fc;
+  --color-blue-100: #dbe9f7;
+  --color-blue-200: #bcd6ef;
+  --color-blue-300: #81B3E0;
+  --color-blue-400: #6BA5D9;
+  --color-blue-500: #5799D2;
+  --color-blue-600: #418FFD;
+  --color-blue-700: #3C7DC0;
+  --color-blue-800: #2E73BA;
+  --color-blue-900: #2068AF;
+  --color-blue-950: #164a80;
+  --color-indigo-50: var(--color-blue-50);
+  --color-indigo-100: var(--color-blue-100);
+  --color-indigo-200: var(--color-blue-200);
+  --color-indigo-300: var(--color-blue-300);
+  --color-indigo-400: var(--color-blue-400);
+  --color-indigo-500: var(--color-blue-500);
+  --color-indigo-600: var(--color-blue-600);
+  --color-indigo-700: var(--color-blue-700);
+  --color-indigo-800: var(--color-blue-800);
+  --color-indigo-900: var(--color-blue-900);
+  --color-indigo-950: var(--color-blue-950);
+
+  /* Orange (also replaces amber, purple) */
+  --color-orange-50: #fef4f0;
+  --color-orange-100: #fde8e1;
+  --color-orange-200: #FBC8B9;
+  --color-orange-300: #F9B29E;
+  --color-orange-400: #F8A086;
+  --color-orange-500: #FF8D6D;
+  --color-orange-600: #F47856;
+  --color-orange-700: #F2673F;
+  --color-orange-800: #F1562A;
+  --color-orange-900: #8a2f15;
+  --color-orange-950: #5c1e0d;
+  --color-amber-50: var(--color-orange-50);
+  --color-amber-100: var(--color-orange-100);
+  --color-amber-200: var(--color-orange-200);
+  --color-amber-300: var(--color-orange-300);
+  --color-amber-400: var(--color-orange-400);
+  --color-amber-500: var(--color-orange-500);
+  --color-amber-600: var(--color-orange-600);
+  --color-amber-700: var(--color-orange-700);
+  --color-amber-800: var(--color-orange-800);
+  --color-amber-900: var(--color-orange-900);
+  --color-amber-950: var(--color-orange-950);
+
+  --color-purple-50: var(--color-orange-50);
+  --color-purple-100: var(--color-orange-100);
+  --color-purple-200: var(--color-orange-200);
+  --color-purple-300: var(--color-orange-300);
+  --color-purple-400: var(--color-orange-400);
+  --color-purple-500: var(--color-orange-500);
+  --color-purple-600: var(--color-orange-600);
+  --color-purple-700: var(--color-orange-700);
+  --color-purple-800: var(--color-orange-800);
+  --color-purple-900: var(--color-orange-900);
+  --color-purple-950: var(--color-orange-950);
+
+  /* Green (also replaces emerald) */
+  --color-green-300: #60C3AA;
+  --color-green-400: #55C0A1;
+  --color-green-500: #3BBB98;
+  --color-green-600: #22AE8A;
+  --color-green-700: #189979;
+  --color-green-800: #1B8368;
+  --color-green-900: #136F58;
+  --color-emerald-300: var(--color-green-300);
+  --color-emerald-400: var(--color-green-400);
+  --color-emerald-500: var(--color-green-500);
+  --color-emerald-600: var(--color-green-600);
+  --color-emerald-700: var(--color-green-700);
+  --color-emerald-800: var(--color-green-800);
+  --color-emerald-900: var(--color-green-900);
+
+  /* Black / neutral (replaces slate and gray). 50-300 stay light tints. */
+  --color-slate-400: #3F607A;
+  --color-slate-500: #365269;
+  --color-slate-600: #2F4557;
+  --color-slate-700: #253746;
+  --color-slate-800: #1B2A36;
+  --color-slate-900: #141D24;
+  --color-slate-950: #0E1215;
+  --color-gray-50: var(--color-slate-50);
+  --color-gray-100: var(--color-slate-100);
+  --color-gray-200: var(--color-slate-200);
+  --color-gray-300: var(--color-slate-300);
+  --color-gray-400: var(--color-slate-400);
+  --color-gray-500: var(--color-slate-500);
+  --color-gray-600: var(--color-slate-600);
+  --color-gray-700: var(--color-slate-700);
+  --color-gray-800: var(--color-slate-800);
+  --color-gray-900: var(--color-slate-900);
+  --color-gray-950: var(--color-slate-950);
+
+  --color-primary: #3C7DC0;
+  --color-secondary: #365269;
+  --color-success: #189979;
   --color-danger: #dc2626;
-  --color-info: #0891b2;
-  --color-ext-wf1: #543ff6; /** indigo-500 **/
-  --color-ext-wf2: #eef2ff; /** indigo-50 **/
-  --color-ext-wf3: #303F9F; /** indigo-700 **/
+  --color-info: #5799D2;
+  --color-ext-wf1: #418FFD;
+  --color-ext-wf2: #eef5fc;
+  --color-ext-wf3: #2068AF;
 }
 
 @source "../../templates/**/*.twig";

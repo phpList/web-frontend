@@ -5,11 +5,17 @@ import { defineComponent, nextTick } from 'vue'
 const statisticsClient = {
     getDashboardSummary: vi.fn(),
     getRecentCampaigns: vi.fn(),
-    getCampaignPerformance: vi.fn(),
 }
+
+const backendFetch = vi.fn()
 
 vi.mock('../../../../../assets/vue/api', () => ({
     statisticsClient,
+    backendFetch,
+}))
+
+vi.mock('../../../../../assets/vue/composables/useCurrentAdmin', () => ({
+    useCurrentAdmin: () => ({ loadCurrentAdmin: vi.fn().mockResolvedValue(undefined) }),
 }))
 
 vi.mock('../../../../../assets/vue/layouts/AdminLayout.vue', () => ({
@@ -27,10 +33,17 @@ vi.mock('../../../../../assets/vue/components/dashboard/KpiGrid.vue', () => ({
     }),
 }))
 
-vi.mock('../../../../../assets/vue/components/dashboard/PerformanceChartCard.vue', () => ({
+vi.mock('../../../../../assets/vue/components/dashboard/HelpCard.vue', () => ({
     default: defineComponent({
-        name: 'PerformanceChartCard',
-        props: ['chart', 'loading', 'error'],
+        name: 'HelpCard',
+        template: '<div class="dashboard-block" />',
+    }),
+}))
+
+vi.mock('../../../../../assets/vue/components/dashboard/CommunityNewsCard.vue', () => ({
+    default: defineComponent({
+        name: 'CommunityNewsCard',
+        props: ['items', 'loading', 'error'],
         template: '<div class="dashboard-block" :data-loading="loading" :data-error="error" />',
     }),
 }))
@@ -55,6 +68,10 @@ describe('DashboardView', () => {
         document.body.innerHTML = ''
         vi.clearAllMocks()
         vi.resetModules()
+        backendFetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({ items: [{ title: 'News', link: 'https://www.phplist.org/newslist/a/' }] }),
+        })
     })
 
     it('marks each section as loading independently, and clears loading once each resolves', async () => {
@@ -65,9 +82,6 @@ describe('DashboardView', () => {
         statisticsClient.getRecentCampaigns.mockResolvedValue({
             campaigns: [{ name: 'Summer launch', status: 'sent', date: '2026-06-01', openRate: '60%', clickRate: '20%' }],
         })
-        statisticsClient.getCampaignPerformance.mockResolvedValue({
-            points: [{ date: '2026-06-01', opens: 10, clicks: 3 }],
-        })
 
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
@@ -75,14 +89,12 @@ describe('DashboardView', () => {
         await nextTick()
 
         expect(wrapper.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(true)
-        expect(wrapper.findComponent({ name: 'PerformanceChartCard' }).props('loading')).toBe(true)
         expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('loading')).toBe(true)
 
         await flushPromises()
 
         // Sections whose requests already resolved stop loading and show their data,
         // while the summary section (still pending) keeps its own spinner.
-        expect(wrapper.findComponent({ name: 'PerformanceChartCard' }).props('loading')).toBe(false)
         expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('loading')).toBe(false)
         expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('rows')).toHaveLength(1)
         expect(wrapper.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(true)
@@ -97,7 +109,6 @@ describe('DashboardView', () => {
 
         expect(statisticsClient.getDashboardSummary).toHaveBeenCalled()
         expect(statisticsClient.getRecentCampaigns).toHaveBeenCalled()
-        expect(statisticsClient.getCampaignPerformance).toHaveBeenCalled()
         expect(wrapper.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(false)
         expect(wrapper.findComponent({ name: 'KpiGrid' }).text()).toContain('summary-loaded')
     })
@@ -105,7 +116,6 @@ describe('DashboardView', () => {
     it('surfaces an error for the failing section only, without blocking the others', async () => {
         statisticsClient.getDashboardSummary.mockRejectedValue(new Error('Session expired'))
         statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
-        statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
 
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
@@ -114,7 +124,6 @@ describe('DashboardView', () => {
         await flushPromises()
 
         expect(wrapper.findComponent({ name: 'KpiGrid' }).props('error')).toBe('Unable to load dashboard summary.')
-        expect(wrapper.findComponent({ name: 'PerformanceChartCard' }).props('error')).toBe('')
         expect(wrapper.findComponent({ name: 'RecentCampaignsCard' }).props('error')).toBe('')
     })
 
@@ -126,7 +135,6 @@ describe('DashboardView', () => {
             bounceRate: { value: 4, changeVsLastMonth: -0.7 },
         })
         statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
-        statisticsClient.getCampaignPerformance.mockResolvedValue({ points: [] })
 
         const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
 
@@ -139,8 +147,24 @@ describe('DashboardView', () => {
 
         expect(statisticsClient.getDashboardSummary).toHaveBeenCalledTimes(1)
         expect(statisticsClient.getRecentCampaigns).toHaveBeenCalledTimes(1)
-        expect(statisticsClient.getCampaignPerformance).toHaveBeenCalledTimes(1)
         expect(secondMount.findComponent({ name: 'KpiGrid' }).props('loading')).toBe(false)
         expect(secondMount.findComponent({ name: 'KpiGrid' }).props('error')).toBe('')
+    })
+
+    it('shows the help section and loads community news', async () => {
+        statisticsClient.getDashboardSummary.mockResolvedValue({})
+        statisticsClient.getRecentCampaigns.mockResolvedValue({ campaigns: [] })
+
+        const { default: DashboardView } = await import('../../../../../assets/vue/views/DashboardView.vue')
+
+        const wrapper = mount(DashboardView)
+        expect(wrapper.findComponent({ name: 'CommunityNewsCard' }).props('loading')).toBe(true)
+        await flushPromises()
+
+        expect(wrapper.findComponent({ name: 'HelpCard' }).exists()).toBe(true)
+        expect(backendFetch).toHaveBeenCalledWith('/dashboard/community-news', expect.anything())
+        const news = wrapper.findComponent({ name: 'CommunityNewsCard' })
+        expect(news.props('loading')).toBe(false)
+        expect(news.props('items')).toHaveLength(1)
     })
 })

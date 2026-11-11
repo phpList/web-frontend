@@ -44,10 +44,9 @@ describe('PerformanceChartCard', () => {
             },
         })
 
-    it('renders card title and description', () => {
+    it('renders card heading', () => {
         const wrapper = mountComponent()
 
-        expect(wrapper.text()).toContain('Campaign Performance')
         expect(wrapper.text()).toContain(
             'Daily opens and clicks for the last 30 days'
         )
@@ -94,8 +93,8 @@ describe('PerformanceChartCard', () => {
         })
 
         expect(options.colors).toEqual([
-            '#10b981',
-            '#3b82f6',
+            '#22AE8A',
+            '#418FFD',
         ])
 
         expect(options.legend.show).toBe(true)

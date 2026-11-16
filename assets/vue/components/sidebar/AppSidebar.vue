@@ -47,6 +47,8 @@
             </span>
           </button>
           <button
+              type="button"
+              aria-label="Close sidebar"
               class="lg:hidden p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200"
               @click="closeSidebar"
           >

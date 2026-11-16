@@ -192,9 +192,9 @@ describe('AppSidebar', () => {
     it('closes sidebar when close button is clicked', async () => {
         const wrapper = createWrapper()
 
-        const buttons = wrapper.findAll('button')
-
-        await buttons[0].trigger('click')
+        await wrapper
+            .find('button[aria-label="Close sidebar"]')
+            .trigger('click')
 
         expect(closeSidebar)
             .toHaveBeenCalledTimes(1)

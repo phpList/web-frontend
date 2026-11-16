@@ -84,15 +84,47 @@ export const configClient = new ConfigClient(client);
 // the user back to the login page).
 let backendQueue = Promise.resolve()
 
+// Upper bound for a queued request to receive its response headers. Without it a stalled request
+// would block every request queued behind it.
+const BACKEND_FETCH_TIMEOUT_MS = 90000
+
 export const backendFetch = (input, init = undefined) => {
     const run = async () => {
-        const response = await fetch(input, init)
+        const callerSignal = init?.signal
+        const controller = new AbortController()
+        let onCallerAbort = null
 
-        if (response.status === 401) {
-            redirectToLogin()
+        if (callerSignal) {
+            if (callerSignal.aborted) {
+                controller.abort(callerSignal.reason)
+            } else {
+                onCallerAbort = () => controller.abort(callerSignal.reason)
+                callerSignal.addEventListener('abort', onCallerAbort, { once: true })
+            }
         }
 
-        return response
+        const timer = setTimeout(() => {
+            controller.abort(new DOMException('Request timed out', 'TimeoutError'))
+        }, BACKEND_FETCH_TIMEOUT_MS)
+
+        try {
+            const response = await fetch(input, { ...init, signal: controller.signal })
+
+            if (response.status === 401) {
+                redirectToLogin()
+            }
+
+            // The caller's abort listener stays attached on success so that cancelling still
+            // aborts the response body while it is being read.
+            return response
+        } catch (error) {
+            if (onCallerAbort) {
+                callerSignal.removeEventListener('abort', onCallerAbort)
+            }
+            throw error
+        } finally {
+            clearTimeout(timer)
+        }
     }
     const result = backendQueue.then(run, run)
     backendQueue = result.catch(() => {})

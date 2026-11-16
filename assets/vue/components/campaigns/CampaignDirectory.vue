@@ -9,7 +9,7 @@
           :key="option.id"
           type="button"
           class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-          :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+          :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-350 hover:text-slate-700 dark:hover:text-slate-300'"
           @click="setFilter(option.id)"
         >
           {{ option.label }}
@@ -41,7 +41,7 @@
             {{ campaign.statusLabel }}
           </BaseBadge>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 align-top">
           <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
           <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
           <template v-else-if="campaign.lists.length <= 3">
@@ -81,14 +81,14 @@
             </p>
           </template>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 align-top">
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total:</span> {{ campaign.processedTotal }}</p>
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Text:</span> {{ campaign.processedText }}</p>
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">HTML:</span> {{ campaign.processedHtml }}</p>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top" v-if="showStatistics">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 align-top" v-if="showStatistics">
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total views:</span> {{ campaign.totalViews }}</p>
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Unique views:</span> {{ campaign.uniqueViews }}</p>
           <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Bounced:</span> {{ campaign.bounced }}</p>
@@ -153,7 +153,7 @@
             :class="{
               'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
               'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-              'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+              'text-slate-500 dark:text-slate-350': getActionFeedback(campaign.id)?.type === 'info'
             }"
           >
             {{ getActionFeedback(campaign.id)?.message }}
@@ -171,7 +171,7 @@
           </BaseBadge>
         </div>
 
-        <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+        <div class="text-xs text-slate-600 dark:text-slate-350 space-y-1">
           <p>
             <span class="font-medium text-slate-700 dark:text-slate-200">Lists: </span>
             <template v-if="campaign.lists.length > 0">
@@ -257,7 +257,7 @@
           :class="{
             'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
             'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-            'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+            'text-slate-500 dark:text-slate-350': getActionFeedback(campaign.id)?.type === 'info'
           }"
         >
           {{ getActionFeedback(campaign.id)?.message }}
@@ -265,7 +265,7 @@
       </template>
     </BaseDataTable>
 
-    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
       <div class="text-center sm:text-left">
         Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeStart }}</span>-<span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ totalForFilter }}</span>
       </div>

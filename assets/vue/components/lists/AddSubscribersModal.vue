@@ -18,7 +18,7 @@
                   :class="fieldInputClass('emails', 'mt-1 block w-full rounded-md dark:bg-slate-800 dark:text-slate-100 px-3 py-2 shadow-sm focus:outline-none sm:text-sm')"
               ></textarea>
               <FieldError :messages="fieldErrors('emails')" />
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
                 Enter one email per line, or separate multiple emails with commas.
               </p>
             </div>

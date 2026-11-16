@@ -61,7 +61,7 @@
       :import-result="importResult"
       @close="isImportResultOpen = false"
     />
-    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
       <div class="text-center sm:text-left">
         Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ pagination.total }}</span> subscribers
       </div>

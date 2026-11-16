@@ -20,7 +20,7 @@
               :class="fieldInputClass('login_name', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('login_name')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Minimum 3 characters</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Minimum 3 characters</p>
           </div>
 
           <!-- Email -->
@@ -51,7 +51,7 @@
               :class="fieldInputClass('password', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('password')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Minimum 6 characters</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Minimum 6 characters</p>
           </div>
 
           <!-- Super User -->

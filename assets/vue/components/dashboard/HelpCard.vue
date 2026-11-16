@@ -4,7 +4,7 @@
       <h2 class="text-sm font-bold text-gray-900 mb-0 dark:text-slate-100">
         Help
       </h2>
-      <p class="text-gray-500 text-xs mt-1 mb-0 dark:text-slate-400">
+      <p class="text-gray-500 text-xs mt-1 mb-0 dark:text-slate-350">
         Useful pages from the phpList manual and community
       </p>
     </header>
@@ -18,7 +18,7 @@
           class="block rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-3 no-underline transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
         >
           <span class="block text-sm font-semibold text-slate-900 dark:text-slate-100">{{ link.label }}</span>
-          <span class="block text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ link.description }}</span>
+          <span class="block text-xs text-slate-500 dark:text-slate-350 mt-0.5">{{ link.description }}</span>
         </a>
       </li>
     </ul>

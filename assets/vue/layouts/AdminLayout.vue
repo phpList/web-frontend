@@ -5,7 +5,7 @@
     <header class="h-16 bg-slate-500 dark:bg-slate-950 border-b border-slate-600 dark:border-slate-800 flex items-center justify-between gap-6 px-6 shrink-0 sticky top-0 z-30">
       <div class="flex items-center gap-4 flex-1">
         <button
-            class="lg:hidden p-2 -ml-2 text-slate-100 hover:text-white dark:text-slate-300 dark:hover:text-white transition-colors"
+            class="lg:hidden p-2 -ml-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white transition-colors"
             @click="openSidebar"
         >
           <BaseIcon name="menu" inherit-color />
@@ -24,11 +24,11 @@
               v-if="showSearchResults && searchQuery"
               class="absolute top-full mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg z-50 overflow-hidden"
           >
-            <div v-if="isSearching" class="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
+            <div v-if="isSearching" class="px-3 py-2 text-sm text-slate-500 dark:text-slate-350">
               Searching...
             </div>
             <template v-else>
-              <div v-if="searchResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700">
+              <div v-if="searchResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-350 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700">
                 Subscribers
               </div>
               <a
@@ -40,7 +40,7 @@
                 {{ subscriber.email }}
               </a>
 
-              <div v-if="campaignResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-700">
+              <div v-if="campaignResults.length" class="px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-350 bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-700">
                 Campaigns
               </div>
               <a
@@ -52,7 +52,7 @@
                 {{ campaign.messageContent?.subject || `Campaign #${campaign.id}` }}
               </a>
 
-              <div v-if="!searchResults.length && !campaignResults.length" class="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
+              <div v-if="!searchResults.length && !campaignResults.length" class="px-3 py-2 text-sm text-slate-500 dark:text-slate-350">
                 No results found
               </div>
             </template>
@@ -73,7 +73,7 @@
 
         <button
             type="button"
-            class="p-2 text-slate-100 hover:text-white dark:text-slate-300 dark:hover:text-white transition-colors"
+            class="p-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white transition-colors"
             :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
             @click="toggleDarkMode"
         >

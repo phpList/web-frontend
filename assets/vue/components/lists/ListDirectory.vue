@@ -24,7 +24,7 @@
       </template>
 
       <template #row="{ item: list }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ list.id }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ list.id }}</td>
         <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ list.name }}</td>
         <td class="px-6 py-4">
           <BaseBadge :variant="isPublic(list) ? 'success' : 'neutral'">
@@ -59,7 +59,7 @@
       <template #card="{ item: list }">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ list.id }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">#{{ list.id }}</p>
             <p class="font-semibold text-slate-900 dark:text-slate-100">{{ list.name }}</p>
           </div>
 

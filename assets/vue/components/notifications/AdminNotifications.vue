@@ -2,7 +2,7 @@
   <div ref="root" class="relative" data-testid="admin-notifications">
     <button
       type="button"
-      class="relative p-2 text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+      class="relative p-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200 transition-colors"
       :aria-label="unread ? `Notifications (${unread} unread)` : 'Notifications'"
       aria-haspopup="true"
       :aria-expanded="open"
@@ -22,10 +22,10 @@
       class="fixed left-4 right-4 top-16 mt-2 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:w-96 max-h-[70vh] overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50"
       data-testid="notifications-dropdown"
     >
-      <div class="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700">
+      <div class="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-350 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700">
         Notifications
       </div>
-      <div v-if="!notifications.length" class="px-4 py-6 text-sm text-center text-slate-500 dark:text-slate-400">
+      <div v-if="!notifications.length" class="px-4 py-6 text-sm text-center text-slate-500 dark:text-slate-350">
         No notifications
       </div>
       <div v-else class="p-2 space-y-2">

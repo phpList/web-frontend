@@ -83,6 +83,7 @@
   --color-emerald-900: var(--color-green-900);
 
   /* Black / neutral (replaces slate and gray). 50-300 stay light tints. */
+  --color-slate-350: #8FA3B8;
   --color-slate-400: #3F607A;
   --color-slate-500: #365269;
   --color-slate-600: #2F4557;

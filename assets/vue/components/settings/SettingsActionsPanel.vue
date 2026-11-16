@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
       <div>
         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Settings</h2>
-        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Application configuration and admin management</p>
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">Application configuration and admin management</p>
       </div>
     </div>
 
@@ -15,7 +15,7 @@
         class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap shrink-0"
         :class="activeTab === tab.id
           ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm border border-slate-300 dark:border-slate-600'
-          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60'"
+          : 'text-slate-500 dark:text-slate-350 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60'"
         @click="setActiveTab(tab.id)"
       >
         <span>{{ tab.label }}</span>
@@ -41,7 +41,7 @@
     <template v-else>
       <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ currentTabLabel }}</h3>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">This panel is under construction.</p>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-350">This panel is under construction.</p>
       </div>
     </template>
   </section>

@@ -4,7 +4,7 @@
       <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Campaign</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Campaign</p>
             <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ pageTitle }}</h2>
           </div>
 
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
         Loading campaign...
       </div>
 
@@ -35,7 +35,7 @@
               class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
               :class="currentStep === step.id
                 ? 'bg-ext-wf1 text-white'
-                : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'"
+                : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-300 dark:hover:bg-slate-600'"
               @click="goToStep(step.id)"
             >
               <span class="block text-base leading-none">{{ step.id }}</span>
@@ -92,7 +92,7 @@
                 class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/page"
               >
-              <p class="text-xs text-slate-500 dark:text-slate-400">Campaign content will be saved as <code>[URL:YOUR_URL]</code>.</p>
+              <p class="text-xs text-slate-500 dark:text-slate-350">Campaign content will be saved as <code>[URL:YOUR_URL]</code>.</p>
             </div>
 
             <div v-else class="space-y-4">
@@ -230,7 +230,7 @@
           <section v-else-if="currentStep === 4" class="space-y-5">
             <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Lists</h3>
 
-            <p class="text-sm text-slate-600 dark:text-slate-300">Please select the lists you want to send this campaign to.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-350">Please select the lists you want to send this campaign to.</p>
 
             <div class="max-h-96 overflow-auto rounded-lg border border-slate-200 dark:border-slate-700 p-3">
               <label
@@ -249,14 +249,14 @@
                 <span>{{ list.name || `List #${list.id}` }}</span>
               </label>
 
-              <p v-if="mailingLists.length === 0" class="text-sm text-slate-500 dark:text-slate-400">No mailing lists found.</p>
+              <p v-if="mailingLists.length === 0" class="text-sm text-slate-500 dark:text-slate-350">No mailing lists found.</p>
             </div>
           </section>
 
           <section v-else-if="currentStep === 5" class="space-y-5">
             <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Send test</h3>
 
-            <p class="text-sm text-slate-600 dark:text-slate-300">Test send to email address(es).</p>
+            <p class="text-sm text-slate-600 dark:text-slate-350">Test send to email address(es).</p>
             <div class="text-slate-400 dark:text-slate-500">
               (comma separate addresses - all must be existing subscribers)
             </div>

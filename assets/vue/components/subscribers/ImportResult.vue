@@ -8,14 +8,14 @@
   <div class="p-4 space-y-4">
     <div class="grid grid-cols-2 gap-3">
       <div class="rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3">
-        <div class="text-xs text-slate-500 dark:text-slate-400">Imported</div>
+        <div class="text-xs text-slate-500 dark:text-slate-350">Imported</div>
         <div class="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {{ importResult.imported }}
         </div>
       </div>
 
       <div class="rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3">
-        <div class="text-xs text-slate-500 dark:text-slate-400">Skipped</div>
+        <div class="text-xs text-slate-500 dark:text-slate-350">Skipped</div>
         <div class="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {{ importResult.skipped }}
         </div>

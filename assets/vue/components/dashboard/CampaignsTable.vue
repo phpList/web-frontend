@@ -1,7 +1,7 @@
 <template>
   <table class="w-full text-left border-collapse">
     <thead class="border-b border-gray-200 dark:border-slate-700">
-    <tr class="uppercase text-xs text-gray-500 font-semibold dark:text-slate-400">
+    <tr class="uppercase text-xs text-gray-500 font-semibold dark:text-slate-350">
       <th class="py-3 pr-4">Campaign Name</th>
       <th class="py-3 px-4">Status</th>
       <th class="py-3 px-4">Date</th>
@@ -26,14 +26,14 @@
         </BaseBadge>
       </td>
 
-      <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-400">{{ row.date }}</td>
-      <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-400">{{ row.openRate ?? '—' }}</td>
-      <td class="py-3 pl-4 text-sm text-gray-500 dark:text-slate-400">{{ row.clickRate ?? '—' }}</td>
+      <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-350">{{ row.date }}</td>
+      <td class="py-3 px-4 text-sm text-gray-500 dark:text-slate-350">{{ row.openRate ?? '—' }}</td>
+      <td class="py-3 pl-4 text-sm text-gray-500 dark:text-slate-350">{{ row.clickRate ?? '—' }}</td>
     </tr>
 
     <!-- empty state -->
     <tr v-if="!rows.length">
-      <td colspan="5" class="text-center py-8 text-gray-500 dark:text-slate-400">
+      <td colspan="5" class="text-center py-8 text-gray-500 dark:text-slate-350">
         No campaigns yet.
       </td>
     </tr>

@@ -25,7 +25,7 @@
     </div>
 
     <section class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 mt-4">
-      <div v-if="isLoading" class="text-sm text-slate-500 dark:text-slate-400">Loading configuration keys...</div>
+      <div v-if="isLoading" class="text-sm text-slate-500 dark:text-slate-350">Loading configuration keys...</div>
       <div v-else-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</div>
       <div v-else-if="filtered.length" class="overflow-x-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -34,7 +34,7 @@
               <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">
                 {{ item.key }}
               </div>
-              <div v-if="item.description" class="text-xs text-slate-500 dark:text-slate-400">
+              <div v-if="item.description" class="text-xs text-slate-500 dark:text-slate-350">
                 {{ item.description }}
               </div>
             </div>
@@ -70,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="text-sm text-slate-500 dark:text-slate-400">No configuration keys found.</div>
+      <div v-else class="text-sm text-slate-500 dark:text-slate-350">No configuration keys found.</div>
     </section>
   </div>
 </template>

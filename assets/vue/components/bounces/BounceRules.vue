@@ -3,7 +3,7 @@
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div>
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounce Rules</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+        <p class="text-xs text-slate-500 dark:text-slate-350 mt-0.5">
           Rules are evaluated top-to-bottom. Drag to reorder priority.
         </p>
       </div>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="hidden md:grid px-5 py-3.5 border-b border-slate-100 dark:border-slate-700 grid-cols-12 gap-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+      <div class="hidden md:grid px-5 py-3.5 border-b border-slate-100 dark:border-slate-700 grid-cols-12 gap-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
         <span class="col-span-1 hidden md:block">#</span>
         <span class="col-span-4 md:col-span-3">Rule</span>
         <span class="col-span-4 md:col-span-3">Pattern</span>
@@ -33,7 +33,7 @@
       >
         <div class="md:hidden px-5 py-4 space-y-1.5 text-sm">
           <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Rule -</span> <span class="text-slate-900 dark:text-slate-100 min-w-0 break-words">{{ rule.comment }}</span></p>
-          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Pattern -</span> <span class="font-mono text-xs text-slate-500 dark:text-slate-400 min-w-0 break-all">{{ rule.regex }}</span></p>
+          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Pattern -</span> <span class="font-mono text-xs text-slate-500 dark:text-slate-350 min-w-0 break-all">{{ rule.regex }}</span></p>
           <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Action -</span> <span :class="rule.actionClass" class="text-xs font-medium min-w-0 break-words">{{ rule.action }}</span></p>
           <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Hits -</span> <span class="text-slate-700 dark:text-slate-200 min-w-0 break-words">{{ rule.count }}</span></p>
           <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Status -</span> <span class="capitalize min-w-0 break-words">{{ rule.status }}</span></p>
@@ -44,7 +44,7 @@
           <div class="col-span-3">
           <p class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ rule.comment }}</p>
           </div>
-          <p class="col-span-3 text-xs font-mono text-slate-500 dark:text-slate-400" :title="rule.pattern">{{ rule.regex }}</p>
+          <p class="col-span-3 text-xs font-mono text-slate-500 dark:text-slate-350" :title="rule.pattern">{{ rule.regex }}</p>
           <span class="col-span-2">
             <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="rule.actionClass">{{ rule.action }}</span>
           </span>
@@ -53,7 +53,7 @@
             <button
                 type="button"
                 class="text-xs px-2 py-1 rounded-md"
-                :class="rule.status === 'active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'"
+                :class="rule.status === 'active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-350'"
             >
               {{ rule.status }}
             </button>

@@ -3,7 +3,7 @@
     <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Stuck Campaigns</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p class="text-sm text-slate-500 dark:text-slate-350 mt-1">
           Campaigns still in Prepared/InProcess status with no progress for a while. No action is taken
           automatically - review each one and resume it if it should still be sending.
         </p>
@@ -49,7 +49,7 @@
             {{ campaign.statusLabel }}
           </BaseBadge>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ campaign.stuckFor }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ campaign.stuckFor }}</td>
         <td class="px-6 py-4 text-right">
           <div class="inline-flex justify-end">
             <ActionButton
@@ -67,7 +67,7 @@
             :class="{
               'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
               'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-              'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+              'text-slate-500 dark:text-slate-350': getActionFeedback(campaign.id)?.type === 'info'
             }"
           >
             {{ getActionFeedback(campaign.id)?.message }}
@@ -88,7 +88,7 @@
           </BaseBadge>
         </div>
 
-        <p class="text-xs text-slate-600 dark:text-slate-300">
+        <p class="text-xs text-slate-600 dark:text-slate-350">
           <span class="font-medium text-slate-700 dark:text-slate-200">Stuck for:</span> {{ campaign.stuckFor }}
         </p>
 
@@ -108,7 +108,7 @@
           :class="{
             'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
             'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-            'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+            'text-slate-500 dark:text-slate-350': getActionFeedback(campaign.id)?.type === 'info'
           }"
         >
           {{ getActionFeedback(campaign.id)?.message }}

@@ -4,7 +4,7 @@
       <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Mailing List</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Mailing List</p>
             <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
               {{ listName || `List #${listId}` }}
             </h2>
@@ -24,7 +24,7 @@
             class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Subscribers</h3>
           <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
-            <label class="text-sm text-slate-600 dark:text-slate-300">Status</label>
+            <label class="text-sm text-slate-600 dark:text-slate-350">Status</label>
             <select
                 v-model="statusFilter"
                 class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
@@ -39,7 +39,7 @@
         <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
           <div class="flex flex-col xl:flex-row xl:items-center gap-3">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="text-sm text-slate-600 dark:text-slate-300">Selected: {{ selectedSubscribers.length }}</span>
+              <span class="text-sm text-slate-600 dark:text-slate-350">Selected: {{ selectedSubscribers.length }}</span>
               <button
                   type="button"
                   class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
@@ -91,7 +91,7 @@
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm hidden md:table">
-            <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
+            <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-350 font-medium">
             <tr>
               <th class="px-4 py-4 w-10">
                 <input
@@ -112,7 +112,7 @@
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
             <tr v-if="loading">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading...</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">Loading...</td>
             </tr>
 
             <tr v-else-if="error">
@@ -133,14 +133,14 @@
                     :value="subscriber.id"
                 >
               </td>
-              <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ subscriber.id }}</td>
+              <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ subscriber.id }}</td>
               <td class="px-6 py-4 font-mono text-slate-900 dark:text-slate-100">{{ subscriber.email }}</td>
               <td class="px-6 py-4">
                   <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
                     {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
                   </BaseBadge>
               </td>
-              <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ formatDate(subscriber.createdAt) }}</td>
+              <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ formatDate(subscriber.createdAt) }}</td>
               <td class="px-6 py-4 text-right">
                 <button
                     type="button"
@@ -155,13 +155,13 @@
             </tr>
 
             <tr v-if="!loading && !error && filteredSubscribers.length === 0">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No subscribers for this filter.</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">No subscribers for this filter.</td>
             </tr>
             </tbody>
           </table>
 
           <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-            <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">Loading...</div>
+            <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm">Loading...</div>
             <div v-else-if="error" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ error }}</div>
 
             <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !error && filteredSubscribers.length">
@@ -196,7 +196,7 @@
                       {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
                     </BaseBadge>
                   </div>
-                  <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
+                  <p class="mt-2 text-xs text-slate-500 dark:text-slate-350">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
                   <button
                       type="button"
                       class="mt-3 inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
@@ -212,7 +212,7 @@
 
             <div
                 v-if="!loading && !error && filteredSubscribers.length === 0"
-                class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm"
+                class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm"
             >
               No subscribers for this filter.
             </div>
@@ -221,7 +221,7 @@
 
         <div
             class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
-          <span class="text-slate-500 dark:text-slate-400">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
+          <span class="text-slate-500 dark:text-slate-350">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
           <div class="flex gap-2 w-full sm:w-auto">
             <button
                 type="button"

@@ -3,7 +3,7 @@
     <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
       <div>
         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Administrators</h2>
-        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Manage administrator accounts and permissions</p>
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">Manage administrator accounts and permissions</p>
       </div>
 
       <BaseButton variant="accent" icon="plus" @click="openCreateModal">
@@ -29,15 +29,15 @@
       </template>
 
       <template #row="{ item: admin }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.id }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ admin.id }}</td>
         <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ admin.loginName }}</td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.email }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ admin.email }}</td>
         <td class="px-6 py-4">
           <BaseBadge :variant="admin.superUser ? 'info' : 'neutral'">
             {{ admin.superUser ? 'Yes' : 'No' }}
           </BaseBadge>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-xs">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 text-xs">
           {{ formatDate(admin.createdAt) }}
         </td>
         <td class="px-6 py-4">
@@ -56,9 +56,9 @@
       <template #card="{ item: admin }">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ admin.id }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">#{{ admin.id }}</p>
             <p class="font-semibold text-slate-900 dark:text-slate-100">{{ admin.loginName }}</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400">{{ admin.email }}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-350">{{ admin.email }}</p>
           </div>
 
           <BaseBadge class="whitespace-nowrap" :variant="admin.superUser ? 'info' : 'neutral'">
@@ -66,7 +66,7 @@
           </BaseBadge>
         </div>
 
-        <p class="text-xs text-slate-500 dark:text-slate-400">
+        <p class="text-xs text-slate-500 dark:text-slate-350">
           Created: {{ formatDate(admin.createdAt) }}
         </p>
 

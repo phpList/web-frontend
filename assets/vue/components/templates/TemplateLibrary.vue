@@ -22,7 +22,7 @@
     </header>
 
     <div class="p-6">
-      <div v-if="isLoading" class="py-12 text-center text-slate-500 dark:text-slate-400">
+      <div v-if="isLoading" class="py-12 text-center text-slate-500 dark:text-slate-350">
         Loading templates...
       </div>
 
@@ -30,7 +30,7 @@
         {{ errorMessage }}
       </div>
 
-      <div v-else-if="templates.length === 0" class="py-12 text-center text-slate-500 dark:text-slate-400">
+      <div v-else-if="templates.length === 0" class="py-12 text-center text-slate-500 dark:text-slate-350">
         No templates found.
       </div>
 
@@ -50,7 +50,7 @@
 
           <div class="p-4">
             <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">{{ templateItem.title || `Template #${templateItem.id}` }}</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+            <p class="text-xs text-slate-500 dark:text-slate-350 mb-3">
               {{ getTemplateType(templateItem) }}
             </p>
 
@@ -81,7 +81,7 @@
       @close="closeDefaultTemplateModal"
   >
     <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitCreateFromDefault">
-          <div v-if="isDefaultTemplatesLoading" class="text-sm text-slate-500 dark:text-slate-400">
+          <div v-if="isDefaultTemplatesLoading" class="text-sm text-slate-500 dark:text-slate-350">
             Loading default templates...
           </div>
 
@@ -105,7 +105,7 @@
 
             <p
               v-if="selectedDefaultTemplateDescription"
-              class="text-xs text-slate-500 dark:text-slate-400"
+              class="text-xs text-slate-500 dark:text-slate-350"
             >
               {{ selectedDefaultTemplateDescription }}
             </p>

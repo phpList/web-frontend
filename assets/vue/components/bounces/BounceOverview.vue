@@ -4,7 +4,7 @@
       <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces</h3>
         <div class="flex items-center gap-2">
-          <label class="text-sm text-slate-600 dark:text-slate-300" for="bounce-status-filter">Status</label>
+          <label class="text-sm text-slate-600 dark:text-slate-350" for="bounce-status-filter">Status</label>
           <select
             id="bounce-status-filter"
             v-model="statusFilter"
@@ -36,7 +36,7 @@
 
         <template #row="{ item: bounce }">
           <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ bounce.id }}</td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.formattedDate }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ bounce.formattedDate }}</td>
           <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ bounce.email }}</td>
           <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ bounce.subject }}</td>
           <td class="px-6 py-4">
@@ -44,7 +44,7 @@
               {{ bounce.status }}
             </BaseBadge>
           </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.comment }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ bounce.comment }}</td>
         </template>
 
         <template #card="{ item: bounce }">
@@ -54,14 +54,14 @@
               {{ bounce.status }}
             </BaseBadge>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400">{{ bounce.formattedDate }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-350">{{ bounce.formattedDate }}</p>
           <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ bounce.email }}</p>
           <p class="text-sm text-slate-700 dark:text-slate-200">{{ bounce.subject }}</p>
-          <p class="text-xs text-slate-600 dark:text-slate-300">{{ bounce.comment }}</p>
+          <p class="text-xs text-slate-600 dark:text-slate-350">{{ bounce.comment }}</p>
         </template>
       </BaseDataTable>
 
-      <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+      <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
         <div class="text-center sm:text-left">
           Page <span class="font-medium text-slate-900 dark:text-slate-100">{{ currentPage }}</span>
         </div>

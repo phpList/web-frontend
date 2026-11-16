@@ -23,7 +23,7 @@
       </div>
     </header>
 
-    <div v-if="isLoading" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 text-center text-slate-500 dark:text-slate-400">
+    <div v-if="isLoading" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 text-center text-slate-500 dark:text-slate-350">
       Loading public page data...
     </div>
 
@@ -35,7 +35,7 @@
             :key="step.id"
             type="button"
             class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
-            :class="currentStep === step.id ? 'bg-ext-wf1 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'"
+            :class="currentStep === step.id ? 'bg-ext-wf1 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-300 dark:hover:bg-slate-600'"
             @click="goToStep(step.id)"
           >
             <span class="block text-base leading-none">{{ step.id }}</span>
@@ -162,11 +162,11 @@
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div class="min-w-0">
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Name</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-350">Name</p>
                     <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.name">{{ attribute.name }}</p>
                   </div>
                   <div class="min-w-0">
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Type</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-350">Type</p>
                     <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.type">{{ attribute.type }}</p>
                   </div>
                   <label class="space-y-1">

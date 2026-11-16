@@ -25,7 +25,7 @@
       </template>
 
       <template #row="{ item: page }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ page.id }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ page.id }}</td>
         <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</td>
         <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
         <td class="px-6 py-4">
@@ -70,11 +70,11 @@
       <template #card="{ item: page }">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ page.id }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">#{{ page.id }}</p>
             <p class="font-semibold text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</p>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-350 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
           </div>
-          <div class="text-xs text-slate-500 dark:text-slate-400">
+          <div class="text-xs text-slate-500 dark:text-slate-350">
             {{ isRowBusy(page.id) ? 'Updating...' : '' }}
           </div>
         </div>

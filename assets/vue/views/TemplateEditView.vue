@@ -4,7 +4,7 @@
       <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Template</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Template</p>
             <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ pageTitle }}</h2>
           </div>
 
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
         Loading template...
       </div>
 

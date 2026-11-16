@@ -2,7 +2,7 @@
   <div class="overflow-x-auto">
     <!-- Desktop Table -->
     <table class="w-full text-left text-sm hidden md:table">
-      <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
+      <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-350 font-medium">
         <tr>
           <th class="px-6 py-4">ID</th>
           <th class="px-6 py-4">Email</th>
@@ -18,7 +18,7 @@
           :key="subscriber.id"
           class="hover:bg-slate-50 dark:hover:bg-slate-800  transition-colors group"
         >
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300 ">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-350 ">
             {{ subscriber.id }}
           </td>
           <td class="px-6 py-4 font-mono text-sm text-slate-900 dark:text-slate-100">
@@ -34,10 +34,10 @@
               </BaseBadge>
             </div>
           </td>
-          <td class="px-6 py-4 text-right text-slate-600 dark:text-slate-300">
+          <td class="px-6 py-4 text-right text-slate-600 dark:text-slate-350">
             {{ subscriber.listCount }}
           </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-350">
             {{ subscriber.createdAt }}
           </td>
           <td class="px-6 py-4 text-right">
@@ -73,7 +73,7 @@
           </div>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="text-xs font-mono text-slate-500 dark:text-slate-400 break-all">{{ subscriber.email }}</p>
+          <p class="text-xs font-mono text-slate-500 dark:text-slate-350 break-all">{{ subscriber.email }}</p>
           <div class="flex items-center gap-4 mt-2 text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-tight">
             <span class="flex items-center gap-1">
               <BaseIcon name="list" class="w-3 h-3" />

@@ -81,7 +81,7 @@
                       >
                         {{ list.name }}
                       </BaseBadge>
-                      <span v-if="!subscriber.subscribedLists.length" class="text-xs text-slate-500 dark:text-slate-400">
+                      <span v-if="!subscriber.subscribedLists.length" class="text-xs text-slate-500 dark:text-slate-350">
                         No lists
                       </span>
                     </div>

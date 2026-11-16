@@ -26,7 +26,7 @@
       {{ error }}
     </div>
 
-    <p v-else-if="!items.length" class="py-4 text-sm text-slate-500 dark:text-slate-400">
+    <p v-else-if="!items.length" class="py-4 text-sm text-slate-500 dark:text-slate-350">
       No news available right now.
     </p>
 
@@ -42,7 +42,7 @@
           <span v-if="formatDate(item.date)" class="block text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
             {{ formatDate(item.date) }}
           </span>
-          <span v-if="item.summary" class="block text-xs text-slate-500 dark:text-slate-400 mt-1">{{ item.summary }}</span>
+          <span v-if="item.summary" class="block text-xs text-slate-500 dark:text-slate-350 mt-1">{{ item.summary }}</span>
         </a>
       </li>
     </ul>

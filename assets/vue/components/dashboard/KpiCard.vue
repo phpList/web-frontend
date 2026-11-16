@@ -3,12 +3,12 @@
   <BaseCard>
     <header class="flex items-center mb-2">
       <div
-        class="inline-flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-2 dark:bg-slate-700 dark:text-slate-400"
+        class="inline-flex items-center justify-center rounded-full bg-gray-100 text-gray-500 mr-2 dark:bg-slate-700 dark:text-slate-350"
         style="width: 40px; height: 40px;"
       >
         <BaseIcon :name="icon" />
       </div>
-      <p class="mb-0 text-gray-500 uppercase text-xs font-semibold dark:text-slate-400">{{ label }}</p>
+      <p class="mb-0 text-gray-500 uppercase text-xs font-semibold dark:text-slate-350">{{ label }}</p>
     </header>
 
     <p class="mb-1 text-2xl font-bold dark:text-slate-100">{{ value }}</p>

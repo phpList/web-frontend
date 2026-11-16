@@ -8,7 +8,7 @@
     <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitUpdateAdmin">
           <!-- ID Display -->
           <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-md">
-            <p class="text-xs text-slate-500 dark:text-slate-400">Administrator ID</p>
+            <p class="text-xs text-slate-500 dark:text-slate-350">Administrator ID</p>
             <p class="font-mono font-semibold text-slate-900 dark:text-slate-100">{{ admin?.id }}</p>
           </div>
 
@@ -25,7 +25,7 @@
               :class="fieldInputClass('login_name', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('login_name')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Leave empty to keep current value. Minimum 3 characters.</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Leave empty to keep current value. Minimum 3 characters.</p>
           </div>
 
           <!-- Email -->
@@ -39,7 +39,7 @@
               :class="fieldInputClass('email', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('email')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Leave empty to keep current value.</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Leave empty to keep current value.</p>
           </div>
 
           <!-- Password -->
@@ -55,7 +55,7 @@
               :class="fieldInputClass('password', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('password')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Leave empty to keep current password. Minimum 6 characters if setting new password.</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Leave empty to keep current password. Minimum 6 characters if setting new password.</p>
           </div>
 
           <!-- Super User -->

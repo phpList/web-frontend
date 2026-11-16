@@ -6,7 +6,7 @@
       @close="emit('close')"
   >
       <div class="p-5">
-        <p v-if="isViewLoading" class="text-sm text-slate-500 dark:text-slate-400">
+        <p v-if="isViewLoading" class="text-sm text-slate-500 dark:text-slate-350">
           Loading campaign...
         </p>
 
@@ -32,21 +32,21 @@
 
           <div class="pt-2">
             <p class="font-medium text-slate-900 dark:text-slate-100">HTML content</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-350 whitespace-pre-wrap">{{
                 campaign?.messageContent?.text || '-'
               }}</pre>
           </div>
 
           <div class="pt-2">
             <p class="font-medium text-slate-900 dark:text-slate-100">Text content</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-350 whitespace-pre-wrap">{{
                 campaign?.messageContent?.textMessage || '-'
               }}</pre>
           </div>
 
           <div class="pt-2">
             <p class="font-medium text-slate-900 dark:text-slate-100">Footer</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-350 whitespace-pre-wrap">{{
                 campaign?.messageContent?.footer || '-'
               }}</pre>
           </div>
@@ -59,7 +59,7 @@
           <div class="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
             <p class="mb-2 font-medium text-slate-900 dark:text-slate-100">
               Resend campaign
-              <span class="ml-2 text-xs font-light text-slate-600 dark:text-slate-300">
+              <span class="ml-2 text-xs font-light text-slate-600 dark:text-slate-350">
                 Choose mailing lists
               </span>
             </p>
@@ -85,7 +85,7 @@
                     <span>{{ list.name }}</span>
                   </label>
 
-                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500 dark:text-slate-400">
+                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500 dark:text-slate-350">
                     No mailing lists found.
                   </p>
                 </div>
@@ -107,7 +107,7 @@
           </div>
         </div>
 
-        <p v-else class="text-sm text-slate-500 dark:text-slate-400">
+        <p v-else class="text-sm text-slate-500 dark:text-slate-350">
           No campaign selected.
         </p>
       </div>

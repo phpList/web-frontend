@@ -12,17 +12,17 @@
       <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <BaseCard v-for="metric in metrics" :key="metric.id" class="h-full">
           <header class="mb-2 flex items-center gap-3">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-350">
               <BaseIcon :name="metric.icon" />
             </span>
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
               {{ metric.label }}
             </p>
           </header>
           <p class="mb-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
             {{ metric.value }}
           </p>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
+          <p class="text-sm text-slate-500 dark:text-slate-350">
             {{ metric.description }}
           </p>
         </BaseCard>
@@ -47,11 +47,11 @@
             </p>
           </header>
 
-          <div v-if="loading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+          <div v-if="loading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-350">
             Loading analytics...
           </div>
 
-          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-350">
             No campaign statistics found.
           </div>
 
@@ -69,7 +69,7 @@
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
               <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Domain confirmation</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
                 Confirmation coverage by sending domain.
               </p>
             </div>
@@ -136,7 +136,7 @@
             </div>
           </div>
 
-          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-350">
             No confirmation data found.
           </div>
         </BaseCard>
@@ -147,7 +147,7 @@
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
               <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Top domains</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
                 Subscriber counts by email domain.
               </p>
             </div>
@@ -158,7 +158,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
                 <tr>
                   <th class="px-4 py-3">Domain</th>
                   <th class="px-4 py-3 text-right">Subscribers</th>
@@ -166,7 +166,7 @@
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <tr v-if="hasLoaded && topDomains.length === 0">
-                  <td colspan="2" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
+                  <td colspan="2" class="px-4 py-6 text-center text-slate-500 dark:text-slate-350">
                     No domain statistics found.
                   </td>
                 </tr>
@@ -187,7 +187,7 @@
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
               <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Top local parts</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
                 Most common subscriber usernames.
               </p>
             </div>
@@ -198,7 +198,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
                 <tr>
                   <th class="px-4 py-3">Local part</th>
                   <th class="px-4 py-3 text-right">Count</th>
@@ -207,7 +207,7 @@
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <tr v-if="hasLoaded && topLocalParts.length === 0">
-                  <td colspan="3" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
+                  <td colspan="3" class="px-4 py-6 text-center text-slate-500 dark:text-slate-350">
                     No local-part statistics found.
                   </td>
                 </tr>
@@ -218,7 +218,7 @@
                   <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                     {{ formatCount(part.count) }}
                   </td>
-                  <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-300">
+                  <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-350">
                     {{ formatPercentage(part.percentage) }}
                   </td>
                 </tr>
@@ -232,7 +232,7 @@
         <header class="mb-4 flex items-start justify-between gap-3">
           <div>
             <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Campaign breakdown</h2>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
               Open and click activity by campaign.
             </p>
           </div>
@@ -243,7 +243,7 @@
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
               <tr>
                 <th class="px-4 py-3">Campaign</th>
                 <th class="px-4 py-3 text-right">Sent</th>
@@ -255,7 +255,7 @@
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               <tr v-if="hasLoaded && campaignStatistics.length === 0">
-                <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
+                <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-350">
                   No campaign statistics found.
                 </td>
               </tr>
@@ -264,7 +264,7 @@
                   <div class="font-medium text-slate-900 dark:text-slate-100">
                     {{ campaign.subject || `Campaign #${campaign.campaignId}` }}
                   </div>
-                  <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  <div class="mt-1 text-xs text-slate-500 dark:text-slate-350">
                     Sent {{ campaign.dateSent ? formatDate(campaign.dateSent) : 'unknown date' }}
                   </div>
                 </td>

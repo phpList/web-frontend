@@ -6,7 +6,7 @@
           {{ title }}
         </h2>
 
-        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">
           {{ description }}
         </p>
       </div>
@@ -33,7 +33,7 @@
       </template>
 
       <template #row="{ item: attribute }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">
           {{ attribute.id }}
         </td>
 
@@ -41,7 +41,7 @@
           {{ attribute.name }}
         </td>
 
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">
           {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
         </td>
 
@@ -67,7 +67,7 @@
       <template #card="{ item: attribute }">
         <div class="flex justify-between items-start">
           <div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
+            <p class="text-xs text-slate-500 dark:text-slate-350">
               #{{ attribute.id }}
             </p>
 
@@ -75,7 +75,7 @@
               {{ attribute.name }}
             </p>
 
-            <p class="text-sm text-slate-500 dark:text-slate-400">
+            <p class="text-sm text-slate-500 dark:text-slate-350">
               {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
             </p>
           </div>

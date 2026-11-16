@@ -21,7 +21,7 @@
           <!-- Desktop: collapse sidebar -->
           <button
               type="button"
-              class="hidden lg:block p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200"
+              class="hidden lg:block p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200"
               :class="isSidebarCollapsed ? 'lg:hidden' : ''"
               aria-label="Collapse sidebar"
               title="Collapse sidebar"
@@ -34,7 +34,7 @@
           <button
               v-if="isSidebarCollapsed"
               type="button"
-              class="group hidden lg:flex w-9 h-9 items-center justify-center rounded-lg text-slate-100 hover:bg-slate-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+              class="group hidden lg:flex w-9 h-9 items-center justify-center rounded-lg text-slate-100 hover:bg-slate-600 dark:text-slate-350 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               aria-label="Expand sidebar"
               title="Expand sidebar"
               @click="toggleCollapsed"
@@ -49,7 +49,7 @@
           <button
               type="button"
               aria-label="Close sidebar"
-              class="lg:hidden p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-400 dark:hover:text-slate-200"
+              class="lg:hidden p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200"
               @click="closeSidebar"
           >
             <BaseIcon name="close" />
@@ -83,13 +83,13 @@
               <span class="text-sm font-bold text-slate-100 leading-none truncate">
                 {{ adminName }}
               </span>
-              <span class="text-[10px] text-slate-100 dark:text-slate-400 mt-1">
+              <span class="text-[10px] text-slate-100 dark:text-slate-350 mt-1">
                 {{ adminData.super_user ? 'Super Admin' : 'Administrator' }}
               </span>
             </div>
             <a
                 href="/logout"
-                class="shrink-0 p-2 rounded-lg no-underline text-slate-100 hover:text-white hover:bg-slate-500 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
+                class="shrink-0 p-2 rounded-lg no-underline text-slate-100 hover:text-white hover:bg-slate-500 dark:text-slate-350 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
                 aria-label="Logout"
                 title="Logout"
             >

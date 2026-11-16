@@ -106,7 +106,7 @@
 
               <div class="grid grid-cols-3 gap-2 text-xs">
                 <div class="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 px-2 py-2">
-                  <p class="uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Confirmed</p>
+                  <p class="uppercase tracking-wide text-emerald-900 dark:text-emerald-400">Confirmed</p>
                   <p class="mt-1 font-semibold text-emerald-900 dark:text-emerald-400">
                     {{ formatCount(item.confirmed?.count) }}
                   </p>
@@ -115,7 +115,7 @@
                   </p>
                 </div>
                 <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 px-2 py-2">
-                  <p class="uppercase tracking-wide text-amber-700 dark:text-amber-400">Unconfirmed</p>
+                  <p class="uppercase tracking-wide text-amber-900 dark:text-amber-400">Unconfirmed</p>
                   <p class="mt-1 font-semibold text-amber-900 dark:text-amber-400">
                     {{ formatCount(item.unconfirmed?.count) }}
                   </p>

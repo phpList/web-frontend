@@ -12,6 +12,7 @@ const ok = (body) => ({ ok: true, json: async () => body })
 describe('AdminNotifications', () => {
     beforeEach(() => {
         vi.clearAllMocks()
+        localStorage.clear()
         __resetCurrentAdminForTests()
         __resetAdminNotificationsForTests()
     })
@@ -72,5 +73,55 @@ describe('AdminNotifications', () => {
 
         expect(wrapper.find('[data-testid="notifications-unread"]').exists()).toBe(false)
         spy.mockRestore()
+    })
+
+    describe('seen state per administrator', () => {
+        const items = [{ code: 'a', level: 'info', message: 'Queue has 2', context: {} }]
+
+        const mountAs = async (admin) => {
+            backendFetch.mockImplementation(async (url) =>
+                ok(url === '/admin-notifications' ? { items } : admin))
+            const wrapper = mount(AdminNotifications)
+            await flushPromises()
+            return wrapper
+        }
+
+        const switchAdmin = () => {
+            // Simulates a fresh page load; localStorage is kept.
+            __resetCurrentAdminForTests()
+            __resetAdminNotificationsForTests()
+        }
+
+        it('stores seen codes under an administrator-specific key', async () => {
+            const wrapper = await mountAs({ id: 7, login_name: 'alice' })
+            await wrapper.find('[data-testid="notifications-bell"]').trigger('click')
+
+            expect(JSON.parse(localStorage.getItem('phplist.seenNotifications.7'))).toEqual(['a'])
+            expect(localStorage.getItem('phplist.seenNotifications')).toBeNull()
+        })
+
+        it('does not share seen codes between administrators', async () => {
+            const first = await mountAs({ id: 1, login_name: 'alice' })
+            await first.find('[data-testid="notifications-bell"]').trigger('click')
+            expect(first.find('[data-testid="notifications-unread"]').exists()).toBe(false)
+            first.unmount()
+
+            switchAdmin()
+            const second = await mountAs({ id: 2, login_name: 'bob' })
+            expect(second.find('[data-testid="notifications-unread"]').exists()).toBe(true)
+            second.unmount()
+
+            switchAdmin()
+            const again = await mountAs({ id: 1, login_name: 'alice' })
+            expect(again.find('[data-testid="notifications-unread"]').exists()).toBe(false)
+        })
+
+        it('does not persist when the administrator cannot be identified', async () => {
+            const wrapper = await mountAs({})
+            await wrapper.find('[data-testid="notifications-bell"]').trigger('click')
+
+            expect(wrapper.find('[data-testid="notifications-unread"]').exists()).toBe(false)
+            expect(localStorage.length).toBe(0)
+        })
     })
 })

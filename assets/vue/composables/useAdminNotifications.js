@@ -7,22 +7,33 @@ const items = ref([])
 const dismissed = ref(new Set())
 const SEEN_KEY = 'phplist.seenNotifications'
 
-// The backend has no read state, so "seen" codes are remembered per browser.
+// The backend has no read state, so "seen" codes are remembered per browser and per administrator.
+const { adminData, loadCurrentAdmin } = useCurrentAdmin()
+
+const seenKey = () => {
+  const identity = adminData.value?.id ?? adminData.value?.login_name
+  return identity === undefined || identity === null || identity === ''
+    ? null
+    : `${SEEN_KEY}.${identity}`
+}
+
 const loadSeen = () => {
+  const key = seenKey()
+  if (!key) return new Set()
   try {
-    const raw = JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')
+    const raw = JSON.parse(localStorage.getItem(key) || '[]')
     return new Set(Array.isArray(raw) ? raw : [])
   } catch {
     return new Set()
   }
 }
-const seen = ref(loadSeen())
-const { loadCurrentAdmin } = useCurrentAdmin()
+const seen = ref(new Set())
 
 const action = useAsyncAction(
   async () => {
     // The backend rotates the session id on every request; wait for /admin-about to finish first.
     await loadCurrentAdmin()
+    seen.value = loadSeen()
 
     const response = await backendFetch('/admin-notifications', {
       headers: {
@@ -55,8 +66,10 @@ export function useAdminNotifications() {
 
   const markAllRead = () => {
     seen.value = new Set([...seen.value, ...items.value.map((item) => item.code)])
+    const key = seenKey()
+    if (!key) return
     try {
-      localStorage.setItem(SEEN_KEY, JSON.stringify([...seen.value]))
+      localStorage.setItem(key, JSON.stringify([...seen.value]))
     } catch {
       // storage unavailable; keep in-memory state only
     }
@@ -72,6 +85,8 @@ export function __resetAdminNotificationsForTests() {
   dismissed.value = new Set()
   seen.value = new Set()
   try {
+    const key = seenKey()
+    if (key) localStorage.removeItem(key)
     localStorage.removeItem(SEEN_KEY)
   } catch {
     // ignore

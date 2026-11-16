@@ -6,7 +6,9 @@ namespace PhpList\WebFrontend\Tests\Integration\Controller;
 
 use PHPUnitRetry\RetryAnnotationTrait;
 use PHPUnitRetry\RetryTrait;
+use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\PantherTestCase;
+use Throwable;
 
 /**
  * @retryAttempts 1
@@ -35,6 +37,13 @@ class PublicPagesControllerPantherTest extends PantherTestCase
         $this->assertSelectorExists('input[name="password"]');
     }
 
+    /**
+     * @retryAttempts 1
+     * @retryIfException Facebook\WebDriver\Exception\NoSuchWindowException
+     * @retryIfException Facebook\WebDriver\Exception\TimeoutException
+     * @retryDelaySeconds 5
+     * @throws Throwable
+     */
     public function testAuthenticatedUserCanOpenPublicPagesIndex(): void
     {
         $client = static::createPantherClient([
@@ -52,12 +61,42 @@ class PublicPagesControllerPantherTest extends PantherTestCase
         ]);
         $client->submit($form);
         $client->waitFor('#vue-app');
+        $afterLogin = $this->describeCookies($client);
 
         $client->request('GET', '/public/');
-        $client->waitFor('#vue-app');
+        try {
+            $client->waitFor('#vue-app');
+        } catch (Throwable $e) {
+            $client->takeScreenshot('var/screenshots/public-pages-index.png');
+            fwrite(STDERR, sprintf(
+                "Public pages index failed.\n  URL: %s\n  cookies after login: %s\n  cookies at failure: %s\n",
+                $client->getCurrentURL(),
+                $afterLogin,
+                $this->describeCookies($client)
+            ));
+            throw $e;
+        }
 
         $this->assertPageTitleContains('phpList - Public Pages');
         $this->assertSelectorExists('#vue-app');
+    }
+
+    private function describeCookies(Client $client): string
+    {
+        $cookies = [];
+        foreach ($client->getCookieJar()->all() as $cookie) {
+            $cookies[] = sprintf(
+                '%s=%s (domain=%s path=%s expires=%s secure=%s)',
+                $cookie->getName(),
+                substr(hash('sha256', (string) $cookie->getValue()), 0, 8),
+                (string) $cookie->getDomain(),
+                (string) $cookie->getPath(),
+                (string) $cookie->getExpiresTime(),
+                $cookie->isSecure() ? 'yes' : 'no'
+            );
+        }
+
+        return $cookies === [] ? '(none)' : implode('; ', $cookies);
     }
 
     /**

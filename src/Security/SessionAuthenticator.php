@@ -7,6 +7,8 @@ namespace PhpList\WebFrontend\Security;
 use PhpList\WebFrontend\Trait\LoginUrlBuilderTrait;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use PhpList\WebFrontend\Trait\SessionExpiredResponseTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,8 +46,13 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
         '/robots.txt',
     ];
 
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    private readonly LoggerInterface $logger;
+
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        ?LoggerInterface $logger = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function supports(Request $request): ?bool
@@ -68,6 +75,8 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     public function authenticate(Request $request): Passport
     {
         if (!$request->hasSession()) {
+            $this->logger->debug('Auth rejected: no session available', ['uri' => $request->getRequestUri()]);
+
             throw new AuthenticationException('Session is not available');
         }
         $session = $request->getSession();
@@ -80,6 +89,13 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
 
             return new SelfValidatingPassport($userBadge);
         }
+
+        $this->logger->debug('Auth rejected: no auth_token in session', [
+            'uri' => $request->getRequestUri(),
+            'session_cookie_sent' => $request->cookies->has($session->getName()),
+            'session_id_hash' => substr(hash('sha256', $session->getId()), 0, 8),
+            'session_started' => $session->isStarted(),
+        ]);
 
         throw new AuthenticationException('No auth token in session');
     }

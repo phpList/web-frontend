@@ -473,7 +473,7 @@ const campaignChartOptions = computed(() => ({
       rotate: -30,
       trim: true,
       style: {
-        colors: '#3F607A',
+        colors: isDark.value ? '#81B3E0' : '#3F607A',
         fontSize: '12px',
       },
     },
@@ -481,7 +481,7 @@ const campaignChartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        colors: '#3F607A',
+        colors: isDark.value ? '#81B3E0' : '#3F607A',
         fontSize: '12px',
       },
       formatter: (value) => Math.round(value).toLocaleString(),

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+  <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
     <div class="p-4 sm:p-6 space-y-5">
       <!-- Date type -->
       <div class="space-y-2">
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
+    <div class="px-4 sm:px-6 py-4 border-t border-slate-300 dark:border-slate-700 flex items-center justify-between gap-3">
       <button
           type="button"
           class="inline-flex items-center justify-center rounded-md border border-transparent bg-ext-wf1 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-ext-wf3 disabled:opacity-50 disabled:cursor-not-allowed"

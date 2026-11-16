@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6 pb-4">
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 dark:border-slate-700">
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-300 dark:border-slate-700">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces By Subscriber</h3>
       </div>
 
@@ -56,8 +56,8 @@
       </BaseDataTable>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 dark:border-slate-700">
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-300 dark:border-slate-700">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces By Campaign</h3>
       </div>
 

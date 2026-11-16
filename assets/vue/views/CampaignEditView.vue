@@ -1,7 +1,7 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
+      <div class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Campaign</p>
@@ -10,23 +10,23 @@
 
           <RouterLink
             to="/campaigns"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-800"
           >
             Back to Campaigns
           </RouterLink>
         </div>
       </div>
 
-      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
         Loading campaign...
       </div>
 
-      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+      <div v-else-if="error" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
         {{ error }}
       </div>
 
-      <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
-        <div class="border-b border-slate-200 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
+      <div v-else class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div class="border-b border-slate-300 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
             <button
               v-for="step in steps"
@@ -35,7 +35,7 @@
               class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
               :class="currentStep === step.id
                 ? 'bg-ext-wf1 text-white'
-                : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-300 dark:hover:bg-slate-600'"
+                : 'bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-350 dark:hover:bg-slate-600'"
               @click="goToStep(step.id)"
             >
               <span class="block text-base leading-none">{{ step.id }}</span>
@@ -59,7 +59,7 @@
               >
             </div>
 
-            <div class="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+            <div class="space-y-3 rounded-lg border border-slate-300 dark:border-slate-700 p-4">
               <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">How do you want to compose content?</p>
 
               <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
@@ -232,7 +232,7 @@
 
             <p class="text-sm text-slate-600 dark:text-slate-350">Please select the lists you want to send this campaign to.</p>
 
-            <div class="max-h-96 overflow-auto rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+            <div class="max-h-96 overflow-auto rounded-lg border border-slate-300 dark:border-slate-700 p-3">
               <label
                 v-for="list in mailingLists"
                 :key="list.id"
@@ -261,7 +261,7 @@
               (comma separate addresses - all must be existing subscribers)
             </div>
 
-            <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
+            <div class="rounded-lg border border-slate-300 dark:border-slate-700 p-3 space-y-3">
               <textarea
                 id="campaign-test-recipients"
                 v-model="form.testRecipients"
@@ -272,7 +272,7 @@
 
               <button
                 type="button"
-                class="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                class="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50"
                 :disabled="isSendingTest"
                 @click="sendTestCampaign"
               >
@@ -330,7 +330,7 @@
           </section>
         </div>
 
-        <div class="border-t border-slate-200 dark:border-slate-700 px-4 py-4 sm:px-6">
+        <div class="border-t border-slate-300 dark:border-slate-700 px-4 py-4 sm:px-6">
           <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div class="text-sm">
               <div v-if="saveErrors.length" class="text-red-600 dark:text-red-400">
@@ -346,7 +346,7 @@
             <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap lg:justify-end">
               <button
                 type="button"
-                class="rounded-md border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                class="rounded-md border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50"
                 :disabled="currentStep === 1"
                 @click="previousStep"
               >

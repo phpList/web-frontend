@@ -1,6 +1,6 @@
 <template>
-  <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-    <header class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+  <section class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+    <header class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
       <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Subscribe Pages</h2>
       <BaseButton variant="accent" icon="plus" :disabled="isLoading" @click="handleCreatePage">
         Add New Subscribe Page

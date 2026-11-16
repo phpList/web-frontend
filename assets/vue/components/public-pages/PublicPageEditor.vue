@@ -1,13 +1,13 @@
 <template>
   <section class="space-y-6">
-    <header class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <header class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100">
         {{ isEditMode ? 'Edit Subscribe Page' : 'Create Subscribe Page' }}
       </h1>
       <div class="flex gap-2">
         <button
           type="button"
-          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg transition-colors"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg transition-colors"
           @click="goBack"
         >
           Back
@@ -23,19 +23,19 @@
       </div>
     </header>
 
-    <div v-if="isLoading" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 text-center text-slate-500 dark:text-slate-350">
+    <div v-if="isLoading" class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-8 text-center text-slate-500 dark:text-slate-350">
       Loading public page data...
     </div>
 
-    <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
-      <div class="border-b border-slate-200 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
+    <div v-else class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div class="border-b border-slate-300 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
         <div class="grid grid-cols-3 gap-2 sm:grid-cols-5">
           <button
             v-for="step in steps"
             :key="step.id"
             type="button"
             class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
-            :class="currentStep === step.id ? 'bg-ext-wf1 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-300 dark:hover:bg-slate-600'"
+            :class="currentStep === step.id ? 'bg-ext-wf1 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-300 dark:hover:bg-slate-600'"
             @click="goToStep(step.id)"
           >
             <span class="block text-base leading-none">{{ step.id }}</span>
@@ -120,7 +120,7 @@
             <article
               v-for="list in publicLists"
               :key="list.id"
-              class="rounded-lg border border-slate-200 dark:border-slate-700 p-3"
+              class="rounded-lg border border-slate-300 dark:border-slate-700 p-3"
             >
               <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <label class="flex items-center gap-2 text-sm font-medium text-slate-800 dark:text-slate-100">
@@ -153,7 +153,7 @@
             <article
               v-for="attribute in attributes"
               :key="attribute.id"
-              class="h-full rounded-lg border border-slate-200 dark:border-slate-700 p-4"
+              class="h-full rounded-lg border border-slate-300 dark:border-slate-700 p-4"
             >
               <div class="flex h-full flex-col gap-3">
                 <div class="flex items-start justify-between gap-3">

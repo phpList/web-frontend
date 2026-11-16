@@ -4,10 +4,16 @@ import BaseCard from '../../../../../../assets/vue/components/base/BaseCard.vue'
 
 describe('BaseCard.vue', () => {
     describe('default variant', () => {
-        it('renders with default variant when no prop is passed', () => {
+        it('renders with the subtle variant when no prop is passed', () => {
             const wrapper = mount(BaseCard)
             expect(wrapper.classes()).toContain('rounded-lg')
             expect(wrapper.classes()).toContain('shadow-sm')
+            expect(wrapper.classes()).toContain('border-0')
+            expect(wrapper.classes()).toContain('bg-slate-200')
+        })
+
+        it('renders the bordered white card when variant is "default"', () => {
+            const wrapper = mount(BaseCard, { props: { variant: 'default' } })
             expect(wrapper.classes()).toContain('border')
             expect(wrapper.classes()).toContain('border-gray-100')
             expect(wrapper.classes()).toContain('bg-white')
@@ -23,7 +29,7 @@ describe('BaseCard.vue', () => {
     describe('subtle variant', () => {
         it('applies subtle card classes', () => {
             const wrapper = mount(BaseCard, { props: { variant: 'subtle' } })
-            expect(wrapper.classes()).toContain('bg-gray-50')
+            expect(wrapper.classes()).toContain('bg-slate-200')
             expect(wrapper.classes()).toContain('border-0')
             expect(wrapper.classes()).not.toContain('bg-white')
         })

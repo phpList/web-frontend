@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700  shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 ">
+  <div class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700  shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 ">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 ">Subscribers</h2>
         <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
@@ -46,7 +46,7 @@
         </div>
       </div>
     </div>
-    <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+    <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-300 dark:border-slate-700">
       <SubscriberFilters @filter-change="handleFilterChange" />
     </div>
     <SubscriberTable :subscribers="subscribers" @view="openSubscriberModal" />
@@ -61,20 +61,20 @@
       :import-result="importResult"
       @close="isImportResultOpen = false"
     />
-    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
+    <div class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
       <div class="text-center sm:text-left">
         Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ pagination.total }}</span> subscribers
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
           :disabled="pagination.isFirstPage"
           @click="previousPage"
         >
           Previous
         </button>
         <button
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
           :disabled="!pagination.hasMore"
           @click="nextPage"
         >

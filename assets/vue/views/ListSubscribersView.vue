@@ -1,7 +1,7 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
+      <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Mailing List</p>
@@ -12,16 +12,16 @@
 
           <RouterLink
               to="/lists"
-              class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
+              class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700"
           >
             Back to Lists
           </RouterLink>
         </div>
       </div>
 
-      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
         <div
-            class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Subscribers</h3>
           <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
             <label class="text-sm text-slate-600 dark:text-slate-350">Status</label>
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+        <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
           <div class="flex flex-col xl:flex-row xl:items-center gap-3">
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-sm text-slate-600 dark:text-slate-350">Selected: {{ selectedSubscribers.length }}</span>
@@ -110,7 +110,7 @@
               <th class="px-6 py-4 text-right">Actions</th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
             <tr v-if="loading">
               <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">Loading...</td>
             </tr>
@@ -123,7 +123,7 @@
                 v-for="subscriber in filteredSubscribers"
                 v-else
                 :key="subscriber.id"
-                class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                class="hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
             >
               <td class="px-4 py-4">
                 <input
@@ -160,11 +160,11 @@
             </tbody>
           </table>
 
-          <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+          <div class="block md:hidden divide-y divide-slate-300 dark:divide-slate-700">
             <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm">Loading...</div>
             <div v-else-if="error" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ error }}</div>
 
-            <div class="p-4 border-b border-slate-100 dark:border-slate-700" v-if="!loading && !error && filteredSubscribers.length">
+            <div class="p-4 border-b border-slate-300 dark:border-slate-700" v-if="!loading && !error && filteredSubscribers.length">
               <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input
                     type="checkbox"
@@ -220,12 +220,12 @@
         </div>
 
         <div
-            class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
+            class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
           <span class="text-slate-500 dark:text-slate-350">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
           <div class="flex gap-2 w-full sm:w-auto">
             <button
                 type="button"
-                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
+                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
                 :disabled="!canGoPrevious || loading || actionLoading"
                 @click="previousPage"
             >
@@ -233,7 +233,7 @@
             </button>
             <button
                 type="button"
-                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
+                class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
                 :disabled="!canGoNext || loading || actionLoading"
                 @click="nextPage"
             >

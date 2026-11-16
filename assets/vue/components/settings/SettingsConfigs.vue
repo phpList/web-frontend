@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Configs</h3>
@@ -24,12 +24,12 @@
       </div>
     </div>
 
-    <section class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 mt-4">
+    <section class="bg-slate-200 dark:bg-slate-800 rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm p-4 mt-4">
       <div v-if="isLoading" class="text-sm text-slate-500 dark:text-slate-350">Loading configuration keys...</div>
       <div v-else-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</div>
       <div v-else-if="filtered.length" class="overflow-x-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div v-for="item in filtered" :key="item.key" class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+          <div v-for="item in filtered" :key="item.key" class="border border-slate-300 dark:border-slate-700 rounded-lg p-3">
             <div class="mb-2">
               <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">
                 {{ item.key }}

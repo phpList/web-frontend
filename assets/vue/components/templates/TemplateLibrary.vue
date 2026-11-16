@@ -1,10 +1,10 @@
 <template>
-  <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-    <header class="p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+  <section class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm">
+    <header class="p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
       <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Templates</h2>
       <div class="flex gap-2">
         <button
-          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors"
           type="button"
           @click="openDefaultTemplateModal"
         >
@@ -38,7 +38,7 @@
         <article
           v-for="templateItem in templates"
           :key="templateItem.id"
-          class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden hover:shadow-lg transition-all"
+          class="border border-slate-300  dark:border-slate-700 rounded-lg overflow-hidden hover:shadow-lg transition-all"
         >
           <div class="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-6xl">
             <img
@@ -130,7 +130,7 @@
       </button>
       <button
           type="button"
-          class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
           :disabled="isCreatingFromDefault"
           @click="closeDefaultTemplateModal"
       >

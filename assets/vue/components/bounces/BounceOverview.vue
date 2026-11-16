@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces</h3>
         <div class="flex items-center gap-2">
           <label class="text-sm text-slate-600 dark:text-slate-350" for="bounce-status-filter">Status</label>
@@ -61,14 +61,14 @@
         </template>
       </BaseDataTable>
 
-      <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
+      <div class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
         <div class="text-center sm:text-left">
           Page <span class="font-medium text-slate-900 dark:text-slate-100">{{ currentPage }}</span>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
           <button
             type="button"
-            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
             :disabled="!canGoPrevious"
             @click="previousPage"
           >
@@ -76,7 +76,7 @@
           </button>
           <button
             type="button"
-            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
             :disabled="!canGoNext"
             @click="nextPage"
           >

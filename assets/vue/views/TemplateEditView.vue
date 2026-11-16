@@ -1,7 +1,7 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
+      <div class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Template</p>
@@ -10,22 +10,22 @@
 
           <RouterLink
             to="/templates"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-800"
           >
             Back to Templates
           </RouterLink>
         </div>
       </div>
 
-      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
+      <div v-if="loading" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
         Loading template...
       </div>
 
-      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+      <div v-else-if="error" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
         {{ error }}
       </div>
 
-      <section v-else class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
+      <section v-else class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-6 sm:p-8">
         <form class="space-y-6" @submit.prevent="saveTemplate">
             <div class="grid gap-6 lg:grid-cols-2">
               <div class="space-y-2">
@@ -65,7 +65,7 @@
                 <label for="template-text" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Text version</label>
                 <button
                   type="button"
-                  class="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-200 transition-colors"
+                  class="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-200 transition-colors"
                   @click="populateTextFromContent"
                 >
                   Use HTML as plain text
@@ -93,7 +93,7 @@
 
             <div class="space-y-2">
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Checks</label>
-              <div class="space-y-2 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+              <div class="space-y-2 rounded-lg border border-slate-300 dark:border-slate-700 p-4">
                 <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
                     v-model="form.checkLinks"
@@ -137,7 +137,7 @@
             <div class="flex items-center justify-end gap-2">
               <RouterLink
                 to="/templates"
-                class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 transition-colors"
+                class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </RouterLink>

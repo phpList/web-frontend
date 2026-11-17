@@ -125,11 +125,12 @@ class AuthControllerTest extends TestCase
             ['auth_token', 'test-token'],
             ['auth_expiry_date', '2026-03-18T14:15:38+04:00'],
             ['auth_id', 1],
+            ['admin_id', 7],
         ];
 
         $index = 0;
 
-        $session->expects($this->exactly(3))
+        $session->expects($this->exactly(4))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use (&$expected, &$index) {
                 Assert::assertSame($expected[$index][0], $key);
@@ -146,6 +147,8 @@ class AuthControllerTest extends TestCase
         $this->authClient->method('login')
             ->with('testuser', 'testpass')
             ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
+        $this->authClient->method('getSessionUser')
+            ->willReturn(new Administrator(['id' => 7, 'login_name' => 'testuser', 'created_at' => '2026-01-01']));
 
         $response = $this->controller->login($request);
 
@@ -166,11 +169,12 @@ class AuthControllerTest extends TestCase
             ['auth_token', 'test-token'],
             ['auth_expiry_date', '2026-03-18T14:15:38+04:00'],
             ['auth_id', 1],
+            ['admin_id', 7],
         ];
 
         $index = 0;
 
-        $session->expects($this->exactly(3))
+        $session->expects($this->exactly(4))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use (&$expected, &$index) {
                 Assert::assertSame($expected[$index][0], $key);
@@ -188,6 +192,8 @@ class AuthControllerTest extends TestCase
         $this->authClient->method('login')
             ->with('testuser', 'testpass')
             ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
+        $this->authClient->method('getSessionUser')
+            ->willReturn(new Administrator(['id' => 7, 'login_name' => 'testuser', 'created_at' => '2026-01-01']));
 
         $response = $this->controller->login($request);
 
@@ -284,11 +290,12 @@ class AuthControllerTest extends TestCase
         $expected = [
             ['auth_token'],
             ['auth_id'],
+            ['admin_id'],
         ];
 
         $index = 0;
 
-        $session->expects($this->exactly(2))
+        $session->expects($this->exactly(3))
             ->method('remove')
             ->willReturnCallback(function ($key) use (&$expected, &$index) {
                 Assert::assertSame($expected[$index][0], $key);
@@ -643,5 +650,28 @@ class AuthControllerTest extends TestCase
         $response = $this->controller->resetPassword($request);
 
         $this->assertStringContainsString('invalid or has expired', $response->getContent());
+    }
+
+    public function testLoginStillSucceedsWhenTheAdministratorIdCannotBeLoaded(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->willReturnMap([['auth_token', false], ['login_error', false]]);
+
+        $stored = [];
+        $session->method('set')->willReturnCallback(function ($key) use (&$stored) {
+            $stored[] = $key;
+        });
+
+        $request = Request::create('/login', 'POST', ['username' => 'testuser', 'password' => 'testpass']);
+        $request->setSession($session);
+
+        $this->authClient->method('login')
+            ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
+        $this->authClient->method('getSessionUser')->willThrowException(new ApiException('down'));
+
+        $response = $this->controller->login($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertNotContains('admin_id', $stored);
     }
 }

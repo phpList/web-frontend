@@ -15,13 +15,12 @@ class TranslationsExtensionTest extends TestCase
 {
     private const TRANSLATIONS_DIR = __DIR__ . '/../../../translations';
 
-    public function testRegistersTheJsonFunctionAsHtmlSafe(): void
+    public function testRegistersTheLocalesFunction(): void
     {
         $extension = new TranslationsExtension($this->createTranslator('en'));
         $function = $extension->getFunctions()[0];
 
-        $this->assertSame('frontend_messages_json', $function->getName());
-        $this->assertSame(['html'], $function->getSafe(new \Twig\Node\Node()));
+        $this->assertSame('frontend_locales', $function->getName());
     }
 
     public function testReturnsTheRealEnglishCatalogue(): void
@@ -53,23 +52,18 @@ class TranslationsExtensionTest extends TestCase
         $this->assertArrayNotHasKey('core.message', $messages);
     }
 
-    public function testJsonIsSafeToEmbedInAScriptTag(): void
-    {
-        $translator = $this->createTranslator('en');
-        $translator->addResource('array', ['x.evil' => '</script><script>alert("&")</script>'], 'en', 'frontend');
-
-        $json = (new TranslationsExtension($translator))->getMessagesJson();
-
-        $this->assertStringNotContainsString('</script>', $json);
-        $this->assertStringNotContainsString('<', $json);
-        $this->assertSame('</script><script>alert("&")</script>', json_decode($json, true)['x.evil']);
-    }
-
-    public function testReturnsAnEmptyObjectWithoutACatalogueAwareTranslator(): void
+    public function testReturnsNoMessagesWithoutACatalogueAwareTranslator(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
 
-        $this->assertSame('{}', (new TranslationsExtension($translator))->getMessagesJson());
+        $this->assertSame([], (new TranslationsExtension($translator))->getMessages());
+    }
+
+    public function testReturnsMessagesOfAnExplicitLocale(): void
+    {
+        $messages = (new TranslationsExtension($this->createTranslator('en')))->getMessages('es');
+
+        $this->assertSame('Panel', $messages['sidebar.nav.dashboard']);
     }
 
     public function testTwigSideFormatsIcuMessages(): void

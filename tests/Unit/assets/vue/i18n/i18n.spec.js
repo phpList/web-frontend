@@ -1,31 +1,9 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { createAppI18n, readLocale, readMessages, readAvailableLocales, localeUrl, stripLocaleParam } from '../../../../../assets/vue/i18n'
+import { createAppI18n, readAvailableLocales, readLocale, loadMessages } from '../../../../../assets/vue/i18n'
 
 describe('i18n', () => {
     afterEach(() => {
-        document.documentElement.removeAttribute('lang')
         document.body.innerHTML = ''
-    })
-
-    it('reads the locale from <html lang>, defaulting to English', () => {
-        expect(readLocale()).toBe('en')
-
-        document.documentElement.setAttribute('lang', 'es')
-        expect(readLocale()).toBe('es')
-    })
-
-    it('reads the messages embedded by the server', () => {
-        document.body.innerHTML =
-            '<script type="application/json" id="i18n-messages">{"sidebar.nav.lists":"Listas"}</script>'
-
-        expect(readMessages()).toEqual({ 'sidebar.nav.lists': 'Listas' })
-    })
-
-    it('returns no messages when the embedded JSON is missing or invalid', () => {
-        expect(readMessages()).toEqual({})
-
-        document.body.innerHTML = '<script type="application/json" id="i18n-messages">{oops</script>'
-        expect(readMessages()).toEqual({})
     })
 
     it('formats ICU placeholders and plurals with flat dotted keys', () => {
@@ -69,21 +47,41 @@ describe('i18n', () => {
         expect(readAvailableLocales()).toEqual({ en: 'English', es: 'Español' })
     })
 
-    it('builds a same-page URL in another language, keeping query and hash', () => {
-        expect(localeUrl('es', 'http://x.test/lists?page=2#a')).toBe('/lists?page=2&_locale=es#a')
-        expect(localeUrl('es', 'http://x.test/?_locale=en')).toBe('/?_locale=es')
+    describe('readLocale', () => {
+        const available = { en: 'English', es: 'Español' }
+        const docWithLang = (lang) => {
+            const doc = document.implementation.createHTMLDocument('')
+            if (lang !== null) {
+                doc.documentElement.setAttribute('lang', lang)
+            }
+            return doc
+        }
+
+        it('uses the language the server rendered the page in', () => {
+            expect(readLocale(docWithLang('es'), available)).toBe('es')
+            expect(readLocale(docWithLang('ES'), available)).toBe('es')
+        })
+
+        it('defaults to English when missing or not offered', () => {
+            expect(readLocale(docWithLang(null), available)).toBe('en')
+            expect(readLocale(docWithLang('xx'), available)).toBe('en')
+            expect(readLocale(docWithLang('es'), {})).toBe('en')
+        })
     })
 
-    it('removes the locale parameter from the address bar', () => {
-        const replaceState = vi.fn()
-        const win = { location: { href: 'http://x.test/lists?page=2&_locale=es#a' }, history: { state: { s: 1 }, replaceState } }
+    describe('loadMessages', () => {
+        it('fetches the catalogue of the language', async () => {
+            const fetchFn = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ a: 'b' }) })
 
-        stripLocaleParam(win)
-        expect(replaceState).toHaveBeenCalledWith({ s: 1 }, '', '/lists?page=2#a')
+            await expect(loadMessages('es', fetchFn)).resolves.toEqual({ a: 'b' })
+            expect(fetchFn).toHaveBeenCalledWith('/translations/es.json', expect.objectContaining({ credentials: 'same-origin' }))
+        })
 
-        replaceState.mockClear()
-        win.location.href = 'http://x.test/lists'
-        stripLocaleParam(win)
-        expect(replaceState).not.toHaveBeenCalled()
+        it('returns no messages when the request fails', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {})
+
+            await expect(loadMessages('es', vi.fn().mockResolvedValue({ ok: false, status: 500 }))).resolves.toEqual({})
+            await expect(loadMessages('es', vi.fn().mockRejectedValue(new Error('offline')))).resolves.toEqual({})
+        })
     })
 })

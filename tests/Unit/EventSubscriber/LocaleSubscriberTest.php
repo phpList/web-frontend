@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Unit\EventSubscriber;
 
 use PhpList\WebFrontend\EventSubscriber\LocaleSubscriber;
+use PhpList\WebFrontend\Service\LocalePreference;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -19,7 +23,7 @@ class LocaleSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->subscriber = new LocaleSubscriber(['en', 'es']);
+        $this->subscriber = new LocaleSubscriber(new LocalePreference(['en', 'es']));
     }
 
     public function testRunsBeforeTheTranslatorPicksUpTheRequestLocale(): void
@@ -30,86 +34,106 @@ class LocaleSubscriberTest extends TestCase
         $this->assertSame(['onKernelRequest', 20], $events[KernelEvents::REQUEST]);
     }
 
-    public function testUsesTheBestMatchFromAcceptLanguage(): void
+    public function testAppliesTheRememberedLanguageToPageRequests(): void
     {
-        $request = $this->createRequest('/', ['HTTP_ACCEPT_LANGUAGE' => 'es-ES,es;q=0.9,en;q=0.8']);
+        $request = $this->request('/login', ['phplist_locale' => 'es']);
 
-        $this->dispatch($request);
+        $this->dispatchRequest($request);
 
         $this->assertSame('es', $request->getLocale());
     }
 
-    public function testFallsBackToTheFirstSupportedLocale(): void
+    public function testUsesTheLoggedInAdministratorsOwnLanguage(): void
     {
-        $request = $this->createRequest('/', ['HTTP_ACCEPT_LANGUAGE' => 'de-DE,de;q=0.9']);
+        $request = $this->request(
+            '/',
+            ['phplist_locale' => 'en', 'phplist_admin_locales' => '{"7":"es"}'],
+            adminId: 7
+        );
 
-        $this->dispatch($request);
-
-        $this->assertSame('en', $request->getLocale());
-    }
-
-    public function testQueryParameterWinsAndIsRememberedInTheSession(): void
-    {
-        $request = $this->createRequest('/?_locale=es', ['HTTP_ACCEPT_LANGUAGE' => 'en']);
-
-        $this->dispatch($request);
-
-        $this->assertSame('es', $request->getLocale());
-        $this->assertSame('es', $request->getSession()->get(LocaleSubscriber::SESSION_KEY));
-    }
-
-    public function testSessionLocaleWinsOverAcceptLanguage(): void
-    {
-        $request = $this->createRequest('/', ['HTTP_ACCEPT_LANGUAGE' => 'en']);
-        $request->getSession()->set(LocaleSubscriber::SESSION_KEY, 'es');
-
-        $this->dispatch($request);
+        $this->dispatchRequest($request);
 
         $this->assertSame('es', $request->getLocale());
     }
 
-    public function testIgnoresUnsupportedLocalesFromQueryAndSession(): void
+    public function testLeavesApiRequestsAndSubRequestsAlone(): void
     {
-        $request = $this->createRequest('/?_locale=xx', ['HTTP_ACCEPT_LANGUAGE' => 'es']);
-        $request->getSession()->set(LocaleSubscriber::SESSION_KEY, '../../etc');
+        $api = $this->request('/api/v2/sessions', ['phplist_locale' => 'es']);
+        $api->setLocale('en');
+        $this->dispatchRequest($api);
 
-        $this->dispatch($request);
+        $sub = $this->request('/', ['phplist_locale' => 'es']);
+        $sub->setLocale('en');
+        $this->dispatchRequest($sub, HttpKernelInterface::SUB_REQUEST);
 
-        $this->assertSame('es', $request->getLocale());
-        $this->assertSame('../../etc', $request->getSession()->get(LocaleSubscriber::SESSION_KEY));
+        $this->assertSame('en', $api->getLocale());
+        $this->assertSame('en', $sub->getLocale());
     }
 
-    public function testLeavesApiRequestsAlone(): void
+    public function testLoginSyncsTheBrowsersLastLanguageToTheAdministratorsOwn(): void
     {
-        $request = $this->createRequest('/api/v2/sessions', ['HTTP_ACCEPT_LANGUAGE' => 'es']);
-        $request->setLocale('en');
+        $request = $this->request(
+            '/',
+            ['phplist_locale' => 'en', 'phplist_admin_locales' => '{"7":"es"}'],
+            adminId: 7
+        );
 
-        $this->dispatch($request);
+        $response = $this->dispatchResponse($request, new Response());
 
-        $this->assertSame('en', $request->getLocale());
+        $cookies = $response->headers->getCookies();
+        $this->assertCount(1, $cookies);
+        $this->assertSame('phplist_locale', $cookies[0]->getName());
+        $this->assertSame('es', $cookies[0]->getValue());
     }
 
-    public function testIgnoresSubRequests(): void
+    public function testDoesNotOverrideACookieTheResponseAlreadySets(): void
     {
-        $request = $this->createRequest('/', ['HTTP_ACCEPT_LANGUAGE' => 'es']);
-        $request->setLocale('en');
+        $request = $this->request(
+            '/locale',
+            ['phplist_locale' => 'en', 'phplist_admin_locales' => '{"7":"en"}'],
+            adminId: 7
+        );
+        $response = new Response();
+        $response->headers->setCookie(Cookie::create('phplist_locale', 'es'));
 
-        $this->dispatch($request, HttpKernelInterface::SUB_REQUEST);
+        $this->dispatchResponse($request, $response);
 
-        $this->assertSame('en', $request->getLocale());
+        $cookies = $response->headers->getCookies();
+        $this->assertCount(1, $cookies);
+        $this->assertSame('es', $cookies[0]->getValue());
     }
 
-    private function createRequest(string $uri, array $server): Request
+    private function request(string $uri, array $cookies = [], ?int $adminId = null): Request
     {
-        $request = Request::create($uri, 'GET', [], [], [], $server);
-        $request->setSession(new Session(new MockArraySessionStorage()));
+        $request = Request::create($uri, 'GET', [], $cookies);
+        $session = new Session(new MockArraySessionStorage());
+        if ($adminId !== null) {
+            $session->set('auth_token', 'token');
+            $session->set('admin_id', $adminId);
+        }
+        $request->setSession($session);
 
         return $request;
     }
 
-    private function dispatch(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST): void
+    private function dispatchRequest(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST): void
     {
-        $event = new RequestEvent($this->createMock(HttpKernelInterface::class), $request, $type);
-        $this->subscriber->onKernelRequest($event);
+        $this->subscriber->onKernelRequest(
+            new RequestEvent($this->createMock(HttpKernelInterface::class), $request, $type)
+        );
+    }
+
+    private function dispatchResponse(Request $request, Response $response): Response
+    {
+        $this->subscriber->onKernelResponse(
+            new ResponseEvent(
+                $this->createMock(HttpKernelInterface::class),
+                $request,
+                HttpKernelInterface::MAIN_REQUEST,
+                $response
+            )
+        );
+
+        return $response;
     }
 }

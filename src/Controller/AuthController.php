@@ -11,6 +11,7 @@ use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
+use PhpList\RestApiClient\Exception\AuthorizationException;
 use PhpList\WebFrontend\Service\AuthenticationService;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
@@ -61,6 +62,7 @@ class AuthController extends AbstractController
             try {
                 $authData = $this->authClient->login($username, $password);
                 $this->authenticationService->storeAuthentication($request, $authData);
+                $this->rememberAdminId($request);
 
                 return $this->redirectAfterLogin($redirectTarget);
             } catch (GuzzleException $e) {
@@ -163,6 +165,7 @@ class AuthController extends AbstractController
     {
         $request->getSession()->remove('auth_token');
         $request->getSession()->remove('auth_id');
+        $request->getSession()->remove('admin_id');
         $this->authClient->logout();
 
         return $this->redirectToRoute('login');
@@ -238,5 +241,19 @@ class AuthController extends AbstractController
         }
 
         return $this->isSafeRedirectTarget($redirectTarget) ? $redirectTarget : null;
+    }
+
+    /**
+     * The session's "auth_id" is the API session id, so keep the administrator's own id as well.
+     * It identifies whose remembered UI language applies (see LocalePreference).
+     */
+    private function rememberAdminId(Request $request): void
+    {
+        try {
+            $request->getSession()->set('admin_id', $this->authClient->getSessionUser()->id);
+        } catch (ApiException | AuthenticationException | AuthorizationException $e) {
+            // Best effort: without it the browser's last-used language applies.
+            $this->logger->warning('Unable to load the administrator id after login: ' . $e->getMessage());
+        }
     }
 }

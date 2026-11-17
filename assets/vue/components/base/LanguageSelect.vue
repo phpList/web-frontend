@@ -24,9 +24,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { localeUrl, readAvailableLocales } from '../../i18n'
+import { backendFetch } from '../../api'
+import { loadMessages, readAvailableLocales } from '../../i18n'
 
-const { t, locale } = useI18n()
+const { t, locale, setLocaleMessage } = useI18n()
 
 const selectId = 'language-select'
 
@@ -34,11 +35,31 @@ const options = computed(() =>
   Object.entries(readAvailableLocales()).map(([code, name]) => ({ code, name }))
 )
 
-const changeLocale = (event) => {
+const changeLocale = async (event) => {
   const next = event.target.value
-  if (next && next !== locale.value) {
-    // Full navigation: the server renders the page (and the embedded messages) in the new language.
-    window.location.assign(localeUrl(next))
+  if (!next || next === locale.value) {
+    return
+  }
+
+  // Switch in place: no page reload, every translated string re-renders reactively.
+  setLocaleMessage(next, await loadMessages(next))
+  locale.value = next
+  document.documentElement.setAttribute('lang', next)
+
+  // Remember the choice for this administrator (a cookie set by the server), so it applies on every
+  // page and at the next login in this browser.
+  try {
+    const response = await backendFetch('/locale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ locale: next }),
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+  } catch (error) {
+    console.error('Failed to save the language choice:', error)
   }
 }
 </script>

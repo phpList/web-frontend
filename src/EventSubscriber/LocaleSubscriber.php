@@ -4,29 +4,21 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\EventSubscriber;
 
+use PhpList\WebFrontend\Service\LocalePreference;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Picks the UI locale for each request:
- *  1. `?_locale=xx` (if supported) — remembered in the session,
- *  2. the locale stored in the session,
- *  3. the best match from the browser's Accept-Language header,
- *  4. the first supported locale.
+ * Applies the browser's remembered UI language (see LocalePreference) to every page request.
  *
  * Runs before Symfony's LocaleAwareListener (priority 15), so the translator picks up the result.
  */
 class LocaleSubscriber implements EventSubscriberInterface
 {
-    public const SESSION_KEY = '_locale';
-    private const QUERY_KEY = '_locale';
-
-    /**
-     * @param string[] $supportedLocales
-     */
-    public function __construct(private readonly array $supportedLocales)
+    public function __construct(private readonly LocalePreference $preference)
     {
     }
 
@@ -34,43 +26,43 @@ class LocaleSubscriber implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 20],
+            KernelEvents::RESPONSE => ['onKernelResponse', 0],
         ];
     }
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$event->isMainRequest() || $this->supportedLocales === []) {
+        if (!$event->isMainRequest() || $this->isApiRequest($event->getRequest())) {
             return;
         }
 
         $request = $event->getRequest();
-        if (str_starts_with($request->getPathInfo(), '/api/')) {
+        $request->setLocale($this->preference->resolve($request));
+    }
+
+    public function onKernelResponse(ResponseEvent $event): void
+    {
+        $request = $event->getRequest();
+        if (!$event->isMainRequest() || $this->isApiRequest($request)) {
             return;
         }
 
-        $request->setLocale($this->resolveLocale($request));
-    }
-
-    private function resolveLocale(Request $request): string
-    {
-        $session = $request->hasSession() ? $request->getSession() : null;
-
-        $requested = $request->query->get(self::QUERY_KEY);
-        if (is_string($requested) && $this->isSupported($requested)) {
-            $session?->set(self::SESSION_KEY, $requested);
-            return $requested;
+        $response = $event->getResponse();
+        foreach ($response->headers->getCookies() as $cookie) {
+            if ($cookie->getName() === LocalePreference::LAST_COOKIE) {
+                // The response already records an explicit choice.
+                return;
+            }
         }
 
-        $stored = $session?->get(self::SESSION_KEY);
-        if (is_string($stored) && $this->isSupported($stored)) {
-            return $stored;
+        $cookie = $this->preference->createLoginSyncCookie($request);
+        if ($cookie !== null) {
+            $response->headers->setCookie($cookie);
         }
-
-        return $request->getPreferredLanguage($this->supportedLocales) ?? $this->supportedLocales[0];
     }
 
-    private function isSupported(string $locale): bool
+    private function isApiRequest(Request $request): bool
     {
-        return in_array($locale, $this->supportedLocales, true);
+        return str_starts_with($request->getPathInfo(), '/api/');
     }
 }

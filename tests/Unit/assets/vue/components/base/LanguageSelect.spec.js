@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
+import { backendFetch } from '../../../../../../assets/vue/api'
 import LanguageSelect from '../../../../../../assets/vue/components/base/LanguageSelect.vue'
+import { createAppI18n } from '../../../../../../assets/vue/i18n'
 
 const setLocales = (locales) => {
     document.body.innerHTML = locales
@@ -8,10 +11,15 @@ const setLocales = (locales) => {
         : ''
 }
 
+vi.mock('../../../../../../assets/vue/api', () => ({ backendFetch: vi.fn() }))
+
 describe('LanguageSelect', () => {
     afterEach(() => {
+        vi.clearAllMocks()
         document.body.innerHTML = ''
+        document.documentElement.removeAttribute('lang')
         vi.restoreAllMocks()
+        vi.unstubAllGlobals()
     })
 
     it('lists the languages offered by the server, named in their own language', () => {
@@ -34,27 +42,51 @@ describe('LanguageSelect', () => {
         expect(mount(LanguageSelect).find('select').exists()).toBe(false)
     })
 
-    it('navigates to the current page with the chosen locale', async () => {
+    it('switches the language in place and asks the server to remember it', async () => {
         setLocales({ en: 'English', es: 'Español' })
-        const assign = vi.fn()
-        vi.spyOn(window, 'location', 'get').mockReturnValue({
-            href: 'http://localhost/subscribers?page=2#top',
-            assign,
-        })
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ 'language.label': 'Idioma' }),
+        }))
+        backendFetch.mockResolvedValue({ ok: true })
+        const i18n = createAppI18n({ locale: 'en', messages: { 'language.label': 'Language' } })
 
-        const wrapper = mount(LanguageSelect)
+        const wrapper = mount(LanguageSelect, { global: { plugins: [i18n] } })
         await wrapper.find('select').setValue('es')
+        await flushPromises()
 
-        expect(assign).toHaveBeenCalledWith('/subscribers?page=2&_locale=es#top')
+        expect(fetch).toHaveBeenCalledWith('/translations/es.json', expect.anything())
+        expect(i18n.global.locale.value).toBe('es')
+        expect(wrapper.find('label').text()).toBe('Idioma')
+        expect(document.documentElement.getAttribute('lang')).toBe('es')
+        expect(backendFetch).toHaveBeenCalledWith('/locale', expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify({ locale: 'es' }),
+        }))
+    })
+
+    it('still switches when saving the choice fails', async () => {
+        setLocales({ en: 'English', es: 'Español' })
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }))
+        backendFetch.mockResolvedValue({ ok: false, status: 500 })
+        vi.spyOn(console, 'error').mockImplementation(() => {})
+        const i18n = createAppI18n({ locale: 'en', messages: {} })
+
+        const wrapper = mount(LanguageSelect, { global: { plugins: [i18n] } })
+        await wrapper.find('select').setValue('es')
+        await flushPromises()
+
+        expect(i18n.global.locale.value).toBe('es')
+        expect(console.error).toHaveBeenCalled()
     })
 
     it('does nothing when the current language is picked again', async () => {
         setLocales({ en: 'English', es: 'Español' })
-        const assign = vi.fn()
-        vi.spyOn(window, 'location', 'get').mockReturnValue({ href: 'http://localhost/', assign })
+        vi.stubGlobal('fetch', vi.fn())
 
         await mount(LanguageSelect).find('select').setValue('en')
 
-        expect(assign).not.toHaveBeenCalled()
+        expect(fetch).not.toHaveBeenCalled()
+        expect(backendFetch).not.toHaveBeenCalled()
     })
 })

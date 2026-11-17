@@ -5,18 +5,18 @@ import IntlMessageFormat from 'intl-messageformat'
  * Admin UI translations.
  *
  * The single source of truth is translations/frontend+intl-icu.<locale>.xlf (Symfony).
- * The server embeds the catalogue for the current locale (already merged with the English
- * fallback) into spa.html.twig as JSON, and sets <html lang>. Messages use ICU MessageFormat,
- * so Twig (`|trans`) and Vue (`t()`) share one syntax:
+ * The server decides the language of each page (the administrator's own choice, remembered in a
+ * cookie; see LocalePreference) and renders it into <html lang>. The app fetches that language's
+ * catalogue from /translations/<locale>.json (already merged with the English fallback), and
+ * again whenever the header selector changes the language.
+ * Messages use ICU MessageFormat, so Twig (`|trans`) and Vue (`t()`) share one syntax:
  *
  *   XLIFF target: {count, plural, one {# subscriber} other {# subscribers}}
  *   Vue:          t(key, { count: 3 })      Twig: key|trans({count: 3})
  */
 
 export const DEFAULT_LOCALE = 'en'
-const MESSAGES_ELEMENT_ID = 'i18n-messages'
 const LOCALES_ELEMENT_ID = 'i18n-locales'
-export const LOCALE_QUERY_PARAM = '_locale'
 
 /**
  * vue-i18n message compiler that formats messages with ICU MessageFormat instead of
@@ -42,23 +42,6 @@ export function icuMessageCompiler(message, { locale, key, onError }) {
     }
 }
 
-export function readLocale(doc = document) {
-    return doc.documentElement.getAttribute('lang') || DEFAULT_LOCALE
-}
-
-export function readMessages(doc = document) {
-    const element = doc.getElementById(MESSAGES_ELEMENT_ID)
-    if (!element) {
-        return {}
-    }
-
-    try {
-        return JSON.parse(element.textContent || '{}')
-    } catch {
-        return {}
-    }
-}
-
 /** Languages offered by the language selector, as { code: nativeName }. */
 export function readAvailableLocales(doc = document) {
     try {
@@ -68,32 +51,38 @@ export function readAvailableLocales(doc = document) {
     }
 }
 
-/**
- * URL of the current page in another language. The server stores the choice in the session,
- * so the parameter is only needed for this one navigation.
- */
-export function localeUrl(locale, href = window.location.href) {
-    const url = new URL(href)
-    url.searchParams.set(LOCALE_QUERY_PARAM, locale)
-    return url.pathname + url.search + url.hash
+/** The language the server rendered the page in (<html lang>), English if missing or not offered. */
+export function readLocale(doc = document, available = readAvailableLocales(doc)) {
+    const lang = doc.documentElement.getAttribute('lang') || ''
+    const code = Object.keys(available).find((locale) => locale.toLowerCase() === lang.toLowerCase())
+
+    return code || DEFAULT_LOCALE
 }
 
-/** Removes `?_locale=` from the address bar once the server has applied (and remembered) it. */
-export function stripLocaleParam(win = window) {
-    const url = new URL(win.location.href)
-    if (url.searchParams.has(LOCALE_QUERY_PARAM)) {
-        url.searchParams.delete(LOCALE_QUERY_PARAM)
-        win.history.replaceState(win.history.state, '', url.pathname + url.search + url.hash)
+/** Fetches the catalogue ({ key: ICU message }) for a language. Returns {} on failure. */
+export async function loadMessages(locale, fetchFn = (...args) => window.fetch(...args)) {
+    try {
+        const response = await fetchFn(`/translations/${encodeURIComponent(locale)}.json`, {
+            headers: { Accept: 'application/json' },
+            credentials: 'same-origin',
+        })
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`)
+        }
+        return await response.json()
+    } catch (error) {
+        console.error(`Failed to load "${locale}" translations:`, error)
+        return {}
     }
 }
 
-export function createAppI18n({ locale = readLocale(), messages = readMessages() } = {}) {
+export function createAppI18n({ locale = DEFAULT_LOCALE, messages = {} } = {}) {
     return createI18n({
         legacy: false,
         locale,
-        // The server has already merged the English fallback into `messages`,
+        // The server has already merged the English fallback into each catalogue,
         // so there is no second catalogue to fall back to on the client.
-        fallbackLocale: locale,
+        fallbackLocale: false,
         messages: { [locale]: messages },
         messageCompiler: icuMessageCompiler,
         missingWarn: process.env.NODE_ENV !== 'production',

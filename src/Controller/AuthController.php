@@ -11,7 +11,6 @@ use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
-use PhpList\RestApiClient\Exception\AuthorizationException;
 use PhpList\WebFrontend\Service\AuthenticationService;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
@@ -251,8 +250,9 @@ class AuthController extends AbstractController
     {
         try {
             $request->getSession()->set('admin_id', $this->authClient->getSessionUser()->id);
-        } catch (ApiException | AuthenticationException | AuthorizationException $e) {
-            // Best effort: without it the browser's last-used language applies.
+        } catch (Exception $e) {
+            // Best effort (API errors, or a response that cannot be parsed): it must never fail a login that
+            // already succeeded. Without the id the browser's last-used language applies.
             $this->logger->warning('Unable to load the administrator id after login: ' . $e->getMessage());
         }
     }

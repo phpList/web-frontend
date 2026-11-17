@@ -674,4 +674,28 @@ class AuthControllerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertNotContains('admin_id', $stored);
     }
+
+    public function testLoginStillSucceedsWhenTheAdministratorResponseCannotBeParsed(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->willReturnMap([['auth_token', false], ['login_error', false]]);
+
+        $stored = [];
+        $session->method('set')->willReturnCallback(function ($key) use (&$stored) {
+            $stored[] = $key;
+        });
+
+        $request = Request::create('/login', 'POST', ['username' => 'testuser', 'password' => 'testpass']);
+        $request->setSession($session);
+
+        $this->authClient->method('login')
+            ->willReturn(['key' => 'test-token', 'id' => 1, 'expiry_date' => '2026-03-18T14:15:38+04:00']);
+        $this->authClient->method('getSessionUser')->willThrowException(new \UnexpectedValueException('bad payload'));
+
+        $response = $this->controller->login($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertContains('auth_token', $stored);
+        $this->assertNotContains('admin_id', $stored);
+    }
 }

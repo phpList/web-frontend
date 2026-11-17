@@ -64,8 +64,8 @@ export const LOAD_TIMEOUT_MS = 8000
 
 /**
  * Fetches the catalogue ({ key: ICU message }) for a language.
- * Never rejects and never hangs: returns {} on failure or after `timeoutMs`, in which case
- * messages render as their keys until a later load succeeds.
+ * Never rejects and never hangs: returns null on failure or after `timeoutMs`, so callers can tell a
+ * failed load from a genuinely empty catalogue ({}).
  */
 export async function loadMessages(locale, fetchFn = (...args) => window.fetch(...args), timeoutMs = LOAD_TIMEOUT_MS) {
     const controller = new AbortController()
@@ -94,7 +94,7 @@ export async function loadMessages(locale, fetchFn = (...args) => window.fetch(.
         ])
     } catch (error) {
         console.error(`Failed to load "${locale}" translations:`, error)
-        return {}
+        return null
     } finally {
         clearTimeout(timer)
     }

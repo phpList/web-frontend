@@ -77,18 +77,18 @@ describe('i18n', () => {
             expect(fetchFn).toHaveBeenCalledWith('/translations/es.json', expect.objectContaining({ credentials: 'same-origin' }))
         })
 
-        it('returns no messages when the request fails', async () => {
+        it('returns null when the request fails', async () => {
             vi.spyOn(console, 'error').mockImplementation(() => {})
 
-            await expect(loadMessages('es', vi.fn().mockResolvedValue({ ok: false, status: 500 }))).resolves.toEqual({})
-            await expect(loadMessages('es', vi.fn().mockRejectedValue(new Error('offline')))).resolves.toEqual({})
+            await expect(loadMessages('es', vi.fn().mockResolvedValue({ ok: false, status: 500 }))).resolves.toBeNull()
+            await expect(loadMessages('es', vi.fn().mockRejectedValue(new Error('offline')))).resolves.toBeNull()
         })
 
-        it('gives up with no messages when the request stalls', async () => {
+        it('gives up with null when the request stalls', async () => {
             vi.spyOn(console, 'error').mockImplementation(() => {})
             const stalled = vi.fn(() => new Promise(() => {}))
 
-            await expect(loadMessages('es', stalled, 20)).resolves.toEqual({})
+            await expect(loadMessages('es', stalled, 20)).resolves.toBeNull()
             expect(stalled.mock.calls[0][1].signal.aborted).toBe(true)
         })
     })

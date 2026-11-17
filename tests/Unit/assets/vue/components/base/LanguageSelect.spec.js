@@ -132,4 +132,21 @@ describe('LanguageSelect', () => {
         await flushPromises()
         expect(i18n.global.locale.value).toBe('en')
     })
+
+    it('keeps the current language and does not save when the catalogue fails to load', async () => {
+        setLocales({ en: 'English', es: 'Español' })
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
+        vi.spyOn(console, 'error').mockImplementation(() => {})
+        const i18n = createAppI18n({ locale: 'en', messages: { 'language.label': 'Language' } })
+
+        const wrapper = mount(LanguageSelect, { global: { plugins: [i18n] } })
+        await wrapper.find('select').setValue('es')
+        await flushPromises()
+
+        expect(i18n.global.locale.value).toBe('en')
+        expect(i18n.global.getLocaleMessage('en')).toEqual({ 'language.label': 'Language' })
+        expect(i18n.global.getLocaleMessage('es')).toEqual({})
+        expect(wrapper.find('select').element.value).toBe('en')
+        expect(backendFetch).not.toHaveBeenCalled()
+    })
 })

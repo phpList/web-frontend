@@ -10,7 +10,9 @@ if (appElement) {
     // The server renders the page in the administrator's language and states it in <html lang>.
     const locale = readLocale();
 
-    loadMessages(locale).then((messages) => {
+    loadMessages(locale).then((loaded) => {
+        // If the catalogue could not be loaded the app still mounts; strings show as their keys.
+        const messages = loaded ?? {};
         const app = createApp(App);
         app.use(router);
         app.use(createAppI18n({ locale, messages }));

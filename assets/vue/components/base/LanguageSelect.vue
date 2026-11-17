@@ -53,6 +53,11 @@ const changeLocale = async (event) => {
   if (request !== latestRequest) {
     return
   }
+  if (messages === null) {
+    // The catalogue could not be loaded: keep the current language and catalogue, and show it again.
+    event.target.value = locale.value
+    return
+  }
   setLocaleMessage(next, messages)
   locale.value = next
   document.documentElement.setAttribute('lang', next)

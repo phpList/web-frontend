@@ -33,6 +33,9 @@ class ApiSessionListener implements EventSubscriberInterface
             return;
         }
 
+        // TODO: pass the resolved UI locale ($request->getLocale(), set by LocaleSubscriber) to the REST API
+        //  (e.g. an Accept-Language header on every request made by $this->apiClient) so the data it returns
+        //  can be translated into the administrator's language too. Needs support in rest-api-client and rest-api.
         $session = $request->getSession();
         $authToken = $session->get('auth_token');
 

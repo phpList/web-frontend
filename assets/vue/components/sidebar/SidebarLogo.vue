@@ -4,7 +4,7 @@
       <img
           class="w-full h-full max-w-full h-auto block"
           :src="logo"
-          alt="Logo"
+          :alt="t('sidebar.logo_alt')"
           style="object-fit: contain;"
       />
     </div>
@@ -14,6 +14,9 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import logo from '../../../images/logo-48.png'
+
+const { t } = useI18n()
 
 </script>

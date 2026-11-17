@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Source catalogue for all admin UI strings (Twig templates and Vue components).
+
+  - Keys are namespaced ids (area.element.purpose), never English sentences.
+  - Values use ICU MessageFormat: {name} placeholders, {count, plural, one {...} other {...}}.
+    A literal { or } must be quoted: '{'  '}'
+  - Every new string is added here first; other languages fall back to English.
+-->
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="en" datatype="plaintext" original="frontend">
+    <body>
+      <!-- Sidebar -->
+      <trans-unit id="sidebar.section.general" resname="sidebar.section.general">
+        <source>sidebar.section.general</source>
+        <target>General</target>
+      </trans-unit>
+      <trans-unit id="sidebar.section.marketing" resname="sidebar.section.marketing">
+        <source>sidebar.section.marketing</source>
+        <target>Marketing</target>
+      </trans-unit>
+      <trans-unit id="sidebar.section.reports" resname="sidebar.section.reports">
+        <source>sidebar.section.reports</source>
+        <target>Reports</target>
+      </trans-unit>
+      <trans-unit id="sidebar.section.system" resname="sidebar.section.system">
+        <source>sidebar.section.system</source>
+        <target>System</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.dashboard" resname="sidebar.nav.dashboard">
+        <source>sidebar.nav.dashboard</source>
+        <target>Dashboard</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.subscribers" resname="sidebar.nav.subscribers">
+        <source>sidebar.nav.subscribers</source>
+        <target>Subscribers</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.lists" resname="sidebar.nav.lists">
+        <source>sidebar.nav.lists</source>
+        <target>Lists</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.campaigns" resname="sidebar.nav.campaigns">
+        <source>sidebar.nav.campaigns</source>
+        <target>Campaigns</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.stuck_campaigns" resname="sidebar.nav.stuck_campaigns">
+        <source>sidebar.nav.stuck_campaigns</source>
+        <target>Stuck Campaigns</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.templates" resname="sidebar.nav.templates">
+        <source>sidebar.nav.templates</source>
+        <target>Templates</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.bounces" resname="sidebar.nav.bounces">
+        <source>sidebar.nav.bounces</source>
+        <target>Bounces</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.analytics" resname="sidebar.nav.analytics">
+        <source>sidebar.nav.analytics</source>
+        <target>Analytics</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.settings" resname="sidebar.nav.settings">
+        <source>sidebar.nav.settings</source>
+        <target>Settings</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.public_pages" resname="sidebar.nav.public_pages">
+        <source>sidebar.nav.public_pages</source>
+        <target>Public pages</target>
+      </trans-unit>
+      <trans-unit id="sidebar.collapse" resname="sidebar.collapse">
+        <source>sidebar.collapse</source>
+        <target>Collapse sidebar</target>
+      </trans-unit>
+      <trans-unit id="sidebar.expand" resname="sidebar.expand">
+        <source>sidebar.expand</source>
+        <target>Expand sidebar</target>
+      </trans-unit>
+      <trans-unit id="sidebar.close" resname="sidebar.close">
+        <source>sidebar.close</source>
+        <target>Close sidebar</target>
+      </trans-unit>
+      <trans-unit id="sidebar.logo_alt" resname="sidebar.logo_alt">
+        <source>sidebar.logo_alt</source>
+        <target>Logo</target>
+      </trans-unit>
+      <trans-unit id="sidebar.admin_fallback" resname="sidebar.admin_fallback">
+        <source>sidebar.admin_fallback</source>
+        <target>Admin User</target>
+      </trans-unit>
+      <trans-unit id="sidebar.role.super_admin" resname="sidebar.role.super_admin">
+        <source>sidebar.role.super_admin</source>
+        <target>Super Admin</target>
+      </trans-unit>
+      <trans-unit id="sidebar.role.administrator" resname="sidebar.role.administrator">
+        <source>sidebar.role.administrator</source>
+        <target>Administrator</target>
+      </trans-unit>
+      <trans-unit id="sidebar.logout" resname="sidebar.logout">
+        <source>sidebar.logout</source>
+        <target>Logout</target>
+      </trans-unit>
+
+      <!-- Login page -->
+      <trans-unit id="auth.login.page_title" resname="auth.login.page_title">
+        <source>auth.login.page_title</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="auth.login.logo_alt" resname="auth.login.logo_alt">
+        <source>auth.login.logo_alt</source>
+        <target>phpList icon</target>
+      </trans-unit>
+      <trans-unit id="auth.login.heading" resname="auth.login.heading">
+        <source>auth.login.heading</source>
+        <target>Sign in to your account</target>
+      </trans-unit>
+      <trans-unit id="auth.login.intro" resname="auth.login.intro">
+        <source>auth.login.intro</source>
+        <target>Enter your credentials to access your dashboard.</target>
+      </trans-unit>
+      <trans-unit id="auth.login.username" resname="auth.login.username">
+        <source>auth.login.username</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="auth.login.password" resname="auth.login.password">
+        <source>auth.login.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="auth.login.forgot_password" resname="auth.login.forgot_password">
+        <source>auth.login.forgot_password</source>
+        <target>Forgot password?</target>
+      </trans-unit>
+      <trans-unit id="auth.login.show_password" resname="auth.login.show_password">
+        <source>auth.login.show_password</source>
+        <target>Show password</target>
+      </trans-unit>
+      <trans-unit id="auth.login.hide_password" resname="auth.login.hide_password">
+        <source>auth.login.hide_password</source>
+        <target>Hide password</target>
+      </trans-unit>
+      <trans-unit id="auth.login.submit" resname="auth.login.submit">
+        <source>auth.login.submit</source>
+        <target>Sign In</target>
+      </trans-unit>
+      <trans-unit id="auth.login.restricted" resname="auth.login.restricted">
+        <source>auth.login.restricted</source>
+        <target>Access is restricted to authorised administrators only.</target>
+      </trans-unit>
+      <trans-unit id="auth.footer.documentation" resname="auth.footer.documentation">
+        <source>auth.footer.documentation</source>
+        <target>Documentation</target>
+      </trans-unit>
+      <trans-unit id="auth.footer.support_forum" resname="auth.footer.support_forum">
+        <source>auth.footer.support_forum</source>
+        <target>Support Forum</target>
+      </trans-unit>
+      <trans-unit id="auth.footer.version" resname="auth.footer.version">
+        <source>auth.footer.version</source>
+        <target>phpList v{version}</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

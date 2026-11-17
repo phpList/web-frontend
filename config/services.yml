@@ -1,4 +1,9 @@
 # config/services.yaml
+parameters:
+  # UI languages offered by the admin frontend. Each needs a translations/frontend+intl-icu.<locale>.xlf file.
+  # The first entry is used when the browser asks for none of them.
+  phplist_frontend.locales: ['en', 'es']
+
 services:
   _defaults:
     autowire: true
@@ -37,3 +42,10 @@ services:
 
   PhpList\WebFrontend\Twig\HtmlCleanupExtension:
     tags: [ 'twig.extension' ]
+
+  PhpList\WebFrontend\Twig\TranslationsExtension:
+    tags: [ 'twig.extension' ]
+
+  PhpList\WebFrontend\EventSubscriber\LocaleSubscriber:
+    arguments:
+      $supportedLocales: '%phplist_frontend.locales%'

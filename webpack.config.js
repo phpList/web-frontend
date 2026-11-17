@@ -16,6 +16,12 @@ Encore
     .addStyleEntry('color', './assets/styles/color.css')
     .addStyleEntry('subscribe', './assets/styles/subscribe.css')
     .enableVueLoader(() => {}, { version: 3 })
+    // vue-i18n esm-bundler feature flags: Composition API only, no devtools in production.
+    .configureDefinePlugin((options) => {
+        options.__VUE_I18N_FULL_INSTALL__ = JSON.stringify(true);
+        options.__VUE_I18N_LEGACY_API__ = JSON.stringify(false);
+        options.__INTLIFY_PROD_DEVTOOLS__ = JSON.stringify(false);
+    })
     .enableSingleRuntimeChunk()
     .enablePostCssLoader()
     .enableVersioning(Encore.isProduction())

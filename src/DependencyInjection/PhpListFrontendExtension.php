@@ -46,6 +46,11 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
         ]);
 
         $container->prependExtensionConfig('framework', [
+            // The kernel's translator only scans core's resources; register this bundle's catalogues
+            // (frontend+intl-icu.<locale>.xlf for the admin UI, public.<locale>.phplist for legacy texts).
+            'translator' => [
+                'paths' => [$bundlePath . '/translations'],
+            ],
             'assets' => [
                 'packages' => [
                     self::ASSET_PACKAGE_NAME => [

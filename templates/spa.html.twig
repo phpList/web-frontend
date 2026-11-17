@@ -7,4 +7,6 @@
          data-api-token="{{ app.session.get('auth_token')|default('') }}"
          data-bounce-actions="{{ bounce_actions|default({})|json_encode|e('html_attr') }}">
     </div>
+    {# Admin UI strings for the current locale (with English fallback), consumed by assets/vue/i18n.js #}
+    <script type="application/json" id="i18n-messages">{{ frontend_messages_json() }}</script>
 {% endblock %}

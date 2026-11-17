@@ -76,13 +76,14 @@ class PhpListTranslationLoader implements LoaderInterface
             'fr' => 'french.inc',
         ];
 
-        return $map[$baseLocale] ?? 'english.php';
+        return $map[$baseLocale] ?? 'english.inc';
     }
 }
 
-// USAGE
+// USAGE (legacy phpList 3 subscriber texts, loaded via translations/public.<locale>.phplist
+// into the `public` domain so they stay separate from the admin UI's `frontend` domain)
 // If the file contains $strPleaseEnter
-//    <label>{{ 'strPleaseEnter'|trans }}</label>
+//    <label>{{ 'strPleaseEnter'|trans({}, 'public') }}</label>
 //
 // If the file contains $lan['money']
-//    <p>{{ 'lan.money'|trans }}</p>
+//    <p>{{ 'lan.money'|trans({}, 'public') }}</p>

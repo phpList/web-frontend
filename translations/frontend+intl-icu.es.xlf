@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Spanish admin UI strings. Missing keys fall back to English (frontend+intl-icu.en.xlf). -->
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="es" datatype="plaintext" original="frontend">
+    <body>
+      <!-- Sidebar -->
+      <trans-unit id="sidebar.section.general" resname="sidebar.section.general">
+        <source>sidebar.section.general</source>
+        <target>General</target>
+      </trans-unit>
+      <trans-unit id="sidebar.section.marketing" resname="sidebar.section.marketing">
+        <source>sidebar.section.marketing</source>
+        <target>Marketing</target>
+      </trans-unit>
+      <trans-unit id="sidebar.section.reports" resname="sidebar.section.reports">
+        <source>sidebar.section.reports</source>
+        <target>Informes</target>
+      </trans-unit>
+      <trans-unit id="sidebar.section.system" resname="sidebar.section.system">
+        <source>sidebar.section.system</source>
+        <target>Sistema</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.dashboard" resname="sidebar.nav.dashboard">
+        <source>sidebar.nav.dashboard</source>
+        <target>Panel</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.subscribers" resname="sidebar.nav.subscribers">
+        <source>sidebar.nav.subscribers</source>
+        <target>Suscriptores</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.lists" resname="sidebar.nav.lists">
+        <source>sidebar.nav.lists</source>
+        <target>Listas</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.campaigns" resname="sidebar.nav.campaigns">
+        <source>sidebar.nav.campaigns</source>
+        <target>Campañas</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.stuck_campaigns" resname="sidebar.nav.stuck_campaigns">
+        <source>sidebar.nav.stuck_campaigns</source>
+        <target>Campañas bloqueadas</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.templates" resname="sidebar.nav.templates">
+        <source>sidebar.nav.templates</source>
+        <target>Plantillas</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.bounces" resname="sidebar.nav.bounces">
+        <source>sidebar.nav.bounces</source>
+        <target>Rebotes</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.analytics" resname="sidebar.nav.analytics">
+        <source>sidebar.nav.analytics</source>
+        <target>Analíticas</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.settings" resname="sidebar.nav.settings">
+        <source>sidebar.nav.settings</source>
+        <target>Configuración</target>
+      </trans-unit>
+      <trans-unit id="sidebar.nav.public_pages" resname="sidebar.nav.public_pages">
+        <source>sidebar.nav.public_pages</source>
+        <target>Páginas públicas</target>
+      </trans-unit>
+      <trans-unit id="sidebar.collapse" resname="sidebar.collapse">
+        <source>sidebar.collapse</source>
+        <target>Contraer barra lateral</target>
+      </trans-unit>
+      <trans-unit id="sidebar.expand" resname="sidebar.expand">
+        <source>sidebar.expand</source>
+        <target>Expandir barra lateral</target>
+      </trans-unit>
+      <trans-unit id="sidebar.close" resname="sidebar.close">
+        <source>sidebar.close</source>
+        <target>Cerrar barra lateral</target>
+      </trans-unit>
+      <trans-unit id="sidebar.logo_alt" resname="sidebar.logo_alt">
+        <source>sidebar.logo_alt</source>
+        <target>Logotipo</target>
+      </trans-unit>
+      <trans-unit id="sidebar.admin_fallback" resname="sidebar.admin_fallback">
+        <source>sidebar.admin_fallback</source>
+        <target>Usuario administrador</target>
+      </trans-unit>
+      <trans-unit id="sidebar.role.super_admin" resname="sidebar.role.super_admin">
+        <source>sidebar.role.super_admin</source>
+        <target>Superadministrador</target>
+      </trans-unit>
+      <trans-unit id="sidebar.role.administrator" resname="sidebar.role.administrator">
+        <source>sidebar.role.administrator</source>
+        <target>Administrador</target>
+      </trans-unit>
+      <trans-unit id="sidebar.logout" resname="sidebar.logout">
+        <source>sidebar.logout</source>
+        <target>Cerrar sesión</target>
+      </trans-unit>
+
+      <!-- Login page -->
+      <trans-unit id="auth.login.page_title" resname="auth.login.page_title">
+        <source>auth.login.page_title</source>
+        <target>Iniciar sesión</target>
+      </trans-unit>
+      <trans-unit id="auth.login.logo_alt" resname="auth.login.logo_alt">
+        <source>auth.login.logo_alt</source>
+        <target>Icono de phpList</target>
+      </trans-unit>
+      <trans-unit id="auth.login.heading" resname="auth.login.heading">
+        <source>auth.login.heading</source>
+        <target>Inicia sesión en tu cuenta</target>
+      </trans-unit>
+      <trans-unit id="auth.login.intro" resname="auth.login.intro">
+        <source>auth.login.intro</source>
+        <target>Introduce tus credenciales para acceder a tu panel.</target>
+      </trans-unit>
+      <trans-unit id="auth.login.username" resname="auth.login.username">
+        <source>auth.login.username</source>
+        <target>Usuario</target>
+      </trans-unit>
+      <trans-unit id="auth.login.password" resname="auth.login.password">
+        <source>auth.login.password</source>
+        <target>Contraseña</target>
+      </trans-unit>
+      <trans-unit id="auth.login.forgot_password" resname="auth.login.forgot_password">
+        <source>auth.login.forgot_password</source>
+        <target>¿Olvidaste tu contraseña?</target>
+      </trans-unit>
+      <trans-unit id="auth.login.show_password" resname="auth.login.show_password">
+        <source>auth.login.show_password</source>
+        <target>Mostrar contraseña</target>
+      </trans-unit>
+      <trans-unit id="auth.login.hide_password" resname="auth.login.hide_password">
+        <source>auth.login.hide_password</source>
+        <target>Ocultar contraseña</target>
+      </trans-unit>
+      <trans-unit id="auth.login.submit" resname="auth.login.submit">
+        <source>auth.login.submit</source>
+        <target>Iniciar sesión</target>
+      </trans-unit>
+      <trans-unit id="auth.login.restricted" resname="auth.login.restricted">
+        <source>auth.login.restricted</source>
+        <target>El acceso está restringido a administradores autorizados.</target>
+      </trans-unit>
+      <trans-unit id="auth.footer.documentation" resname="auth.footer.documentation">
+        <source>auth.footer.documentation</source>
+        <target>Documentación</target>
+      </trans-unit>
+      <trans-unit id="auth.footer.support_forum" resname="auth.footer.support_forum">
+        <source>auth.footer.support_forum</source>
+        <target>Foro de soporte</target>
+      </trans-unit>
+      <trans-unit id="auth.footer.version" resname="auth.footer.version">
+        <source>auth.footer.version</source>
+        <target>phpList v{version}</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

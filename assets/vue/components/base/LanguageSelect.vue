@@ -35,14 +35,25 @@ const options = computed(() =>
   Object.entries(readAvailableLocales()).map(([code, name]) => ({ code, name }))
 )
 
+let latestRequest = 0
 const changeLocale = async (event) => {
   const next = event.target.value
-  if (!next || next === locale.value) {
+  if (!next) {
+    return
+  }
+
+  const request = ++latestRequest
+  if (next === locale.value) {
+    // Back to the active language: the ticket above already cancels any pending switch.
     return
   }
 
   // Switch in place: no page reload, every translated string re-renders reactively.
-  setLocaleMessage(next, await loadMessages(next))
+  const messages = await loadMessages(next)
+  if (request !== latestRequest) {
+    return
+  }
+  setLocaleMessage(next, messages)
   locale.value = next
   document.documentElement.setAttribute('lang', next)
 

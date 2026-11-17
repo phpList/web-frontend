@@ -89,4 +89,47 @@ describe('LanguageSelect', () => {
         expect(fetch).not.toHaveBeenCalled()
         expect(backendFetch).not.toHaveBeenCalled()
     })
+
+    it('ignores a slow earlier switch when the active language is picked again', async () => {
+        setLocales({ en: 'English', es: 'Español' })
+        let resolveEs
+        vi.stubGlobal('fetch', vi.fn(() => new Promise((resolve) => { resolveEs = resolve })))
+        backendFetch.mockResolvedValue({ ok: true })
+        const i18n = createAppI18n({ locale: 'en', messages: { 'language.label': 'Language' } })
+
+        const wrapper = mount(LanguageSelect, { global: { plugins: [i18n] } })
+        await wrapper.find('select').setValue('es')
+        await wrapper.find('select').setValue('en')
+        resolveEs({ ok: true, json: async () => ({ 'language.label': 'Idioma' }) })
+        await flushPromises()
+
+        expect(i18n.global.locale.value).toBe('en')
+        expect(document.documentElement.getAttribute('lang')).not.toBe('es')
+        expect(backendFetch).not.toHaveBeenCalled()
+    })
+
+    it('lets the newest choice win over an older pending one and works again afterwards', async () => {
+        setLocales({ en: 'English', es: 'Español', fr: 'Français' })
+        const pending = {}
+        vi.stubGlobal('fetch', vi.fn((url) => new Promise((resolve) => { pending[url] = resolve })))
+        backendFetch.mockResolvedValue({ ok: true })
+        const i18n = createAppI18n({ locale: 'en', messages: {} })
+
+        const wrapper = mount(LanguageSelect, { global: { plugins: [i18n] } })
+        await wrapper.find('select').setValue('es')
+        await wrapper.find('select').setValue('fr')
+        pending['/translations/fr.json']({ ok: true, json: async () => ({}) })
+        await flushPromises()
+        pending['/translations/es.json']({ ok: true, json: async () => ({}) })
+        await flushPromises()
+
+        expect(i18n.global.locale.value).toBe('fr')
+        expect(backendFetch).toHaveBeenCalledTimes(1)
+        expect(backendFetch.mock.calls[0][1].body).toBe(JSON.stringify({ locale: 'fr' }))
+
+        await wrapper.find('select').setValue('en')
+        pending['/translations/en.json']({ ok: true, json: async () => ({}) })
+        await flushPromises()
+        expect(i18n.global.locale.value).toBe('en')
+    })
 })

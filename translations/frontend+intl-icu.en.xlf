@@ -157,6 +157,28 @@
         <source>auth.footer.version</source>
         <target>phpList v{version}</target>
       </trans-unit>
+
+      <!-- Dashboard: KPI cards -->
+      <trans-unit id="dashboard.kpi.total_subscribers" resname="dashboard.kpi.total_subscribers">
+        <source>dashboard.kpi.total_subscribers</source>
+        <target>Total Subscribers</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.active_campaigns" resname="dashboard.kpi.active_campaigns">
+        <source>dashboard.kpi.active_campaigns</source>
+        <target>Active Campaigns</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.open_rate" resname="dashboard.kpi.open_rate">
+        <source>dashboard.kpi.open_rate</source>
+        <target>Open Rate</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.bounce_rate" resname="dashboard.kpi.bounce_rate">
+        <source>dashboard.kpi.bounce_rate</source>
+        <target>Bounce Rate</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.change_vs_last_month" resname="dashboard.kpi.change_vs_last_month">
+        <source>dashboard.kpi.change_vs_last_month</source>
+        <target>{change} vs last month</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

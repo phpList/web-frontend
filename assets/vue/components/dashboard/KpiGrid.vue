@@ -29,6 +29,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import KpiCard from './KpiCard.vue'
 
 const props = defineProps({
@@ -46,14 +47,18 @@ const props = defineProps({
   },
 })
 
-const formatNumber = (value) => new Intl.NumberFormat().format(Number(value) || 0)
+const { t, locale } = useI18n()
 
-const formatPercentage = (value) => `${Number(value) || 0}%`
+const formatNumber = (value) => new Intl.NumberFormat(locale.value).format(Number(value) || 0)
+
+const formatPercentage = (value) => `${formatNumber(value)}%`
 
 const formatChange = (value) => {
-  const numericValue = Number(value) || 0
-  const sign = numericValue > 0 ? '+' : ''
-  return `${sign}${numericValue.toFixed(1)}%`
+  return `${new Intl.NumberFormat(locale.value, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    signDisplay: 'exceptZero',
+  }).format(Number(value) || 0)}%`
 }
 
 const toTrend = (value) => ((Number(value) || 0) < 0 ? 'down' : 'up')
@@ -61,7 +66,7 @@ const toTrend = (value) => ((Number(value) || 0) < 0 ? 'down' : 'up')
 const kpis = computed(() => [
   {
     id: 'subscribers',
-    label: 'Total Subscribers',
+    label: t('dashboard.kpi.total_subscribers'),
     value: formatNumber(props.summary?.totalSubscribers?.value),
     change: formatChange(props.summary?.totalSubscribers?.changeVsLastMonth),
     trend: toTrend(props.summary?.totalSubscribers?.changeVsLastMonth),
@@ -69,7 +74,7 @@ const kpis = computed(() => [
   },
   {
     id: 'campaigns',
-    label: 'Active Campaigns',
+    label: t('dashboard.kpi.active_campaigns'),
     value: formatNumber(props.summary?.activeCampaigns?.value),
     change: formatChange(props.summary?.activeCampaigns?.changeVsLastMonth),
     trend: toTrend(props.summary?.activeCampaigns?.changeVsLastMonth),
@@ -77,7 +82,7 @@ const kpis = computed(() => [
   },
   {
     id: 'open-rate',
-    label: 'Open Rate',
+    label: t('dashboard.kpi.open_rate'),
     value: formatPercentage(props.summary?.openRate?.value),
     change: formatChange(props.summary?.openRate?.changeVsLastMonth),
     trend: toTrend(props.summary?.openRate?.changeVsLastMonth),
@@ -85,7 +90,7 @@ const kpis = computed(() => [
   },
   {
     id: 'bounce-rate',
-    label: 'Bounce Rate',
+    label: t('dashboard.kpi.bounce_rate'),
     value: formatPercentage(props.summary?.bounceRate?.value),
     change: formatChange(props.summary?.bounceRate?.changeVsLastMonth),
     trend: toTrend(props.summary?.bounceRate?.changeVsLastMonth),

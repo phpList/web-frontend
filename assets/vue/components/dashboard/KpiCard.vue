@@ -14,15 +14,18 @@
     <p class="mb-1 text-2xl font-bold dark:text-slate-100">{{ value }}</p>
 
     <p class="mb-0 text-sm" :class="trendClass">
-      {{ change }} vs last month
+      {{ t('dashboard.kpi.change_vs_last_month', { change }) }}
     </p>
   </BaseCard>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../../components/base/BaseCard.vue'
 import BaseIcon from '../../components/base/BaseIcon.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
   id: String,

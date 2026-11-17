@@ -59,20 +59,44 @@ export function readLocale(doc = document, available = readAvailableLocales(doc)
     return code || DEFAULT_LOCALE
 }
 
-/** Fetches the catalogue ({ key: ICU message }) for a language. Returns {} on failure. */
-export async function loadMessages(locale, fetchFn = (...args) => window.fetch(...args)) {
+/** How long to wait for a catalogue before giving up, so a stalled request cannot block the app. */
+export const LOAD_TIMEOUT_MS = 8000
+
+/**
+ * Fetches the catalogue ({ key: ICU message }) for a language.
+ * Never rejects and never hangs: returns {} on failure or after `timeoutMs`, in which case
+ * messages render as their keys until a later load succeeds.
+ */
+export async function loadMessages(locale, fetchFn = (...args) => window.fetch(...args), timeoutMs = LOAD_TIMEOUT_MS) {
+    const controller = new AbortController()
+    let timer
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => {
+            controller.abort()
+            reject(new Error(`timed out after ${timeoutMs}ms`))
+        }, timeoutMs)
+    })
+
     try {
-        const response = await fetchFn(`/translations/${encodeURIComponent(locale)}.json`, {
-            headers: { Accept: 'application/json' },
-            credentials: 'same-origin',
-        })
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`)
-        }
-        return await response.json()
+        return await Promise.race([
+            (async () => {
+                const response = await fetchFn(`/translations/${encodeURIComponent(locale)}.json`, {
+                    headers: { Accept: 'application/json' },
+                    credentials: 'same-origin',
+                    signal: controller.signal,
+                })
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`)
+                }
+                return await response.json()
+            })(),
+            timeout,
+        ])
     } catch (error) {
         console.error(`Failed to load "${locale}" translations:`, error)
         return {}
+    } finally {
+        clearTimeout(timer)
     }
 }
 

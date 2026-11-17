@@ -83,5 +83,13 @@ describe('i18n', () => {
             await expect(loadMessages('es', vi.fn().mockResolvedValue({ ok: false, status: 500 }))).resolves.toEqual({})
             await expect(loadMessages('es', vi.fn().mockRejectedValue(new Error('offline')))).resolves.toEqual({})
         })
+
+        it('gives up with no messages when the request stalls', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {})
+            const stalled = vi.fn(() => new Promise(() => {}))
+
+            await expect(loadMessages('es', stalled, 20)).resolves.toEqual({})
+            expect(stalled.mock.calls[0][1].signal.aborted).toBe(true)
+        })
     })
 })

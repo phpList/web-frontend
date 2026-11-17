@@ -61,7 +61,8 @@
         "ext-fileinfo": "*",
         "elasticsearch/elasticsearch": "^8.9",
         "ext-libxml": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-intl": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",

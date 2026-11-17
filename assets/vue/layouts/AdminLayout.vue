@@ -79,6 +79,8 @@
         >
           <BaseIcon :name="isDark ? 'sun' : 'moon'" inherit-color />
         </button>
+
+        <LanguageSelect />
       </div>
     </header>
 
@@ -91,6 +93,7 @@
 
 <script setup>
 import BaseIcon from "../components/base/BaseIcon.vue";
+import LanguageSelect from "../components/base/LanguageSelect.vue";
 import AdminNotifications from "../components/notifications/AdminNotifications.vue";
 import { useSidebar } from "../composables/useSidebar";
 import { useDarkMode } from "../composables/useDarkMode";

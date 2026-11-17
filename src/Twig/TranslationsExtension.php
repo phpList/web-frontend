@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Twig;
 
+use Locale;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -19,15 +20,47 @@ class TranslationsExtension extends AbstractExtension
 {
     public const DOMAIN = 'frontend';
 
-    public function __construct(private readonly TranslatorInterface $translator)
-    {
+    /**
+     * @param string[] $supportedLocales
+     */
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly array $supportedLocales = [],
+    ) {
     }
 
     public function getFunctions(): array
     {
         return [
             new TwigFunction('frontend_messages_json', [$this, 'getMessagesJson'], ['is_safe' => ['html']]),
+            new TwigFunction('frontend_locales', [$this, 'getLocales']),
+            new TwigFunction('frontend_locales_json', [$this, 'getLocalesJson'], ['is_safe' => ['html']]),
         ];
+    }
+
+    /**
+     * Languages offered in the language selector, as [code => name written in that language],
+     * e.g. ['en' => 'English', 'es' => 'Español'].
+     *
+     * @return array<string, string>
+     */
+    public function getLocales(): array
+    {
+        $locales = [];
+        foreach ($this->supportedLocales as $code) {
+            $name = class_exists(Locale::class) ? Locale::getDisplayLanguage($code, $code) : '';
+            $locales[$code] = $name !== '' && $name !== $code ? mb_convert_case($name, MB_CASE_TITLE) : $code;
+        }
+
+        return $locales;
+    }
+
+    public function getLocalesJson(): string
+    {
+        return json_encode(
+            (object) $this->getLocales(),
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+        );
     }
 
     /**

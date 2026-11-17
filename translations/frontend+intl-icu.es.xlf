@@ -172,6 +172,12 @@
         <source>dashboard.kpi.change_vs_last_month</source>
         <target>{change} frente al mes anterior</target>
       </trans-unit>
+
+      <!-- Language selector -->
+      <trans-unit id="language.label" resname="language.label">
+        <source>language.label</source>
+        <target>Idioma</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

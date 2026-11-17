@@ -15,6 +15,8 @@ import IntlMessageFormat from 'intl-messageformat'
 
 export const DEFAULT_LOCALE = 'en'
 const MESSAGES_ELEMENT_ID = 'i18n-messages'
+const LOCALES_ELEMENT_ID = 'i18n-locales'
+export const LOCALE_QUERY_PARAM = '_locale'
 
 /**
  * vue-i18n message compiler that formats messages with ICU MessageFormat instead of
@@ -54,6 +56,34 @@ export function readMessages(doc = document) {
         return JSON.parse(element.textContent || '{}')
     } catch {
         return {}
+    }
+}
+
+/** Languages offered by the language selector, as { code: nativeName }. */
+export function readAvailableLocales(doc = document) {
+    try {
+        return JSON.parse(doc.getElementById(LOCALES_ELEMENT_ID)?.textContent || '{}') || {}
+    } catch {
+        return {}
+    }
+}
+
+/**
+ * URL of the current page in another language. The server stores the choice in the session,
+ * so the parameter is only needed for this one navigation.
+ */
+export function localeUrl(locale, href = window.location.href) {
+    const url = new URL(href)
+    url.searchParams.set(LOCALE_QUERY_PARAM, locale)
+    return url.pathname + url.search + url.hash
+}
+
+/** Removes `?_locale=` from the address bar once the server has applied (and remembered) it. */
+export function stripLocaleParam(win = window) {
+    const url = new URL(win.location.href)
+    if (url.searchParams.has(LOCALE_QUERY_PARAM)) {
+        url.searchParams.delete(LOCALE_QUERY_PARAM)
+        win.history.replaceState(win.history.state, '', url.pathname + url.search + url.hash)
     }
 }
 

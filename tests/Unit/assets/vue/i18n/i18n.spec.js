@@ -1,5 +1,5 @@
-import { describe, it, expect, afterEach } from 'vitest'
-import { createAppI18n, readLocale, readMessages } from '../../../../../assets/vue/i18n'
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import { createAppI18n, readLocale, readMessages, readAvailableLocales, localeUrl, stripLocaleParam } from '../../../../../assets/vue/i18n'
 
 describe('i18n', () => {
     afterEach(() => {
@@ -59,5 +59,31 @@ describe('i18n', () => {
         const { global } = createAppI18n({ locale: 'en', messages: {} })
 
         expect(global.t('does.not.exist')).toBe('does.not.exist')
+    })
+
+    it('reads the languages offered by the server', () => {
+        expect(readAvailableLocales()).toEqual({})
+
+        document.body.innerHTML =
+            '<script type="application/json" id="i18n-locales">{"en":"English","es":"Español"}</script>'
+        expect(readAvailableLocales()).toEqual({ en: 'English', es: 'Español' })
+    })
+
+    it('builds a same-page URL in another language, keeping query and hash', () => {
+        expect(localeUrl('es', 'http://x.test/lists?page=2#a')).toBe('/lists?page=2&_locale=es#a')
+        expect(localeUrl('es', 'http://x.test/?_locale=en')).toBe('/?_locale=es')
+    })
+
+    it('removes the locale parameter from the address bar', () => {
+        const replaceState = vi.fn()
+        const win = { location: { href: 'http://x.test/lists?page=2&_locale=es#a' }, history: { state: { s: 1 }, replaceState } }
+
+        stripLocaleParam(win)
+        expect(replaceState).toHaveBeenCalledWith({ s: 1 }, '', '/lists?page=2#a')
+
+        replaceState.mockClear()
+        win.location.href = 'http://x.test/lists'
+        stripLocaleParam(win)
+        expect(replaceState).not.toHaveBeenCalled()
     })
 })

@@ -97,4 +97,20 @@ class TranslationsExtensionTest extends TestCase
 
         return $translator;
     }
+
+    public function testListsSupportedLocalesNamedInTheirOwnLanguage(): void
+    {
+        $extension = new TranslationsExtension($this->createTranslator('en'), ['en', 'es']);
+
+        $this->assertSame(['en' => 'English', 'es' => 'Español'], $extension->getLocales());
+        $this->assertSame('{"en":"English","es":"Español"}', $extension->getLocalesJson());
+    }
+
+    public function testNoLocalesWithoutConfiguration(): void
+    {
+        $extension = new TranslationsExtension($this->createTranslator('en'));
+
+        $this->assertSame([], $extension->getLocales());
+        $this->assertSame('{}', $extension->getLocalesJson());
+    }
 }

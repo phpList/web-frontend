@@ -45,6 +45,8 @@ services:
 
   PhpList\WebFrontend\Twig\TranslationsExtension:
     tags: [ 'twig.extension' ]
+    arguments:
+      $supportedLocales: '%phplist_frontend.locales%'
 
   PhpList\WebFrontend\EventSubscriber\LocaleSubscriber:
     arguments:

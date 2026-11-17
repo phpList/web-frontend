@@ -9,4 +9,6 @@
     </div>
     {# Admin UI strings for the current locale (with English fallback), consumed by assets/vue/i18n.js #}
     <script type="application/json" id="i18n-messages">{{ frontend_messages_json() }}</script>
+    {# Languages offered by the language selector: {"en": "English", "es": "Español"} #}
+    <script type="application/json" id="i18n-locales">{{ frontend_locales_json() }}</script>
 {% endblock %}

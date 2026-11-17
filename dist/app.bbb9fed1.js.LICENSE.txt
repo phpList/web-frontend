@@ -1,4 +1,10 @@
 /*!
+  * shared v10.0.8
+  * (c) 2025 kazuya kawaguchi
+  * Released under the MIT License.
+  */
+
+/*!
  * vue-router v4.6.4
  * (c) 2025 Eduardo San Martin Morote
  * @license MIT

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Integration\Controller;
 
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use PHPUnitRetry\RetryAnnotationTrait;
 use PHPUnitRetry\RetryTrait;
 use Symfony\Component\Panther\Client;
@@ -77,6 +78,8 @@ class PublicPagesControllerPantherTest extends PantherTestCase
             throw $e;
         }
 
+        // The server renders a placeholder title; the Vue router sets the final one after it mounts.
+        $client->wait(10)->until(WebDriverExpectedCondition::titleContains('phpList - Public Pages'));
         $this->assertPageTitleContains('phpList - Public Pages');
         $this->assertSelectorExists('#vue-app');
     }

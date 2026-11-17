@@ -17,6 +17,7 @@ class AuthenticationService
     public function storeAuthentication(Request $request, array $authData): void
     {
         $session = $request->getSession();
+        $session->migrate(true);
 
         $session->set('auth_token', $authData['key']);
         $session->set('auth_expiry_date', $authData['expiry_date']);

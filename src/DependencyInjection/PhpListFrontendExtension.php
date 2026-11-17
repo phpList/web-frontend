@@ -62,6 +62,10 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
         ]);
 
         $container->prependExtensionConfig('security', [
+            // SessionAuthenticator re-authenticates from the session on every request. Migrating the session id
+            // each time would destroy the id that concurrent requests (XHR + navigation) still carry and log the
+            // user out. The session is migrated once at login instead (AuthenticationService::storeAuthentication).
+            'session_fixation_strategy' => 'none',
             'providers' => [
                 'in_memory' => ['memory' => null],
             ],

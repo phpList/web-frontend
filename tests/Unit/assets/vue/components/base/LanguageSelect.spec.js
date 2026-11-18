@@ -29,7 +29,7 @@ describe('LanguageSelect', () => {
         const options = wrapper.findAll('option')
 
         expect(options.map((o) => o.attributes('value'))).toEqual(['en', 'es'])
-        expect(options.map((o) => o.text())).toEqual(['English', 'Español'])
+        expect(options.map((o) => o.text())).toEqual(['🇬🇧 English', '🇪🇸 Español'])
         expect(wrapper.find('select').element.value).toBe('en')
         expect(wrapper.find('label').text()).toBe('Language')
     })

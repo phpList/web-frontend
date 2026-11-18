@@ -1,10 +1,15 @@
 <template>
-  <div v-if="options.length > 1" class="relative">
+  <div v-if="options.length > 1" class="relative flex items-center">
     <label class="sr-only" :for="selectId">{{ t('language.label') }}</label>
+    <span
+      class="sm:hidden flex items-center justify-center rounded-lg border border-slate-400/40 dark:border-slate-700 px-2 py-1.5 text-base leading-none"
+      aria-hidden="true"
+      data-testid="language-flag"
+    >{{ currentFlag }}</span>
     <select
       :id="selectId"
       :value="locale"
-      class="appearance-none cursor-pointer rounded-lg bg-transparent py-2 pl-3 pr-7 text-xs font-semibold text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white border border-slate-400/40 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+      class="max-sm:absolute max-sm:inset-0 max-sm:h-full max-sm:w-full max-sm:opacity-0 appearance-none cursor-pointer rounded-lg bg-transparent py-2 pl-3 pr-7 text-xs font-semibold text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white border border-slate-400/40 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       :title="t('language.label')"
       data-testid="language-select"
       @change="changeLocale"
@@ -15,7 +20,7 @@
         :value="option.code"
         class="text-slate-900"
       >
-        {{ option.name }}
+        {{ option.flag }} {{ option.name }}
       </option>
     </select>
   </div>
@@ -31,9 +36,28 @@ const { t, locale, setLocaleMessage } = useI18n()
 
 const selectId = 'language-select'
 
+// Language code => ISO country code of the flag shown for it.
+const FLAG_COUNTRIES = {
+  en: 'GB', es: 'ES', de: 'DE', fr: 'FR', it: 'IT', pt: 'PT', 'pt-br': 'BR', nl: 'NL', pl: 'PL',
+  ru: 'RU', uk: 'UA', tr: 'TR', ja: 'JP', zh: 'CN', ko: 'KR', ar: 'SA', cs: 'CZ', sv: 'SE',
+  da: 'DK', fi: 'FI', nb: 'NO', no: 'NO', el: 'GR', hu: 'HU', ro: 'RO', bg: 'BG', hr: 'HR',
+  sk: 'SK', sl: 'SI', he: 'IL', hi: 'IN', id: 'ID', vi: 'VN', th: 'TH', ca: 'ES',
+}
+
+const flagFor = (code) => {
+  const lower = code.toLowerCase()
+  const country = FLAG_COUNTRIES[lower] || FLAG_COUNTRIES[lower.split(/[-_]/)[0]]
+  if (!country) {
+    return '\u{1F310}'
+  }
+  return [...country].map((char) => String.fromCodePoint(0x1f1e6 + char.charCodeAt(0) - 65)).join('')
+}
+
 const options = computed(() =>
-  Object.entries(readAvailableLocales()).map(([code, name]) => ({ code, name }))
+  Object.entries(readAvailableLocales()).map(([code, name]) => ({ code, name, flag: flagFor(code) }))
 )
+
+const currentFlag = computed(() => flagFor(locale.value))
 
 let latestRequest = 0
 const changeLocale = async (event) => {

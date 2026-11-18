@@ -65,7 +65,7 @@
 
         <button
             type="button"
-            class="p-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white transition-colors"
+            class="flex items-center justify-center p-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white transition-colors"
             :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
             @click="toggleDarkMode"
         >

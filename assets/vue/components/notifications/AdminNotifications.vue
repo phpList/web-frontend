@@ -1,8 +1,8 @@
 <template>
-  <div ref="root" class="relative" data-testid="admin-notifications">
+  <div ref="root" class="relative flex items-center" data-testid="admin-notifications">
     <button
       type="button"
-      class="relative p-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200 transition-colors"
+      class="relative flex items-center justify-center p-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200 transition-colors"
       :aria-label="unread ? `Notifications (${unread} unread)` : 'Notifications'"
       aria-haspopup="true"
       :aria-expanded="open"

@@ -2,8 +2,8 @@
 <template>
   <div class="flex flex-col flex-1">
     <!-- Topbar -->
-    <header class="h-16 bg-slate-500 dark:bg-slate-950 border-b border-slate-600 dark:border-slate-800 flex items-center justify-between gap-6 px-6 shrink-0 sticky top-0 z-30">
-      <div class="flex items-center gap-4 flex-1">
+    <header class="h-16 bg-slate-500 dark:bg-slate-950 border-b border-slate-600 dark:border-slate-800 flex items-center justify-between gap-2 sm:gap-6 px-3 sm:px-6 shrink-0 sticky top-0 z-30">
+      <div class="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
         <button
             class="lg:hidden p-2 -ml-2 text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-white transition-colors"
             @click="openSidebar"
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+      <div class="flex items-center gap-1 sm:gap-5 shrink-0">
         <AdminNotifications />
 
         <button

@@ -1,13 +1,13 @@
 <template>
   <BaseModal
       :is-open="isOpen"
-      title="Edit List"
+      :title="t('lists.edit.title')"
       max-width="xl"
       @close="close"
   >
     <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitEditList">
             <div>
-              <label for="list-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Name</label>
+              <label for="list-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('lists.form.name') }}</label>
               <input
                 id="list-name"
                 v-model.trim="editForm.name"
@@ -26,13 +26,13 @@
                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800 rounded accent-ext-wf1"
               >
               <label for="list-public" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
-                Public
+                {{ t('lists.form.public') }}
               </label>
             </div>
 
             <div>
               <label for="list-position" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
-                List Position (optional)
+                {{ t('lists.form.list_position') }}
               </label>
               <input
                 id="list-position"
@@ -47,7 +47,7 @@
 
             <div>
               <label for="list-description" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
-                Description (optional)
+                {{ t('lists.form.description') }}
               </label>
               <textarea
                 id="list-description"
@@ -59,7 +59,7 @@
             </div>
 
             <div>
-              <label for="list-category" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Category</label>
+              <label for="list-category" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('lists.form.category') }}</label>
               <input
                 id="list-category"
                 v-model.trim="editForm.category"
@@ -70,7 +70,7 @@
             </div>
 
             <div>
-              <label for="list-rss" class="block text-sm font-medium text-slate-700 dark:text-slate-200">RssFeed url</label>
+              <label for="list-rss" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('lists.form.rss_feed') }}</label>
               <input
                 id="list-rss"
                 v-model.trim="editForm.rssFeed"
@@ -81,7 +81,7 @@
             </div>
 
             <div>
-              <label for="list-prefix" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Subject Prefix</label>
+              <label for="list-prefix" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('lists.form.subject_prefix') }}</label>
               <input
                 id="list-prefix"
                 v-model.trim="editForm.subjectPrefix"
@@ -102,14 +102,14 @@
           class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50"
           @click="submitEditList"
       >
-        {{ updatingList ? 'Saving...' : 'Save' }}
+        {{ updatingList ? t('common.saving') : t('common.save') }}
       </button>
       <button
           type="button"
           class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
           @click="close"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
     </template>
   </BaseModal>
@@ -117,11 +117,14 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseModal from '../base/BaseModal.vue'
 import FieldError from '../base/FieldError.vue'
 import { listClient } from '../../api'
 import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
+
+const { t } = useI18n()
 
 const props = defineProps({
   isOpen: Boolean,
@@ -191,7 +194,7 @@ const submitEditList = async () => {
 
   const name = editForm.value.name.trim()
   if (!name) {
-    editError.value = 'Name is required.'
+    editError.value = t('lists.form.errors.name_required')
     return
   }
 
@@ -201,7 +204,7 @@ const submitEditList = async () => {
   }
 
   if (parsedPosition !== null && (!Number.isInteger(parsedPosition) || parsedPosition < 0)) {
-    editError.value = 'List Position must be a whole number greater than or equal to 0.'
+    editError.value = t('lists.form.errors.position_invalid')
     return
   }
 
@@ -225,7 +228,7 @@ const submitEditList = async () => {
     emit('close')
   } catch (error) {
     setErrorsFromError(error)
-    editError.value = hasFieldErrors.value ? '' : (error?.message || 'Failed to update list.')
+    editError.value = hasFieldErrors.value ? '' : (error?.message || t('lists.edit.errors.failed'))
   } finally {
     updatingList.value = false
   }

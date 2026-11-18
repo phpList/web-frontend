@@ -12,7 +12,7 @@
       </div>
 
       <BaseButton variant="accent" icon="plus" @click="openCreateModal">
-        Add Attribute
+        {{ t('settings.attributes.add') }}
       </BaseButton>
     </div>
 
@@ -20,16 +20,16 @@
         :items="attributes"
         :is-loading="isLoading"
         :load-error="loadError"
-        loading-message="Loading attributes..."
-        empty-message="No attributes found."
+        :loading-message="t('settings.attributes.loading')"
+        :empty-message="t('settings.attributes.empty')"
         :colspan="5"
     >
       <template #head>
-        <th class="px-6 py-4">ID</th>
-        <th class="px-6 py-4">Name</th>
-        <th class="px-6 py-4">Type</th>
-        <th class="px-6 py-4">Required</th>
-        <th class="px-6 py-4 text-right">Actions</th>
+        <th class="px-6 py-4">{{ t('settings.attributes.id') }}</th>
+        <th class="px-6 py-4">{{ t('settings.attributes.name') }}</th>
+        <th class="px-6 py-4">{{ t('settings.attributes.type') }}</th>
+        <th class="px-6 py-4">{{ t('settings.attributes.required') }}</th>
+        <th class="px-6 py-4 text-right">{{ t('settings.actions') }}</th>
       </template>
 
       <template #row="{ item: attribute }">
@@ -42,23 +42,23 @@
         </td>
 
         <td class="px-6 py-4 text-slate-600 dark:text-slate-350">
-          {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
+          {{ typeLabel(attribute.type) }}
         </td>
 
         <td class="px-6 py-4">
           <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
-            {{ attribute.required ? 'Required' : 'Optional' }}
+            {{ attribute.required ? t('settings.attributes.required') : t('settings.attributes.optional') }}
           </BaseBadge>
         </td>
 
         <td class="px-6 py-4">
           <div class="flex justify-end gap-2">
             <ActionButton icon="edit" @click="handleEdit(attribute)">
-              Edit
+              {{ t('common.edit') }}
             </ActionButton>
 
             <ActionButton variant="danger" icon="delete" @click="handleDelete(attribute)">
-              Delete
+              {{ t('common.delete') }}
             </ActionButton>
           </div>
         </td>
@@ -76,22 +76,22 @@
             </p>
 
             <p class="text-sm text-slate-500 dark:text-slate-350">
-              {{ attribute.type === 'textline' ? 'Text' : attribute.type === 'hidden' ? 'Hidden' : attribute.type }}
+              {{ typeLabel(attribute.type) }}
             </p>
           </div>
 
           <BaseBadge :variant="attribute.required ? 'danger' : 'neutral'">
-            {{ attribute.required ? 'Required' : 'Optional' }}
+            {{ attribute.required ? t('settings.attributes.required') : t('settings.attributes.optional') }}
           </BaseBadge>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <ActionButton block icon="edit" @click="handleEdit(attribute)">
-            Edit
+            {{ t('common.edit') }}
           </ActionButton>
 
           <ActionButton block variant="danger" icon="delete" @click="handleDelete(attribute)">
-            Delete
+            {{ t('common.delete') }}
           </ActionButton>
         </div>
       </template>
@@ -116,16 +116,23 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '../base/BaseButton.vue'
 import BaseBadge from '../base/BaseBadge.vue'
 import ActionButton from '../base/ActionButton.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
   title: { type: String, required: true },
   description: { type: String, required: true },
   client: { type: Object, required: true }
 })
+
+const typeLabel = (type) => (
+  ['textline', 'hidden'].includes(type) ? t(`settings.attribute_types.${type}`) : type
+)
 
 const attributes = ref([])
 
@@ -146,7 +153,7 @@ const fetchAttributes = async () => {
     attributes.value = result.items ?? result.data ?? []
   } catch (e) {
     console.error(e)
-    loadError.value = e?.message || 'Failed to load attributes.'
+    loadError.value = e?.message || t('settings.attributes.errors.load_failed')
     attributes.value = []
   } finally {
     isLoading.value = false
@@ -185,7 +192,7 @@ const handleUpdated = async () => {
 
 const handleDelete = async (attribute) => {
   const confirmed = window.confirm(
-      `Delete attribute "${attribute.name}"?\n\nThis action cannot be undone.`
+      t('settings.attributes.delete_confirm', { name: attribute.name })
   )
 
   if (!confirmed) return
@@ -195,7 +202,7 @@ const handleDelete = async (attribute) => {
     await fetchAttributes()
   } catch (e) {
     console.error(e)
-    alert(e?.message || 'Failed to delete attribute.')
+    alert(e?.message || t('settings.attributes.errors.delete_failed'))
   }
 }
 </script>

@@ -2,8 +2,8 @@
   <section class="space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Settings</h2>
-        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">Application configuration and admin management</p>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('settings.title') }}</h2>
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">{{ t('settings.subtitle') }}</p>
       </div>
     </div>
 
@@ -41,7 +41,7 @@
     <template v-else>
       <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-6">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ currentTabLabel }}</h3>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-350">This panel is under construction.</p>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-350">{{ t('settings.under_construction') }}</p>
       </div>
     </template>
   </section>
@@ -49,24 +49,27 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import SettingsConfigs from './SettingsConfigs.vue'
 import SettingsAdmins from './SettingsAdmins.vue'
 import SettingsAdminAttributes from './SettingsAdminAttributes.vue'
 import SettingsSubscriberAttributes from "./SettingsSubscriberAttributes.vue";
 
-const tabs = [
-  { id: 'configs', label: 'Configs' },
-  { id: 'admins', label: 'Admins' },
-  { id: 'admin_attributes', label: 'Admin Attributes' },
-  { id: 'subscriber_attributes', label: 'Subscriber Attributes' },
-]
+const { t } = useI18n()
+
+const tabs = computed(() => [
+  { id: 'configs', label: t('settings.tabs.configs') },
+  { id: 'admins', label: t('settings.tabs.admins') },
+  { id: 'admin_attributes', label: t('settings.tabs.admin_attributes') },
+  { id: 'subscriber_attributes', label: t('settings.tabs.subscriber_attributes') },
+])
 
 const route = useRoute()
 const router = useRouter()
 
 const defaultTabId = 'configs'
-const tabIds = new Set(tabs.map((tab) => tab.id))
+const tabIds = new Set(tabs.value.map((tab) => tab.id))
 
 const normalizeTabId = (tabId) => (typeof tabId === 'string' && tabIds.has(tabId) ? tabId : defaultTabId)
 
@@ -103,6 +106,6 @@ watch(
   { immediate: true }
 )
 
-const currentTabLabel = computed(() => tabs.find((tab) => tab.id === activeTab.value)?.label || 'Panel')
+const currentTabLabel = computed(() => tabs.value.find((tab) => tab.id === activeTab.value)?.label || t('settings.panel'))
 </script>
 

@@ -11,14 +11,17 @@
       ]"
         @click="toggleFilter(filter.id)"
     >
-      {{ filter.label }}
+      {{ t(`subscribers.filters.${filter.id}`) }}
     </button>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { subscriberFilters } from './subscriberFilters'
+
+const { t } = useI18n()
 
 const activeFilter = ref('all')
 

@@ -4,9 +4,9 @@
       <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">Mailing List</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">{{ t('list_subscribers.mailing_list') }}</p>
             <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
-              {{ listName || `List #${listId}` }}
+              {{ listName || t('list_subscribers.list_fallback', { id: listId }) }}
             </h2>
           </div>
 
@@ -14,7 +14,7 @@
               to="/lists"
               class="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700"
           >
-            Back to Lists
+            {{ t('list_subscribers.back') }}
           </RouterLink>
         </div>
       </div>
@@ -22,16 +22,16 @@
       <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
         <div
             class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Subscribers</h3>
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t('subscribers.title') }}</h3>
           <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
-            <label class="text-sm text-slate-600 dark:text-slate-350">Status</label>
+            <label class="text-sm text-slate-600 dark:text-slate-350">{{ t('subscribers.table.status') }}</label>
             <select
                 v-model="statusFilter"
                 class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
             >
-              <option value="all">All</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="unconfirmed">Unconfirmed</option>
+              <option value="all">{{ t('subscribers.filters.all') }}</option>
+              <option value="confirmed">{{ t('subscribers.status.confirmed') }}</option>
+              <option value="unconfirmed">{{ t('subscribers.status.unconfirmed') }}</option>
             </select>
           </div>
         </div>
@@ -39,7 +39,7 @@
         <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
           <div class="flex flex-col xl:flex-row xl:items-center gap-3">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="text-sm text-slate-600 dark:text-slate-350">Selected: {{ selectedSubscribers.length }}</span>
+              <span class="text-sm text-slate-600 dark:text-slate-350">{{ t('list_subscribers.selected', { count: selectedSubscribers.length }) }}</span>
               <button
                   type="button"
                   class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
@@ -47,7 +47,7 @@
                   @click="deleteSelectedSubscribers"
               >
                 <BaseIcon name="delete" class="w-3.5 h-3.5" />
-                Delete Selected
+                {{ t('list_subscribers.delete_selected') }}
               </button>
             </div>
 
@@ -57,9 +57,9 @@
                   class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                   :disabled="actionLoading"
               >
-                <option value="">Select target list</option>
+                <option value="">{{ t('list_subscribers.select_target') }}</option>
                 <option v-for="list in availableLists" :key="list.id" :value="String(list.id)">
-                  {{ list.name || `List #${list.id}` }}
+                  {{ list.name || t('list_subscribers.list_fallback', { id: list.id }) }}
                 </option>
               </select>
 
@@ -70,7 +70,7 @@
                   @click="copySelectedSubscribers"
               >
                 <BaseIcon name="copy" class="w-3.5 h-3.5" />
-                Copy Selected
+                {{ t('list_subscribers.copy_selected') }}
               </button>
 
               <button
@@ -80,7 +80,7 @@
                   @click="moveSelectedSubscribers"
               >
                 <BaseIcon name="start" class="w-3.5 h-3.5" />
-                Move Selected
+                {{ t('list_subscribers.move_selected') }}
               </button>
             </div>
           </div>
@@ -103,16 +103,16 @@
                     @change="toggleSelectAllVisible"
                 >
               </th>
-              <th class="px-6 py-4">ID</th>
-              <th class="px-6 py-4">Email</th>
-              <th class="px-6 py-4">Status</th>
-              <th class="px-6 py-4">Created</th>
-              <th class="px-6 py-4 text-right">Actions</th>
+              <th class="px-6 py-4">{{ t('subscribers.table.id') }}</th>
+              <th class="px-6 py-4">{{ t('subscribers.table.email') }}</th>
+              <th class="px-6 py-4">{{ t('subscribers.table.status') }}</th>
+              <th class="px-6 py-4">{{ t('subscribers.table.created') }}</th>
+              <th class="px-6 py-4 text-right">{{ t('subscribers.table.actions') }}</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
             <tr v-if="loading">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">Loading...</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">{{ t('list_subscribers.loading') }}</td>
             </tr>
 
             <tr v-else-if="error">
@@ -137,7 +137,7 @@
               <td class="px-6 py-4 font-mono text-slate-900 dark:text-slate-100">{{ subscriber.email }}</td>
               <td class="px-6 py-4">
                   <BaseBadge :variant="subscriber.confirmed ? 'success' : 'warning'">
-                    {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
+                    {{ subscriber.confirmed ? t('subscribers.status.confirmed') : t('subscribers.status.unconfirmed') }}
                   </BaseBadge>
               </td>
               <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ formatDate(subscriber.createdAt) }}</td>
@@ -149,19 +149,19 @@
                     @click="deleteSingleSubscriber(subscriber)"
                 >
                   <BaseIcon name="delete" class="w-3.5 h-3.5" />
-                  Delete
+                  {{ t('lists.actions.delete') }}
                 </button>
               </td>
             </tr>
 
             <tr v-if="!loading && !error && filteredSubscribers.length === 0">
-              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">No subscribers for this filter.</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">{{ t('list_subscribers.empty') }}</td>
             </tr>
             </tbody>
           </table>
 
           <div class="block md:hidden divide-y divide-slate-300 dark:divide-slate-700">
-            <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm">Loading...</div>
+            <div v-if="loading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm">{{ t('list_subscribers.loading') }}</div>
             <div v-else-if="error" class="px-4 py-8 text-center text-red-600 dark:text-red-400 text-sm">{{ error }}</div>
 
             <div class="p-4 border-b border-slate-300 dark:border-slate-700" v-if="!loading && !error && filteredSubscribers.length">
@@ -172,7 +172,7 @@
                     :checked="allVisibleSelected"
                     @change="toggleSelectAllVisible"
                 >
-                Select all visible
+                {{ t('list_subscribers.select_all_visible') }}
               </label>
             </div>
 
@@ -193,7 +193,7 @@
                   <div class="flex items-center justify-between gap-3">
                     <p class="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{{ subscriber.email }}</p>
                     <BaseBadge class="whitespace-nowrap" :variant="subscriber.confirmed ? 'success' : 'warning'">
-                      {{ subscriber.confirmed ? 'Confirmed' : 'Unconfirmed' }}
+                      {{ subscriber.confirmed ? t('subscribers.status.confirmed') : t('subscribers.status.unconfirmed') }}
                     </BaseBadge>
                   </div>
                   <p class="mt-2 text-xs text-slate-500 dark:text-slate-350">#{{ subscriber.id }} · {{formatDate(subscriber.createdAt) }}</p>
@@ -204,7 +204,7 @@
                       @click="deleteSingleSubscriber(subscriber)"
                   >
                     <BaseIcon name="delete" class="w-3.5 h-3.5" />
-                    Delete
+                    {{ t('lists.actions.delete') }}
                   </button>
                 </div>
               </div>
@@ -214,14 +214,14 @@
                 v-if="!loading && !error && filteredSubscribers.length === 0"
                 class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm"
             >
-              No subscribers for this filter.
+              {{ t('list_subscribers.empty') }}
             </div>
           </div>
         </div>
 
         <div
             class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm">
-          <span class="text-slate-500 dark:text-slate-350">Showing {{ filteredSubscribers.length }} on page · Total: {{ total }}</span>
+          <span class="text-slate-500 dark:text-slate-350">{{ t('list_subscribers.showing', { shown: filteredSubscribers.length, total }) }}</span>
           <div class="flex gap-2 w-full sm:w-auto">
             <button
                 type="button"
@@ -229,7 +229,7 @@
                 :disabled="!canGoPrevious || loading || actionLoading"
                 @click="previousPage"
             >
-              Previous
+              {{ t('common.previous') }}
             </button>
             <button
                 type="button"
@@ -237,7 +237,7 @@
                 :disabled="!canGoNext || loading || actionLoading"
                 @click="nextPage"
             >
-              Next
+              {{ t('common.next') }}
             </button>
           </div>
         </div>
@@ -252,6 +252,7 @@
 <script setup>
 import {computed, onMounted, ref, watch, watchEffect} from 'vue'
 import {useRoute} from 'vue-router'
+import {useI18n} from 'vue-i18n'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import ListSubscribersExportPanel from '../components/lists/ListSubscribersExportPanel.vue'
 import BaseIcon from '../components/base/BaseIcon.vue'
@@ -259,6 +260,7 @@ import BaseBadge from '../components/base/BaseBadge.vue'
 import client, {subscriptionClient} from '../api'
 import {useAsyncAction} from '../composables/useAsyncAction'
 
+const { t, locale } = useI18n()
 const route = useRoute()
 const listId = computed(() => Number(route.params.listId))
 const listName = ref(typeof route.query.listName === 'string' ? route.query.listName : '')
@@ -321,7 +323,7 @@ const formatDate = (value) => {
   if (!value) return '-'
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '-'
-  return date.toLocaleDateString()
+  return date.toLocaleDateString(locale.value)
 }
 
 const clearSelection = () => {
@@ -396,7 +398,7 @@ const fetchSubscribersAction = useAsyncAction(
     return true
   },
   {
-    errorMessage: 'Failed to load subscribers for this list.',
+    errorMessage: t('list_subscribers.errors.load_failed'),
     logLabel: 'Failed to load list subscribers:',
     onError: () => {
       subscribers.value = []
@@ -411,7 +413,7 @@ const error = fetchSubscribersAction.error
 
 const fetchSubscribers = async (cursor = null) => {
   if (!Number.isInteger(listId.value) || listId.value <= 0) {
-    error.value = 'Invalid list ID.'
+    error.value = t('list_subscribers.errors.invalid_list_id')
     subscribers.value = []
     return
   }
@@ -435,17 +437,17 @@ const deleteSingleSubscriber = async (subscriber) => {
   actionError.value = ''
   actionMessage.value = ''
 
-  const confirmed = window.confirm(`Remove ${subscriber.email} from this list?`)
+  const confirmed = window.confirm(t('list_subscribers.confirm.remove_one', { email: subscriber.email }))
   if (!confirmed) return
 
   actionLoading.value = true
   try {
     await deleteEmailsFromCurrentList([subscriber.email])
-    actionMessage.value = 'Subscriber removed from this list.'
+    actionMessage.value = t('list_subscribers.messages.removed_one')
     await refreshCurrentPage()
   } catch (error) {
     console.error('Failed to delete subscriber from list:', error)
-    actionError.value = 'Failed to remove subscriber from this list.'
+    actionError.value = t('list_subscribers.errors.remove_one')
   } finally {
     actionLoading.value = false
   }
@@ -458,17 +460,17 @@ const deleteSelectedSubscribers = async () => {
   actionError.value = ''
   actionMessage.value = ''
 
-  const confirmed = window.confirm(`Remove ${emails.length} selected subscriber(s) from this list?`)
+  const confirmed = window.confirm(t('list_subscribers.confirm.remove_selected', { count: emails.length }))
   if (!confirmed) return
 
   actionLoading.value = true
   try {
     await deleteEmailsFromCurrentList(emails)
-    actionMessage.value = `Removed ${emails.length} subscriber(s) from this list.`
+    actionMessage.value = t('list_subscribers.messages.removed_selected', { count: emails.length })
     await refreshCurrentPage()
   } catch (error) {
     console.error('Failed to delete selected subscribers from list:', error)
-    actionError.value = 'Failed to remove selected subscribers from this list.'
+    actionError.value = t('list_subscribers.errors.remove_selected')
   } finally {
     actionLoading.value = false
   }
@@ -486,10 +488,10 @@ const copySelectedSubscribers = async () => {
   actionLoading.value = true
   try {
     await subscriptionClient.createSubscriptions(emails, targetListId)
-    actionMessage.value = `Copied ${emails.length} subscriber(s) to the selected list.`
+    actionMessage.value = t('list_subscribers.messages.copied', { count: emails.length })
   } catch (error) {
     console.error('Failed to copy selected subscribers:', error)
-    actionError.value = 'Failed to copy selected subscribers.'
+    actionError.value = t('list_subscribers.errors.copy')
   } finally {
     actionLoading.value = false
   }
@@ -504,7 +506,7 @@ const moveSelectedSubscribers = async () => {
   actionError.value = ''
   actionMessage.value = ''
 
-  const confirmed = window.confirm(`Move ${emails.length} selected subscriber(s) to the selected list?`)
+  const confirmed = window.confirm(t('list_subscribers.confirm.move', { count: emails.length }))
   if (!confirmed) return
 
   actionLoading.value = true
@@ -516,7 +518,7 @@ const moveSelectedSubscribers = async () => {
 
     await deleteEmailsFromCurrentList(emails)
 
-    actionMessage.value = `Moved ${emails.length} subscriber(s) to the selected list.`
+    actionMessage.value = t('list_subscribers.messages.moved', { count: emails.length })
     selectedTargetListId.value = ''
     await refreshCurrentPage()
   } catch (error) {
@@ -524,12 +526,10 @@ const moveSelectedSubscribers = async () => {
 
     if (copied) {
       actionError.value =
-          `Copied ${emails.length} subscriber(s) to the selected list, ` +
-          `but failed to remove them from the current list. ` +
-          `They may now exist in both lists.`
+          t('list_subscribers.errors.move_partial', { count: emails.length })
       await refreshCurrentPage()
     } else {
-      actionError.value = 'Failed to move selected subscribers.'
+      actionError.value = t('list_subscribers.errors.move')
     }
   } finally {
     actionLoading.value = false

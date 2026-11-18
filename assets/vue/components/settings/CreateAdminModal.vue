@@ -1,14 +1,14 @@
 <template>
   <BaseModal
       :is-open="isOpen"
-      title="Create New Administrator"
+      :title="t('settings.admin_form.create_title')"
       max-width="xl"
       @close="close"
   >
     <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitCreateAdmin">
           <!-- Login Name -->
           <div>
-            <label for="admin-login-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Login Name</label>
+            <label for="admin-login-name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('settings.admins.login_name') }}</label>
             <input
               id="admin-login-name"
               v-model.trim="form.login_name"
@@ -20,12 +20,12 @@
               :class="fieldInputClass('login_name', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('login_name')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Minimum 3 characters</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">{{ t('settings.admin_form.min_login') }}</p>
           </div>
 
           <!-- Email -->
           <div>
-            <label for="admin-email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
+            <label for="admin-email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('settings.admins.email') }}</label>
             <input
               id="admin-email"
               v-model.trim="form.email"
@@ -39,7 +39,7 @@
 
           <!-- Password -->
           <div>
-            <label for="admin-password" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Password</label>
+            <label for="admin-password" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('settings.admin_form.password') }}</label>
             <input
               id="admin-password"
               v-model="form.password"
@@ -51,7 +51,7 @@
               :class="fieldInputClass('password', 'mt-1 block w-full dark:bg-slate-800 dark:text-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm')"
             >
             <FieldError :messages="fieldErrors('password')" />
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">Minimum 6 characters</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">{{ t('settings.admin_form.min_password') }}</p>
           </div>
 
           <!-- Super User -->
@@ -63,13 +63,13 @@
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
             >
             <label for="admin-super-user" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
-              Super User / Full Access
+              {{ t('settings.admin_form.super_user_full') }}
             </label>
           </div>
 
           <!-- Privileges Section -->
           <div v-if="!form.super_user" class="border-t border-slate-200 dark:border-slate-700 pt-4">
-            <p class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-3">Privileges</p>
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-3">{{ t('settings.admin_form.privileges') }}</p>
             <div class="space-y-2">
               <div class="flex items-center">
                 <input
@@ -79,7 +79,7 @@
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
                 <label for="priv-subscribers" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
-                  Subscribers Management
+                  {{ t('settings.admin_form.privilege_subscribers') }}
                 </label>
               </div>
 
@@ -91,7 +91,7 @@
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
                 <label for="priv-campaigns" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
-                  Campaigns Management
+                  {{ t('settings.admin_form.privilege_campaigns') }}
                 </label>
               </div>
 
@@ -103,7 +103,7 @@
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
                 <label for="priv-statistics" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
-                  Statistics Viewing
+                  {{ t('settings.admin_form.privilege_statistics') }}
                 </label>
               </div>
 
@@ -115,7 +115,7 @@
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                 >
                 <label for="priv-settings" class="ml-2 block text-sm text-slate-700 dark:text-slate-200">
-                  Settings Management
+                  {{ t('settings.admin_form.privilege_settings') }}
                 </label>
               </div>
             </div>
@@ -132,14 +132,14 @@
           class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50 transition-colors"
           @click="submitCreateAdmin"
       >
-        {{ isCreating ? 'Creating...' : 'Create' }}
+        {{ isCreating ? t('common.creating') : t('common.create') }}
       </button>
       <button
           type="button"
           class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm transition-colors"
           @click="close"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
     </template>
   </BaseModal>
@@ -147,11 +147,14 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Requests } from '@tatevikgr/rest-api-client'
 import { adminClient } from '../../api'
 import BaseModal from '../base/BaseModal.vue'
 import FieldError from '../base/FieldError.vue'
 import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
+
+const { t } = useI18n()
 
 const props = defineProps({
   isOpen: Boolean
@@ -227,17 +230,17 @@ const submitCreateAdmin = async () => {
   }
 
   if (!form.value.login_name.trim()) {
-    createError.value = 'Login name is required.'
+    createError.value = t('settings.admin_form.errors.login_required')
     return
   }
 
   if (!form.value.email.trim()) {
-    createError.value = 'Email is required.'
+    createError.value = t('settings.admin_form.errors.email_required')
     return
   }
 
   if (!form.value.password) {
-    createError.value = 'Password is required.'
+    createError.value = t('settings.admin_form.errors.password_required')
     return
   }
 
@@ -260,7 +263,7 @@ const submitCreateAdmin = async () => {
   } catch (error) {
     console.error('Create admin failed:', error)
     setErrorsFromError(error)
-    createError.value = hasFieldErrors.value ? '' : (error?.message || 'Failed to create administrator.')
+    createError.value = hasFieldErrors.value ? '' : (error?.message || t('settings.admin_form.errors.create_failed'))
   } finally {
     isCreating.value = false
   }

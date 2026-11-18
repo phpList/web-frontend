@@ -2,9 +2,9 @@
   <section class="space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Bounce Management</h2>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('bounces.management.title') }}</h2>
         <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">
-          Monitor, process and automate bounce handling across all campaigns
+          {{ t('bounces.management.subtitle') }}
         </p>
       </div>
 <!--      <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-lg">-->
@@ -50,7 +50,7 @@
     <template v-else>
       <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-6">
         <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ currentTabLabel }}</h3>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-350">This panel matches the template navigation and can be expanded next.</p>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-350">{{ t('bounces.management.placeholder') }}</p>
       </div>
     </template>
   </section>
@@ -58,25 +58,28 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import BounceOverview from './BounceOverview.vue'
 import BounceRules from './BounceRules.vue'
 import BouncePer from "./BouncePer.vue";
 
-const tabs = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'rules', label: 'Rules' },
-  { id: 'per', label: 'Per List/Campaign' },
-  { id: 'processing', label: 'Processing' },
+const { t } = useI18n()
+
+const tabs = computed(() => [
+  { id: 'overview', label: t('bounces.tabs.overview') },
+  { id: 'rules', label: t('bounces.tabs.rules') },
+  { id: 'per', label: t('bounces.tabs.per') },
+  { id: 'processing', label: t('bounces.tabs.processing') },
   // { id: 'per_list', label: 'Per List' },
   // { id: 'per_campaign', label: 'Per Campaign' },
-]
+])
 
 const route = useRoute()
 const router = useRouter()
 
 const defaultTabId = 'overview'
-const tabIds = new Set(tabs.map((tab) => tab.id))
+const tabIds = new Set(tabs.value.map((tab) => tab.id))
 
 const normalizeTabId = (tabId) => (typeof tabId === 'string' && tabIds.has(tabId) ? tabId : defaultTabId)
 
@@ -113,5 +116,5 @@ watch(
   { immediate: true }
 )
 
-const currentTabLabel = computed(() => tabs.find((tab) => tab.id === activeTab.value)?.label || 'Panel')
+const currentTabLabel = computed(() => tabs.value.find((tab) => tab.id === activeTab.value)?.label || t('bounces.management.panel'))
 </script>

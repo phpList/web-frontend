@@ -1,7 +1,7 @@
 <template>
   <BaseModal
       :is-open="isOpen"
-      title="Create Subscriber Attribute"
+      :title="t('settings.subscriber_attributes.create_title')"
       max-width="2xl"
       @close="close"
   >
@@ -10,7 +10,7 @@
             @submit.prevent="submit"
         >
           <div>
-            <label class="block mb-1 text-slate-700 dark:text-slate-200">Name</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">{{ t('settings.attributes.name') }}</label>
 
             <input
                 v-model="form.name"
@@ -20,7 +20,7 @@
           </div>
 
           <div>
-            <label class="block mb-1 text-slate-700 dark:text-slate-200">Type</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">{{ t('settings.attributes.type') }}</label>
 
             <select
                 v-model="form.type"
@@ -37,7 +37,7 @@
           </div>
 
           <div>
-            <label class="block mb-1 text-slate-700 dark:text-slate-200">Order</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">{{ t('settings.subscriber_attributes.order') }}</label>
 
             <input
                 v-model.number="form.order"
@@ -47,7 +47,7 @@
           </div>
 
           <div>
-            <label class="block mb-1 text-slate-700 dark:text-slate-200">Default value</label>
+            <label class="block mb-1 text-slate-700 dark:text-slate-200">{{ t('settings.subscriber_attributes.default_value') }}</label>
 
             <input
                 v-model="form.default_value"
@@ -61,19 +61,19 @@
                 type="checkbox"
             >
 
-            Required
+            {{ t('settings.attributes.required') }}
           </label>
 
           <div v-if="supportsOptions">
             <div class="flex justify-between items-center mb-3">
-              <strong class="text-slate-900 dark:text-slate-100">Options</strong>
+              <strong class="text-slate-900 dark:text-slate-100">{{ t('settings.subscriber_attributes.options') }}</strong>
 
               <button
                   type="button"
                   class="rounded bg-slate-200 dark:bg-slate-700 dark:text-slate-100 px-3 py-1"
                   @click="addOption"
               >
-                Add
+                {{ t('settings.subscriber_attributes.add_option') }}
               </button>
             </div>
 
@@ -86,7 +86,7 @@
                 <input
                     v-model="option.name"
                     class="flex-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2"
-                    placeholder="Option"
+                    :placeholder="t('settings.subscriber_attributes.option')"
                 >
 
                 <input
@@ -118,14 +118,14 @@
                 class="rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2"
                 @click="close"
             >
-              Cancel
+              {{ t('common.cancel') }}
             </button>
 
             <button
                 class="rounded bg-ext-wf1 px-4 py-2 text-white"
                 :disabled="saving"
             >
-              {{ saving ? 'Creating...' : 'Create' }}
+              {{ saving ? t('common.creating') : t('common.create') }}
             </button>
           </div>
         </form>
@@ -134,9 +134,12 @@
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import BaseModal from '../base/BaseModal.vue';
 import { subscriberAttributesClient } from '../../api';
 import BaseIcon from "../base/BaseIcon.vue";
+
+const { t } = useI18n();
 
 const props = defineProps({
   isOpen: Boolean,
@@ -150,17 +153,9 @@ const emit = defineEmits([
 const saving = ref(false);
 const error = ref('');
 
-const attributeTypes = [
-  { label: 'Text', value: 'textline' },
-  { label: 'Hidden', value: 'hidden' },
-  { label: 'Credit Card', value: 'creditcardno' },
-  { label: 'Select', value: 'select' },
-  { label: 'Date', value: 'date' },
-  { label: 'Checkbox', value: 'checkbox' },
-  { label: 'Textarea', value: 'textarea' },
-  { label: 'Radio', value: 'radio' },
-  { label: 'Checkbox Group', value: 'checkboxgroup' },
-];
+const attributeTypes = computed(() => [
+  'textline', 'hidden', 'creditcardno', 'select', 'date', 'checkbox', 'textarea', 'radio', 'checkboxgroup',
+].map((value) => ({ value, label: t(`settings.attribute_types.${value}`) })));
 
 const optionTypes = ['select', 'radio', 'checkboxgroup'];
 
@@ -221,7 +216,7 @@ async function submit() {
     emit('created');
     close();
   } catch (e) {
-    error.value = e?.message || 'Unable to create attribute.';
+    error.value = e?.message || t('settings.attributes.errors.create_failed');
   } finally {
     saving.value = false;
   }

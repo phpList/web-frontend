@@ -8,7 +8,7 @@
       <KpiGrid
         :summary="summary"
         :loading="summaryLoading"
-        :error="summaryError"
+        :error="summaryErrorText"
       />
 
       <!-- Quick actions + help -->
@@ -22,7 +22,7 @@
         <CommunityNewsCard
           :items="newsItems"
           :loading="newsLoading"
-          :error="newsError"
+          :error="newsErrorText"
         />
       </section>
 
@@ -32,7 +32,7 @@
           <RecentCampaignsCard
             :rows="recentCampaigns"
             :loading="recentCampaignsLoading"
-            :error="recentCampaignsError"
+            :error="recentCampaignsErrorText"
           />
         </div>
       </section>
@@ -41,7 +41,8 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import KpiGrid from '../components/dashboard/KpiGrid.vue'
 import QuickActionsCard from '../components/dashboard/QuickActionsCard.vue'
@@ -50,6 +51,8 @@ import HelpCard from '../components/dashboard/HelpCard.vue'
 import CommunityNewsCard from '../components/dashboard/CommunityNewsCard.vue'
 import { useDashboardData } from '../composables/useDashboardData'
 import { useCommunityNews } from '../composables/useCommunityNews'
+
+const { t } = useI18n()
 
 const {
   summary,
@@ -67,6 +70,11 @@ const {
   error: newsError,
   load: loadNews,
 } = useCommunityNews()
+
+// The composables keep a plain English message; show it translated.
+const summaryErrorText = computed(() => (summaryError.value ? t('dashboard.errors.summary') : ''))
+const newsErrorText = computed(() => (newsError.value ? t('dashboard.errors.news') : ''))
+const recentCampaignsErrorText = computed(() => (recentCampaignsError.value ? t('dashboard.errors.recent_campaigns') : ''))
 
 onMounted(() => {
   load()

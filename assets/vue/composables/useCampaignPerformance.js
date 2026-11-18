@@ -5,8 +5,8 @@ import { useAsyncAction } from './useAsyncAction'
 const defaultChart = () => ({
   labels: [],
   series: [
-    { name: 'Opens', data: [] },
-    { name: 'Clicks', data: [] },
+    { id: 'opens', name: 'Opens', data: [] },
+    { id: 'clicks', name: 'Clicks', data: [] },
   ],
 })
 
@@ -35,8 +35,8 @@ const chartAction = useAsyncAction(
     chart.value = {
       labels: points.map((point) => formatChartLabel(point.date)),
       series: [
-        { name: 'Opens', data: points.map((point) => point.opens) },
-        { name: 'Clicks', data: points.map((point) => point.clicks) },
+        { id: 'opens', name: 'Opens', data: points.map((point) => point.opens) },
+        { id: 'clicks', name: 'Clicks', data: points.map((point) => point.clicks) },
       ],
     }
   },

@@ -2,14 +2,14 @@
   <div class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700  shadow-sm overflow-hidden">
     <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 ">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 ">Subscribers</h2>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 ">{{ t('subscribers.title') }}</h2>
         <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
           <div class="flex gap-2 flex-1 sm:w-[400px]">
             <div class="relative flex-1">
               <BaseIcon name="search" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
               <input
                 v-model="searchQuery"
-                placeholder="Search subscribers..."
+                :placeholder="t('subscribers.directory.search_placeholder')"
                 class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-600  rounded-lg bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                 type="text"
                 @input="handleSearch"
@@ -40,7 +40,7 @@
             >
               <BaseIcon v-if="!isImporting" name="upload" class="w-4 h-4" />
               <div v-else class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              <span class="flex items-center whitespace-nowrap">{{ isImporting ? 'Importing...' : 'Import CSV' }}</span>
+              <span class="flex items-center whitespace-nowrap">{{ isImporting ? t('subscribers.directory.importing') : t('subscribers.directory.import_csv') }}</span>
             </button>
           </div>
         </div>
@@ -63,7 +63,7 @@
     />
     <div class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
       <div class="text-center sm:text-left">
-        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ subscribers.length }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ pagination.total }}</span> subscribers
+        {{ t('subscribers.directory.showing', { shown: subscribers.length, total: pagination.total }) }}
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
@@ -71,14 +71,14 @@
           :disabled="pagination.isFirstPage"
           @click="previousPage"
         >
-          Previous
+          {{ t('common.previous') }}
         </button>
         <button
           class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
           :disabled="!pagination.hasMore"
           @click="nextPage"
         >
-          Next
+          {{ t('common.next') }}
         </button>
       </div>
     </div>
@@ -93,10 +93,13 @@ import SubscriberFilters from './SubscriberFilters.vue'
 import SubscriberTable from './SubscriberTable.vue'
 import SubscriberModal from './SubscriberModal.vue'
 import ImportResult from './ImportResult.vue'
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { subscriberFilters } from './subscriberFilters'
 import { backendFetch, subscribersClient } from '../../api'
 import ListSubscribersExportPanel from "../lists/ListSubscribersExportPanel.vue";
+
+const { t } = useI18n()
 
 const initialSubscribers = inject('subscribers', [])
 const initialPagination = inject('pagination', {
@@ -125,12 +128,12 @@ const importResult = ref({
 let searchTimeout = null
 let fetchController = null
 
-const searchColumns = [
-  { id: 'email', label: 'Email' },
-  { id: 'foreignKey', label: 'Foreign Key' },
-  { id: 'uniqueId', label: 'Unique ID' }
-]
-const allowedSearchColumns = searchColumns.map(column => column.id)
+const searchColumns = computed(() => [
+  { id: 'email', label: t('subscribers.search_columns.email') },
+  { id: 'foreignKey', label: t('subscribers.search_columns.foreign_key') },
+  { id: 'uniqueId', label: t('subscribers.search_columns.unique_id') }
+])
+const allowedSearchColumns = ['email', 'foreignKey', 'uniqueId']
 
 const allowedFilters = subscriberFilters.map(f => f.id)
 
@@ -293,7 +296,7 @@ const handleFileChange = async (event) => {
     fetchSubscribers()
   } catch (error) {
     console.error('Failed to import subscribers:', error)
-    alert('Failed to import subscribers. Please check the file and try again.')
+    alert(t('subscribers.directory.import_failed'))
   } finally {
     isImporting.value = false
     event.target.value = ''

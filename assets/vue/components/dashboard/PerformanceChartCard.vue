@@ -3,7 +3,7 @@
   <BaseCard>
     <header class="mb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold text-gray-900 dark:text-slate-100">
-        Daily opens and clicks for the last 30 days
+        {{ t('dashboard.performance.title') }}
       </h2>
     </header>
 
@@ -36,6 +36,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../../components/base/BaseCard.vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useDarkMode } from '../../composables/useDarkMode'
@@ -65,9 +66,13 @@ const props = defineProps({
   },
 })
 
+const { t } = useI18n()
 const { isDark } = useDarkMode()
 
-const series = computed(() => props.chart?.series ?? [])
+// Series carry a stable `id`; the visible name is translated here, so it follows the language.
+const series = computed(() => (props.chart?.series ?? []).map((item) => (
+  item.id ? { ...item, name: t(`dashboard.performance.series.${item.id}`) } : item
+)))
 
 const chartOptions = computed(() => ({
   chart: {

@@ -1,7 +1,7 @@
 <template>
   <BaseModal
       :is-open="isOpen"
-      :title="`Subscriber Details ID: ${subscriber?.id ?? ''}`"
+      :title="t('subscribers.modal.title', { id: subscriber?.id ?? '' })"
       max-width="lg"
       @close="close"
   >
@@ -14,7 +14,7 @@
                 </div>
                 <form v-else @submit.prevent="save" class="space-y-4">
                   <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('subscribers.modal.email') }}</label>
                     <input
                       v-model="formData.email"
                       type="email"
@@ -31,7 +31,7 @@
                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
                     <label for="confirmed" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
-                      Confirmed
+                      {{ t('subscribers.modal.confirmed') }}
                     </label>
                   </div>
 
@@ -43,7 +43,7 @@
                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
                     <label for="blacklisted" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
-                      Blacklisted
+                      {{ t('subscribers.modal.blacklisted') }}
                     </label>
                   </div>
 
@@ -55,7 +55,7 @@
                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
                     <label for="htmlEmail" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
-                      HTML Email
+                      {{ t('subscribers.modal.html_email') }}
                     </label>
                   </div>
 
@@ -67,12 +67,12 @@
                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded accent-ext-wf1"
                     >
                     <label for="disabled" class="ml-2 block text-sm text-slate-900 dark:text-slate-100">
-                      Disabled
+                      {{ t('subscribers.modal.disabled') }}
                     </label>
                   </div>
 
                   <div v-if="subscriber && subscriber.subscribedLists" class="mt-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Subscribed Lists</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">{{ t('subscribers.modal.subscribed_lists') }}</label>
                     <div class="flex flex-wrap gap-2">
                       <BaseBadge
                         v-for="list in subscriber.subscribedLists"
@@ -82,17 +82,17 @@
                         {{ list.name }}
                       </BaseBadge>
                       <span v-if="!subscriber.subscribedLists.length" class="text-xs text-slate-500 dark:text-slate-350">
-                        No lists
+                        {{ t('subscribers.modal.no_lists') }}
                       </span>
                     </div>
                   </div>
 
                   <div v-if="subscriber" class="text-xs text-slate-400 dark:text-slate-500 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
-                    <p>Created: {{ subscriber.createdAt }}</p>
-                    <p>Updated: {{ subscriber.updatedAt === '' ? '-' : subscriber.updatedAt }}</p>
-                    <p>Bounce Count: {{ subscriber.bounceCount }}</p>
-                    <p>Unique ID: {{ subscriber.uniqueId }}</p>
-                    <p>UUID: {{ subscriber.uuid === '' ? '-' : subscriber.uuid }}</p>
+                    <p>{{ t('subscribers.modal.created', { value: subscriber.createdAt }) }}</p>
+                    <p>{{ t('subscribers.modal.updated', { value: subscriber.updatedAt === '' ? '-' : subscriber.updatedAt }) }}</p>
+                    <p>{{ t('subscribers.modal.bounce_count', { value: subscriber.bounceCount }) }}</p>
+                    <p>{{ t('subscribers.modal.unique_id', { value: subscriber.uniqueId }) }}</p>
+                    <p>{{ t('subscribers.modal.uuid', { value: subscriber.uuid === '' ? '-' : subscriber.uuid }) }}</p>
                   </div>
                 </form>
         </div>
@@ -104,14 +104,14 @@
           class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ext-wf1 text-base font-medium text-white hover:bg-ext-wf3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50"
           @click="save"
       >
-        {{ saving ? 'Saving...' : 'Save' }}
+        {{ saving ? t('common.saving') : t('common.save') }}
       </button>
       <button
           type="button"
           class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
           @click="close"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
     </template>
   </BaseModal>
@@ -121,7 +121,10 @@
 import BaseModal from '../base/BaseModal.vue'
 import BaseBadge from '../base/BaseBadge.vue'
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { subscribersClient } from '../../api'
+
+const { t } = useI18n()
 
 const props = defineProps({
   isOpen: Boolean,

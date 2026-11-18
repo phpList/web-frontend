@@ -2,7 +2,7 @@
   <BaseCard>
     <header class="mb-3 flex items-center justify-between gap-3">
       <h2 class="text-sm font-bold text-gray-900 mb-0 dark:text-slate-100">
-        phpList community news
+        {{ t('dashboard.news.title') }}
       </h2>
       <a
         :href="allNewsUrl"
@@ -10,7 +10,7 @@
         rel="noopener noreferrer"
         class="text-xs font-semibold text-ext-wf3 dark:text-indigo-400 no-underline hover:underline"
       >
-        All news
+        {{ t('dashboard.news.all_news') }}
       </a>
     </header>
 
@@ -27,7 +27,7 @@
     </div>
 
     <p v-else-if="!items.length" class="py-4 text-sm text-slate-500 dark:text-slate-350">
-      No news available right now.
+      {{ t('dashboard.news.empty') }}
     </p>
 
     <ul v-else class="space-y-3 list-none p-0 m-0">
@@ -50,7 +50,10 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../base/BaseCard.vue'
+
+const { t, locale } = useI18n()
 
 defineProps({
   items: { type: Array, default: () => [] },
@@ -66,6 +69,6 @@ const formatDate = (value) => {
     return ''
   }
 
-  return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(date)
+  return new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'short', day: '2-digit' }).format(date)
 }
 </script>

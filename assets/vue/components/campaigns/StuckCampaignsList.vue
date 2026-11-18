@@ -2,10 +2,9 @@
   <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
     <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Stuck Campaigns</h2>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('stuck_campaigns.title') }}</h2>
         <p class="text-sm text-slate-500 dark:text-slate-350 mt-1">
-          Campaigns still in Prepared/InProcess status with no progress for a while. No action is taken
-          automatically - review each one and resume it if it should still be sending.
+          {{ t('stuck_campaigns.description') }}
         </p>
       </div>
 
@@ -16,7 +15,7 @@
         @click="loadStuckCampaigns"
       >
         <BaseIcon name="repeat" class="w-3.5 h-3.5" />
-        Refresh
+        {{ t('stuck_campaigns.refresh') }}
       </button>
     </div>
 
@@ -24,15 +23,15 @@
         :items="campaigns"
         :is-loading="isLoading"
         :load-error="errorMessage"
-        loading-message="Loading stuck campaigns..."
-        empty-message="No stuck campaigns right now."
+        :loading-message="t('stuck_campaigns.loading')"
+        :empty-message="t('stuck_campaigns.empty')"
         :colspan="4"
     >
       <template #head>
-        <th class="px-6 py-4">Subject</th>
-        <th class="px-6 py-4">Status</th>
-        <th class="px-6 py-4">Stuck for</th>
-        <th class="px-6 py-4 text-right">Actions</th>
+        <th class="px-6 py-4">{{ t('campaigns.table.subject') }}</th>
+        <th class="px-6 py-4">{{ t('campaigns.table.status') }}</th>
+        <th class="px-6 py-4">{{ t('stuck_campaigns.stuck_for') }}</th>
+        <th class="px-6 py-4 text-right">{{ t('campaigns.table.actions') }}</th>
       </template>
 
       <template #row="{ item: campaign }">
@@ -41,7 +40,7 @@
             :to="`/campaigns/${campaign.id}/edit`"
             class="hover:underline"
           >
-            {{ campaign.subject || `Campaign #${campaign.id}` }}
+            {{ campaign.subject || t('campaigns.fallback_subject', { id: campaign.id }) }}
           </router-link>
         </td>
         <td class="px-6 py-4">
@@ -58,7 +57,7 @@
               :disabled="isActionLoading(campaign.id)"
               @click="handleResume(campaign.id)"
             >
-              Resume
+              {{ t('stuck_campaigns.resume') }}
             </ActionButton>
           </div>
           <p
@@ -81,7 +80,7 @@
             :to="`/campaigns/${campaign.id}/edit`"
             class="font-semibold text-slate-900 dark:text-slate-100 hover:underline"
           >
-            {{ campaign.subject || `Campaign #${campaign.id}` }}
+            {{ campaign.subject || t('campaigns.fallback_subject', { id: campaign.id }) }}
           </router-link>
           <BaseBadge class="whitespace-nowrap" variant="warning">
             {{ campaign.statusLabel }}
@@ -89,7 +88,7 @@
         </div>
 
         <p class="text-xs text-slate-600 dark:text-slate-350">
-          <span class="font-medium text-slate-700 dark:text-slate-200">Stuck for:</span> {{ campaign.stuckFor }}
+          <span class="font-medium text-slate-700 dark:text-slate-200">{{ t('stuck_campaigns.stuck_for_label') }}</span> {{ campaign.stuckFor }}
         </p>
 
         <div class="pt-2 flex flex-wrap gap-2">
@@ -99,7 +98,7 @@
             :disabled="isActionLoading(campaign.id)"
             @click="handleResume(campaign.id)"
           >
-            Resume
+            {{ t('stuck_campaigns.resume') }}
           </ActionButton>
         </div>
         <p
@@ -120,11 +119,14 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { campaignClient } from '../../api'
 import BaseIcon from '../base/BaseIcon.vue'
 import BaseBadge from '../base/BaseBadge.vue'
 import ActionButton from '../base/ActionButton.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'
+
+const { t } = useI18n()
 
 const campaigns = ref([])
 const isLoading = ref(false)
@@ -132,10 +134,10 @@ const errorMessage = ref('')
 const actionLoadingByCampaignId = ref({})
 const actionFeedbackByCampaignId = ref({})
 
-const toStatusLabel = (statusRaw) => (statusRaw ? statusRaw.replace(/_/g, ' ') : 'Unknown')
+const toStatusLabel = (statusRaw) => (statusRaw ? statusRaw.replace(/_/g, ' ') : t('campaigns.status.unknown'))
 
 const formatStuckDuration = (totalSeconds) => {
-  if (totalSeconds === null || totalSeconds === undefined || Number.isNaN(totalSeconds)) return 'Unknown'
+  if (totalSeconds === null || totalSeconds === undefined || Number.isNaN(totalSeconds)) return t('campaigns.status.unknown')
   const seconds = Math.max(0, Math.floor(totalSeconds))
   const days = Math.floor(seconds / 86400)
   const hours = Math.floor((seconds % 86400) / 3600)
@@ -174,7 +176,7 @@ const loadStuckCampaigns = async () => {
     }))
   } catch (error) {
     console.error('Failed to load stuck campaigns:', error)
-    errorMessage.value = error?.message || 'Failed to load stuck campaigns.'
+    errorMessage.value = error?.message || t('stuck_campaigns.errors.load_failed')
   } finally {
     isLoading.value = false
   }
@@ -183,17 +185,17 @@ const loadStuckCampaigns = async () => {
 const handleResume = async (campaignId) => {
   if (isActionLoading(campaignId)) return
   setActionLoading(campaignId, true)
-  setActionFeedback(campaignId, 'Resuming campaign...')
+  setActionFeedback(campaignId, t('stuck_campaigns.feedback.resuming'))
 
   try {
     await campaignClient.resumeCampaign(campaignId)
-    setActionFeedback(campaignId, 'Campaign resumed.', 'success')
+    setActionFeedback(campaignId, t('stuck_campaigns.feedback.resumed'), 'success')
     setTimeout(() => {
       loadStuckCampaigns()
     }, 1500)
   } catch (error) {
     console.error(`Failed to resume campaign ${campaignId}:`, error)
-    setActionFeedback(campaignId, error?.message || 'Failed to resume campaign.', 'error')
+    setActionFeedback(campaignId, error?.message || t('stuck_campaigns.feedback.resume_failed'), 'error')
   } finally {
     setActionLoading(campaignId, false)
   }

@@ -2,10 +2,10 @@
   <BaseCard>
     <header class="mb-3">
       <h2 class="text-sm font-bold text-gray-900 mb-0 dark:text-slate-100">
-        Help
+        {{ t('dashboard.help.title') }}
       </h2>
       <p class="text-gray-500 text-xs mt-1 mb-0 dark:text-slate-350">
-        Useful pages from the phpList manual and community
+        {{ t('dashboard.help.subtitle') }}
       </p>
     </header>
 
@@ -26,14 +26,18 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../base/BaseCard.vue'
+
+const { t } = useI18n()
 
 const MANUAL = 'https://www.phplist.org/manual/books/phplist-manual/page'
 
-const links = [
+const links = computed(() => [
   {
-    label: 'Composing your first campaign',
-    description: 'Create, preview and send your first message.',
+    label: t('dashboard.help.first_campaign.label'),
+    description: t('dashboard.help.first_campaign.description'),
     href: `${MANUAL}/composing-your-first-campaign`,
   },
   // {
@@ -42,14 +46,14 @@ const links = [
   //   href: `${MANUAL}/basic-campaign-statistics`,
   // },
   {
-    label: 'System overview',
-    description: 'How the pieces of phpList fit together.',
+    label: t('dashboard.help.system_overview.label'),
+    description: t('dashboard.help.system_overview.description'),
     href: `${MANUAL}/system-overview`,
   },
   {
-    label: 'Community forum',
-    description: 'Ask questions and read the latest discussions.',
+    label: t('dashboard.help.forum.label'),
+    description: t('dashboard.help.forum.description'),
     href: 'https://discuss.phplist.org/latest',
   },
-]
+])
 </script>

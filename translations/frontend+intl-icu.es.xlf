@@ -173,10 +173,2463 @@
         <target>{change} frente al mes anterior</target>
       </trans-unit>
 
+      <!-- Dashboard: cards -->
+      <trans-unit id="dashboard.quick_actions.title" resname="dashboard.quick_actions.title">
+        <source>dashboard.quick_actions.title</source>
+        <target>Acciones rápidas</target>
+      </trans-unit>
+      <trans-unit id="dashboard.quick_actions.new_campaign" resname="dashboard.quick_actions.new_campaign">
+        <source>dashboard.quick_actions.new_campaign</source>
+        <target>Nueva campaña</target>
+      </trans-unit>
+      <trans-unit id="dashboard.quick_actions.add_subscribers" resname="dashboard.quick_actions.add_subscribers">
+        <source>dashboard.quick_actions.add_subscribers</source>
+        <target>Añadir suscriptores</target>
+      </trans-unit>
+      <trans-unit id="dashboard.quick_actions.import_list" resname="dashboard.quick_actions.import_list">
+        <source>dashboard.quick_actions.import_list</source>
+        <target>Importar lista</target>
+      </trans-unit>
+      <trans-unit id="dashboard.quick_actions.new_template" resname="dashboard.quick_actions.new_template">
+        <source>dashboard.quick_actions.new_template</source>
+        <target>Nueva plantilla</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.title" resname="dashboard.help.title">
+        <source>dashboard.help.title</source>
+        <target>Ayuda</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.subtitle" resname="dashboard.help.subtitle">
+        <source>dashboard.help.subtitle</source>
+        <target>Páginas útiles del manual y de la comunidad de phpList</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.first_campaign.label" resname="dashboard.help.first_campaign.label">
+        <source>dashboard.help.first_campaign.label</source>
+        <target>Redactar tu primera campaña</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.first_campaign.description" resname="dashboard.help.first_campaign.description">
+        <source>dashboard.help.first_campaign.description</source>
+        <target>Crea, previsualiza y envía tu primer mensaje.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.system_overview.label" resname="dashboard.help.system_overview.label">
+        <source>dashboard.help.system_overview.label</source>
+        <target>Descripción general del sistema</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.system_overview.description" resname="dashboard.help.system_overview.description">
+        <source>dashboard.help.system_overview.description</source>
+        <target>Cómo encajan las piezas de phpList.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.forum.label" resname="dashboard.help.forum.label">
+        <source>dashboard.help.forum.label</source>
+        <target>Foro de la comunidad</target>
+      </trans-unit>
+      <trans-unit id="dashboard.help.forum.description" resname="dashboard.help.forum.description">
+        <source>dashboard.help.forum.description</source>
+        <target>Haz preguntas y lee las últimas discusiones.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.news.title" resname="dashboard.news.title">
+        <source>dashboard.news.title</source>
+        <target>Noticias de la comunidad phpList</target>
+      </trans-unit>
+      <trans-unit id="dashboard.news.all_news" resname="dashboard.news.all_news">
+        <source>dashboard.news.all_news</source>
+        <target>Todas las noticias</target>
+      </trans-unit>
+      <trans-unit id="dashboard.news.empty" resname="dashboard.news.empty">
+        <source>dashboard.news.empty</source>
+        <target>No hay noticias disponibles en este momento.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.title" resname="dashboard.recent_campaigns.title">
+        <source>dashboard.recent_campaigns.title</source>
+        <target>Campañas recientes</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.name" resname="dashboard.recent_campaigns.name">
+        <source>dashboard.recent_campaigns.name</source>
+        <target>Nombre de la campaña</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.status" resname="dashboard.recent_campaigns.status">
+        <source>dashboard.recent_campaigns.status</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.date" resname="dashboard.recent_campaigns.date">
+        <source>dashboard.recent_campaigns.date</source>
+        <target>Fecha</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.open_rate" resname="dashboard.recent_campaigns.open_rate">
+        <source>dashboard.recent_campaigns.open_rate</source>
+        <target>Tasa de apertura</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.click_rate" resname="dashboard.recent_campaigns.click_rate">
+        <source>dashboard.recent_campaigns.click_rate</source>
+        <target>Tasa de clics</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.empty" resname="dashboard.recent_campaigns.empty">
+        <source>dashboard.recent_campaigns.empty</source>
+        <target>Aún no hay campañas.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.status_sent" resname="dashboard.recent_campaigns.status_sent">
+        <source>dashboard.recent_campaigns.status_sent</source>
+        <target>Enviada</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.status_scheduled" resname="dashboard.recent_campaigns.status_scheduled">
+        <source>dashboard.recent_campaigns.status_scheduled</source>
+        <target>Programada</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent_campaigns.status_draft" resname="dashboard.recent_campaigns.status_draft">
+        <source>dashboard.recent_campaigns.status_draft</source>
+        <target>Borrador</target>
+      </trans-unit>
+      <trans-unit id="dashboard.performance.title" resname="dashboard.performance.title">
+        <source>dashboard.performance.title</source>
+        <target>Aperturas y clics diarios de los últimos 30 días</target>
+      </trans-unit>
+      <trans-unit id="dashboard.errors.summary" resname="dashboard.errors.summary">
+        <source>dashboard.errors.summary</source>
+        <target>No se pudo cargar el resumen del panel.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.errors.news" resname="dashboard.errors.news">
+        <source>dashboard.errors.news</source>
+        <target>No se pudieron cargar las noticias de la comunidad.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.errors.recent_campaigns" resname="dashboard.errors.recent_campaigns">
+        <source>dashboard.errors.recent_campaigns</source>
+        <target>No se pudieron cargar las campañas recientes.</target>
+      </trans-unit>
+
       <!-- Language selector -->
       <trans-unit id="language.label" resname="language.label">
         <source>language.label</source>
         <target>Idioma</target>
+      </trans-unit>
+
+      <!-- Common + Subscribers -->
+      <trans-unit id="common.close" resname="common.close">
+        <source>common.close</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="common.save" resname="common.save">
+        <source>common.save</source>
+        <target>Guardar</target>
+      </trans-unit>
+      <trans-unit id="common.saving" resname="common.saving">
+        <source>common.saving</source>
+        <target>Guardando...</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" resname="common.cancel">
+        <source>common.cancel</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="common.previous" resname="common.previous">
+        <source>common.previous</source>
+        <target>Anterior</target>
+      </trans-unit>
+      <trans-unit id="common.next" resname="common.next">
+        <source>common.next</source>
+        <target>Siguiente</target>
+      </trans-unit>
+      <trans-unit id="common.view" resname="common.view">
+        <source>common.view</source>
+        <target>Ver</target>
+      </trans-unit>
+      <trans-unit id="subscribers.title" resname="subscribers.title">
+        <source>subscribers.title</source>
+        <target>Suscriptores</target>
+      </trans-unit>
+      <trans-unit id="subscribers.directory.search_placeholder" resname="subscribers.directory.search_placeholder">
+        <source>subscribers.directory.search_placeholder</source>
+        <target>Buscar suscriptores...</target>
+      </trans-unit>
+      <trans-unit id="subscribers.directory.import_csv" resname="subscribers.directory.import_csv">
+        <source>subscribers.directory.import_csv</source>
+        <target>Importar CSV</target>
+      </trans-unit>
+      <trans-unit id="subscribers.directory.importing" resname="subscribers.directory.importing">
+        <source>subscribers.directory.importing</source>
+        <target>Importando...</target>
+      </trans-unit>
+      <trans-unit id="subscribers.directory.showing" resname="subscribers.directory.showing">
+        <source>subscribers.directory.showing</source>
+        <target>Mostrando {shown} de {total} suscriptores</target>
+      </trans-unit>
+      <trans-unit id="subscribers.directory.import_failed" resname="subscribers.directory.import_failed">
+        <source>subscribers.directory.import_failed</source>
+        <target>No se pudieron importar los suscriptores. Compruebe el archivo e inténtelo de nuevo.</target>
+      </trans-unit>
+      <trans-unit id="subscribers.search_columns.email" resname="subscribers.search_columns.email">
+        <source>subscribers.search_columns.email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="subscribers.search_columns.foreign_key" resname="subscribers.search_columns.foreign_key">
+        <source>subscribers.search_columns.foreign_key</source>
+        <target>Clave externa</target>
+      </trans-unit>
+      <trans-unit id="subscribers.search_columns.unique_id" resname="subscribers.search_columns.unique_id">
+        <source>subscribers.search_columns.unique_id</source>
+        <target>ID único</target>
+      </trans-unit>
+      <trans-unit id="subscribers.filters.all" resname="subscribers.filters.all">
+        <source>subscribers.filters.all</source>
+        <target>Todos</target>
+      </trans-unit>
+      <trans-unit id="subscribers.filters.unconfirmed" resname="subscribers.filters.unconfirmed">
+        <source>subscribers.filters.unconfirmed</source>
+        <target>Sin confirmar</target>
+      </trans-unit>
+      <trans-unit id="subscribers.filters.blacklisted" resname="subscribers.filters.blacklisted">
+        <source>subscribers.filters.blacklisted</source>
+        <target>En lista negra</target>
+      </trans-unit>
+      <trans-unit id="subscribers.filters.confirmed" resname="subscribers.filters.confirmed">
+        <source>subscribers.filters.confirmed</source>
+        <target>Confirmados</target>
+      </trans-unit>
+      <trans-unit id="subscribers.filters.non-blacklisted" resname="subscribers.filters.non-blacklisted">
+        <source>subscribers.filters.non-blacklisted</source>
+        <target>Fuera de la lista negra</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.id" resname="subscribers.table.id">
+        <source>subscribers.table.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.email" resname="subscribers.table.email">
+        <source>subscribers.table.email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.status" resname="subscribers.table.status">
+        <source>subscribers.table.status</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.lists" resname="subscribers.table.lists">
+        <source>subscribers.table.lists</source>
+        <target>Listas</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.created" resname="subscribers.table.created">
+        <source>subscribers.table.created</source>
+        <target>Creado</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.actions" resname="subscribers.table.actions">
+        <source>subscribers.table.actions</source>
+        <target>Acciones</target>
+      </trans-unit>
+      <trans-unit id="subscribers.table.list_count" resname="subscribers.table.list_count">
+        <source>subscribers.table.list_count</source>
+        <target>{count, plural, one {# lista} other {# listas}}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.status.confirmed" resname="subscribers.status.confirmed">
+        <source>subscribers.status.confirmed</source>
+        <target>Confirmado</target>
+      </trans-unit>
+      <trans-unit id="subscribers.status.unconfirmed" resname="subscribers.status.unconfirmed">
+        <source>subscribers.status.unconfirmed</source>
+        <target>Sin confirmar</target>
+      </trans-unit>
+      <trans-unit id="subscribers.status.active" resname="subscribers.status.active">
+        <source>subscribers.status.active</source>
+        <target>Activo</target>
+      </trans-unit>
+      <trans-unit id="subscribers.status.blacklisted" resname="subscribers.status.blacklisted">
+        <source>subscribers.status.blacklisted</source>
+        <target>En lista negra</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.title" resname="subscribers.modal.title">
+        <source>subscribers.modal.title</source>
+        <target>Detalles del suscriptor ID: {id}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.email" resname="subscribers.modal.email">
+        <source>subscribers.modal.email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.confirmed" resname="subscribers.modal.confirmed">
+        <source>subscribers.modal.confirmed</source>
+        <target>Confirmado</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.blacklisted" resname="subscribers.modal.blacklisted">
+        <source>subscribers.modal.blacklisted</source>
+        <target>En lista negra</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.html_email" resname="subscribers.modal.html_email">
+        <source>subscribers.modal.html_email</source>
+        <target>Correo HTML</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.disabled" resname="subscribers.modal.disabled">
+        <source>subscribers.modal.disabled</source>
+        <target>Desactivado</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.subscribed_lists" resname="subscribers.modal.subscribed_lists">
+        <source>subscribers.modal.subscribed_lists</source>
+        <target>Listas suscritas</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.no_lists" resname="subscribers.modal.no_lists">
+        <source>subscribers.modal.no_lists</source>
+        <target>Sin listas</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.created" resname="subscribers.modal.created">
+        <source>subscribers.modal.created</source>
+        <target>Creado: {value}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.updated" resname="subscribers.modal.updated">
+        <source>subscribers.modal.updated</source>
+        <target>Actualizado: {value}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.bounce_count" resname="subscribers.modal.bounce_count">
+        <source>subscribers.modal.bounce_count</source>
+        <target>Rebotes: {value}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.unique_id" resname="subscribers.modal.unique_id">
+        <source>subscribers.modal.unique_id</source>
+        <target>ID único: {value}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.modal.uuid" resname="subscribers.modal.uuid">
+        <source>subscribers.modal.uuid</source>
+        <target>UUID: {value}</target>
+      </trans-unit>
+      <trans-unit id="subscribers.import_result.title" resname="subscribers.import_result.title">
+        <source>subscribers.import_result.title</source>
+        <target>Resultado de la importación</target>
+      </trans-unit>
+      <trans-unit id="subscribers.import_result.imported" resname="subscribers.import_result.imported">
+        <source>subscribers.import_result.imported</source>
+        <target>Importados</target>
+      </trans-unit>
+      <trans-unit id="subscribers.import_result.skipped" resname="subscribers.import_result.skipped">
+        <source>subscribers.import_result.skipped</source>
+        <target>Omitidos</target>
+      </trans-unit>
+      <trans-unit id="subscribers.import_result.errors" resname="subscribers.import_result.errors">
+        <source>subscribers.import_result.errors</source>
+        <target>Errores</target>
+      </trans-unit>
+      <trans-unit id="subscribers.import_result.no_errors" resname="subscribers.import_result.no_errors">
+        <source>subscribers.import_result.no_errors</source>
+        <target>Importación completada sin errores.</target>
+      </trans-unit>
+
+      <!-- Subscribers: export -->
+      <trans-unit id="subscribers.export.date_prompt" resname="subscribers.export.date_prompt">
+        <source>subscribers.export.date_prompt</source>
+        <target>¿Qué fecha se debe utilizar?:</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_from" resname="subscribers.export.date_from">
+        <source>subscribers.export.date_from</source>
+        <target>Fecha desde</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_to" resname="subscribers.export.date_to">
+        <source>subscribers.export.date_to</source>
+        <target>Fecha hasta</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns" resname="subscribers.export.columns">
+        <source>subscribers.export.columns</source>
+        <target>Columnas</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.select_all" resname="subscribers.export.select_all">
+        <source>subscribers.export.select_all</source>
+        <target>Seleccionar todo</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.export" resname="subscribers.export.export">
+        <source>subscribers.export.export</source>
+        <target>Exportar</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_types.any" resname="subscribers.export.date_types.any">
+        <source>subscribers.export.date_types.any</source>
+        <target>Cualquier fecha (exportar todos los suscriptores)</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_types.signup" resname="subscribers.export.date_types.signup">
+        <source>subscribers.export.date_types.signup</source>
+        <target>Cuando se registraron</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_types.changed" resname="subscribers.export.date_types.changed">
+        <source>subscribers.export.date_types.changed</source>
+        <target>Cuando se modificó el registro</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_types.changelog" resname="subscribers.export.date_types.changelog">
+        <source>subscribers.export.date_types.changelog</source>
+        <target>Según el registro de cambios</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.date_types.subscribed" resname="subscribers.export.date_types.subscribed">
+        <source>subscribers.export.date_types.subscribed</source>
+        <target>Cuando se suscribieron a una nueva lista</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.id" resname="subscribers.export.columns.id">
+        <source>subscribers.export.columns.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.email" resname="subscribers.export.columns.email">
+        <source>subscribers.export.columns.email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.confirmed" resname="subscribers.export.columns.confirmed">
+        <source>subscribers.export.columns.confirmed</source>
+        <target>¿Está confirmado este suscriptor?</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.blacklisted" resname="subscribers.export.columns.blacklisted">
+        <source>subscribers.export.columns.blacklisted</source>
+        <target>¿Está este suscriptor en la lista negra?</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.bounce_count" resname="subscribers.export.columns.bounce_count">
+        <source>subscribers.export.columns.bounce_count</source>
+        <target>Número de rebotes</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.created_at" resname="subscribers.export.columns.created_at">
+        <source>subscribers.export.columns.created_at</source>
+        <target>Fecha de alta</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.updated_at" resname="subscribers.export.columns.updated_at">
+        <source>subscribers.export.columns.updated_at</source>
+        <target>Última modificación</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.unique_id" resname="subscribers.export.columns.unique_id">
+        <source>subscribers.export.columns.unique_id</source>
+        <target>ID único</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.html_email" resname="subscribers.export.columns.html_email">
+        <source>subscribers.export.columns.html_email</source>
+        <target>Enviar correos HTML a este suscriptor</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.rss_frequency" resname="subscribers.export.columns.rss_frequency">
+        <source>subscribers.export.columns.rss_frequency</source>
+        <target>Frecuencia de RSS</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.disabled" resname="subscribers.export.columns.disabled">
+        <source>subscribers.export.columns.disabled</source>
+        <target>¿Está desactivada esta cuenta?</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.extra_data" resname="subscribers.export.columns.extra_data">
+        <source>subscribers.export.columns.extra_data</source>
+        <target>Datos adicionales</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.columns.foreign_key" resname="subscribers.export.columns.foreign_key">
+        <source>subscribers.export.columns.foreign_key</source>
+        <target>Clave externa</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.errors.no_columns" resname="subscribers.export.errors.no_columns">
+        <source>subscribers.export.errors.no_columns</source>
+        <target>Seleccione al menos una columna.</target>
+      </trans-unit>
+      <trans-unit id="subscribers.export.errors.date_order" resname="subscribers.export.errors.date_order">
+        <source>subscribers.export.errors.date_order</source>
+        <target>«Fecha desde» no puede ser posterior a «Fecha hasta».</target>
+      </trans-unit>
+
+      <!-- Lists -->
+      <trans-unit id="lists.title" resname="lists.title">
+        <source>lists.title</source>
+        <target>Listas de correo</target>
+      </trans-unit>
+      <trans-unit id="lists.add_new" resname="lists.add_new">
+        <source>lists.add_new</source>
+        <target>Añadir nueva lista</target>
+      </trans-unit>
+      <trans-unit id="lists.loading" resname="lists.loading">
+        <source>lists.loading</source>
+        <target>Cargando listas de correo...</target>
+      </trans-unit>
+      <trans-unit id="lists.empty" resname="lists.empty">
+        <source>lists.empty</source>
+        <target>No se encontraron listas de correo.</target>
+      </trans-unit>
+      <trans-unit id="lists.table.id" resname="lists.table.id">
+        <source>lists.table.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="lists.table.name" resname="lists.table.name">
+        <source>lists.table.name</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="lists.table.public_active" resname="lists.table.public_active">
+        <source>lists.table.public_active</source>
+        <target>Pública/Activa</target>
+      </trans-unit>
+      <trans-unit id="lists.table.actions" resname="lists.table.actions">
+        <source>lists.table.actions</source>
+        <target>Acciones</target>
+      </trans-unit>
+      <trans-unit id="lists.table.yes" resname="lists.table.yes">
+        <source>lists.table.yes</source>
+        <target>Sí</target>
+      </trans-unit>
+      <trans-unit id="lists.table.no" resname="lists.table.no">
+        <source>lists.table.no</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="lists.status.public" resname="lists.status.public">
+        <source>lists.status.public</source>
+        <target>Pública</target>
+      </trans-unit>
+      <trans-unit id="lists.status.private" resname="lists.status.private">
+        <source>lists.status.private</source>
+        <target>Privada</target>
+      </trans-unit>
+      <trans-unit id="lists.actions.delete" resname="lists.actions.delete">
+        <source>lists.actions.delete</source>
+        <target>Eliminar</target>
+      </trans-unit>
+      <trans-unit id="lists.actions.add_subscribers" resname="lists.actions.add_subscribers">
+        <source>lists.actions.add_subscribers</source>
+        <target>Añadir suscriptores</target>
+      </trans-unit>
+      <trans-unit id="lists.actions.edit" resname="lists.actions.edit">
+        <source>lists.actions.edit</source>
+        <target>Editar</target>
+      </trans-unit>
+      <trans-unit id="lists.actions.start_campaign" resname="lists.actions.start_campaign">
+        <source>lists.actions.start_campaign</source>
+        <target>Iniciar campaña</target>
+      </trans-unit>
+      <trans-unit id="lists.actions.view_members" resname="lists.actions.view_members">
+        <source>lists.actions.view_members</source>
+        <target>Ver miembros</target>
+      </trans-unit>
+      <trans-unit id="lists.errors.load_failed" resname="lists.errors.load_failed">
+        <source>lists.errors.load_failed</source>
+        <target>No se pudieron cargar las listas de correo.</target>
+      </trans-unit>
+      <trans-unit id="lists.delete_confirm" resname="lists.delete_confirm">
+        <source>lists.delete_confirm</source>
+        <target>¿Eliminar la lista de correo "{name}"?
+
+Esta acción no se puede deshacer.</target>
+      </trans-unit>
+      <trans-unit id="lists.form.name" resname="lists.form.name">
+        <source>lists.form.name</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="lists.form.public" resname="lists.form.public">
+        <source>lists.form.public</source>
+        <target>Pública</target>
+      </trans-unit>
+      <trans-unit id="lists.form.list_position" resname="lists.form.list_position">
+        <source>lists.form.list_position</source>
+        <target>Posición de la lista (opcional)</target>
+      </trans-unit>
+      <trans-unit id="lists.form.description" resname="lists.form.description">
+        <source>lists.form.description</source>
+        <target>Descripción (opcional)</target>
+      </trans-unit>
+      <trans-unit id="lists.form.category" resname="lists.form.category">
+        <source>lists.form.category</source>
+        <target>Categoría</target>
+      </trans-unit>
+      <trans-unit id="lists.form.rss_feed" resname="lists.form.rss_feed">
+        <source>lists.form.rss_feed</source>
+        <target>URL del feed RSS</target>
+      </trans-unit>
+      <trans-unit id="lists.form.subject_prefix" resname="lists.form.subject_prefix">
+        <source>lists.form.subject_prefix</source>
+        <target>Prefijo del asunto</target>
+      </trans-unit>
+      <trans-unit id="lists.form.errors.name_required" resname="lists.form.errors.name_required">
+        <source>lists.form.errors.name_required</source>
+        <target>El nombre es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="lists.form.errors.position_invalid" resname="lists.form.errors.position_invalid">
+        <source>lists.form.errors.position_invalid</source>
+        <target>La posición de la lista debe ser un número entero mayor o igual que 0.</target>
+      </trans-unit>
+      <trans-unit id="lists.create.title" resname="lists.create.title">
+        <source>lists.create.title</source>
+        <target>Crear nueva lista</target>
+      </trans-unit>
+      <trans-unit id="lists.create.submit" resname="lists.create.submit">
+        <source>lists.create.submit</source>
+        <target>Crear</target>
+      </trans-unit>
+      <trans-unit id="lists.create.creating" resname="lists.create.creating">
+        <source>lists.create.creating</source>
+        <target>Creando...</target>
+      </trans-unit>
+      <trans-unit id="lists.create.errors.failed" resname="lists.create.errors.failed">
+        <source>lists.create.errors.failed</source>
+        <target>No se pudo crear la lista.</target>
+      </trans-unit>
+      <trans-unit id="lists.edit.title" resname="lists.edit.title">
+        <source>lists.edit.title</source>
+        <target>Editar lista</target>
+      </trans-unit>
+      <trans-unit id="lists.edit.errors.failed" resname="lists.edit.errors.failed">
+        <source>lists.edit.errors.failed</source>
+        <target>No se pudo actualizar la lista.</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.title" resname="lists.add_subscribers.title">
+        <source>lists.add_subscribers.title</source>
+        <target>Añadir suscriptores</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.emails" resname="lists.add_subscribers.emails">
+        <source>lists.add_subscribers.emails</source>
+        <target>Direcciones de correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.emails_placeholder" resname="lists.add_subscribers.emails_placeholder">
+        <source>lists.add_subscribers.emails_placeholder</source>
+        <target>juan@ejemplo.com
+maria@ejemplo.com
+equipo@ejemplo.com</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.emails_help" resname="lists.add_subscribers.emails_help">
+        <source>lists.add_subscribers.emails_help</source>
+        <target>Introduzca un correo por línea o sepárelos con comas.</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.auto_confirm" resname="lists.add_subscribers.auto_confirm">
+        <source>lists.add_subscribers.auto_confirm</source>
+        <target>Confirmar suscriptores automáticamente</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.submit" resname="lists.add_subscribers.submit">
+        <source>lists.add_subscribers.submit</source>
+        <target>Añadir suscriptores</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.adding" resname="lists.add_subscribers.adding">
+        <source>lists.add_subscribers.adding</source>
+        <target>Añadiendo...</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.errors.no_list" resname="lists.add_subscribers.errors.no_list">
+        <source>lists.add_subscribers.errors.no_list</source>
+        <target>No se ha seleccionado ninguna lista de correo.</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.errors.email_required" resname="lists.add_subscribers.errors.email_required">
+        <source>lists.add_subscribers.errors.email_required</source>
+        <target>Se requiere al menos un correo electrónico.</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.errors.invalid_emails" resname="lists.add_subscribers.errors.invalid_emails">
+        <source>lists.add_subscribers.errors.invalid_emails</source>
+        <target>Correo(s) no válido(s): {emails}</target>
+      </trans-unit>
+      <trans-unit id="lists.add_subscribers.errors.failed" resname="lists.add_subscribers.errors.failed">
+        <source>lists.add_subscribers.errors.failed</source>
+        <target>No se pudieron añadir los suscriptores a la lista.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.mailing_list" resname="list_subscribers.mailing_list">
+        <source>list_subscribers.mailing_list</source>
+        <target>Lista de correo</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.list_fallback" resname="list_subscribers.list_fallback">
+        <source>list_subscribers.list_fallback</source>
+        <target>Lista n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.back" resname="list_subscribers.back">
+        <source>list_subscribers.back</source>
+        <target>Volver a las listas</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.selected" resname="list_subscribers.selected">
+        <source>list_subscribers.selected</source>
+        <target>Seleccionados: {count}</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.delete_selected" resname="list_subscribers.delete_selected">
+        <source>list_subscribers.delete_selected</source>
+        <target>Eliminar seleccionados</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.copy_selected" resname="list_subscribers.copy_selected">
+        <source>list_subscribers.copy_selected</source>
+        <target>Copiar seleccionados</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.move_selected" resname="list_subscribers.move_selected">
+        <source>list_subscribers.move_selected</source>
+        <target>Mover seleccionados</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.select_target" resname="list_subscribers.select_target">
+        <source>list_subscribers.select_target</source>
+        <target>Seleccionar lista de destino</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.loading" resname="list_subscribers.loading">
+        <source>list_subscribers.loading</source>
+        <target>Cargando...</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.empty" resname="list_subscribers.empty">
+        <source>list_subscribers.empty</source>
+        <target>No hay suscriptores para este filtro.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.select_all_visible" resname="list_subscribers.select_all_visible">
+        <source>list_subscribers.select_all_visible</source>
+        <target>Seleccionar todos los visibles</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.showing" resname="list_subscribers.showing">
+        <source>list_subscribers.showing</source>
+        <target>Mostrando {shown} en la página · Total: {total}</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.confirm.remove_one" resname="list_subscribers.confirm.remove_one">
+        <source>list_subscribers.confirm.remove_one</source>
+        <target>¿Quitar a {email} de esta lista?</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.confirm.remove_selected" resname="list_subscribers.confirm.remove_selected">
+        <source>list_subscribers.confirm.remove_selected</source>
+        <target>¿Quitar {count, plural, one {# suscriptor seleccionado} other {# suscriptores seleccionados}} de esta lista?</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.confirm.move" resname="list_subscribers.confirm.move">
+        <source>list_subscribers.confirm.move</source>
+        <target>¿Mover {count, plural, one {# suscriptor seleccionado} other {# suscriptores seleccionados}} a la lista seleccionada?</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.messages.removed_one" resname="list_subscribers.messages.removed_one">
+        <source>list_subscribers.messages.removed_one</source>
+        <target>Suscriptor quitado de esta lista.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.messages.removed_selected" resname="list_subscribers.messages.removed_selected">
+        <source>list_subscribers.messages.removed_selected</source>
+        <target>{count, plural, one {Se quitó # suscriptor} other {Se quitaron # suscriptores}} de esta lista.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.messages.copied" resname="list_subscribers.messages.copied">
+        <source>list_subscribers.messages.copied</source>
+        <target>{count, plural, one {Se copió # suscriptor} other {Se copiaron # suscriptores}} a la lista seleccionada.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.messages.moved" resname="list_subscribers.messages.moved">
+        <source>list_subscribers.messages.moved</source>
+        <target>{count, plural, one {Se movió # suscriptor} other {Se movieron # suscriptores}} a la lista seleccionada.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.load_failed" resname="list_subscribers.errors.load_failed">
+        <source>list_subscribers.errors.load_failed</source>
+        <target>No se pudieron cargar los suscriptores de esta lista.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.invalid_list_id" resname="list_subscribers.errors.invalid_list_id">
+        <source>list_subscribers.errors.invalid_list_id</source>
+        <target>ID de lista no válido.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.remove_one" resname="list_subscribers.errors.remove_one">
+        <source>list_subscribers.errors.remove_one</source>
+        <target>No se pudo quitar al suscriptor de esta lista.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.remove_selected" resname="list_subscribers.errors.remove_selected">
+        <source>list_subscribers.errors.remove_selected</source>
+        <target>No se pudieron quitar los suscriptores seleccionados de esta lista.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.copy" resname="list_subscribers.errors.copy">
+        <source>list_subscribers.errors.copy</source>
+        <target>No se pudieron copiar los suscriptores seleccionados.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.move" resname="list_subscribers.errors.move">
+        <source>list_subscribers.errors.move</source>
+        <target>No se pudieron mover los suscriptores seleccionados.</target>
+      </trans-unit>
+      <trans-unit id="list_subscribers.errors.move_partial" resname="list_subscribers.errors.move_partial">
+        <source>list_subscribers.errors.move_partial</source>
+        <target>{count, plural, one {Se copió # suscriptor} other {Se copiaron # suscriptores}} a la lista seleccionada, pero no se pudieron quitar de la lista actual. Es posible que ahora estén en ambas listas.</target>
+      </trans-unit>
+
+      <!-- Campaigns -->
+      <trans-unit id="campaigns.title" resname="campaigns.title">
+        <source>campaigns.title</source>
+        <target>Campañas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.create" resname="campaigns.create">
+        <source>campaigns.create</source>
+        <target>Crear campaña</target>
+      </trans-unit>
+      <trans-unit id="campaigns.loading" resname="campaigns.loading">
+        <source>campaigns.loading</source>
+        <target>Cargando campañas...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.empty" resname="campaigns.empty">
+        <source>campaigns.empty</source>
+        <target>No hay campañas para este filtro.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.filters.all" resname="campaigns.filters.all">
+        <source>campaigns.filters.all</source>
+        <target>Todas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.filters.sent" resname="campaigns.filters.sent">
+        <source>campaigns.filters.sent</source>
+        <target>Enviadas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.filters.active" resname="campaigns.filters.active">
+        <source>campaigns.filters.active</source>
+        <target>Activas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.filters.draft" resname="campaigns.filters.draft">
+        <source>campaigns.filters.draft</source>
+        <target>Borradores</target>
+      </trans-unit>
+      <trans-unit id="campaigns.status.active" resname="campaigns.status.active">
+        <source>campaigns.status.active</source>
+        <target>Activa</target>
+      </trans-unit>
+      <trans-unit id="campaigns.status.sent" resname="campaigns.status.sent">
+        <source>campaigns.status.sent</source>
+        <target>Enviada</target>
+      </trans-unit>
+      <trans-unit id="campaigns.status.draft" resname="campaigns.status.draft">
+        <source>campaigns.status.draft</source>
+        <target>Borrador</target>
+      </trans-unit>
+      <trans-unit id="campaigns.status.unknown" resname="campaigns.status.unknown">
+        <source>campaigns.status.unknown</source>
+        <target>Desconocido</target>
+      </trans-unit>
+      <trans-unit id="campaigns.table.subject" resname="campaigns.table.subject">
+        <source>campaigns.table.subject</source>
+        <target>Asunto</target>
+      </trans-unit>
+      <trans-unit id="campaigns.table.status" resname="campaigns.table.status">
+        <source>campaigns.table.status</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="campaigns.table.lists" resname="campaigns.table.lists">
+        <source>campaigns.table.lists</source>
+        <target>Listas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.table.processed" resname="campaigns.table.processed">
+        <source>campaigns.table.processed</source>
+        <target>Procesados</target>
+      </trans-unit>
+      <trans-unit id="campaigns.table.statistics" resname="campaigns.table.statistics">
+        <source>campaigns.table.statistics</source>
+        <target>Estadísticas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.table.actions" resname="campaigns.table.actions">
+        <source>campaigns.table.actions</source>
+        <target>Acciones</target>
+      </trans-unit>
+      <trans-unit id="campaigns.lists_loading" resname="campaigns.lists_loading">
+        <source>campaigns.lists_loading</source>
+        <target>Cargando listas...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.lists_count" resname="campaigns.lists_count">
+        <source>campaigns.lists_count</source>
+        <target>{count, plural, one {# lista} other {# listas}}</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.started" resname="campaigns.fields.started">
+        <source>campaigns.fields.started</source>
+        <target>Iniciada:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.time_to_send" resname="campaigns.fields.time_to_send">
+        <source>campaigns.fields.time_to_send</source>
+        <target>Tiempo de envío:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.total" resname="campaigns.fields.total">
+        <source>campaigns.fields.total</source>
+        <target>Total:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.text" resname="campaigns.fields.text">
+        <source>campaigns.fields.text</source>
+        <target>Texto:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.html" resname="campaigns.fields.html">
+        <source>campaigns.fields.html</source>
+        <target>HTML:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.total_views" resname="campaigns.fields.total_views">
+        <source>campaigns.fields.total_views</source>
+        <target>Vistas totales:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.unique_views" resname="campaigns.fields.unique_views">
+        <source>campaigns.fields.unique_views</source>
+        <target>Vistas únicas:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.bounced" resname="campaigns.fields.bounced">
+        <source>campaigns.fields.bounced</source>
+        <target>Rebotados:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.statistics" resname="campaigns.fields.statistics">
+        <source>campaigns.fields.statistics</source>
+        <target>Estadísticas:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.processed" resname="campaigns.fields.processed">
+        <source>campaigns.fields.processed</source>
+        <target>Procesados:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fields.lists" resname="campaigns.fields.lists">
+        <source>campaigns.fields.lists</source>
+        <target>Listas:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.card.processed_summary" resname="campaigns.card.processed_summary">
+        <source>campaigns.card.processed_summary</source>
+        <target>{total} (Texto: {text}, HTML: {html})</target>
+      </trans-unit>
+      <trans-unit id="campaigns.card.statistics_summary" resname="campaigns.card.statistics_summary">
+        <source>campaigns.card.statistics_summary</source>
+        <target>Vistas totales {total}, Vistas únicas {unique}, Rebotados {bounced}</target>
+      </trans-unit>
+      <trans-unit id="campaigns.actions.delete" resname="campaigns.actions.delete">
+        <source>campaigns.actions.delete</source>
+        <target>Eliminar</target>
+      </trans-unit>
+      <trans-unit id="campaigns.actions.suspend" resname="campaigns.actions.suspend">
+        <source>campaigns.actions.suspend</source>
+        <target>Suspender</target>
+      </trans-unit>
+      <trans-unit id="campaigns.actions.requeue" resname="campaigns.actions.requeue">
+        <source>campaigns.actions.requeue</source>
+        <target>Volver a poner en cola</target>
+      </trans-unit>
+      <trans-unit id="campaigns.actions.copy_to_draft" resname="campaigns.actions.copy_to_draft">
+        <source>campaigns.actions.copy_to_draft</source>
+        <target>Copiar a borrador</target>
+      </trans-unit>
+      <trans-unit id="campaigns.actions.edit" resname="campaigns.actions.edit">
+        <source>campaigns.actions.edit</source>
+        <target>Editar</target>
+      </trans-unit>
+      <trans-unit id="campaigns.actions.view" resname="campaigns.actions.view">
+        <source>campaigns.actions.view</source>
+        <target>Ver</target>
+      </trans-unit>
+      <trans-unit id="campaigns.showing" resname="campaigns.showing">
+        <source>campaigns.showing</source>
+        <target>Mostrando {start}-{end} de {total}</target>
+      </trans-unit>
+      <trans-unit id="campaigns.no_date" resname="campaigns.no_date">
+        <source>campaigns.no_date</source>
+        <target>Sin fecha</target>
+      </trans-unit>
+      <trans-unit id="campaigns.not_sent_yet" resname="campaigns.not_sent_yet">
+        <source>campaigns.not_sent_yet</source>
+        <target>Aún no enviada</target>
+      </trans-unit>
+      <trans-unit id="campaigns.fallback_subject" resname="campaigns.fallback_subject">
+        <source>campaigns.fallback_subject</source>
+        <target>Campaña n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="campaigns.delete_confirm" resname="campaigns.delete_confirm">
+        <source>campaigns.delete_confirm</source>
+        <target>¿Eliminar la campaña en borrador n.º {id} - {subject}?</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.requeueing" resname="campaigns.feedback.requeueing">
+        <source>campaigns.feedback.requeueing</source>
+        <target>Volviendo a poner la campaña en cola...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.requeued" resname="campaigns.feedback.requeued">
+        <source>campaigns.feedback.requeued</source>
+        <target>Campaña vuelta a poner en cola.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.requeue_failed" resname="campaigns.feedback.requeue_failed">
+        <source>campaigns.feedback.requeue_failed</source>
+        <target>No se pudo volver a poner la campaña en cola.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.suspending" resname="campaigns.feedback.suspending">
+        <source>campaigns.feedback.suspending</source>
+        <target>Suspendiendo la campaña...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.suspended" resname="campaigns.feedback.suspended">
+        <source>campaigns.feedback.suspended</source>
+        <target>Campaña suspendida.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.suspend_failed" resname="campaigns.feedback.suspend_failed">
+        <source>campaigns.feedback.suspend_failed</source>
+        <target>No se pudo suspender la campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.deleting" resname="campaigns.feedback.deleting">
+        <source>campaigns.feedback.deleting</source>
+        <target>Eliminando la campaña...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.deleted" resname="campaigns.feedback.deleted">
+        <source>campaigns.feedback.deleted</source>
+        <target>Campaña eliminada.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.delete_failed" resname="campaigns.feedback.delete_failed">
+        <source>campaigns.feedback.delete_failed</source>
+        <target>No se pudo eliminar la campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.copying" resname="campaigns.feedback.copying">
+        <source>campaigns.feedback.copying</source>
+        <target>Creando copia en borrador...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.copied" resname="campaigns.feedback.copied">
+        <source>campaigns.feedback.copied</source>
+        <target>Copia en borrador creada</target>
+      </trans-unit>
+      <trans-unit id="campaigns.feedback.copy_failed" resname="campaigns.feedback.copy_failed">
+        <source>campaigns.feedback.copy_failed</source>
+        <target>No se pudo crear la copia en borrador.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.errors.load_failed" resname="campaigns.errors.load_failed">
+        <source>campaigns.errors.load_failed</source>
+        <target>No se pudo cargar la campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.errors.resend_failed" resname="campaigns.errors.resend_failed">
+        <source>campaigns.errors.resend_failed</source>
+        <target>No se pudo reenviar la campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.title" resname="campaigns.view.title">
+        <source>campaigns.view.title</source>
+        <target>Detalles de la campaña: {id}</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.loading" resname="campaigns.view.loading">
+        <source>campaigns.view.loading</source>
+        <target>Cargando campaña...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.subject" resname="campaigns.view.subject">
+        <source>campaigns.view.subject</source>
+        <target>Asunto:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.entered" resname="campaigns.view.entered">
+        <source>campaigns.view.entered</source>
+        <target>Creada:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.from" resname="campaigns.view.from">
+        <source>campaigns.view.from</source>
+        <target>De:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.requeueing" resname="campaigns.view.requeueing">
+        <source>campaigns.view.requeueing</source>
+        <target>Reenvío en cola:</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.html_content" resname="campaigns.view.html_content">
+        <source>campaigns.view.html_content</source>
+        <target>Contenido HTML</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.text_content" resname="campaigns.view.text_content">
+        <source>campaigns.view.text_content</source>
+        <target>Contenido de texto</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.footer" resname="campaigns.view.footer">
+        <source>campaigns.view.footer</source>
+        <target>Pie de página</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.resend" resname="campaigns.view.resend">
+        <source>campaigns.view.resend</source>
+        <target>Reenviar campaña</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.choose_lists" resname="campaigns.view.choose_lists">
+        <source>campaigns.view.choose_lists</source>
+        <target>Elija listas de correo</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.no_lists" resname="campaigns.view.no_lists">
+        <source>campaigns.view.no_lists</source>
+        <target>No se encontraron listas de correo.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.sending" resname="campaigns.view.sending">
+        <source>campaigns.view.sending</source>
+        <target>Enviando...</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.send_to_lists" resname="campaigns.view.send_to_lists">
+        <source>campaigns.view.send_to_lists</source>
+        <target>Enviar a las listas</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.none_selected" resname="campaigns.view.none_selected">
+        <source>campaigns.view.none_selected</source>
+        <target>Ninguna campaña seleccionada.</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.invalid_interval" resname="campaigns.view.invalid_interval">
+        <source>campaigns.view.invalid_interval</source>
+        <target>Intervalo no válido</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.invalid_date" resname="campaigns.view.invalid_date">
+        <source>campaigns.view.invalid_date</source>
+        <target>Fecha no válida</target>
+      </trans-unit>
+      <trans-unit id="campaigns.view.requeue_summary" resname="campaigns.view.requeue_summary">
+        <source>campaigns.view.requeue_summary</source>
+        <target>cada {interval} minutos hasta {until}</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.title" resname="stuck_campaigns.title">
+        <source>stuck_campaigns.title</source>
+        <target>Campañas atascadas</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.description" resname="stuck_campaigns.description">
+        <source>stuck_campaigns.description</source>
+        <target>Campañas que siguen en estado Preparada/En proceso sin avance desde hace un tiempo. No se realiza ninguna acción automáticamente: revise cada una y reanúdela si todavía debe enviarse.</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.refresh" resname="stuck_campaigns.refresh">
+        <source>stuck_campaigns.refresh</source>
+        <target>Actualizar</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.loading" resname="stuck_campaigns.loading">
+        <source>stuck_campaigns.loading</source>
+        <target>Cargando campañas atascadas...</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.empty" resname="stuck_campaigns.empty">
+        <source>stuck_campaigns.empty</source>
+        <target>No hay campañas atascadas por ahora.</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.stuck_for" resname="stuck_campaigns.stuck_for">
+        <source>stuck_campaigns.stuck_for</source>
+        <target>Atascada desde hace</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.stuck_for_label" resname="stuck_campaigns.stuck_for_label">
+        <source>stuck_campaigns.stuck_for_label</source>
+        <target>Atascada desde hace:</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.resume" resname="stuck_campaigns.resume">
+        <source>stuck_campaigns.resume</source>
+        <target>Reanudar</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.errors.load_failed" resname="stuck_campaigns.errors.load_failed">
+        <source>stuck_campaigns.errors.load_failed</source>
+        <target>No se pudieron cargar las campañas atascadas.</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.feedback.resuming" resname="stuck_campaigns.feedback.resuming">
+        <source>stuck_campaigns.feedback.resuming</source>
+        <target>Reanudando la campaña...</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.feedback.resumed" resname="stuck_campaigns.feedback.resumed">
+        <source>stuck_campaigns.feedback.resumed</source>
+        <target>Campaña reanudada.</target>
+      </trans-unit>
+      <trans-unit id="stuck_campaigns.feedback.resume_failed" resname="stuck_campaigns.feedback.resume_failed">
+        <source>stuck_campaigns.feedback.resume_failed</source>
+        <target>No se pudo reanudar la campaña.</target>
+      </trans-unit>
+
+      <!-- Templates -->
+      <trans-unit id="templates.title" resname="templates.title">
+        <source>templates.title</source>
+        <target>Plantillas</target>
+      </trans-unit>
+      <trans-unit id="templates.add_from_default" resname="templates.add_from_default">
+        <source>templates.add_from_default</source>
+        <target>Añadir plantilla desde una predeterminada</target>
+      </trans-unit>
+      <trans-unit id="templates.new" resname="templates.new">
+        <source>templates.new</source>
+        <target>Nueva plantilla</target>
+      </trans-unit>
+      <trans-unit id="templates.loading" resname="templates.loading">
+        <source>templates.loading</source>
+        <target>Cargando plantillas...</target>
+      </trans-unit>
+      <trans-unit id="templates.empty" resname="templates.empty">
+        <source>templates.empty</source>
+        <target>No se encontraron plantillas.</target>
+      </trans-unit>
+      <trans-unit id="templates.fallback_title" resname="templates.fallback_title">
+        <source>templates.fallback_title</source>
+        <target>Plantilla n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="templates.id" resname="templates.id">
+        <source>templates.id</source>
+        <target>ID {id}</target>
+      </trans-unit>
+      <trans-unit id="templates.order" resname="templates.order">
+        <source>templates.order</source>
+        <target>Orden {order}</target>
+      </trans-unit>
+      <trans-unit id="templates.actions.edit" resname="templates.actions.edit">
+        <source>templates.actions.edit</source>
+        <target>Editar</target>
+      </trans-unit>
+      <trans-unit id="templates.actions.delete" resname="templates.actions.delete">
+        <source>templates.actions.delete</source>
+        <target>Eliminar</target>
+      </trans-unit>
+      <trans-unit id="templates.actions.delete_aria" resname="templates.actions.delete_aria">
+        <source>templates.actions.delete_aria</source>
+        <target>Eliminar plantilla</target>
+      </trans-unit>
+      <trans-unit id="templates.types.html_text" resname="templates.types.html_text">
+        <source>templates.types.html_text</source>
+        <target>html + texto</target>
+      </trans-unit>
+      <trans-unit id="templates.types.html" resname="templates.types.html">
+        <source>templates.types.html</source>
+        <target>html</target>
+      </trans-unit>
+      <trans-unit id="templates.types.text" resname="templates.types.text">
+        <source>templates.types.text</source>
+        <target>texto</target>
+      </trans-unit>
+      <trans-unit id="templates.types.empty" resname="templates.types.empty">
+        <source>templates.types.empty</source>
+        <target>vacía</target>
+      </trans-unit>
+      <trans-unit id="templates.default.loading" resname="templates.default.loading">
+        <source>templates.default.loading</source>
+        <target>Cargando plantillas predeterminadas...</target>
+      </trans-unit>
+      <trans-unit id="templates.default.label" resname="templates.default.label">
+        <source>templates.default.label</source>
+        <target>Plantilla predeterminada</target>
+      </trans-unit>
+      <trans-unit id="templates.default.select" resname="templates.default.select">
+        <source>templates.default.select</source>
+        <target>Seleccione una plantilla predeterminada</target>
+      </trans-unit>
+      <trans-unit id="templates.default.add" resname="templates.default.add">
+        <source>templates.default.add</source>
+        <target>Añadir</target>
+      </trans-unit>
+      <trans-unit id="templates.default.adding" resname="templates.default.adding">
+        <source>templates.default.adding</source>
+        <target>Añadiendo...</target>
+      </trans-unit>
+      <trans-unit id="templates.delete_confirm" resname="templates.delete_confirm">
+        <source>templates.delete_confirm</source>
+        <target>¿Seguro que desea eliminar esta plantilla?</target>
+      </trans-unit>
+      <trans-unit id="templates.errors.load_failed" resname="templates.errors.load_failed">
+        <source>templates.errors.load_failed</source>
+        <target>No se pudieron cargar las plantillas.</target>
+      </trans-unit>
+      <trans-unit id="templates.errors.load_defaults_failed" resname="templates.errors.load_defaults_failed">
+        <source>templates.errors.load_defaults_failed</source>
+        <target>No se pudieron cargar las plantillas predeterminadas.</target>
+      </trans-unit>
+      <trans-unit id="templates.errors.select_default" resname="templates.errors.select_default">
+        <source>templates.errors.select_default</source>
+        <target>Seleccione una plantilla predeterminada.</target>
+      </trans-unit>
+      <trans-unit id="templates.errors.create_from_default_failed" resname="templates.errors.create_from_default_failed">
+        <source>templates.errors.create_from_default_failed</source>
+        <target>No se pudo crear la plantilla desde la predeterminada.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.template" resname="template_edit.template">
+        <source>template_edit.template</source>
+        <target>Plantilla</target>
+      </trans-unit>
+      <trans-unit id="template_edit.back" resname="template_edit.back">
+        <source>template_edit.back</source>
+        <target>Volver a las plantillas</target>
+      </trans-unit>
+      <trans-unit id="template_edit.loading" resname="template_edit.loading">
+        <source>template_edit.loading</source>
+        <target>Cargando plantilla...</target>
+      </trans-unit>
+      <trans-unit id="template_edit.create_title" resname="template_edit.create_title">
+        <source>template_edit.create_title</source>
+        <target>Crear plantilla</target>
+      </trans-unit>
+      <trans-unit id="template_edit.edit_title" resname="template_edit.edit_title">
+        <source>template_edit.edit_title</source>
+        <target>Editar plantilla n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="template_edit.fields.title" resname="template_edit.fields.title">
+        <source>template_edit.fields.title</source>
+        <target>Título</target>
+      </trans-unit>
+      <trans-unit id="template_edit.fields.list_order" resname="template_edit.fields.list_order">
+        <source>template_edit.fields.list_order</source>
+        <target>Orden en la lista</target>
+      </trans-unit>
+      <trans-unit id="template_edit.fields.content" resname="template_edit.fields.content">
+        <source>template_edit.fields.content</source>
+        <target>Contenido</target>
+      </trans-unit>
+      <trans-unit id="template_edit.fields.text" resname="template_edit.fields.text">
+        <source>template_edit.fields.text</source>
+        <target>Versión de texto</target>
+      </trans-unit>
+      <trans-unit id="template_edit.fields.file" resname="template_edit.fields.file">
+        <source>template_edit.fields.file</source>
+        <target>Archivo de plantilla</target>
+      </trans-unit>
+      <trans-unit id="template_edit.placeholders.title" resname="template_edit.placeholders.title">
+        <source>template_edit.placeholders.title</source>
+        <target>Introduzca el título de la plantilla</target>
+      </trans-unit>
+      <trans-unit id="template_edit.placeholders.list_order" resname="template_edit.placeholders.list_order">
+        <source>template_edit.placeholders.list_order</source>
+        <target>Opcional (p. ej. 10)</target>
+      </trans-unit>
+      <trans-unit id="template_edit.html_as_text" resname="template_edit.html_as_text">
+        <source>template_edit.html_as_text</source>
+        <target>Usar el HTML como texto sin formato</target>
+      </trans-unit>
+      <trans-unit id="template_edit.checks.title" resname="template_edit.checks.title">
+        <source>template_edit.checks.title</source>
+        <target>Comprobaciones</target>
+      </trans-unit>
+      <trans-unit id="template_edit.checks.links" resname="template_edit.checks.links">
+        <source>template_edit.checks.links</source>
+        <target>Comprobar que todos los enlaces tengan una URL completa</target>
+      </trans-unit>
+      <trans-unit id="template_edit.checks.images" resname="template_edit.checks.images">
+        <source>template_edit.checks.images</source>
+        <target>Comprobar que todas las imágenes tengan una URL completa</target>
+      </trans-unit>
+      <trans-unit id="template_edit.checks.external_images" resname="template_edit.checks.external_images">
+        <source>template_edit.checks.external_images</source>
+        <target>Comprobar que existan todas las imágenes externas</target>
+      </trans-unit>
+      <trans-unit id="template_edit.validation.check_links" resname="template_edit.validation.check_links">
+        <source>template_edit.validation.check_links</source>
+        <target>Comprobar enlaces</target>
+      </trans-unit>
+      <trans-unit id="template_edit.validation.check_images" resname="template_edit.validation.check_images">
+        <source>template_edit.validation.check_images</source>
+        <target>Comprobar imágenes</target>
+      </trans-unit>
+      <trans-unit id="template_edit.validation.check_external_images" resname="template_edit.validation.check_external_images">
+        <source>template_edit.validation.check_external_images</source>
+        <target>Comprobar imágenes externas</target>
+      </trans-unit>
+      <trans-unit id="template_edit.fix_fields" resname="template_edit.fix_fields">
+        <source>template_edit.fix_fields</source>
+        <target>Corrija los siguientes campos:</target>
+      </trans-unit>
+      <trans-unit id="template_edit.create" resname="template_edit.create">
+        <source>template_edit.create</source>
+        <target>Crear</target>
+      </trans-unit>
+      <trans-unit id="template_edit.creating" resname="template_edit.creating">
+        <source>template_edit.creating</source>
+        <target>Creando...</target>
+      </trans-unit>
+      <trans-unit id="template_edit.errors.load_failed" resname="template_edit.errors.load_failed">
+        <source>template_edit.errors.load_failed</source>
+        <target>No se pudo cargar la plantilla.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.errors.invalid_id" resname="template_edit.errors.invalid_id">
+        <source>template_edit.errors.invalid_id</source>
+        <target>El ID de la plantilla no es válido.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.errors.title_required" resname="template_edit.errors.title_required">
+        <source>template_edit.errors.title_required</source>
+        <target>El título es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.errors.list_order_invalid" resname="template_edit.errors.list_order_invalid">
+        <source>template_edit.errors.list_order_invalid</source>
+        <target>El orden en la lista debe ser un entero no negativo.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.errors.save_failed" resname="template_edit.errors.save_failed">
+        <source>template_edit.errors.save_failed</source>
+        <target>No se pudo guardar la plantilla.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.messages.created" resname="template_edit.messages.created">
+        <source>template_edit.messages.created</source>
+        <target>Plantilla creada correctamente.</target>
+      </trans-unit>
+      <trans-unit id="template_edit.messages.updated" resname="template_edit.messages.updated">
+        <source>template_edit.messages.updated</source>
+        <target>Plantilla actualizada correctamente.</target>
+      </trans-unit>
+
+      <!-- Bounces -->
+      <trans-unit id="bounces.title" resname="bounces.title">
+        <source>bounces.title</source>
+        <target>Rebotes</target>
+      </trans-unit>
+      <trans-unit id="bounces.yes" resname="bounces.yes">
+        <source>bounces.yes</source>
+        <target>Sí</target>
+      </trans-unit>
+      <trans-unit id="bounces.no" resname="bounces.no">
+        <source>bounces.no</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="bounces.no_date" resname="bounces.no_date">
+        <source>bounces.no_date</source>
+        <target>Sin fecha</target>
+      </trans-unit>
+      <trans-unit id="bounces.unknown_email" resname="bounces.unknown_email">
+        <source>bounces.unknown_email</source>
+        <target>Correo desconocido</target>
+      </trans-unit>
+      <trans-unit id="bounces.no_subject" resname="bounces.no_subject">
+        <source>bounces.no_subject</source>
+        <target>Sin asunto</target>
+      </trans-unit>
+      <trans-unit id="bounces.no_comment" resname="bounces.no_comment">
+        <source>bounces.no_comment</source>
+        <target>Sin comentario</target>
+      </trans-unit>
+      <trans-unit id="bounces.status.active" resname="bounces.status.active">
+        <source>bounces.status.active</source>
+        <target>Activa</target>
+      </trans-unit>
+      <trans-unit id="bounces.status.inactive" resname="bounces.status.inactive">
+        <source>bounces.status.inactive</source>
+        <target>Inactiva</target>
+      </trans-unit>
+      <trans-unit id="bounces.table.id" resname="bounces.table.id">
+        <source>bounces.table.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="bounces.table.date" resname="bounces.table.date">
+        <source>bounces.table.date</source>
+        <target>Fecha</target>
+      </trans-unit>
+      <trans-unit id="bounces.table.subscriber" resname="bounces.table.subscriber">
+        <source>bounces.table.subscriber</source>
+        <target>Suscriptor</target>
+      </trans-unit>
+      <trans-unit id="bounces.table.campaign" resname="bounces.table.campaign">
+        <source>bounces.table.campaign</source>
+        <target>Campaña</target>
+      </trans-unit>
+      <trans-unit id="bounces.table.status" resname="bounces.table.status">
+        <source>bounces.table.status</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="bounces.table.comment" resname="bounces.table.comment">
+        <source>bounces.table.comment</source>
+        <target>Comentario</target>
+      </trans-unit>
+      <trans-unit id="bounces.overview.processed" resname="bounces.overview.processed">
+        <source>bounces.overview.processed</source>
+        <target>Procesados</target>
+      </trans-unit>
+      <trans-unit id="bounces.overview.unidentified" resname="bounces.overview.unidentified">
+        <source>bounces.overview.unidentified</source>
+        <target>Sin identificar</target>
+      </trans-unit>
+      <trans-unit id="bounces.overview.loading" resname="bounces.overview.loading">
+        <source>bounces.overview.loading</source>
+        <target>Cargando rebotes...</target>
+      </trans-unit>
+      <trans-unit id="bounces.overview.empty" resname="bounces.overview.empty">
+        <source>bounces.overview.empty</source>
+        <target>No se encontraron rebotes.</target>
+      </trans-unit>
+      <trans-unit id="bounces.overview.page" resname="bounces.overview.page">
+        <source>bounces.overview.page</source>
+        <target>Página {page}</target>
+      </trans-unit>
+      <trans-unit id="bounces.overview.load_failed" resname="bounces.overview.load_failed">
+        <source>bounces.overview.load_failed</source>
+        <target>No se pudieron cargar los rebotes.</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.by_subscriber" resname="bounces.per.by_subscriber">
+        <source>bounces.per.by_subscriber</source>
+        <target>Rebotes por suscriptor</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.by_campaign" resname="bounces.per.by_campaign">
+        <source>bounces.per.by_campaign</source>
+        <target>Rebotes por campaña</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.loading_subscribers" resname="bounces.per.loading_subscribers">
+        <source>bounces.per.loading_subscribers</source>
+        <target>Cargando datos de rebotes por suscriptor...</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.empty_subscribers" resname="bounces.per.empty_subscribers">
+        <source>bounces.per.empty_subscribers</source>
+        <target>No se encontraron datos de rebotes por suscriptor.</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.loading_campaigns" resname="bounces.per.loading_campaigns">
+        <source>bounces.per.loading_campaigns</source>
+        <target>Cargando datos de rebotes por campaña...</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.empty_campaigns" resname="bounces.per.empty_campaigns">
+        <source>bounces.per.empty_campaigns</source>
+        <target>No se encontraron datos de rebotes por campaña.</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.email" resname="bounces.per.email">
+        <source>bounces.per.email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.confirmed" resname="bounces.per.confirmed">
+        <source>bounces.per.confirmed</source>
+        <target>Confirmado</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.blacklisted" resname="bounces.per.blacklisted">
+        <source>bounces.per.blacklisted</source>
+        <target>En lista negra</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.total" resname="bounces.per.total">
+        <source>bounces.per.total</source>
+        <target>Total de rebotes</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.subject" resname="bounces.per.subject">
+        <source>bounces.per.subject</source>
+        <target>Asunto</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.confirmed_value" resname="bounces.per.confirmed_value">
+        <source>bounces.per.confirmed_value</source>
+        <target>Confirmado: {value}</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.blacklisted_value" resname="bounces.per.blacklisted_value">
+        <source>bounces.per.blacklisted_value</source>
+        <target>En lista negra: {value}</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.load_campaigns_failed" resname="bounces.per.load_campaigns_failed">
+        <source>bounces.per.load_campaigns_failed</source>
+        <target>No se pudieron cargar los datos de rebotes por campaña.</target>
+      </trans-unit>
+      <trans-unit id="bounces.per.load_subscribers_failed" resname="bounces.per.load_subscribers_failed">
+        <source>bounces.per.load_subscribers_failed</source>
+        <target>No se pudieron cargar los datos de rebotes por suscriptor.</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.title" resname="bounces.rules.title">
+        <source>bounces.rules.title</source>
+        <target>Reglas de rebote</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.description" resname="bounces.rules.description">
+        <source>bounces.rules.description</source>
+        <target>Las reglas se evalúan de arriba abajo. Arrastre para cambiar la prioridad.</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.new" resname="bounces.rules.new">
+        <source>bounces.rules.new</source>
+        <target>Nueva regla</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.loading" resname="bounces.rules.loading">
+        <source>bounces.rules.loading</source>
+        <target>Cargando reglas de rebote...</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.empty" resname="bounces.rules.empty">
+        <source>bounces.rules.empty</source>
+        <target>No se encontraron reglas de rebote.</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.rule" resname="bounces.rules.rule">
+        <source>bounces.rules.rule</source>
+        <target>Regla</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.pattern" resname="bounces.rules.pattern">
+        <source>bounces.rules.pattern</source>
+        <target>Patrón</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.action" resname="bounces.rules.action">
+        <source>bounces.rules.action</source>
+        <target>Acción</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.hits" resname="bounces.rules.hits">
+        <source>bounces.rules.hits</source>
+        <target>Coincidencias</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.hits_label" resname="bounces.rules.hits_label">
+        <source>bounces.rules.hits_label</source>
+        <target>Coincidencias:</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.modal_title" resname="bounces.rules.modal_title">
+        <source>bounces.rules.modal_title</source>
+        <target>Nueva regla de rebote</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.regex" resname="bounces.rules.regex">
+        <source>bounces.rules.regex</source>
+        <target>Expresión regular</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.comment" resname="bounces.rules.comment">
+        <source>bounces.rules.comment</source>
+        <target>Comentario (opcional)</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.list_order" resname="bounces.rules.list_order">
+        <source>bounces.rules.list_order</source>
+        <target>Orden en la lista (opcional)</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.create" resname="bounces.rules.create">
+        <source>bounces.rules.create</source>
+        <target>Crear regla</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.creating" resname="bounces.rules.creating">
+        <source>bounces.rules.creating</source>
+        <target>Creando...</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.errors.regex_required" resname="bounces.rules.errors.regex_required">
+        <source>bounces.rules.errors.regex_required</source>
+        <target>La expresión regular es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.errors.list_order_invalid" resname="bounces.rules.errors.list_order_invalid">
+        <source>bounces.rules.errors.list_order_invalid</source>
+        <target>El orden en la lista debe ser un número entero mayor o igual que 0.</target>
+      </trans-unit>
+      <trans-unit id="bounces.rules.errors.create_failed" resname="bounces.rules.errors.create_failed">
+        <source>bounces.rules.errors.create_failed</source>
+        <target>No se pudo crear la regla.</target>
+      </trans-unit>
+      <trans-unit id="bounces.management.title" resname="bounces.management.title">
+        <source>bounces.management.title</source>
+        <target>Gestión de rebotes</target>
+      </trans-unit>
+      <trans-unit id="bounces.management.subtitle" resname="bounces.management.subtitle">
+        <source>bounces.management.subtitle</source>
+        <target>Supervise, procese y automatice la gestión de rebotes en todas las campañas</target>
+      </trans-unit>
+      <trans-unit id="bounces.management.placeholder" resname="bounces.management.placeholder">
+        <source>bounces.management.placeholder</source>
+        <target>Este panel sigue la navegación de la plantilla y se puede ampliar más adelante.</target>
+      </trans-unit>
+      <trans-unit id="bounces.management.panel" resname="bounces.management.panel">
+        <source>bounces.management.panel</source>
+        <target>Panel</target>
+      </trans-unit>
+      <trans-unit id="bounces.tabs.overview" resname="bounces.tabs.overview">
+        <source>bounces.tabs.overview</source>
+        <target>Resumen</target>
+      </trans-unit>
+      <trans-unit id="bounces.tabs.rules" resname="bounces.tabs.rules">
+        <source>bounces.tabs.rules</source>
+        <target>Reglas</target>
+      </trans-unit>
+      <trans-unit id="bounces.tabs.per" resname="bounces.tabs.per">
+        <source>bounces.tabs.per</source>
+        <target>Por lista/campaña</target>
+      </trans-unit>
+      <trans-unit id="bounces.tabs.processing" resname="bounces.tabs.processing">
+        <source>bounces.tabs.processing</source>
+        <target>Procesamiento</target>
+      </trans-unit>
+
+      <!-- Analytics -->
+      <trans-unit id="analytics.top_campaigns" resname="analytics.top_campaigns">
+        <source>analytics.top_campaigns</source>
+        <target>Principales campañas ordenadas por vistas únicas y volumen de clics</target>
+      </trans-unit>
+      <trans-unit id="analytics.loading" resname="analytics.loading">
+        <source>analytics.loading</source>
+        <target>Cargando analíticas...</target>
+      </trans-unit>
+      <trans-unit id="analytics.count_campaigns" resname="analytics.count_campaigns">
+        <source>analytics.count_campaigns</source>
+        <target>{formatted} {count, plural, one {campaña} other {campañas}}</target>
+      </trans-unit>
+      <trans-unit id="analytics.count_domains" resname="analytics.count_domains">
+        <source>analytics.count_domains</source>
+        <target>{formatted} {count, plural, one {dominio} other {dominios}}</target>
+      </trans-unit>
+      <trans-unit id="analytics.count_values" resname="analytics.count_values">
+        <source>analytics.count_values</source>
+        <target>{formatted} {count, plural, one {valor} other {valores}}</target>
+      </trans-unit>
+      <trans-unit id="analytics.count_records" resname="analytics.count_records">
+        <source>analytics.count_records</source>
+        <target>{formatted} {count, plural, one {registro} other {registros}}</target>
+      </trans-unit>
+      <trans-unit id="analytics.unknown_domain" resname="analytics.unknown_domain">
+        <source>analytics.unknown_domain</source>
+        <target>Dominio desconocido</target>
+      </trans-unit>
+      <trans-unit id="analytics.unknown" resname="analytics.unknown">
+        <source>analytics.unknown</source>
+        <target>Desconocido</target>
+      </trans-unit>
+      <trans-unit id="analytics.unknown_date" resname="analytics.unknown_date">
+        <source>analytics.unknown_date</source>
+        <target>Fecha desconocida</target>
+      </trans-unit>
+      <trans-unit id="analytics.unknown_date_lower" resname="analytics.unknown_date_lower">
+        <source>analytics.unknown_date_lower</source>
+        <target>fecha desconocida</target>
+      </trans-unit>
+      <trans-unit id="analytics.fallback_subject" resname="analytics.fallback_subject">
+        <source>analytics.fallback_subject</source>
+        <target>Campaña n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="analytics.empty.campaigns" resname="analytics.empty.campaigns">
+        <source>analytics.empty.campaigns</source>
+        <target>No se encontraron estadísticas de campañas.</target>
+      </trans-unit>
+      <trans-unit id="analytics.empty.confirmation" resname="analytics.empty.confirmation">
+        <source>analytics.empty.confirmation</source>
+        <target>No se encontraron datos de confirmación.</target>
+      </trans-unit>
+      <trans-unit id="analytics.empty.domains" resname="analytics.empty.domains">
+        <source>analytics.empty.domains</source>
+        <target>No se encontraron estadísticas de dominios.</target>
+      </trans-unit>
+      <trans-unit id="analytics.empty.local_parts" resname="analytics.empty.local_parts">
+        <source>analytics.empty.local_parts</source>
+        <target>No se encontraron estadísticas de partes locales.</target>
+      </trans-unit>
+      <trans-unit id="analytics.domain_confirmation.title" resname="analytics.domain_confirmation.title">
+        <source>analytics.domain_confirmation.title</source>
+        <target>Confirmación por dominio</target>
+      </trans-unit>
+      <trans-unit id="analytics.domain_confirmation.description" resname="analytics.domain_confirmation.description">
+        <source>analytics.domain_confirmation.description</source>
+        <target>Cobertura de confirmación por dominio de envío.</target>
+      </trans-unit>
+      <trans-unit id="analytics.domain_confirmation.total" resname="analytics.domain_confirmation.total">
+        <source>analytics.domain_confirmation.total</source>
+        <target>{count} en total</target>
+      </trans-unit>
+      <trans-unit id="analytics.domain_confirmation.confirmed" resname="analytics.domain_confirmation.confirmed">
+        <source>analytics.domain_confirmation.confirmed</source>
+        <target>Confirmados</target>
+      </trans-unit>
+      <trans-unit id="analytics.domain_confirmation.unconfirmed" resname="analytics.domain_confirmation.unconfirmed">
+        <source>analytics.domain_confirmation.unconfirmed</source>
+        <target>Sin confirmar</target>
+      </trans-unit>
+      <trans-unit id="analytics.domain_confirmation.blacklisted" resname="analytics.domain_confirmation.blacklisted">
+        <source>analytics.domain_confirmation.blacklisted</source>
+        <target>En lista negra</target>
+      </trans-unit>
+      <trans-unit id="analytics.top_domains.title" resname="analytics.top_domains.title">
+        <source>analytics.top_domains.title</source>
+        <target>Principales dominios</target>
+      </trans-unit>
+      <trans-unit id="analytics.top_domains.description" resname="analytics.top_domains.description">
+        <source>analytics.top_domains.description</source>
+        <target>Número de suscriptores por dominio de correo.</target>
+      </trans-unit>
+      <trans-unit id="analytics.top_domains.domain" resname="analytics.top_domains.domain">
+        <source>analytics.top_domains.domain</source>
+        <target>Dominio</target>
+      </trans-unit>
+      <trans-unit id="analytics.top_domains.subscribers" resname="analytics.top_domains.subscribers">
+        <source>analytics.top_domains.subscribers</source>
+        <target>Suscriptores</target>
+      </trans-unit>
+      <trans-unit id="analytics.local_parts.title" resname="analytics.local_parts.title">
+        <source>analytics.local_parts.title</source>
+        <target>Principales partes locales</target>
+      </trans-unit>
+      <trans-unit id="analytics.local_parts.description" resname="analytics.local_parts.description">
+        <source>analytics.local_parts.description</source>
+        <target>Nombres de usuario de suscriptores más comunes.</target>
+      </trans-unit>
+      <trans-unit id="analytics.local_parts.local_part" resname="analytics.local_parts.local_part">
+        <source>analytics.local_parts.local_part</source>
+        <target>Parte local</target>
+      </trans-unit>
+      <trans-unit id="analytics.local_parts.count" resname="analytics.local_parts.count">
+        <source>analytics.local_parts.count</source>
+        <target>Cantidad</target>
+      </trans-unit>
+      <trans-unit id="analytics.local_parts.share" resname="analytics.local_parts.share">
+        <source>analytics.local_parts.share</source>
+        <target>Proporción</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.title" resname="analytics.breakdown.title">
+        <source>analytics.breakdown.title</source>
+        <target>Desglose por campaña</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.description" resname="analytics.breakdown.description">
+        <source>analytics.breakdown.description</source>
+        <target>Actividad de aperturas y clics por campaña.</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.campaign" resname="analytics.breakdown.campaign">
+        <source>analytics.breakdown.campaign</source>
+        <target>Campaña</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.sent" resname="analytics.breakdown.sent">
+        <source>analytics.breakdown.sent</source>
+        <target>Enviados</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.views" resname="analytics.breakdown.views">
+        <source>analytics.breakdown.views</source>
+        <target>Vistas</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.open_rate" resname="analytics.breakdown.open_rate">
+        <source>analytics.breakdown.open_rate</source>
+        <target>Tasa de apertura</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.clicks" resname="analytics.breakdown.clicks">
+        <source>analytics.breakdown.clicks</source>
+        <target>Clics</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.bounce" resname="analytics.breakdown.bounce">
+        <source>analytics.breakdown.bounce</source>
+        <target>Rebotes</target>
+      </trans-unit>
+      <trans-unit id="analytics.breakdown.sent_on" resname="analytics.breakdown.sent_on">
+        <source>analytics.breakdown.sent_on</source>
+        <target>Enviada el {date}</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.campaigns.label" resname="analytics.metrics.campaigns.label">
+        <source>analytics.metrics.campaigns.label</source>
+        <target>Campañas monitorizadas</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.campaigns.description" resname="analytics.metrics.campaigns.description">
+        <source>analytics.metrics.campaigns.description</source>
+        <target>Registros de campañas devueltos por el servicio de analíticas.</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.sent.label" resname="analytics.metrics.sent.label">
+        <source>analytics.metrics.sent.label</source>
+        <target>Mensajes enviados</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.sent.description" resname="analytics.metrics.sent.description">
+        <source>analytics.metrics.sent.description</source>
+        <target>Total de mensajes incluidos en los datos de estadísticas de campañas.</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.views.label" resname="analytics.metrics.views.label">
+        <source>analytics.metrics.views.label</source>
+        <target>Vistas únicas</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.views.description" resname="analytics.metrics.views.description">
+        <source>analytics.metrics.views.description</source>
+        <target>Promedio del {rate} en las filas de analíticas de aperturas.</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.clicks.label" resname="analytics.metrics.clicks.label">
+        <source>analytics.metrics.clicks.label</source>
+        <target>Clics totales</target>
+      </trans-unit>
+      <trans-unit id="analytics.metrics.clicks.description" resname="analytics.metrics.clicks.description">
+        <source>analytics.metrics.clicks.description</source>
+        <target>Rebotes registrados: {count}.</target>
+      </trans-unit>
+      <trans-unit id="analytics.chart.unique_views" resname="analytics.chart.unique_views">
+        <source>analytics.chart.unique_views</source>
+        <target>Vistas únicas</target>
+      </trans-unit>
+      <trans-unit id="analytics.chart.clicks" resname="analytics.chart.clicks">
+        <source>analytics.chart.clicks</source>
+        <target>Clics</target>
+      </trans-unit>
+
+      <trans-unit id="dashboard.performance.series.opens" resname="dashboard.performance.series.opens">
+        <source>dashboard.performance.series.opens</source>
+        <target>Aperturas</target>
+      </trans-unit>
+      <trans-unit id="dashboard.performance.series.clicks" resname="dashboard.performance.series.clicks">
+        <source>dashboard.performance.series.clicks</source>
+        <target>Clics</target>
+      </trans-unit>
+
+      <!-- Settings -->
+      <trans-unit id="common.creating" resname="common.creating">
+        <source>common.creating</source>
+        <target>Creando...</target>
+      </trans-unit>
+      <trans-unit id="common.create" resname="common.create">
+        <source>common.create</source>
+        <target>Crear</target>
+      </trans-unit>
+      <trans-unit id="common.updating" resname="common.updating">
+        <source>common.updating</source>
+        <target>Actualizando...</target>
+      </trans-unit>
+      <trans-unit id="common.update" resname="common.update">
+        <source>common.update</source>
+        <target>Actualizar</target>
+      </trans-unit>
+      <trans-unit id="common.edit" resname="common.edit">
+        <source>common.edit</source>
+        <target>Editar</target>
+      </trans-unit>
+      <trans-unit id="common.delete" resname="common.delete">
+        <source>common.delete</source>
+        <target>Eliminar</target>
+      </trans-unit>
+      <trans-unit id="common.yes" resname="common.yes">
+        <source>common.yes</source>
+        <target>Sí</target>
+      </trans-unit>
+      <trans-unit id="common.no" resname="common.no">
+        <source>common.no</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="common.refresh" resname="common.refresh">
+        <source>common.refresh</source>
+        <target>Actualizar</target>
+      </trans-unit>
+      <trans-unit id="settings.title" resname="settings.title">
+        <source>settings.title</source>
+        <target>Configuración</target>
+      </trans-unit>
+      <trans-unit id="settings.subtitle" resname="settings.subtitle">
+        <source>settings.subtitle</source>
+        <target>Configuración de la aplicación y gestión de administradores</target>
+      </trans-unit>
+      <trans-unit id="settings.under_construction" resname="settings.under_construction">
+        <source>settings.under_construction</source>
+        <target>Este panel está en construcción.</target>
+      </trans-unit>
+      <trans-unit id="settings.panel" resname="settings.panel">
+        <source>settings.panel</source>
+        <target>Panel</target>
+      </trans-unit>
+      <trans-unit id="settings.actions" resname="settings.actions">
+        <source>settings.actions</source>
+        <target>Acciones</target>
+      </trans-unit>
+      <trans-unit id="settings.tabs.configs" resname="settings.tabs.configs">
+        <source>settings.tabs.configs</source>
+        <target>Ajustes</target>
+      </trans-unit>
+      <trans-unit id="settings.tabs.admins" resname="settings.tabs.admins">
+        <source>settings.tabs.admins</source>
+        <target>Administradores</target>
+      </trans-unit>
+      <trans-unit id="settings.tabs.admin_attributes" resname="settings.tabs.admin_attributes">
+        <source>settings.tabs.admin_attributes</source>
+        <target>Atributos de administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.tabs.subscriber_attributes" resname="settings.tabs.subscriber_attributes">
+        <source>settings.tabs.subscriber_attributes</source>
+        <target>Atributos de suscriptor</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_attributes.title" resname="settings.admin_attributes.title">
+        <source>settings.admin_attributes.title</source>
+        <target>Atributos de administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_attributes.description" resname="settings.admin_attributes.description">
+        <source>settings.admin_attributes.description</source>
+        <target>Gestione las definiciones de atributos de administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_attributes.create_title" resname="settings.admin_attributes.create_title">
+        <source>settings.admin_attributes.create_title</source>
+        <target>Crear atributo</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_attributes.edit_title" resname="settings.admin_attributes.edit_title">
+        <source>settings.admin_attributes.edit_title</source>
+        <target>Editar atributo</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.title" resname="settings.subscriber_attributes.title">
+        <source>settings.subscriber_attributes.title</source>
+        <target>Atributos de suscriptor</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.description" resname="settings.subscriber_attributes.description">
+        <source>settings.subscriber_attributes.description</source>
+        <target>Gestione las definiciones de atributos de suscriptor</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.create_title" resname="settings.subscriber_attributes.create_title">
+        <source>settings.subscriber_attributes.create_title</source>
+        <target>Crear atributo de suscriptor</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.edit_title" resname="settings.subscriber_attributes.edit_title">
+        <source>settings.subscriber_attributes.edit_title</source>
+        <target>Editar atributo de suscriptor</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.order" resname="settings.subscriber_attributes.order">
+        <source>settings.subscriber_attributes.order</source>
+        <target>Orden</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.default_value" resname="settings.subscriber_attributes.default_value">
+        <source>settings.subscriber_attributes.default_value</source>
+        <target>Valor predeterminado</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.options" resname="settings.subscriber_attributes.options">
+        <source>settings.subscriber_attributes.options</source>
+        <target>Opciones</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.add_option" resname="settings.subscriber_attributes.add_option">
+        <source>settings.subscriber_attributes.add_option</source>
+        <target>Añadir</target>
+      </trans-unit>
+      <trans-unit id="settings.subscriber_attributes.option" resname="settings.subscriber_attributes.option">
+        <source>settings.subscriber_attributes.option</source>
+        <target>Opción</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.add" resname="settings.attributes.add">
+        <source>settings.attributes.add</source>
+        <target>Añadir atributo</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.loading" resname="settings.attributes.loading">
+        <source>settings.attributes.loading</source>
+        <target>Cargando atributos...</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.empty" resname="settings.attributes.empty">
+        <source>settings.attributes.empty</source>
+        <target>No se encontraron atributos.</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.id" resname="settings.attributes.id">
+        <source>settings.attributes.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.name" resname="settings.attributes.name">
+        <source>settings.attributes.name</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.type" resname="settings.attributes.type">
+        <source>settings.attributes.type</source>
+        <target>Tipo</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.required" resname="settings.attributes.required">
+        <source>settings.attributes.required</source>
+        <target>Obligatorio</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.optional" resname="settings.attributes.optional">
+        <source>settings.attributes.optional</source>
+        <target>Opcional</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.delete_confirm" resname="settings.attributes.delete_confirm">
+        <source>settings.attributes.delete_confirm</source>
+        <target>¿Eliminar el atributo "{name}"?
+
+Esta acción no se puede deshacer.</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.errors.load_failed" resname="settings.attributes.errors.load_failed">
+        <source>settings.attributes.errors.load_failed</source>
+        <target>No se pudieron cargar los atributos.</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.errors.delete_failed" resname="settings.attributes.errors.delete_failed">
+        <source>settings.attributes.errors.delete_failed</source>
+        <target>No se pudo eliminar el atributo.</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.errors.create_failed" resname="settings.attributes.errors.create_failed">
+        <source>settings.attributes.errors.create_failed</source>
+        <target>No se pudo crear el atributo.</target>
+      </trans-unit>
+      <trans-unit id="settings.attributes.errors.update_failed" resname="settings.attributes.errors.update_failed">
+        <source>settings.attributes.errors.update_failed</source>
+        <target>No se pudo actualizar el atributo.</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.textline" resname="settings.attribute_types.textline">
+        <source>settings.attribute_types.textline</source>
+        <target>Texto</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.hidden" resname="settings.attribute_types.hidden">
+        <source>settings.attribute_types.hidden</source>
+        <target>Oculto</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.creditcardno" resname="settings.attribute_types.creditcardno">
+        <source>settings.attribute_types.creditcardno</source>
+        <target>Tarjeta de crédito</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.select" resname="settings.attribute_types.select">
+        <source>settings.attribute_types.select</source>
+        <target>Selección</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.date" resname="settings.attribute_types.date">
+        <source>settings.attribute_types.date</source>
+        <target>Fecha</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.checkbox" resname="settings.attribute_types.checkbox">
+        <source>settings.attribute_types.checkbox</source>
+        <target>Casilla</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.textarea" resname="settings.attribute_types.textarea">
+        <source>settings.attribute_types.textarea</source>
+        <target>Área de texto</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.radio" resname="settings.attribute_types.radio">
+        <source>settings.attribute_types.radio</source>
+        <target>Opción única</target>
+      </trans-unit>
+      <trans-unit id="settings.attribute_types.checkboxgroup" resname="settings.attribute_types.checkboxgroup">
+        <source>settings.attribute_types.checkboxgroup</source>
+        <target>Grupo de casillas</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.title" resname="settings.admins.title">
+        <source>settings.admins.title</source>
+        <target>Administradores</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.description" resname="settings.admins.description">
+        <source>settings.admins.description</source>
+        <target>Gestione las cuentas de administrador y sus permisos</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.add" resname="settings.admins.add">
+        <source>settings.admins.add</source>
+        <target>Añadir administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.loading" resname="settings.admins.loading">
+        <source>settings.admins.loading</source>
+        <target>Cargando administradores...</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.empty" resname="settings.admins.empty">
+        <source>settings.admins.empty</source>
+        <target>No se encontraron administradores. Cree uno para empezar.</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.id" resname="settings.admins.id">
+        <source>settings.admins.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.login_name" resname="settings.admins.login_name">
+        <source>settings.admins.login_name</source>
+        <target>Nombre de usuario</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.email" resname="settings.admins.email">
+        <source>settings.admins.email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.super_user" resname="settings.admins.super_user">
+        <source>settings.admins.super_user</source>
+        <target>Superusuario</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.created" resname="settings.admins.created">
+        <source>settings.admins.created</source>
+        <target>Creado</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.badge_super" resname="settings.admins.badge_super">
+        <source>settings.admins.badge_super</source>
+        <target>Super</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.badge_user" resname="settings.admins.badge_user">
+        <source>settings.admins.badge_user</source>
+        <target>Usuario</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.created_on" resname="settings.admins.created_on">
+        <source>settings.admins.created_on</source>
+        <target>Creado: {date}</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.delete_confirm" resname="settings.admins.delete_confirm">
+        <source>settings.admins.delete_confirm</source>
+        <target>¿Eliminar al administrador "{name}"?
+
+Esta acción no se puede deshacer.</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.errors.load_failed" resname="settings.admins.errors.load_failed">
+        <source>settings.admins.errors.load_failed</source>
+        <target>No se pudieron cargar los administradores.</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.errors.delete_failed" resname="settings.admins.errors.delete_failed">
+        <source>settings.admins.errors.delete_failed</source>
+        <target>No se pudo eliminar al administrador: {reason}</target>
+      </trans-unit>
+      <trans-unit id="settings.admins.errors.unknown" resname="settings.admins.errors.unknown">
+        <source>settings.admins.errors.unknown</source>
+        <target>Error desconocido</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.create_title" resname="settings.admin_form.create_title">
+        <source>settings.admin_form.create_title</source>
+        <target>Crear nuevo administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.edit_title" resname="settings.admin_form.edit_title">
+        <source>settings.admin_form.edit_title</source>
+        <target>Editar administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.admin_id" resname="settings.admin_form.admin_id">
+        <source>settings.admin_form.admin_id</source>
+        <target>ID del administrador</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.password" resname="settings.admin_form.password">
+        <source>settings.admin_form.password</source>
+        <target>Contraseña</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.super_user_full" resname="settings.admin_form.super_user_full">
+        <source>settings.admin_form.super_user_full</source>
+        <target>Superusuario / Acceso completo</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.privileges" resname="settings.admin_form.privileges">
+        <source>settings.admin_form.privileges</source>
+        <target>Privilegios</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.privilege_subscribers" resname="settings.admin_form.privilege_subscribers">
+        <source>settings.admin_form.privilege_subscribers</source>
+        <target>Gestión de suscriptores</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.privilege_campaigns" resname="settings.admin_form.privilege_campaigns">
+        <source>settings.admin_form.privilege_campaigns</source>
+        <target>Gestión de campañas</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.privilege_statistics" resname="settings.admin_form.privilege_statistics">
+        <source>settings.admin_form.privilege_statistics</source>
+        <target>Consulta de estadísticas</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.privilege_settings" resname="settings.admin_form.privilege_settings">
+        <source>settings.admin_form.privilege_settings</source>
+        <target>Gestión de la configuración</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.min_login" resname="settings.admin_form.min_login">
+        <source>settings.admin_form.min_login</source>
+        <target>Mínimo 3 caracteres</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.min_password" resname="settings.admin_form.min_password">
+        <source>settings.admin_form.min_password</source>
+        <target>Mínimo 6 caracteres</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.keep_login" resname="settings.admin_form.keep_login">
+        <source>settings.admin_form.keep_login</source>
+        <target>Déjelo vacío para conservar el valor actual. Mínimo 3 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.keep_value" resname="settings.admin_form.keep_value">
+        <source>settings.admin_form.keep_value</source>
+        <target>Déjelo vacío para conservar el valor actual.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.keep_password" resname="settings.admin_form.keep_password">
+        <source>settings.admin_form.keep_password</source>
+        <target>Déjelo vacío para conservar la contraseña actual. Mínimo 6 caracteres si establece una nueva.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.errors.login_required" resname="settings.admin_form.errors.login_required">
+        <source>settings.admin_form.errors.login_required</source>
+        <target>El nombre de usuario es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.errors.email_required" resname="settings.admin_form.errors.email_required">
+        <source>settings.admin_form.errors.email_required</source>
+        <target>El correo electrónico es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.errors.password_required" resname="settings.admin_form.errors.password_required">
+        <source>settings.admin_form.errors.password_required</source>
+        <target>La contraseña es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.errors.create_failed" resname="settings.admin_form.errors.create_failed">
+        <source>settings.admin_form.errors.create_failed</source>
+        <target>No se pudo crear el administrador.</target>
+      </trans-unit>
+      <trans-unit id="settings.admin_form.errors.update_failed" resname="settings.admin_form.errors.update_failed">
+        <source>settings.admin_form.errors.update_failed</source>
+        <target>No se pudo actualizar el administrador.</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.title" resname="settings.configs.title">
+        <source>settings.configs.title</source>
+        <target>Ajustes</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.search" resname="settings.configs.search">
+        <source>settings.configs.search</source>
+        <target>Buscar claves...</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.loading" resname="settings.configs.loading">
+        <source>settings.configs.loading</source>
+        <target>Cargando claves de configuración...</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.empty" resname="settings.configs.empty">
+        <source>settings.configs.empty</source>
+        <target>No se encontraron claves de configuración.</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.value_for" resname="settings.configs.value_for">
+        <source>settings.configs.value_for</source>
+        <target>Valor de {key}</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.reset" resname="settings.configs.reset">
+        <source>settings.configs.reset</source>
+        <target>Restablecer</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.saved" resname="settings.configs.saved">
+        <source>settings.configs.saved</source>
+        <target>Guardado</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.errors.load_failed" resname="settings.configs.errors.load_failed">
+        <source>settings.configs.errors.load_failed</source>
+        <target>No se pudo cargar la configuración.</target>
+      </trans-unit>
+      <trans-unit id="settings.configs.errors.save_failed" resname="settings.configs.errors.save_failed">
+        <source>settings.configs.errors.save_failed</source>
+        <target>Error al guardar.</target>
+      </trans-unit>
+
+      <!-- Public pages -->
+      <trans-unit id="common.back" resname="common.back">
+        <source>common.back</source>
+        <target>Volver</target>
+      </trans-unit>
+      <trans-unit id="public_pages.title" resname="public_pages.title">
+        <source>public_pages.title</source>
+        <target>Páginas de suscripción</target>
+      </trans-unit>
+      <trans-unit id="public_pages.add" resname="public_pages.add">
+        <source>public_pages.add</source>
+        <target>Añadir nueva página de suscripción</target>
+      </trans-unit>
+      <trans-unit id="public_pages.loading" resname="public_pages.loading">
+        <source>public_pages.loading</source>
+        <target>Cargando páginas de suscripción...</target>
+      </trans-unit>
+      <trans-unit id="public_pages.empty" resname="public_pages.empty">
+        <source>public_pages.empty</source>
+        <target>No se encontraron páginas de suscripción.</target>
+      </trans-unit>
+      <trans-unit id="public_pages.fallback_title" resname="public_pages.fallback_title">
+        <source>public_pages.fallback_title</source>
+        <target>Página de suscripción n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="public_pages.no_owner" resname="public_pages.no_owner">
+        <source>public_pages.no_owner</source>
+        <target>Sin propietario</target>
+      </trans-unit>
+      <trans-unit id="public_pages.owner_label" resname="public_pages.owner_label">
+        <source>public_pages.owner_label</source>
+        <target>Propietario: {owner}</target>
+      </trans-unit>
+      <trans-unit id="public_pages.preview" resname="public_pages.preview">
+        <source>public_pages.preview</source>
+        <target>Vista previa</target>
+      </trans-unit>
+      <trans-unit id="public_pages.table.id" resname="public_pages.table.id">
+        <source>public_pages.table.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="public_pages.table.title" resname="public_pages.table.title">
+        <source>public_pages.table.title</source>
+        <target>Título</target>
+      </trans-unit>
+      <trans-unit id="public_pages.table.owner" resname="public_pages.table.owner">
+        <source>public_pages.table.owner</source>
+        <target>Propietario</target>
+      </trans-unit>
+      <trans-unit id="public_pages.table.default" resname="public_pages.table.default">
+        <source>public_pages.table.default</source>
+        <target>Predeterminada</target>
+      </trans-unit>
+      <trans-unit id="public_pages.table.active" resname="public_pages.table.active">
+        <source>public_pages.table.active</source>
+        <target>Activa</target>
+      </trans-unit>
+      <trans-unit id="public_pages.table.actions" resname="public_pages.table.actions">
+        <source>public_pages.table.actions</source>
+        <target>Acciones</target>
+      </trans-unit>
+      <trans-unit id="public_pages.delete_confirm" resname="public_pages.delete_confirm">
+        <source>public_pages.delete_confirm</source>
+        <target>¿Eliminar la página de suscripción "{title}"?</target>
+      </trans-unit>
+      <trans-unit id="public_pages.errors.load_failed" resname="public_pages.errors.load_failed">
+        <source>public_pages.errors.load_failed</source>
+        <target>No se pudieron cargar las páginas de suscripción.</target>
+      </trans-unit>
+      <trans-unit id="public_pages.errors.delete_failed" resname="public_pages.errors.delete_failed">
+        <source>public_pages.errors.delete_failed</source>
+        <target>No se pudo eliminar la página de suscripción.</target>
+      </trans-unit>
+      <trans-unit id="public_pages.errors.active_failed" resname="public_pages.errors.active_failed">
+        <source>public_pages.errors.active_failed</source>
+        <target>No se pudo actualizar el estado de activación.</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.create_title" resname="public_page_editor.create_title">
+        <source>public_page_editor.create_title</source>
+        <target>Crear página de suscripción</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.edit_title" resname="public_page_editor.edit_title">
+        <source>public_page_editor.edit_title</source>
+        <target>Editar página de suscripción</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.loading" resname="public_page_editor.loading">
+        <source>public_page_editor.loading</source>
+        <target>Cargando datos de la página pública...</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.saved" resname="public_page_editor.saved">
+        <source>public_page_editor.saved</source>
+        <target>Página pública guardada.</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.steps.general" resname="public_page_editor.steps.general">
+        <source>public_page_editor.steps.general</source>
+        <target>General</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.steps.lists" resname="public_page_editor.steps.lists">
+        <source>public_page_editor.steps.lists</source>
+        <target>Listas</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.steps.attributes" resname="public_page_editor.steps.attributes">
+        <source>public_page_editor.steps.attributes</source>
+        <target>Atributos</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.steps.messages" resname="public_page_editor.steps.messages">
+        <source>public_page_editor.steps.messages</source>
+        <target>Mensajes</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.steps.email" resname="public_page_editor.steps.email">
+        <source>public_page_editor.steps.email</source>
+        <target>Ajustes de correo</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.title" resname="public_page_editor.general.title">
+        <source>public_page_editor.general.title</source>
+        <target>Ajustes generales</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.title_field" resname="public_page_editor.general.title_field">
+        <source>public_page_editor.general.title_field</source>
+        <target>Título</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.language_file" resname="public_page_editor.general.language_file">
+        <source>public_page_editor.general.language_file</source>
+        <target>Archivo de idioma que se usará</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.button" resname="public_page_editor.general.button">
+        <source>public_page_editor.general.button</source>
+        <target>Texto del botón</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.intro" resname="public_page_editor.general.intro">
+        <source>public_page_editor.general.intro</source>
+        <target>Texto de introducción</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.header" resname="public_page_editor.general.header">
+        <source>public_page_editor.general.header</source>
+        <target>Texto de encabezado</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.footer" resname="public_page_editor.general.footer">
+        <source>public_page_editor.general.footer</source>
+        <target>Texto de pie de página</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.thank_you" resname="public_page_editor.general.thank_you">
+        <source>public_page_editor.general.thank_you</source>
+        <target>Texto de la página de agradecimiento</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.general.ajax_success" resname="public_page_editor.general.ajax_success">
+        <source>public_page_editor.general.ajax_success</source>
+        <target>Texto para una suscripción AJAX correcta</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.title" resname="public_page_editor.lists.title">
+        <source>public_page_editor.lists.title</source>
+        <target>Seleccione las listas que se ofrecerán</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.categories" resname="public_page_editor.lists.categories">
+        <source>public_page_editor.lists.categories</source>
+        <target>Mostrar categorías de listas</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.no_categories" resname="public_page_editor.lists.no_categories">
+        <source>public_page_editor.lists.no_categories</source>
+        <target>No mostrar categorías de listas</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.labelled_categories" resname="public_page_editor.lists.labelled_categories">
+        <source>public_page_editor.lists.labelled_categories</source>
+        <target>Mostrar las listas en categorías con etiqueta</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.no_preselect" resname="public_page_editor.lists.no_preselect">
+        <source>public_page_editor.lists.no_preselect</source>
+        <target>No preseleccionar ninguna lista</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.preselect" resname="public_page_editor.lists.preselect">
+        <source>public_page_editor.lists.preselect</source>
+        <target>Preseleccionar</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.lists.fallback_name" resname="public_page_editor.lists.fallback_name">
+        <source>public_page_editor.lists.fallback_name</source>
+        <target>Lista n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.title" resname="public_page_editor.attributes.title">
+        <source>public_page_editor.attributes.title</source>
+        <target>Seleccione los atributos que se usarán</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.attribute" resname="public_page_editor.attributes.attribute">
+        <source>public_page_editor.attributes.attribute</source>
+        <target>Atributo: {id}</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.name" resname="public_page_editor.attributes.name">
+        <source>public_page_editor.attributes.name</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.type" resname="public_page_editor.attributes.type">
+        <source>public_page_editor.attributes.type</source>
+        <target>Tipo</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.default_value" resname="public_page_editor.attributes.default_value">
+        <source>public_page_editor.attributes.default_value</source>
+        <target>Valor predeterminado</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.order" resname="public_page_editor.attributes.order">
+        <source>public_page_editor.attributes.order</source>
+        <target>Orden en el listado</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.required" resname="public_page_editor.attributes.required">
+        <source>public_page_editor.attributes.required</source>
+        <target>¿Es obligatorio este atributo?</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.attributes.use" resname="public_page_editor.attributes.use">
+        <source>public_page_editor.attributes.use</source>
+        <target>Usar este atributo en la página</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.messages.title" resname="public_page_editor.messages.title">
+        <source>public_page_editor.messages.title</source>
+        <target>Mensajes de transacción</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.messages.subscribe" resname="public_page_editor.messages.subscribe">
+        <source>public_page_editor.messages.subscribe</source>
+        <target>Mensaje que reciben los suscriptores al suscribirse</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.messages.confirmed" resname="public_page_editor.messages.confirmed">
+        <source>public_page_editor.messages.confirmed</source>
+        <target>Mensaje que reciben al confirmar su suscripción</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.messages.unsubscribe" resname="public_page_editor.messages.unsubscribe">
+        <source>public_page_editor.messages.unsubscribe</source>
+        <target>Contenido del mensaje que reciben al darse de baja</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.messages.subject" resname="public_page_editor.messages.subject">
+        <source>public_page_editor.messages.subject</source>
+        <target>Asunto</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.messages.message" resname="public_page_editor.messages.message">
+        <source>public_page_editor.messages.message</source>
+        <target>Mensaje</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.html_choice" resname="public_page_editor.email.html_choice">
+        <source>public_page_editor.email.html_choice</source>
+        <target>Elección de correo HTML</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.text_only" resname="public_page_editor.email.text_only">
+        <source>public_page_editor.email.text_only</source>
+        <target>No ofrecer elección, texto por defecto</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.html_only" resname="public_page_editor.email.html_only">
+        <source>public_page_editor.email.html_only</source>
+        <target>No ofrecer elección, HTML por defecto</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.check_text" resname="public_page_editor.email.check_text">
+        <source>public_page_editor.email.check_text</source>
+        <target>Ofrecer casilla para texto</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.check_html" resname="public_page_editor.email.check_html">
+        <source>public_page_editor.email.check_html</source>
+        <target>Ofrecer casilla para HTML</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.radio_text" resname="public_page_editor.email.radio_text">
+        <source>public_page_editor.email.radio_text</source>
+        <target>Botones de opción, texto por defecto</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.radio_html" resname="public_page_editor.email.radio_html">
+        <source>public_page_editor.email.radio_html</source>
+        <target>Botones de opción, HTML por defecto</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.confirmation_field" resname="public_page_editor.email.confirmation_field">
+        <source>public_page_editor.email.confirmation_field</source>
+        <target>Mostrar el campo de confirmación de la dirección de correo</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.owner" resname="public_page_editor.email.owner">
+        <source>public_page_editor.email.owner</source>
+        <target>Propietario</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.select_admin" resname="public_page_editor.email.select_admin">
+        <source>public_page_editor.email.select_admin</source>
+        <target>Seleccione un administrador</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.email.fallback_admin" resname="public_page_editor.email.fallback_admin">
+        <source>public_page_editor.email.fallback_admin</source>
+        <target>Administrador n.º {id}</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.errors.load_failed" resname="public_page_editor.errors.load_failed">
+        <source>public_page_editor.errors.load_failed</source>
+        <target>No se pudieron cargar los datos del editor de páginas públicas.</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.errors.title_required" resname="public_page_editor.errors.title_required">
+        <source>public_page_editor.errors.title_required</source>
+        <target>El título es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.errors.invalid_id" resname="public_page_editor.errors.invalid_id">
+        <source>public_page_editor.errors.invalid_id</source>
+        <target>El servidor devolvió un ID de página de suscripción no válido.</target>
+      </trans-unit>
+      <trans-unit id="public_page_editor.errors.save_failed" resname="public_page_editor.errors.save_failed">
+        <source>public_page_editor.errors.save_failed</source>
+        <target>No se pudo guardar la página pública.</target>
       </trans-unit>
     </body>
   </file>

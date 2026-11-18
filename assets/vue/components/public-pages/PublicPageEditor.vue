@@ -2,7 +2,7 @@
   <section class="space-y-6">
     <header class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100">
-        {{ isEditMode ? 'Edit Subscribe Page' : 'Create Subscribe Page' }}
+        {{ isEditMode ? t('public_page_editor.edit_title') : t('public_page_editor.create_title') }}
       </h1>
       <div class="flex gap-2">
         <button
@@ -10,7 +10,7 @@
           class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-medium rounded-lg transition-colors"
           @click="goBack"
         >
-          Back
+          {{ t('common.back') }}
         </button>
         <button
           type="button"
@@ -18,13 +18,13 @@
           :disabled="isSaving || isLoading"
           @click="savePage"
         >
-          {{ isSaving ? 'Saving...' : 'Save' }}
+          {{ isSaving ? t('common.saving') : t('common.save') }}
         </button>
       </div>
     </header>
 
     <div v-if="isLoading" class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-8 text-center text-slate-500 dark:text-slate-350">
-      Loading public page data...
+      {{ t('public_page_editor.loading') }}
     </div>
 
     <div v-else class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 shadow-sm overflow-hidden">
@@ -46,63 +46,63 @@
 
       <div class="p-4 sm:p-6 space-y-5">
         <section v-if="currentStep === 1" class="space-y-4">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">General settings</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t('public_page_editor.general.title') }}</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="space-y-1 md:col-span-2">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Title</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.title_field') }}</span>
               <input v-model="form.title" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Language file to use</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.language_file') }}</span>
               <select v-model="form.languageFile" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
                 <option v-for="option in languageOptions" :key="option" :value="option">{{ option }}</option>
               </select>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Text for button</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.button') }}</span>
               <input v-model="form.button" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
             </label>
 
             <label class="space-y-1 md:col-span-2">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Intro text</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.intro') }}</span>
               <textarea v-model="form.introText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Header text</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.header') }}</span>
               <textarea v-model="form.headerText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Footer text</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.footer') }}</span>
               <textarea v-model="form.footerText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Thank you page text</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.thank_you') }}</span>
               <textarea v-model="form.thankYouPageText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
 
             <label class="space-y-1">
-              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Text for successful AJAX subscription</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.general.ajax_success') }}</span>
               <textarea v-model="form.ajaxSuccessText" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
             </label>
           </div>
         </section>
 
         <section v-else-if="currentStep === 2" class="space-y-4">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Select the lists to offer</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t('public_page_editor.lists.title') }}</h2>
           <fieldset class="space-y-2">
-            <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">Display list categories</legend>
+            <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.lists.categories') }}</legend>
             <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
               <input v-model="form.displayListCategories" type="radio" value="0" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-              Do not show list categories
+              {{ t('public_page_editor.lists.no_categories') }}
             </label>
             <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
               <input v-model="form.displayListCategories" type="radio" value="1" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-              Display lists in labelled categories
+              {{ t('public_page_editor.lists.labelled_categories') }}
             </label>
           </fieldset>
 
@@ -113,7 +113,7 @@
               class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
               @change="toggleNoPreselectAnyList($event)"
             >
-            Do not preselect any list
+            {{ t('public_page_editor.lists.no_preselect') }}
           </label>
 
           <div class="space-y-3">
@@ -130,7 +130,7 @@
                     class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1"
                     @change="toggleListSelection(list.id, $event)"
                   >
-                  {{ list.name || `List #${list.id}` }}
+                  {{ list.name || t('public_page_editor.lists.fallback_name', { id: list.id }) }}
                 </label>
                 <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
@@ -140,7 +140,7 @@
                     :disabled="!form.selectedListIds.includes(list.id)"
                     @change="toggleListPreselection(list.id, $event)"
                   >
-                  Preselect
+                  {{ t('public_page_editor.lists.preselect') }}
                 </label>
               </div>
             </article>
@@ -148,7 +148,7 @@
         </section>
 
         <section v-else-if="currentStep === 3" class="space-y-4">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Select the attributes to use</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t('public_page_editor.attributes.title') }}</h2>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:auto-rows-fr">
             <article
               v-for="attribute in attributes"
@@ -157,20 +157,20 @@
             >
               <div class="flex h-full flex-col gap-3">
                 <div class="flex items-start justify-between gap-3">
-                  <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">Attribute: {{ attribute.id }}</p>
+                  <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ t('public_page_editor.attributes.attribute', { id: attribute.id }) }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div class="min-w-0">
-                    <p class="text-xs text-slate-500 dark:text-slate-350">Name</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-350">{{ t('public_page_editor.attributes.name') }}</p>
                     <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.name">{{ attribute.name }}</p>
                   </div>
                   <div class="min-w-0">
-                    <p class="text-xs text-slate-500 dark:text-slate-350">Type</p>
-                    <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.type">{{ attribute.type }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-350">{{ t('public_page_editor.attributes.type') }}</p>
+                    <p class="truncate text-sm text-slate-800 dark:text-slate-100" :title="attribute.type">{{ attributeTypeLabel(attribute.type) }}</p>
                   </div>
                   <label class="space-y-1">
-                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Default value</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.attributes.default_value') }}</span>
                     <input
                       :value="attributeState(attribute.id).defaultValue"
                       type="text"
@@ -179,7 +179,7 @@
                     >
                   </label>
                   <label class="space-y-1">
-                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Order of listing</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.attributes.order') }}</span>
                     <input
                       :value="attributeState(attribute.id).listOrder"
                       type="number"
@@ -197,7 +197,7 @@
                     class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
                     @change="updateAttributeState(attribute.id, 'required', $event.target.checked)"
                   >
-                  Is this attribute required?
+                  {{ t('public_page_editor.attributes.required') }}
                 </label>
                 <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input
@@ -206,7 +206,7 @@
                     class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-ext-wf1 accent-ext-wf1"
                     @change="updateAttributeState(attribute.id, 'use', $event.target.checked)"
                   >
-                  Use this attribute in the page
+                  {{ t('public_page_editor.attributes.use') }}
                 </label>
               </div>
             </article>
@@ -214,40 +214,40 @@
         </section>
 
         <section v-else-if="currentStep === 4" class="space-y-6">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Transaction messages</h2>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t('public_page_editor.messages.title') }}</h2>
           <div class="grid gap-6 lg:grid-cols-3">
             <div class="space-y-3">
-              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Message subscribers receive when they subscribe</h3>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ t('public_page_editor.messages.subscribe') }}</h3>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Subject</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.messages.subject') }}</span>
                 <input v-model="form.subscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
               </label>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Message</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.messages.message') }}</span>
                 <textarea v-model="form.subscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
               </label>
             </div>
 
             <div class="space-y-3">
-              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Message they receive when they confirm their subscription</h3>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ t('public_page_editor.messages.confirmed') }}</h3>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Subject</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.messages.subject') }}</span>
                 <input v-model="form.confirmedSubject" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
               </label>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Message</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.messages.message') }}</span>
                 <textarea v-model="form.confirmedMessage" rows="6" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
               </label>
             </div>
 
             <div class="space-y-3">
-              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Content of the message they receive when they unsubscribe</h3>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ t('public_page_editor.messages.unsubscribe') }}</h3>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Subject</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.messages.subject') }}</span>
                 <input v-model="form.unsubscribeSubject" type="text" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
               </label>
               <label class="space-y-1">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Message</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.messages.message') }}</span>
                 <textarea v-model="form.unsubscribeMessage" rows="6" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"></textarea>
               </label>
             </div>
@@ -257,53 +257,53 @@
         <section v-else class="space-y-4">
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">HTML email choice</legend>
+              <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.email.html_choice') }}</legend>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.htmlChoice" type="radio" value="textonly" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Don't offer choice, default to text
+                {{ t('public_page_editor.email.text_only') }}
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.htmlChoice" type="radio" value="htmlonly" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Don't offer choice, default to HTML
+                {{ t('public_page_editor.email.html_only') }}
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.htmlChoice" type="radio" value="checkfortext" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Offer checkbox for text
+                {{ t('public_page_editor.email.check_text') }}
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.htmlChoice" type="radio" value="checkforhtml" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Offer checkbox for HTML
+                {{ t('public_page_editor.email.check_html') }}
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.htmlChoice" type="radio" value="radiotext" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Radio buttons, default to text
+                {{ t('public_page_editor.email.radio_text') }}
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.htmlChoice" type="radio" value="radiohtml" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Radio buttons, default to HTML
+                {{ t('public_page_editor.email.radio_html') }}
               </label>
             </fieldset>
 
             <fieldset class="space-y-2">
-              <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">Display email address confirmation field</legend>
+              <legend class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.email.confirmation_field') }}</legend>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.displayEmailConfirmationField" type="radio" value="1" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                Yes
+                {{ t('common.yes') }}
               </label>
               <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.displayEmailConfirmationField" type="radio" value="0" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-ext-wf1 focus:ring-ext-wf2 accent-ext-wf1">
-                No
+                {{ t('common.no') }}
               </label>
             </fieldset>
           </div>
 
-          <h2 class="text-sm font-medium text-slate-700 dark:text-slate-200">Owner</h2>
+          <h2 class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.email.owner') }}</h2>
           <label class="space-y-1 block">
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Select admin</span>
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('public_page_editor.email.select_admin') }}</span>
             <select v-model="form.ownerId" class="w-full md:max-w-md rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 dark:bg-slate-800 shadow-sm outline-none focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2">
-              <option value="">No owner</option>
+              <option value="">{{ t('public_pages.no_owner') }}</option>
               <option v-for="admin in admins" :key="admin.id" :value="String(admin.id)">
-                {{ admin.loginName || admin.email || `Admin #${admin.id}` }}
+                {{ admin.loginName || admin.email || t('public_page_editor.email.fallback_admin', { id: admin.id }) }}
               </option>
             </select>
           </label>
@@ -316,6 +316,7 @@
 <script setup>
 import {computed, onMounted, ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
+import {useI18n} from 'vue-i18n'
 import {
   backendFetch,
   fetchAllAdmins,
@@ -324,6 +325,7 @@ import {
   subscribePagesClient
 } from '../../api'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -336,13 +338,19 @@ const admins = ref([])
 const lists = ref([])
 const attributes = ref([])
 const currentStep = ref(1)
-const steps = [
-  { id: 1, label: 'General' },
-  { id: 2, label: 'Lists' },
-  { id: 3, label: 'Attributes' },
-  { id: 4, label: 'Messages' },
-  { id: 5, label: 'Email Settings' }
-]
+const steps = computed(() => [
+  { id: 1, label: t('public_page_editor.steps.general') },
+  { id: 2, label: t('public_page_editor.steps.lists') },
+  { id: 3, label: t('public_page_editor.steps.attributes') },
+  { id: 4, label: t('public_page_editor.steps.messages') },
+  { id: 5, label: t('public_page_editor.steps.email') }
+])
+
+const attributeTypeLabel = (type) => (
+  ['textline', 'hidden', 'creditcardno', 'select', 'date', 'checkbox', 'textarea', 'radio', 'checkboxgroup'].includes(type)
+    ? t(`settings.attribute_types.${type}`)
+    : type
+)
 const attributeConfig = ref({})
 const dataMap = ref({})
 const legacyHtmlChoiceOptions = new Set(['textonly', 'htmlonly', 'checkfortext', 'checkforhtml', 'radiotext', 'radiohtml'])
@@ -400,14 +408,14 @@ const languageOptions = computed(() => {
 const publicLists = computed(() => lists.value.filter((list) => list.public === true))
 
 const goToStep = (stepId) => {
-  if (stepId < 1 || stepId > steps.length) return
+  if (stepId < 1 || stepId > steps.value.length) return
   currentStep.value = stepId
 }
 
 const resolveStepFromQuery = (stepValue) => {
   const rawValue = Array.isArray(stepValue) ? stepValue[0] : stepValue
   const parsedValue = Number(rawValue)
-  if (!Number.isInteger(parsedValue) || parsedValue < 1 || parsedValue > steps.length) {
+  if (!Number.isInteger(parsedValue) || parsedValue < 1 || parsedValue > steps.value.length) {
     return null
   }
   return parsedValue
@@ -601,7 +609,7 @@ const loadInitialData = async () => {
     }
   } catch (error) {
     console.error('Failed to load public page editor data:', error)
-    window.alert(error?.message || 'Failed to load data for public page editor.')
+    window.alert(error?.message || t('public_page_editor.errors.load_failed'))
   } finally {
     isLoading.value = false
   }
@@ -652,7 +660,7 @@ const savePage = async () => {
 
   const title = form.value.title.trim()
   if (!title) {
-    window.alert('Title is required.')
+    window.alert(t('public_page_editor.errors.title_required'))
     return
   }
 
@@ -704,7 +712,7 @@ const savePage = async () => {
 
     const savedId = Number(savedPage?.id || pageId.value)
     if (!Number.isFinite(savedId) || savedId <= 0) {
-      throw new Error('Invalid subscribe page id returned from server.')
+      throw new Error(t('public_page_editor.errors.invalid_id'))
     }
 
     await persistDataItems(savedId)
@@ -720,10 +728,10 @@ const savePage = async () => {
       })
     }
 
-    window.alert('Public page saved.')
+    window.alert(t('public_page_editor.saved'))
   } catch (error) {
     console.error('Failed to save public page:', error)
-    window.alert(error?.message || 'Failed to save public page.')
+    window.alert(error?.message || t('public_page_editor.errors.save_failed'))
   } finally {
     isSaving.value = false
   }

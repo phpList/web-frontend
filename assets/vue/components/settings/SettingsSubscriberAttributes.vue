@@ -1,7 +1,7 @@
 <template>
   <AttributeDirectory
-      title="Subscriber Attributes"
-      description="Manage subscriber attribute definitions"
+      :title="t('settings.subscriber_attributes.title')"
+      :description="t('settings.subscriber_attributes.description')"
       :client="subscriberAttributesClient"
   >
     <template #create-modal="{ isOpen, close, created }">
@@ -24,9 +24,12 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import AttributeDirectory from './AttributeDirectory.vue'
 import CreateSubscriberAttributeModal from './CreateSubscriberAttributeModal.vue'
 import EditSubscriberAttributeModal from './EditSubscriberAttributeModal.vue'
 
 import { subscriberAttributesClient } from '../../api'
+
+const { t } = useI18n()
 </script>

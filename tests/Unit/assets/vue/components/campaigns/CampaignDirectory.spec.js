@@ -94,6 +94,7 @@ const makeRouter = async (query = {}) => {
         history: createMemoryHistory(),
         routes: [
             { path: '/', component: { template: '<div />' } },
+            { path: '/campaigns/create', component: { template: '<div />' } },
             { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: { template: '<div />' } },
             { path: '/lists/:listId/subscribers', component: { template: '<div />' } },
         ],
@@ -130,6 +131,15 @@ describe('loading state', () => {
     it('clears loading text after the API resolves', async () => {
         const { wrapper } = await mountComponent()
         expect(wrapper.text()).not.toContain('Loading campaigns...')
+    })
+})
+
+describe('create campaign button', () => {
+    it('links to the create campaign page', async () => {
+        const { wrapper } = await mountComponent()
+        const link = wrapper.findAll('a').find((a) => a.text().includes('Create Campaign'))
+        expect(link).toBeTruthy()
+        expect(link.attributes('href')).toBe('/campaigns/create')
     })
 })
 

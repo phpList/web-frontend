@@ -3,17 +3,26 @@
     <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Campaigns</h2>
 
-      <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-slate-50 dark:bg-slate-900 w-full sm:w-auto">
-        <button
-          v-for="option in filterOptions"
-          :key="option.id"
-          type="button"
-          class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-          :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-350 hover:text-slate-700 dark:hover:text-slate-300'"
-          @click="setFilter(option.id)"
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-slate-50 dark:bg-slate-900 w-full sm:w-auto">
+          <button
+            v-for="option in filterOptions"
+            :key="option.id"
+            type="button"
+            class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+            :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-350 hover:text-slate-700 dark:hover:text-slate-300'"
+            @click="setFilter(option.id)"
+          >
+            {{ option.label }}
+          </button>
+        </div>
+        <RouterLink
+          to="/campaigns/create"
+          class="px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
-          {{ option.label }}
-        </button>
+          <BaseIcon name="plus" class="w-4 h-4" inherit-color />
+          Create Campaign
+        </RouterLink>
       </div>
     </div>
 
@@ -305,7 +314,8 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import BaseIcon from '../base/BaseIcon.vue'
 import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 import ActionButton from '../base/ActionButton.vue'

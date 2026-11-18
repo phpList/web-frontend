@@ -61,14 +61,6 @@
       </div>
 
       <div class="flex items-center gap-3 sm:gap-5 shrink-0">
-        <RouterLink
-          to="/campaigns/create"
-          class="hidden sm:flex items-center gap-2 px-4 py-2 bg-ext-wf1 text-white text-xs font-bold rounded-lg hover:bg-ext-wf3 transition-shadow shadow-sm shadow-indigo-500/20"
-        >
-          <BaseIcon name="plus" class="w-3.5 h-3.5" inherit-color />
-          Create Campaign
-        </RouterLink>
-
         <AdminNotifications />
 
         <button
@@ -99,7 +91,6 @@ import { useSidebar } from "../composables/useSidebar";
 import { useDarkMode } from "../composables/useDarkMode";
 import { useCurrentAdmin } from "../composables/useCurrentAdmin";
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { RouterLink } from 'vue-router';
 import { Requests } from "@tatevikgr/rest-api-client";
 import { subscribersClient, campaignClient } from "../api";
 

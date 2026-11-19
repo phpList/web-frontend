@@ -5,6 +5,7 @@
 {% block body %}
     <div id="vue-app"
          data-api-token="{{ app.session.get('auth_token')|default('') }}"
+         data-logout-token="{{ csrf_token('logout') }}"
          data-bounce-actions="{{ bounce_actions|default({})|json_encode|e('html_attr') }}">
     </div>
     {# Languages offered by the language selector: {"en": "English", "es": "Español"}. The chosen one lives in localStorage; its strings are fetched from /translations/<locale>.json #}

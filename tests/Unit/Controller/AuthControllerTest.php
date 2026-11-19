@@ -11,11 +11,16 @@ use PhpList\WebFrontend\Controller\AuthController;
 use PhpList\RestApiClient\Endpoint\AuthClient;
 use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\WebFrontend\Service\AuthenticationService;
+use PhpList\WebFrontend\Service\LoginThrottle;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +32,8 @@ class AuthControllerTest extends TestCase
     private AuthClient&MockObject $authClient;
     private Client&MockObject $apiClient;
     private AuthController $controller;
+    private LoggerInterface&MockObject $logger;
+    private bool $csrfTokenValid = true;
 
     protected function setUp(): void
     {
@@ -39,9 +46,10 @@ class AuthControllerTest extends TestCase
                 new PasswordResetClient($this->apiClient),
                 $this->apiClient,
                 new AuthenticationService($this->apiClient),
-                $this->createMock(LoggerInterface::class)
+                $this->logger = $this->createMock(LoggerInterface::class),
+                new LoginThrottle(new ArrayAdapter(), 3, 5, 900),
             ])
-            ->onlyMethods(['render', 'redirectToRoute', 'generateUrl'])
+            ->onlyMethods(['render', 'redirectToRoute', 'generateUrl', 'isCsrfTokenValid'])
             ->getMock();
 
         $this->controller->method('render')
@@ -50,6 +58,9 @@ class AuthControllerTest extends TestCase
                     'Rendered template: ' . $template . ' with params: ' . json_encode($params)
                 );
             });
+
+        $this->controller->method('isCsrfTokenValid')
+            ->willReturnCallback(fn (string $id, ?string $token) => $this->csrfTokenValid && $token === 'good-token');
 
         $this->controller->method('redirectToRoute')
             ->willReturnCallback(function ($route) {
@@ -71,12 +82,8 @@ class AuthControllerTest extends TestCase
                 ['login_error', false]
             ]);
 
-        $request = $this->createMock(Request::class);
-        $request->method('getSession')
-            ->willReturn($session);
-        $request->method('isMethod')
-            ->with('POST')
-            ->willReturn(false);
+        $request = Request::create('/login', 'GET');
+        $request->setSession($session);
 
         $response = $this->controller->login($request);
 
@@ -99,12 +106,8 @@ class AuthControllerTest extends TestCase
             ->method('remove')
             ->with('login_error');
 
-        $request = $this->createMock(Request::class);
-        $request->method('getSession')
-            ->willReturn($session);
-        $request->method('isMethod')
-            ->with('POST')
-            ->willReturn(false);
+        $request = Request::create('/login', 'GET');
+        $request->setSession($session);
 
         $response = $this->controller->login($request);
 
@@ -218,15 +221,184 @@ class AuthControllerTest extends TestCase
 
         $this->authClient->method('login')
             ->with('testuser', 'testpass')
-            ->willThrowException(new RuntimeException('Invalid credentials'));
+            ->willThrowException(new RuntimeException('Invalid credentials', 401));
 
         $response = $this->controller->login($request);
 
         $this->assertStringContainsString('auth/login.html.twig', $response->getContent());
         $this->assertStringContainsString(
-            'Invalid credentials',
+            'Invalid credentials.',
             $response->getContent(),
         );
+    }
+
+    public function testLoginFailureDoesNotLeakUpstreamDetails(): void
+    {
+        $this->authClient->method('login')->willThrowException(
+            new RuntimeException('cURL error 7: Failed to connect to http://10.0.0.5:8080/api/v2/sessions')
+        );
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with($this->stringContains('10.0.0.5'));
+
+        $response = $this->controller->login($this->postLoginRequest('testuser', 'wrong'));
+
+        $this->assertStringNotContainsString('10.0.0.5', $response->getContent());
+        $this->assertStringNotContainsString('cURL', $response->getContent());
+        $this->assertStringContainsString('Unable to sign in right now', $response->getContent());
+    }
+
+    public function testLoginFailureWithGuzzleExceptionDoesNotLeakUpstreamDetails(): void
+    {
+        $this->authClient->method('login')->willThrowException(
+            new ConnectException(
+                'Connection refused for http://internal-api.local/api/v2',
+                new GuzzleRequest('POST', 'http://internal-api.local')
+            )
+        );
+
+        $response = $this->controller->login($this->postLoginRequest('testuser', 'wrong'));
+
+        $this->assertStringNotContainsString('internal-api.local', $response->getContent());
+        $this->assertStringContainsString('Invalid credentials.', $response->getContent());
+    }
+
+    public function testLoginIsBlockedAfterTooManyFailedAttempts(): void
+    {
+        $this->authClient->expects($this->exactly(3))
+            ->method('login')
+            ->willThrowException(new RuntimeException('nope', 401));
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->assertSame(
+                200,
+                $this->controller->login(
+                    $this->postLoginRequest(
+                        'victim',
+                        'guess' . $i
+                    )
+                )->getStatusCode()
+            );
+        }
+
+        // The 4th attempt never reaches the API, even with the right password.
+        $response = $this->controller->login($this->postLoginRequest('victim', 'correct-password'));
+
+        $this->assertSame(Response::HTTP_TOO_MANY_REQUESTS, $response->getStatusCode());
+        $this->assertSame('900', $response->headers->get('Retry-After'));
+        $this->assertStringContainsString('Too many attempts', $response->getContent());
+    }
+
+    public function testLoginThrottleAppliesPerUsernameCaseInsensitively(): void
+    {
+        $this->authClient->method('login')->willThrowException(new RuntimeException('nope', 401));
+
+        foreach (['victim', 'VICTIM', 'Victim'] as $name) {
+            $this->controller->login($this->postLoginRequest($name, 'x', '10.0.0.' . random_int(1, 200)));
+        }
+
+        // Attempts from yet another IP are still blocked for the targeted account.
+        $response = $this->controller->login($this->postLoginRequest('victim', 'x', '192.168.1.1'));
+
+        $this->assertSame(Response::HTTP_TOO_MANY_REQUESTS, $response->getStatusCode());
+    }
+
+    public function testLoginIsBlockedPerIpAcrossUsernames(): void
+    {
+        $this->authClient->method('login')->willThrowException(new RuntimeException('nope', 401));
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->controller->login($this->postLoginRequest('user' . $i, 'x'));
+        }
+
+        $response = $this->controller->login($this->postLoginRequest('another-user', 'x'));
+
+        $this->assertSame(Response::HTTP_TOO_MANY_REQUESTS, $response->getStatusCode());
+    }
+
+    public function testSuccessfulLoginResetsTheUsernameCounter(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->willReturn(false);
+        $this->authClient->method('login')->willReturnOnConsecutiveCalls(
+            $this->throwException(new RuntimeException('nope', 401)),
+            $this->throwException(new RuntimeException('nope', 401)),
+            ['key' => 'tok', 'id' => 1, 'expiry_date' => '2099-01-01T00:00:00+00:00'],
+            $this->throwException(new RuntimeException('nope', 401)),
+        );
+        $this->authClient->method('getSessionUser')
+            ->willReturn(new Administrator(['id' => 7, 'login_name' => 'u', 'created_at' => '2026-01-01']));
+
+        $this->controller->login($this->postLoginRequest('admin', 'x', '10.0.0.1', $session));
+        $this->controller->login($this->postLoginRequest('admin', 'x', '10.0.0.1', $session));
+        $this->assertInstanceOf(
+            RedirectResponse::class,
+            $this->controller->login($this->postLoginRequest('admin', 'ok', '10.0.0.1', $session))
+        );
+
+        // Counter was reset, so a later typo is a normal failure rather than a lock-out.
+        $this->assertSame(
+            200,
+            $this->controller->login(
+                $this->postLoginRequest(
+                    'admin',
+                    'x',
+                    '10.0.0.1',
+                    $session
+                )
+            )->getStatusCode()
+        );
+    }
+
+    /**
+     * @dataProvider unsafeRedirectProvider
+     */
+    public function testLoginIgnoresUnsafeRedirectTargets(string $target): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->willReturnMap([['auth_token', true], ['login_error', false]]);
+
+        $request = Request::create('/login', 'GET', ['redirect' => $target]);
+        $request->setSession($session);
+
+        $response = $this->controller->login($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('mocked-route-to-home', $response->getTargetUrl());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function unsafeRedirectProvider(): array
+    {
+        return [
+            'backslash host' => ['/\\evil.com'],
+            'backslash after slash path' => ['/\\/evil.com'],
+            'tab hidden slash' => ["/\t/evil.com"],
+            'newline hidden slash' => ["/\n/evil.com"],
+            'scheme-relative' => ['//evil.com'],
+            'absolute url' => ['https://evil.com'],
+            'javascript scheme' => ['javascript:alert(1)'],
+        ];
+    }
+
+    private function postLoginRequest(
+        string $username,
+        string $password,
+        string $ip = '10.0.0.1',
+        ?SessionInterface $session = null,
+    ): Request {
+        if ($session === null) {
+            $session = $this->createMock(SessionInterface::class);
+            $session->method('has')->willReturnMap([['auth_token', false], ['login_error', false]]);
+        }
+        $request = Request::create('/login', 'POST', ['username' => $username, 'password' => $password], [], [], [
+            'REMOTE_ADDR' => $ip,
+        ]);
+        $request->setSession($session);
+
+        return $request;
     }
 
     public function testLoginWithExistingSession(): void
@@ -238,9 +410,8 @@ class AuthControllerTest extends TestCase
                 ['login_error', false]
             ]);
 
-        $request = $this->createMock(Request::class);
-        $request->method('getSession')
-            ->willReturn($session);
+        $request = Request::create('/login', 'GET');
+        $request->setSession($session);
 
         $response = $this->controller->login($request);
 
@@ -287,29 +458,113 @@ class AuthControllerTest extends TestCase
     public function testLogout(): void
     {
         $session = $this->createMock(SessionInterface::class);
-        $expected = [
-            ['auth_token'],
-            ['auth_id'],
-            ['admin_id'],
-        ];
+        $removed = [];
+        $session->method('remove')->willReturnCallback(function ($key) use (&$removed) {
+            $removed[] = $key;
+        });
+        // The whole server-side session must be dropped, not just the auth keys.
+        $session->expects($this->once())->method('invalidate');
 
-        $index = 0;
-
-        $session->expects($this->exactly(3))
-            ->method('remove')
-            ->willReturnCallback(function ($key) use (&$expected, &$index) {
-                Assert::assertSame($expected[$index][0], $key);
-                $index++;
-            });
-
-        $request = $this->createMock(Request::class);
-        $request->method('getSession')
-            ->willReturn($session);
+        $request = Request::create('/logout', 'POST', ['_token' => 'good-token']);
+        $request->setSession($session);
 
         $response = $this->controller->logout($request);
 
+        $this->assertSame(['auth_token', 'auth_expiry_date', 'auth_id', 'admin_id'], $removed);
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('login', $response->getTargetUrl());
+    }
+
+    public function testLogoutRejectsInvalidCsrfToken(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->expects($this->never())->method('remove');
+        $session->expects($this->never())->method('invalidate');
+        $this->authClient->expects($this->never())->method('logout');
+
+        $request = Request::create('/logout', 'POST', ['_token' => 'forged']);
+        $request->setSession($session);
+
+        $this->expectException(AccessDeniedException::class);
+
+        $this->controller->logout($request);
+    }
+
+    public function testLogoutRejectsMissingCsrfToken(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->expects($this->never())->method('invalidate');
+
+        $request = Request::create('/logout', 'POST');
+        $request->setSession($session);
+
+        $this->expectException(AccessDeniedException::class);
+
+        $this->controller->logout($request);
+    }
+
+    public function testLogoutRouteOnlyAcceptsPost(): void
+    {
+        $attributes = (new \ReflectionMethod(AuthController::class, 'logout'))
+            ->getAttributes(\Symfony\Component\Routing\Attribute\Route::class);
+
+        $this->assertCount(1, $attributes);
+        $this->assertSame(['POST'], $attributes[0]->newInstance()->getMethods());
+    }
+
+    public function testForgotPasswordIsThrottled(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->willReturn(false);
+
+        $send = function (string $email) use ($session): Response {
+            $request = Request::create(
+                '/forgot-password',
+                'POST',
+                ['email' => $email],
+                [],
+                [],
+                ['REMOTE_ADDR' => '10.0.0.9']
+            );
+            $request->setSession($session);
+
+            return $this->controller->forgotPassword($request);
+        };
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->assertSame(200, $send('admin@example.com')->getStatusCode());
+        }
+
+        $response = $send('admin@example.com');
+        $this->assertSame(Response::HTTP_TOO_MANY_REQUESTS, $response->getStatusCode());
+        $this->assertStringContainsString('Too many attempts', $response->getContent());
+    }
+
+    public function testResetPasswordPostIsThrottled(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->willReturn(false);
+        $this->apiClient->method('post')->willThrowException(new ApiException('bad token', 400));
+
+        $send = function () use ($session): Response {
+            $request = Request::create(
+                '/reset-password',
+                'POST',
+                ['token' => 'guess', 'newPassword' => 'password123', 'confirmPassword' => 'password123'],
+                [],
+                [],
+                ['REMOTE_ADDR' => '10.0.0.9']
+            );
+            $request->setSession($session);
+
+            return $this->controller->resetPassword($request);
+        };
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->assertSame(200, $send()->getStatusCode());
+        }
+
+        $this->assertSame(Response::HTTP_TOO_MANY_REQUESTS, $send()->getStatusCode());
     }
 
     public function testAbout(): void

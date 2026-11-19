@@ -223,7 +223,26 @@ describe('AppSidebar', () => {
         expect(user.text()).toContain('jane')
         expect(user.text()).toContain('Super Admin')
         expect(user.find('[data-testid="sidebar-avatar"]').text()).toBe('j')
-        expect(user.find('a[href="/logout"]').attributes('aria-label')).toBe('Logout')
-        expect(user.find('a[href="/logout"] .base-icon').exists()).toBe(true)
+        expect(user.find('form[action="/logout"] button').attributes('aria-label')).toBe('Logout')
+        expect(user.find('form[action="/logout"] button .base-icon').exists()).toBe(true)
+    })
+
+    it('logs out with a CSRF-protected POST, not a GET link', () => {
+        const app = document.createElement('div')
+        app.id = 'vue-app'
+        app.dataset.logoutToken = 'csrf-123'
+        document.body.appendChild(app)
+
+        try {
+            const wrapper = mount(AppSidebar, { global: { stubs: { SidebarLogo: SidebarLogoStub, BaseIcon: BaseIconStub, SidebarNavSection: SidebarNavSectionStub } } })
+            const form = wrapper.find('[data-testid="logout-form"]')
+
+            expect(form.attributes('method')).toBe('post')
+            expect(form.attributes('action')).toBe('/logout')
+            expect(form.find('input[name="_token"]').element.value).toBe('csrf-123')
+            expect(wrapper.find('a[href="/logout"]').exists()).toBe(false)
+        } finally {
+            app.remove()
+        }
     })
 })

@@ -87,14 +87,17 @@
                 {{ adminData.super_user ? t('sidebar.role.super_admin') : t('sidebar.role.administrator') }}
               </span>
             </div>
-            <a
-                href="/logout"
-                class="shrink-0 p-2 rounded-lg no-underline text-slate-100 hover:text-white hover:bg-slate-500 dark:text-slate-350 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
-                :aria-label="t('sidebar.logout')"
-                :title="t('sidebar.logout')"
-            >
-              <BaseIcon name="logout" inherit-color />
-            </a>
+            <form method="post" action="/logout" class="shrink-0 m-0" data-testid="logout-form">
+              <input type="hidden" name="_token" :value="logoutToken" />
+              <button
+                  type="submit"
+                  class="p-2 rounded-lg text-slate-100 hover:text-white hover:bg-slate-500 dark:text-slate-350 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  :aria-label="t('sidebar.logout')"
+                  :title="t('sidebar.logout')"
+              >
+                <BaseIcon name="logout" inherit-color />
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -119,6 +122,8 @@ const { adminData, loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
 onMounted(loadCurrentAdmin)
 
 const adminName = computed(() => adminData.value?.login_name || t('sidebar.admin_fallback'))
+// CSRF token for the POST /logout form, rendered by spa.html.twig
+const logoutToken = document.getElementById('vue-app')?.dataset.logoutToken ?? ''
 const adminInitial = computed(() => adminName.value.trim().charAt(0) || 'A')
 
 const sections = [

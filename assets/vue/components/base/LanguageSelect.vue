@@ -29,7 +29,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { backendFetch } from '../../api'
+import client, { backendFetch } from '../../api'
 import { loadMessages, readAvailableLocales } from '../../i18n'
 
 const { t, locale, setLocaleMessage } = useI18n()
@@ -84,6 +84,7 @@ const changeLocale = async (event) => {
   }
   setLocaleMessage(next, messages)
   locale.value = next
+  client.setLocale(next)
   document.documentElement.setAttribute('lang', next)
 
   // Remember the choice for this administrator (a cookie set by the server), so it applies on every

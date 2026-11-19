@@ -14,6 +14,7 @@ import {
     ConfigClient,
     AdminAttributeClient,
 } from '@tatevikgr/rest-api-client';
+import { readLocale } from './i18n';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';
 let isAuthenticationRedirectInProgress = false;
@@ -53,6 +54,10 @@ const client = new Client(apiBaseUrl || '', {
 if (apiToken) {
     client.setSessionId(apiToken);
 }
+
+// Send the UI language as Accept-Language so the REST API answers in the administrator's language.
+// LanguageSelect updates it when the language is switched in place.
+client.setLocale(readLocale());
 
 client.axiosInstance?.interceptors?.response?.use(
     (response) => response,

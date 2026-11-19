@@ -11,7 +11,10 @@ const setLocales = (locales) => {
         : ''
 }
 
-vi.mock('../../../../../../assets/vue/api', () => ({ backendFetch: vi.fn() }))
+vi.mock('../../../../../../assets/vue/api', () => ({
+    backendFetch: vi.fn(),
+    default: { setLocale: vi.fn() },
+}))
 
 describe('LanguageSelect', () => {
     const globalPlugins = config.global.plugins

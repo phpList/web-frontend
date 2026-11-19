@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@ckeditor/ckeditor5-vue": "^7.4.0",
-    "@tatevikgr/rest-api-client": "^2.2.6",
+    "@tatevikgr/rest-api-client": "^2.2.7",
     "apexcharts": "^5.10.4",
     "ckeditor5": "^48.0.0",
     "intl-messageformat": "^12.1.5",

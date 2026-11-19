@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpList\WebFrontend\Tests\Integration\Controller;
 
 use PhpList\WebFrontend\Controller\DashboardController;
+use PhpList\WebFrontend\Service\CommunityNewsService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -28,7 +29,7 @@ class DashboardControllerTest extends KernelTestCase
         self::bootKernel();
         $apiBaseUrl = (string) static::getContainer()->getParameter('app.api_base_url');
 
-        $controller = new DashboardController();
+        $controller = new DashboardController($this->createMock(CommunityNewsService::class));
         $controller->setContainer(static::getContainer());
 
         $request = Request::create('/');

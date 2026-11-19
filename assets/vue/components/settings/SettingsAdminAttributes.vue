@@ -1,7 +1,7 @@
 <template>
   <AttributeDirectory
-      title="Admin Attributes"
-      description="Manage administrator attribute definitions"
+      :title="t('settings.admin_attributes.title')"
+      :description="t('settings.admin_attributes.description')"
       :client="adminAttributeClient"
   >
     <template #create-modal="{ isOpen, close, created }">
@@ -24,9 +24,12 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import AttributeDirectory from './AttributeDirectory.vue'
 import CreateAdminAttributeModal from './CreateAdminAttributeModal.vue'
 import EditAdminAttributeModal from './EditAdminAttributeModal.vue'
 
 import { adminAttributeClient } from '../../api'
+
+const { t } = useI18n()
 </script>

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import TemplateEditView from '../../../../../assets/vue/views/TemplateEditView.vue'
 import * as api from '../../../../../assets/vue/api'
@@ -24,8 +24,12 @@ vi.mock('vue-router', () => ({
 }))
 
 describe('TemplateEditView', () => {
+    let consoleErrorSpy
+
     beforeEach(() => {
         vi.restoreAllMocks()
+        // Tests here make the API fail on purpose; the component logs those errors.
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
         vi.spyOn(api.templateClient, 'getTemplate').mockResolvedValue({
             id: 1,
@@ -39,6 +43,10 @@ describe('TemplateEditView', () => {
         vi.spyOn(api.templateClient, 'createTemplate').mockResolvedValue({
             id: 2,
         })
+    })
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore()
     })
 
     const mountComponent = async () => {

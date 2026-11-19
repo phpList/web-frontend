@@ -2,7 +2,7 @@
   <BaseCard class="h-full">
     <header class="mb-4">
       <h2 class="text-sm font-bold text-gray-900 mb-0 dark:text-slate-100">
-        Quick Actions
+        {{ t('dashboard.quick_actions.title') }}
       </h2>
     </header>
 
@@ -78,12 +78,16 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../../components/base/BaseCard.vue'
 
-const quickActions = [
-  { id: 'campaign', label: 'New Campaign', href: '/campaigns/create' },
-  { id: 'subscribers', label: 'Add Subscribers', href: '/subscribers' },
-  { id: 'import', label: 'Import List', href: '/lists' },
-  { id: 'templates', label: 'Manage Templates', href: '/templates' },
-]
+const { t } = useI18n()
+
+const quickActions = computed(() => [
+  { id: 'campaign', label: t('dashboard.quick_actions.new_campaign'), href: '/campaigns/create' },
+  { id: 'subscribers', label: t('dashboard.quick_actions.add_subscribers'), href: '/subscribers' },
+  { id: 'import', label: t('dashboard.quick_actions.import_list'), href: '/lists' },
+  { id: 'templates', label: t('dashboard.quick_actions.new_template'), href: '/templates/create' },
+])
 </script>

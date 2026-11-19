@@ -14,6 +14,7 @@ const statisticsClient = {
   getTopDomains: vi.fn(),
   getDomainConfirmationStatistics: vi.fn(),
   getTopLocalParts: vi.fn(),
+  getCampaignPerformance: vi.fn(),
 }
 
 vi.mock('../../../../../assets/vue/api', () => ({
@@ -26,6 +27,9 @@ const layoutStub = {
 }
 
 const mockStatisticsResponses = () => {
+  statisticsClient.getCampaignPerformance.mockResolvedValue({
+    points: [{ date: '2026-06-01', opens: 10, clicks: 3 }],
+  })
   statisticsClient.getCampaignStatistics.mockResolvedValue({
     items: [
       {
@@ -97,6 +101,20 @@ describe('AnalyticsView', () => {
     expect(wrapper.text()).toContain('example.com')
     expect(wrapper.text()).toContain('alex')
     expect(wrapper.text()).toContain('80.0%')
+  })
+
+  it('shows the daily campaign performance chart card', async () => {
+    mockStatisticsResponses()
+
+    const { default: AnalyticsView } = await import('../../../../../assets/vue/views/AnalyticsView.vue')
+
+    const wrapper = mount(AnalyticsView, {
+      global: { stubs: { AdminLayout: layoutStub } },
+    })
+    await flushPromises()
+
+    expect(statisticsClient.getCampaignPerformance).toHaveBeenCalledTimes(1)
+    expect(wrapper.text()).toContain('Daily opens and clicks for the last 30 days')
   })
 
   it('does not re-fetch analytics data when the view is remounted', async () => {

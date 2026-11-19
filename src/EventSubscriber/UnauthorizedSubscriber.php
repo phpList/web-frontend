@@ -7,6 +7,8 @@ namespace PhpList\WebFrontend\EventSubscriber;
 use PhpList\WebFrontend\Trait\LoginUrlBuilderTrait;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use PhpList\WebFrontend\Trait\SessionExpiredResponseTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,9 +25,13 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
     use RedirectValidationTrait;
     use SessionExpiredResponseTrait;
 
+    private readonly LoggerInterface $logger;
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        ?LoggerInterface $logger = null,
     ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public static function getSubscribedEvents(): array
@@ -63,6 +69,13 @@ class UnauthorizedSubscriber implements EventSubscriberInterface
 
             if ($request->hasSession()) {
                 $session = $request->getSession();
+                $this->logger->debug('Invalidating session after API authentication error', [
+                    'uri' => $request->getRequestUri(),
+                    'xhr' => $request->isXmlHttpRequest(),
+                    'session_id_hash' => substr(hash('sha256', $session->getId()), 0, 8),
+                    'api_status' => $exception->getCode(),
+                    'api_message' => $exception->getMessage(),
+                ]);
                 $session->invalidate();
             }
 

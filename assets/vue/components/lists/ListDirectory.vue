@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Mailing Lists</h2>
+  <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex justify-between items-center">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('lists.title') }}</h2>
 
       <BaseButton variant="accent" icon="plus" @click="openCreateModal">
-        Add new list
+        {{ t('lists.add_new') }}
       </BaseButton>
     </div>
 
@@ -12,45 +12,45 @@
         :items="mailingLists"
         :is-loading="isLoading"
         :load-error="loadError"
-        loading-message="Loading mailing lists..."
-        empty-message="No mailing lists found."
+        :loading-message="t('lists.loading')"
+        :empty-message="t('lists.empty')"
         :colspan="4"
     >
       <template #head>
-        <th class="px-6 py-4">ID</th>
-        <th class="px-6 py-4">Name</th>
-        <th class="px-6 py-4">Public/Active</th>
-        <th class="px-6 py-4 text-right">Actions</th>
+        <th class="px-6 py-4">{{ t('lists.table.id') }}</th>
+        <th class="px-6 py-4">{{ t('lists.table.name') }}</th>
+        <th class="px-6 py-4">{{ t('lists.table.public_active') }}</th>
+        <th class="px-6 py-4 text-right">{{ t('lists.table.actions') }}</th>
       </template>
 
       <template #row="{ item: list }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ list.id }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ list.id }}</td>
         <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ list.name }}</td>
         <td class="px-6 py-4">
           <BaseBadge :variant="isPublic(list) ? 'success' : 'neutral'">
-            {{ isPublic(list) ? 'Yes' : 'No' }}
+            {{ isPublic(list) ? t('lists.table.yes') : t('lists.table.no') }}
           </BaseBadge>
         </td>
         <td class="px-6 py-4">
           <div class="flex flex-wrap justify-end gap-2">
             <ActionButton variant="danger" icon="delete" @click="handleDelete(list)">
-              Delete
+              {{ t('lists.actions.delete') }}
             </ActionButton>
 
             <ActionButton v-if="hasPrivilege('subscribers')" variant="success" icon="addUser" @click="handleAddSubscriber(list)">
-              Add Subscribers
+              {{ t('lists.actions.add_subscribers') }}
             </ActionButton>
 
             <ActionButton icon="edit" @click="handleEdit(list)">
-              Edit
+              {{ t('lists.actions.edit') }}
             </ActionButton>
 
             <ActionButton v-if="hasPrivilege('campaigns')" variant="info" icon="plane" @click="handleStartCampaign(list)">
-              Start Campaign
+              {{ t('lists.actions.start_campaign') }}
             </ActionButton>
 
             <ActionButton v-if="hasPrivilege('subscribers')" icon="eye" @click="handleViewMembers(list)">
-              View Members
+              {{ t('lists.actions.view_members') }}
             </ActionButton>
           </div>
         </td>
@@ -59,34 +59,34 @@
       <template #card="{ item: list }">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ list.id }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">#{{ list.id }}</p>
             <p class="font-semibold text-slate-900 dark:text-slate-100">{{ list.name }}</p>
           </div>
 
           <BaseBadge class="whitespace-nowrap" :variant="isPublic(list) ? 'success' : 'neutral'">
-            {{ isPublic(list) ? 'Public' : 'Private' }}
+            {{ isPublic(list) ? t('lists.status.public') : t('lists.status.private') }}
           </BaseBadge>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <ActionButton block variant="danger" icon="delete" @click="handleDelete(list)">
-            Delete
+            {{ t('lists.actions.delete') }}
           </ActionButton>
 
           <ActionButton v-if="hasPrivilege('subscribers')" block variant="success" icon="addUser" @click="handleAddSubscriber(list)">
-            Add Subscriber
+            {{ t('lists.actions.add_subscribers') }}
           </ActionButton>
 
           <ActionButton block icon="edit" @click="handleEdit(list)">
-            Edit
+            {{ t('lists.actions.edit') }}
           </ActionButton>
 
           <ActionButton v-if="hasPrivilege('campaigns')" block variant="info" icon="plane" @click="handleStartCampaign(list)">
-            Start Campaign
+            {{ t('lists.actions.start_campaign') }}
           </ActionButton>
 
           <ActionButton v-if="hasPrivilege('subscribers')" block class="col-span-2" icon="eye" @click="handleViewMembers(list)">
-            View Members
+            {{ t('lists.actions.view_members') }}
           </ActionButton>
         </div>
       </template>
@@ -116,6 +116,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BaseButton from '../base/BaseButton.vue'
 import BaseBadge from '../base/BaseBadge.vue'
@@ -126,6 +127,8 @@ import EditListModal from './EditListModal.vue'
 import AddSubscribersModal from './AddSubscribersModal.vue'
 import { fetchAllLists, listClient } from '../../api'
 import { useCurrentAdmin } from '../../composables/useCurrentAdmin'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const { loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
@@ -147,7 +150,7 @@ const fetchMailingLists = async () => {
   } catch (error) {
     console.error('Failed to fetch mailing lists:', error)
     mailingLists.value = []
-    loadError.value = error?.message || 'Failed to load mailing lists.'
+    loadError.value = error?.message || t('lists.errors.load_failed')
   } finally {
     isLoading.value = false
   }
@@ -167,7 +170,7 @@ const emit = defineEmits([
 
 const handleDelete = async (list) => {
   const confirmed = window.confirm(
-      `Delete mailing list "${list.name}"?\n\nThis action cannot be undone.`
+      t('lists.delete_confirm', { name: list.name })
   )
 
   if (!confirmed) return

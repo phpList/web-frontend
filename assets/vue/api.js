@@ -14,6 +14,7 @@ import {
     ConfigClient,
     AdminAttributeClient,
 } from '@tatevikgr/rest-api-client';
+import { readLocale } from './i18n';
 
 const AUTHENTICATION_REDIRECT_PATH = '/login';
 let isAuthenticationRedirectInProgress = false;
@@ -32,7 +33,7 @@ const redirectToLogin = () => {
     }
     isAuthenticationRedirectInProgress = true;
     const redirectTarget = `${window.location.pathname}${window.location.search}`;
-    const search = new URLSearchParams({ redirect: redirectTarget }).toString();
+    const search = new URLSearchParams({ redirect: redirectTarget, expired: '1' }).toString();
     window.location.href = `${AUTHENTICATION_REDIRECT_PATH}?${search}`;
 };
 
@@ -53,6 +54,10 @@ const client = new Client(apiBaseUrl || '', {
 if (apiToken) {
     client.setSessionId(apiToken);
 }
+
+// Send the UI language as Accept-Language so the REST API answers in the administrator's language.
+// LanguageSelect updates it when the language is switched in place.
+client.setLocale(readLocale());
 
 client.axiosInstance?.interceptors?.response?.use(
     (response) => response,
@@ -79,15 +84,58 @@ export const templateClient = new TemplatesClient(client);
 export const bouncesClient = new BouncesClient(client);
 export const configClient = new ConfigClient(client);
 
-export const backendFetch = async (input, init = undefined) => {
-    const response = await fetch(input, init);
+// Requests to the PHP backend are run one at a time: the shared PHP session is not safe against
+// concurrent requests (one can read it mid-write, see no auth token and answer 401, which sends
+// the user back to the login page).
+let backendQueue = Promise.resolve()
 
-    if (response.status === 401) {
-        redirectToLogin();
+// Upper bound for a queued request to receive its response headers. Without it a stalled request
+// would block every request queued behind it.
+const BACKEND_FETCH_TIMEOUT_MS = 90000
+
+export const backendFetch = (input, init = undefined) => {
+    const run = async () => {
+        const callerSignal = init?.signal
+        const controller = new AbortController()
+        let onCallerAbort = null
+
+        if (callerSignal) {
+            if (callerSignal.aborted) {
+                controller.abort(callerSignal.reason)
+            } else {
+                onCallerAbort = () => controller.abort(callerSignal.reason)
+                callerSignal.addEventListener('abort', onCallerAbort, { once: true })
+            }
+        }
+
+        const timer = setTimeout(() => {
+            controller.abort(new DOMException('Request timed out', 'TimeoutError'))
+        }, BACKEND_FETCH_TIMEOUT_MS)
+
+        try {
+            const response = await fetch(input, { ...init, signal: controller.signal })
+
+            if (response.status === 401) {
+                redirectToLogin()
+            }
+
+            // The caller's abort listener stays attached on success so that cancelling still
+            // aborts the response body while it is being read.
+            return response
+        } catch (error) {
+            if (onCallerAbort) {
+                callerSignal.removeEventListener('abort', onCallerAbort)
+            }
+            throw error
+        } finally {
+            clearTimeout(timer)
+        }
     }
+    const result = backendQueue.then(run, run)
+    backendQueue = result.catch(() => {})
 
-    return response;
-};
+    return result
+}
 
 export const fetchAllLists = async ({ limit = 100, maxPages = 100 } = {}) => {
     const lists = [];

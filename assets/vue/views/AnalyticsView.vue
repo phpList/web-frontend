@@ -12,42 +12,47 @@
       <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <BaseCard v-for="metric in metrics" :key="metric.id" class="h-full">
           <header class="mb-2 flex items-center gap-3">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-350">
               <BaseIcon :name="metric.icon" />
             </span>
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
               {{ metric.label }}
             </p>
           </header>
           <p class="mb-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
             {{ metric.value }}
           </p>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
+          <p class="text-sm text-slate-500 dark:text-slate-350">
             {{ metric.description }}
           </p>
         </BaseCard>
       </section>
 
+      <PerformanceChartCard
+        :chart="performanceChart"
+        :loading="performanceLoading"
+        :error="performanceError"
+      />
+
       <section class="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <BaseCard class="xl:col-span-2">
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Campaign performance</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Top campaigns ranked by unique views and click volume.
-              </p>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">
+                {{ t('analytics.top_campaigns') }}
+              </h2>
             </div>
             <p class="text-xs text-slate-400 dark:text-slate-500">
-              {{ formatCount(campaignStatistics.length) }} campaigns
+              {{ t('analytics.count_campaigns', { count: campaignStatistics.length, formatted: formatCount(campaignStatistics.length) }) }}
             </p>
           </header>
 
-          <div v-if="loading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
-            Loading analytics...
+          <div v-if="loading" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-350">
+            {{ t('analytics.loading') }}
           </div>
 
-          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
-            No campaign statistics found.
+          <div v-else-if="hasLoaded && campaignChartItems.length === 0" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-350">
+            {{ t('analytics.empty.campaigns') }}
           </div>
 
           <div v-else class="min-h-[260px]">
@@ -63,13 +68,13 @@
         <BaseCard>
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Domain confirmation</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Confirmation coverage by sending domain.
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ t('analytics.domain_confirmation.title') }}</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
+                {{ t('analytics.domain_confirmation.description') }}
               </p>
             </div>
             <p class="text-xs text-slate-400 dark:text-slate-500">
-              {{ formatCount(domainConfirmationItems.length) }} domains
+              {{ t('analytics.count_domains', { count: domainConfirmationItems.length, formatted: formatCount(domainConfirmationItems.length) }) }}
             </p>
           </header>
 
@@ -77,10 +82,10 @@
             <div v-for="item in domainConfirmationItems" :key="item.domain" class="space-y-2">
               <div class="flex items-center justify-between gap-2">
                 <p class="break-all text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  {{ item.domain || 'Unknown domain' }}
+                  {{ item.domain || t('analytics.unknown_domain') }}
                 </p>
                 <p class="whitespace-nowrap text-xs text-slate-400 dark:text-slate-500">
-                  {{ formatCount(item.total?.count) }} total
+                  {{ t('analytics.domain_confirmation.total', { count: formatCount(item.total?.count) }) }}
                 </p>
               </div>
 
@@ -101,7 +106,7 @@
 
               <div class="grid grid-cols-3 gap-2 text-xs">
                 <div class="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 px-2 py-2">
-                  <p class="uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Confirmed</p>
+                  <p class="uppercase tracking-wide text-emerald-900 dark:text-emerald-400">{{ t('analytics.domain_confirmation.confirmed') }}</p>
                   <p class="mt-1 font-semibold text-emerald-900 dark:text-emerald-400">
                     {{ formatCount(item.confirmed?.count) }}
                   </p>
@@ -110,7 +115,7 @@
                   </p>
                 </div>
                 <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 px-2 py-2">
-                  <p class="uppercase tracking-wide text-amber-700 dark:text-amber-400">Unconfirmed</p>
+                  <p class="uppercase tracking-wide text-amber-900 dark:text-amber-400">{{ t('analytics.domain_confirmation.unconfirmed') }}</p>
                   <p class="mt-1 font-semibold text-amber-900 dark:text-amber-400">
                     {{ formatCount(item.unconfirmed?.count) }}
                   </p>
@@ -119,7 +124,7 @@
                   </p>
                 </div>
                 <div class="rounded-lg bg-rose-50 dark:bg-rose-500/10 px-2 py-2">
-                  <p class="uppercase tracking-wide text-rose-700 dark:text-rose-400">Blacklisted</p>
+                  <p class="uppercase tracking-wide text-rose-700 dark:text-rose-400">{{ t('analytics.domain_confirmation.blacklisted') }}</p>
                   <p class="mt-1 font-semibold text-rose-900 dark:text-rose-400">
                     {{ formatCount(item.blacklisted?.count) }}
                   </p>
@@ -131,8 +136,8 @@
             </div>
           </div>
 
-          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
-            No confirmation data found.
+          <div v-else-if="hasLoaded" class="flex min-h-[260px] items-center justify-center text-sm text-slate-500 dark:text-slate-350">
+            {{ t('analytics.empty.confirmation') }}
           </div>
         </BaseCard>
       </section>
@@ -141,33 +146,33 @@
         <BaseCard>
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Top domains</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Subscriber counts by email domain.
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ t('analytics.top_domains.title') }}</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
+                {{ t('analytics.top_domains.description') }}
               </p>
             </div>
             <p class="text-xs text-slate-400 dark:text-slate-500">
-              {{ formatCount(topDomains.length) }} domains
+              {{ t('analytics.count_domains', { count: topDomains.length, formatted: formatCount(topDomains.length) }) }}
             </p>
           </header>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
                 <tr>
-                  <th class="px-4 py-3">Domain</th>
-                  <th class="px-4 py-3 text-right">Subscribers</th>
+                  <th class="px-4 py-3">{{ t('analytics.top_domains.domain') }}</th>
+                  <th class="px-4 py-3 text-right">{{ t('analytics.top_domains.subscribers') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <tr v-if="hasLoaded && topDomains.length === 0">
-                  <td colspan="2" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
-                    No domain statistics found.
+                  <td colspan="2" class="px-4 py-6 text-center text-slate-500 dark:text-slate-350">
+                    {{ t('analytics.empty.domains') }}
                   </td>
                 </tr>
                 <tr v-for="domain in topDomains" :key="domain.domain">
                   <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
-                    {{ domain.domain || 'Unknown domain' }}
+                    {{ domain.domain || t('analytics.unknown_domain') }}
                   </td>
                   <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                     {{ formatCount(domain.subscribers) }}
@@ -181,39 +186,39 @@
         <BaseCard>
           <header class="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Top local parts</h2>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Most common subscriber usernames.
+              <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ t('analytics.local_parts.title') }}</h2>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
+                {{ t('analytics.local_parts.description') }}
               </p>
             </div>
             <p class="text-xs text-slate-400 dark:text-slate-500">
-              {{ formatCount(topLocalParts.length) }} values
+              {{ t('analytics.count_values', { count: topLocalParts.length, formatted: formatCount(topLocalParts.length) }) }}
             </p>
           </header>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
                 <tr>
-                  <th class="px-4 py-3">Local part</th>
-                  <th class="px-4 py-3 text-right">Count</th>
-                  <th class="px-4 py-3 text-right">Share</th>
+                  <th class="px-4 py-3">{{ t('analytics.local_parts.local_part') }}</th>
+                  <th class="px-4 py-3 text-right">{{ t('analytics.local_parts.count') }}</th>
+                  <th class="px-4 py-3 text-right">{{ t('analytics.local_parts.share') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <tr v-if="hasLoaded && topLocalParts.length === 0">
-                  <td colspan="3" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
-                    No local-part statistics found.
+                  <td colspan="3" class="px-4 py-6 text-center text-slate-500 dark:text-slate-350">
+                    {{ t('analytics.empty.local_parts') }}
                   </td>
                 </tr>
                 <tr v-for="part in topLocalParts" :key="part.localPart">
                   <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
-                    {{ part.localPart || 'Unknown' }}
+                    {{ part.localPart || t('analytics.unknown') }}
                   </td>
                   <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
                     {{ formatCount(part.count) }}
                   </td>
-                  <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-300">
+                  <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-350">
                     {{ formatPercentage(part.percentage) }}
                   </td>
                 </tr>
@@ -226,41 +231,41 @@
       <BaseCard>
         <header class="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Campaign breakdown</h2>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Open and click activity by campaign.
+            <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ t('analytics.breakdown.title') }}</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-350">
+              {{ t('analytics.breakdown.description') }}
             </p>
           </div>
           <p class="text-xs text-slate-400 dark:text-slate-500">
-            {{ formatCount(campaignStatistics.length) }} records
+            {{ t('analytics.count_records', { count: campaignStatistics.length, formatted: formatCount(campaignStatistics.length) }) }}
           </p>
         </header>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
               <tr>
-                <th class="px-4 py-3">Campaign</th>
-                <th class="px-4 py-3 text-right">Sent</th>
-                <th class="px-4 py-3 text-right">Views</th>
-                <th class="px-4 py-3 text-right">Open rate</th>
-                <th class="px-4 py-3 text-right">Clicks</th>
-                <th class="px-4 py-3 text-right">Bounce</th>
+                <th class="px-4 py-3">{{ t('analytics.breakdown.campaign') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('analytics.breakdown.sent') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('analytics.breakdown.views') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('analytics.breakdown.open_rate') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('analytics.breakdown.clicks') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('analytics.breakdown.bounce') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               <tr v-if="hasLoaded && campaignStatistics.length === 0">
-                <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
-                  No campaign statistics found.
+                <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-350">
+                  {{ t('analytics.empty.campaigns') }}
                 </td>
               </tr>
               <tr v-for="campaign in campaignStatistics" :key="campaign.campaignId">
                 <td class="px-4 py-3">
                   <div class="font-medium text-slate-900 dark:text-slate-100">
-                    {{ campaign.subject || `Campaign #${campaign.campaignId}` }}
+                    {{ campaign.subject || t('analytics.fallback_subject', { id: campaign.campaignId }) }}
                   </div>
-                  <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    Sent {{ campaign.dateSent ? formatDate(campaign.dateSent) : 'unknown date' }}
+                  <div class="mt-1 text-xs text-slate-500 dark:text-slate-350">
+                    {{ t('analytics.breakdown.sent_on', { date: campaign.dateSent ? formatDate(campaign.dateSent) : t('analytics.unknown_date_lower') }) }}
                   </div>
                 </td>
                 <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-200">
@@ -289,13 +294,17 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import VueApexCharts from 'vue3-apexcharts'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import BaseCard from '../components/base/BaseCard.vue'
 import BaseIcon from '../components/base/BaseIcon.vue'
+import PerformanceChartCard from '../components/dashboard/PerformanceChartCard.vue'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAnalyticsData } from '../composables/useAnalyticsData'
+import { useCampaignPerformance } from '../composables/useCampaignPerformance'
 
+const { t, locale } = useI18n()
 const { isDark } = useDarkMode()
 
 const {
@@ -310,20 +319,27 @@ const {
   loadAnalytics,
 } = useAnalyticsData()
 
-const formatCount = (value) => new Intl.NumberFormat().format(Number(value) || 0)
+const {
+  chart: performanceChart,
+  chartLoading: performanceLoading,
+  chartError: performanceError,
+  load: loadPerformance,
+} = useCampaignPerformance()
+
+const formatCount = (value) => new Intl.NumberFormat(locale.value).format(Number(value) || 0)
 
 const toPercent = (value) => {
   const numericValue = Number(value) || 0
   return numericValue <= 1 ? numericValue * 100 : numericValue
 }
 
-const formatPercentage = (value) => `${toPercent(value).toFixed(1)}%`
+const formatPercentage = (value) => `${new Intl.NumberFormat(locale.value, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(toPercent(value))}%`
 
 const clampPercentage = (value) => Math.max(0, Math.min(100, toPercent(value)))
 
 const formatDate = (dateValue) => {
   if (!dateValue) {
-    return 'Unknown date'
+    return t('analytics.unknown_date')
   }
 
   let date
@@ -336,10 +352,10 @@ const formatDate = (dateValue) => {
   }
 
   if (Number.isNaN(date.getTime())) {
-    return 'Unknown date'
+    return t('analytics.unknown_date')
   }
 
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
@@ -374,30 +390,30 @@ const metrics = computed(() => {
   return [
     {
       id: 'campaigns',
-      label: 'Campaigns tracked',
+      label: t('analytics.metrics.campaigns.label'),
       value: formatCount(totalCampaigns),
-      description: 'Campaign records returned by the analytics service.',
+      description: t('analytics.metrics.campaigns.description'),
       icon: 'plane',
     },
     {
       id: 'sent',
-      label: 'Messages sent',
+      label: t('analytics.metrics.sent.label'),
       value: formatCount(totalSent),
-      description: 'Total messages represented in the campaign stats feed.',
+      description: t('analytics.metrics.sent.description'),
       icon: 'time',
     },
     {
       id: 'views',
-      label: 'Unique views',
+      label: t('analytics.metrics.views.label'),
       value: formatCount(totalViews),
-      description: `Average ${formatPercentage(averageOpenRate.value)} across view-open analytics rows.`,
+      description: t('analytics.metrics.views.description', { rate: formatPercentage(averageOpenRate.value) }),
       icon: 'rate',
     },
     {
       id: 'clicks',
-      label: 'Total clicks',
+      label: t('analytics.metrics.clicks.label'),
       value: formatCount(totalClicks),
-      description: `Bounces recorded: ${formatCount(totalBounces)}.`,
+      description: t('analytics.metrics.clicks.description', { count: formatCount(totalBounces) }),
       icon: 'chart',
     },
   ]
@@ -413,11 +429,11 @@ const campaignChartItems = computed(() =>
 
 const campaignChartSeries = computed(() => [
   {
-    name: 'Unique views',
+    name: t('analytics.chart.unique_views'),
     data: campaignChartItems.value.map((item) => Number(item.uniqueViews) || 0),
   },
   {
-    name: 'Clicks',
+    name: t('analytics.chart.clicks'),
     data: campaignChartItems.value.map((item) => Number(item.totalClicks) || 0),
   },
 ])
@@ -439,9 +455,9 @@ const campaignChartOptions = computed(() => ({
   dataLabels: {
     enabled: false,
   },
-  colors: ['#2563eb', '#10b981'],
+  colors: ['#418FFD', '#22AE8A'],
   grid: {
-    borderColor: isDark.value ? '#334155' : '#e5e7eb',
+    borderColor: isDark.value ? '#253746' : '#e5e7eb',
     strokeDashArray: 4,
   },
   legend: {
@@ -450,7 +466,7 @@ const campaignChartOptions = computed(() => ({
     horizontalAlign: 'right',
     fontSize: '12px',
     labels: {
-      colors: isDark.value ? '#cbd5e1' : '#374151',
+      colors: isDark.value ? '#81B3E0' : '#253746',
     },
   },
   xaxis: {
@@ -459,7 +475,7 @@ const campaignChartOptions = computed(() => ({
       rotate: -30,
       trim: true,
       style: {
-        colors: '#64748b',
+        colors: isDark.value ? '#81B3E0' : '#3F607A',
         fontSize: '12px',
       },
     },
@@ -467,10 +483,10 @@ const campaignChartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        colors: '#64748b',
+        colors: isDark.value ? '#81B3E0' : '#3F607A',
         fontSize: '12px',
       },
-      formatter: (value) => Math.round(value).toLocaleString(),
+      formatter: (value) => Math.round(value).toLocaleString(locale.value),
     },
   },
   tooltip: {
@@ -478,10 +494,13 @@ const campaignChartOptions = computed(() => ({
     intersect: false,
     theme: isDark.value ? 'dark' : 'light',
     y: {
-      formatter: (value) => new Intl.NumberFormat().format(Number(value) || 0),
+      formatter: (value) => formatCount(value),
     },
   },
 }))
 
-onMounted(loadAnalytics)
+onMounted(() => {
+  loadAnalytics()
+  loadPerformance()
+})
 </script>

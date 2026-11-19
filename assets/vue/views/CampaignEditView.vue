@@ -1,32 +1,32 @@
 <template>
   <AdminLayout>
     <div class="space-y-6 animate-in fade-in duration-300">
-      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
+      <div class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Campaign</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">{{ t('campaign_edit.label') }}</p>
             <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ pageTitle }}</h2>
           </div>
 
           <RouterLink
             to="/campaigns"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-800"
           >
-            Back to Campaigns
+            {{ t('campaign_edit.back_to_campaigns') }}
           </RouterLink>
         </div>
       </div>
 
-      <div v-if="loading" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
-        Loading campaign...
+      <div v-if="loading" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 p-6 text-sm text-slate-500 dark:text-slate-350 shadow-sm">
+        {{ t('campaign_edit.loading') }}
       </div>
 
-      <div v-else-if="error" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
+      <div v-else-if="error" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 p-6 text-sm text-red-600 dark:text-red-400 shadow-sm">
         {{ error }}
       </div>
 
-      <div v-else class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
-        <div class="border-b border-slate-200 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
+      <div v-else class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div class="border-b border-slate-300 dark:border-slate-700 px-4 pt-4 sm:px-6 sm:pt-6">
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
             <button
               v-for="step in steps"
@@ -35,32 +35,32 @@
               class="rounded-t-lg px-2 py-2 text-center text-xs font-semibold transition-colors"
               :class="currentStep === step.id
                 ? 'bg-ext-wf1 text-white'
-                : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'"
+                : 'bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-350 hover:bg-slate-350 dark:hover:bg-slate-600'"
               @click="goToStep(step.id)"
             >
               <span class="block text-base leading-none">{{ step.id }}</span>
-              <span class="block mt-1">{{ step.label }}</span>
+              <span class="block mt-1">{{ t(step.labelKey) }}</span>
             </button>
           </div>
         </div>
 
         <div class="p-4 sm:p-6 space-y-5">
           <section v-if="currentStep === 1" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Content</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.steps.content') }}</h3>
 
             <div>
-              <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-subject">Subject</label>
+              <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-subject">{{ t('campaign_edit.content.subject') }}</label>
               <input
                 id="campaign-subject"
                 v-model="form.subject"
                 type="text"
                 class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                placeholder="Campaign subject"
+                :placeholder="t('campaign_edit.content.subject_placeholder')"
               >
             </div>
 
-            <div class="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
-              <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">How do you want to compose content?</p>
+            <div class="space-y-3 rounded-lg border border-slate-300 dark:border-slate-700 p-4">
+              <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.content.compose_question') }}</p>
 
               <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
                 <input
@@ -69,7 +69,7 @@
                   value="webpage"
                   class="h-4 w-4 border-slate-300 dark:border-slate-600 text-slate-900"
                 >
-                Send a webpage
+                {{ t('campaign_edit.content.mode_webpage') }}
               </label>
 
               <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
@@ -79,12 +79,12 @@
                   value="compose"
                   class="h-4 w-4 border-slate-300 dark:border-slate-600 text-slate-900"
                 >
-                Compose message
+                {{ t('campaign_edit.content.mode_compose') }}
               </label>
             </div>
 
             <div v-if="form.composeMode === 'webpage'" class="space-y-2">
-              <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-webpage-url">Webpage URL</label>
+              <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-webpage-url">{{ t('campaign_edit.content.webpage_url') }}</label>
               <input
                 id="campaign-webpage-url"
                 v-model="form.webpageUrl"
@@ -92,19 +92,19 @@
                 class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/page"
               >
-              <p class="text-xs text-slate-500 dark:text-slate-400">Campaign content will be saved as <code>[URL:YOUR_URL]</code>.</p>
+              <p class="text-xs text-slate-500 dark:text-slate-350">{{ t('campaign_edit.content.webpage_hint', { token: '[URL:YOUR_URL]' }) }}</p>
             </div>
 
             <div v-else class="space-y-4">
               <CkEditorField
                 id="campaign-html-content"
                 v-model="form.composeHtml"
-                label="HTML content"
+                :label="t('campaign_edit.content.html_content')"
               />
             </div>
 
             <div>
-              <label for="campaign-footer" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Footer</label>
+              <label for="campaign-footer" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('campaign_edit.content.footer') }}</label>
 
               <textarea
                   id="campaign-footer"
@@ -116,13 +116,13 @@
           </section>
 
           <section v-else-if="currentStep === 2" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Format</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.steps.format') }}</h3>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_2fr_1fr]">
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-template">Use template</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-template">{{ t('campaign_edit.format.use_template') }}</label>
                 <select id="campaign-template" v-model="form.templateId" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500" >
-                  <option value="" class="text-slate-400 dark:text-slate-500">No template</option>
+                  <option value="" class="text-slate-400 dark:text-slate-500">{{ t('campaign_edit.format.no_template') }}</option>
                   <option
                       v-for="template in templates"
                       :key="template.id"
@@ -135,23 +135,23 @@
 
               <div class="md:justify-self-center justify-self-start">
                 <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
-                  Send format
+                  {{ t('campaign_edit.format.send_format') }}
                 </label>
 
                 <div class="flex flex-wrap gap-4">
                   <label class="flex items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
                     <input type="radio" value="html" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"/>
-                    HTML
+                    {{ t('campaign_edit.format.html') }}
                   </label>
 
                   <label class="flex items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
                     <input type="radio" value="text" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"/>
-                    Text
+                    {{ t('campaign_edit.format.text') }}
                   </label>
 
                   <label class="flex items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
                     <input type="radio" value="invite" v-model="form.sendFormat" class="h-4 w-4 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"/>
-                    Invite
+                    {{ t('campaign_edit.format.invite') }}
                   </label>
                 </div>
               </div>
@@ -163,18 +163,18 @@
                   type="checkbox"
                   class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 accent-ext-wf1"
                 >
-                HTML formatted
+                {{ t('campaign_edit.format.html_formatted') }}
               </label>
             </div>
 
           </section>
 
           <section v-else-if="currentStep === 3" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Scheduling</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.steps.scheduling') }}</h3>
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-embargo">Embargo until</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-embargo">{{ t('campaign_edit.schedule.embargo') }}</label>
                 <input
                   id="campaign-embargo"
                   v-model="form.embargo"
@@ -184,7 +184,7 @@
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-repeat-interval">Repeat interval (minutes)</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-repeat-interval">{{ t('campaign_edit.schedule.repeat_interval') }}</label>
                 <input
                   id="campaign-repeat-interval"
                   v-model="form.repeatInterval"
@@ -195,7 +195,7 @@
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-repeat-until">Stop sending after</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-repeat-until">{{ t('campaign_edit.schedule.repeat_until') }}</label>
                 <input
                   id="campaign-repeat-until"
                   v-model="form.repeatUntil"
@@ -205,7 +205,7 @@
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-requeue-interval">Requeue every (minutes)</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-requeue-interval">{{ t('campaign_edit.schedule.requeue_interval') }}</label>
                 <input
                   id="campaign-requeue-interval"
                   v-model="form.requeueInterval"
@@ -216,7 +216,7 @@
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-requeue-until">Requeue until</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-requeue-until">{{ t('campaign_edit.schedule.requeue_until') }}</label>
                 <input
                   id="campaign-requeue-until"
                   v-model="form.requeueUntil"
@@ -228,11 +228,11 @@
           </section>
 
           <section v-else-if="currentStep === 4" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Lists</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.steps.lists') }}</h3>
 
-            <p class="text-sm text-slate-600 dark:text-slate-300">Please select the lists you want to send this campaign to.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-350">{{ t('campaign_edit.lists.intro') }}</p>
 
-            <div class="max-h-96 overflow-auto rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+            <div class="max-h-96 overflow-auto rounded-lg border border-slate-300 dark:border-slate-700 p-3">
               <label
                 v-for="list in mailingLists"
                 :key="list.id"
@@ -246,82 +246,82 @@
                   :value="list.id"
                   class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-400 accent-ext-wf1"
                 >
-                <span>{{ list.name || `List #${list.id}` }}</span>
+                <span>{{ list.name || t('campaign_edit.lists.fallback_name', { id: list.id }) }}</span>
               </label>
 
-              <p v-if="mailingLists.length === 0" class="text-sm text-slate-500 dark:text-slate-400">No mailing lists found.</p>
+              <p v-if="mailingLists.length === 0" class="text-sm text-slate-500 dark:text-slate-350">{{ t('campaign_edit.lists.none') }}</p>
             </div>
           </section>
 
           <section v-else-if="currentStep === 5" class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Send test</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.test.title') }}</h3>
 
-            <p class="text-sm text-slate-600 dark:text-slate-300">Test send to email address(es).</p>
+            <p class="text-sm text-slate-600 dark:text-slate-350">{{ t('campaign_edit.test.intro') }}</p>
             <div class="text-slate-400 dark:text-slate-500">
-              (comma separate addresses - all must be existing subscribers)
+              {{ t('campaign_edit.test.hint') }}
             </div>
 
-            <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
+            <div class="rounded-lg border border-slate-300 dark:border-slate-700 p-3 space-y-3">
               <textarea
                 id="campaign-test-recipients"
                 v-model="form.testRecipients"
                 rows="5"
                 class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                placeholder="email1@example.com, email2@example.com"
+                :placeholder="t('campaign_edit.test.placeholder')"
               ></textarea>
 
               <button
                 type="button"
-                class="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                class="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50"
                 :disabled="isSendingTest"
                 @click="sendTestCampaign"
               >
-                Send test
+                {{ t('campaign_edit.test.title') }}
               </button>
             </div>
           </section>
 
           <section v-else class="space-y-5">
-            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Finish</h3>
+            <h3 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">{{ t('campaign_edit.steps.finish') }}</h3>
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-from">From</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-from">{{ t('campaign_edit.finish.from') }}</label>
                 <input
                   id="campaign-from"
                   v-model="form.fromField"
                   type="text"
                   class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  placeholder="From name or address"
+                  :placeholder="t('campaign_edit.finish.from_placeholder')"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-reply-to">Reply-To</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-reply-to">{{ t('campaign_edit.finish.reply_to') }}</label>
                 <input
                   id="campaign-reply-to"
                   v-model="form.replyTo"
                   type="text"
                   class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Reply-to email"
+                  :placeholder="t('campaign_edit.finish.reply_to_placeholder')"
                 >
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-to-field">To field</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200" for="campaign-to-field">{{ t('campaign_edit.finish.to_field') }}</label>
                 <input
                   id="campaign-to-field"
                   v-model="form.toField"
                   type="text"
                   class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Recipient field"
+                  :placeholder="t('campaign_edit.finish.to_field_placeholder')"
                 >
               </div>
             </div>
 
             <div class="space-y-2 rounded-lg border p-4" :class="warnings.length ? 'border-amber-300 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10' : 'border-emerald-300 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10'">
               <p class="text-sm font-semibold" :class="warnings.length ? 'text-amber-800 dark:text-amber-400' : 'text-emerald-800 dark:text-emerald-400'">
-                {{ warnings.length ? 'Please review before saving' : 'Campaign is ready to save' }}
+                {{ warnings.length ? t('campaign_edit.finish.review') : t('campaign_edit.finish.ready') }}
               </p>
               <p v-for="warning in warnings" :key="warning" class="text-sm text-amber-800 dark:text-amber-400">
                 {{ warning }}
@@ -330,11 +330,11 @@
           </section>
         </div>
 
-        <div class="border-t border-slate-200 dark:border-slate-700 px-4 py-4 sm:px-6">
+        <div class="border-t border-slate-300 dark:border-slate-700 px-4 py-4 sm:px-6">
           <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div class="text-sm">
               <div v-if="saveErrors.length" class="text-red-600 dark:text-red-400">
-                <p class="font-medium">Please fix the following fields:</p>
+                <p class="font-medium">{{ t('campaign_edit.errors.fix_fields') }}</p>
                 <ul class="mt-1 list-disc pl-5 space-y-1">
                   <li v-for="errorItem in saveErrors" :key="errorItem">{{ errorItem }}</li>
                 </ul>
@@ -346,11 +346,11 @@
             <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap lg:justify-end">
               <button
                 type="button"
-                class="rounded-md border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                class="rounded-md border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50"
                 :disabled="currentStep === 1"
                 @click="previousStep"
               >
-                Back
+                {{ t('campaign_edit.actions.back') }}
               </button>
 
               <button
@@ -360,7 +360,7 @@
                 :disabled="isSaving"
                 @click="nextStep"
               >
-                Next
+                {{ t('common.next') }}
               </button>
 
               <button
@@ -369,7 +369,7 @@
                 :disabled="isSaving || isQueueing"
                 @click="saveAndContinueEditing"
               >
-                {{ isSaving ? 'Saving...' : 'Save and continue editing' }}
+                {{ isSaving ? t('common.saving') : t('campaign_edit.actions.save_continue') }}
               </button>
 
               <button
@@ -379,7 +379,7 @@
                 :disabled="isSaving || isQueueing"
                 @click="queueCampaignToSend"
               >
-                {{ isQueueing ? 'Queueing...' : 'Place campaign in a queue to send' }}
+                {{ isQueueing ? t('campaign_edit.actions.queueing') : t('campaign_edit.actions.queue') }}
               </button>
             </div>
           </div>
@@ -391,6 +391,7 @@
 
 <script setup>
 import {computed, onMounted, ref, watch} from 'vue'
+import {useI18n} from 'vue-i18n'
 import {RouterLink, useRoute, useRouter} from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import CkEditorField from '../components/base/CkEditorField.vue'
@@ -398,22 +399,23 @@ import {campaignClient, fetchAllLists, listMessagesClient, templateClient} from 
 import {useApiValidationErrors} from '../composables/useApiValidationErrors'
 import {useAsyncAction} from '../composables/useAsyncAction'
 
+const {t} = useI18n()
 const route = useRoute()
 const router = useRouter()
 
 const steps = [
-  { id: 1, label: 'Content' },
-  { id: 2, label: 'Format' },
-  { id: 3, label: 'Scheduling' },
-  { id: 4, label: 'Lists' },
-  { id: 5, label: 'Test send' },
-  { id: 6, label: 'Finish' },
+  { id: 1, labelKey: 'campaign_edit.steps.content' },
+  { id: 2, labelKey: 'campaign_edit.steps.format' },
+  { id: 3, labelKey: 'campaign_edit.steps.scheduling' },
+  { id: 4, labelKey: 'campaign_edit.steps.lists' },
+  { id: 5, labelKey: 'campaign_edit.steps.test_send' },
+  { id: 6, labelKey: 'campaign_edit.steps.finish' },
 ]
 
 const campaignIdFromRoute = computed(() => Number(route.params.campaignId))
 const isCreateMode = computed(() => route.name === 'campaign-create')
 const activeCampaignId = computed(() => Number(campaign.value?.id) || campaignIdFromRoute.value)
-const pageTitle = computed(() => isCreateMode.value ? 'Create Campaign' : `Edit Campaign #${campaignIdFromRoute.value}`)
+const pageTitle = computed(() => isCreateMode.value ? t('campaign_edit.title.create') : t('campaign_edit.title.edit', { id: campaignIdFromRoute.value }))
 const currentStep = ref(1)
 const isSaving = ref(false)
 const isSendingTest = ref(false)
@@ -465,15 +467,15 @@ const warnings = computed(() => {
   const list = []
 
   if (normalizeListIds(selectedListIds.value).length === 0) {
-    list.push('Destination lists are missing.')
+    list.push(t('campaign_edit.warnings.no_lists'))
   }
 
   if (form.value.composeMode === 'webpage' && !form.value.webpageUrl.trim()) {
-    list.push('Webpage URL is required for "Send a webpage" mode.')
+    list.push(t('campaign_edit.warnings.webpage_url_required'))
   }
 
   if (form.value.composeMode === 'compose' && !form.value.composeHtml.trim()) {
-    list.push('Compose message mode requires HTML or text content.')
+    list.push(t('campaign_edit.warnings.compose_required'))
   }
 
   return list
@@ -491,11 +493,12 @@ const canQueueCampaign = computed(() =>
     activeCampaignId.value > 0
 )
 
+// Getters keep the labels reactive to language changes.
 const validationFieldLabels = {
-  'format.sendFormat': 'Send format',
-  'schedule.repeatUntil': 'Stop sending after',
-  'schedule.requeueUntil': 'Requeue until',
-  'schedule.embargo': 'Embargo until'
+  get 'format.sendFormat'() { return t('campaign_edit.format.send_format') },
+  get 'schedule.repeatUntil'() { return t('campaign_edit.schedule.repeat_until') },
+  get 'schedule.requeueUntil'() { return t('campaign_edit.schedule.requeue_until') },
+  get 'schedule.embargo'() { return t('campaign_edit.schedule.embargo') }
 }
 
 const {formatValidationErrors} = useApiValidationErrors(validationFieldLabels)
@@ -607,7 +610,7 @@ const loadCampaignDataAction = useAsyncAction(
     }
 
     if (!Number.isFinite(campaignIdFromRoute.value) || campaignIdFromRoute.value <= 0) {
-      error.value = 'Invalid campaign ID.'
+      error.value = t('campaign_edit.errors.invalid_id')
       return
     }
 
@@ -630,7 +633,7 @@ const loadCampaignDataAction = useAsyncAction(
     selectedListIds.value = [...linkedIds]
   },
   {
-    errorMessage: (error) => error?.message || 'Failed to load campaign data.',
+    errorMessage: (error) => error?.message || t('campaign_edit.errors.load_failed'),
     logLabel: 'Failed to load campaign data for editing:',
   }
 )
@@ -705,7 +708,7 @@ const buildCampaignPayload = () => {
 const syncLists = async () => {
   const currentCampaignId = activeCampaignId.value
   if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
-    throw new Error('Campaign must be saved before updating list associations.')
+    throw new Error(t('campaign_edit.errors.save_before_lists'))
   }
 
   const nextIds = normalizeListIds(selectedListIds.value)
@@ -746,7 +749,7 @@ const syncLists = async () => {
     associatedListIds.value = Array.isArray(latestAssociations?.items)
       ? latestAssociations.items.map((list) => Number(list.id)).filter((id) => Number.isFinite(id))
       : [...associatedListIds.value]
-    throw new Error(`Failed to update ${failedOperations.length} list association(s).`)
+    throw new Error(t('campaign_edit.errors.lists_update_failed', { count: failedOperations.length }))
   }
 
   associatedListIds.value = [...nextIds]
@@ -756,7 +759,7 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
   if (isSaving.value) return
 
   if (form.value.composeMode === 'webpage' && !form.value.webpageUrl.trim()) {
-    saveError.value = 'Webpage URL is required when "Send a webpage" is selected.'
+    saveError.value = t('campaign_edit.errors.webpage_url_required')
     saveErrors.value = []
     saveSuccess.value = ''
     currentStep.value = 1
@@ -790,7 +793,7 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
       }
     }
 
-    saveSuccess.value = 'Campaign saved successfully.'
+    saveSuccess.value = t('campaign_edit.success.saved')
     isSaved = true
   } catch (error) {
     const formattedErrors = formatValidationErrors(error)
@@ -798,7 +801,7 @@ const saveCampaign = async ({ advanceAfterSave = false } = {}) => {
       saveErrors.value = formattedErrors
       saveError.value = ''
     } else {
-      saveError.value = error?.message || 'Failed to save campaign.'
+      saveError.value = error?.message || t('campaign_edit.errors.save_failed')
       saveErrors.value = []
     }
   } finally {
@@ -830,11 +833,11 @@ const queueCampaignToSend = async () => {
 
     const currentCampaignId = activeCampaignId.value
     if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
-      throw new Error('Campaign must be saved before queueing.')
+      throw new Error(t('campaign_edit.errors.save_before_queue'))
     }
 
     await campaignClient.updateCampaignStatus(currentCampaignId, 'submitted')
-    saveSuccess.value = 'Campaign placed in a queue to send.'
+    saveSuccess.value = t('campaign_edit.success.queued')
     campaign.value = {
       ...campaign.value,
       messageMetadata: {
@@ -848,7 +851,7 @@ const queueCampaignToSend = async () => {
       saveErrors.value = formattedErrors
       saveError.value = ''
     } else {
-      saveError.value = error?.message || 'Failed to place campaign in queue.'
+      saveError.value = error?.message || t('campaign_edit.errors.queue_failed')
       saveErrors.value = []
     }
   } finally {
@@ -861,7 +864,7 @@ const sendTestCampaign = async () => {
 
   const recipients = parseTestRecipients(form.value.testRecipients)
   if (recipients.length === 0) {
-    saveError.value = 'Please enter at least one test recipient email.'
+    saveError.value = t('campaign_edit.errors.no_test_recipient')
     saveErrors.value = []
     saveSuccess.value = ''
     return
@@ -877,14 +880,14 @@ const sendTestCampaign = async () => {
     if (!isSaved) return
     const currentCampaignId = activeCampaignId.value
     if (!Number.isFinite(currentCampaignId) || currentCampaignId <= 0) {
-      saveError.value = 'Save the campaign before sending a test.'
+      saveError.value = t('campaign_edit.errors.save_before_test')
       saveErrors.value = []
       saveSuccess.value = ''
       return
     }
 
     await campaignClient.testSendCampaign(currentCampaignId, recipients)
-    saveSuccess.value = 'Test campaign sent successfully.'
+    saveSuccess.value = t('campaign_edit.success.test_sent')
   } catch (error) {
     console.error('Failed to send test campaign:', error?.message ?? error)
     const formattedErrors = formatValidationErrors(error)
@@ -892,7 +895,7 @@ const sendTestCampaign = async () => {
       saveErrors.value = formattedErrors
       saveError.value = ''
     } else {
-      saveError.value = error?.message?.slice(0, 100) || 'Failed to send test campaign.'
+      saveError.value = error?.message?.slice(0, 100) || t('campaign_edit.errors.test_failed')
       saveErrors.value = []
     }
   } finally {

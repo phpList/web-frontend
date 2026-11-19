@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import ListSubscribersView from '../../../../../assets/vue/views/ListSubscribersView.vue'
 import * as api from '../../../../../assets/vue/api'
@@ -15,8 +15,12 @@ vi.mock('vue-router', () => ({
 }))
 
 describe('ListSubscribersView', () => {
+    let consoleErrorSpy
+
     beforeEach(() => {
         vi.restoreAllMocks()
+        // Tests here make the API fail on purpose; the component logs those errors.
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
         vi.spyOn(api.subscriptionClient, 'getSubscriberList').mockResolvedValue({
             id: 1,
@@ -45,6 +49,10 @@ describe('ListSubscribersView', () => {
                 nextCursor: null,
             },
         })
+    })
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore()
     })
 
     const mountComponent = async () => {

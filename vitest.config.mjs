@@ -6,6 +6,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    setupFiles: ['tests/Unit/assets/vue/support/setupI18n.js'],
     include: [
       'assets/vue/**/*.spec.js',
       'tests/Unit/assets/vue/**/*.spec.js',

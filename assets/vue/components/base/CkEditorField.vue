@@ -22,7 +22,7 @@
         :config="config"
     />
 
-    <p v-if="helperText" class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ helperText }}</p>
+    <p v-if="helperText" class="mt-1 text-xs text-slate-500 dark:text-slate-350">{{ helperText }}</p>
     <p v-if="errorMessage" class="mt-1 text-xs text-red-600 dark:text-red-400">{{ errorMessage }}</p>
   </div>
 </template>

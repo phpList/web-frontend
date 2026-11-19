@@ -1,19 +1,28 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Campaigns</h2>
+  <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('campaigns.title') }}</h2>
 
-      <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-slate-50 dark:bg-slate-900 w-full sm:w-auto">
-        <button
-          v-for="option in filterOptions"
-          :key="option.id"
-          type="button"
-          class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-          :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
-          @click="setFilter(option.id)"
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-slate-50 dark:bg-slate-900 w-full sm:w-auto">
+          <button
+            v-for="option in filterOptions"
+            :key="option.id"
+            type="button"
+            class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+            :class="statusFilter === option.id ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-350 hover:text-slate-700 dark:hover:text-slate-300'"
+            @click="setFilter(option.id)"
+          >
+            {{ option.label }}
+          </button>
+        </div>
+        <RouterLink
+          to="/campaigns/create"
+          class="px-4 py-2 bg-ext-wf1 hover:bg-ext-wf3 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
-          {{ option.label }}
-        </button>
+          <BaseIcon name="plus" class="w-4 h-4" inherit-color />
+          {{ t('campaigns.create') }}
+        </RouterLink>
       </div>
     </div>
 
@@ -21,17 +30,17 @@
         :items="paginatedCampaigns"
         :is-loading="loading"
         :load-error="error"
-        loading-message="Loading campaigns..."
-        empty-message="No campaigns for this filter."
+        :loading-message="t('campaigns.loading')"
+        :empty-message="t('campaigns.empty')"
         :colspan="showStatistics ? 6 : 5"
     >
       <template #head>
-        <th class="px-6 py-4">Subject</th>
-        <th class="px-6 py-4">Status</th>
-        <th class="px-6 py-4">Lists</th>
-        <th class="px-6 py-4">Processed</th>
-        <th class="px-6 py-4" v-if="showStatistics">Statistics</th>
-        <th class="px-6 py-4 text-right">Actions</th>
+        <th class="px-6 py-4">{{ t('campaigns.table.subject') }}</th>
+        <th class="px-6 py-4">{{ t('campaigns.table.status') }}</th>
+        <th class="px-6 py-4">{{ t('campaigns.table.lists') }}</th>
+        <th class="px-6 py-4">{{ t('campaigns.table.processed') }}</th>
+        <th class="px-6 py-4" v-if="showStatistics">{{ t('campaigns.table.statistics') }}</th>
+        <th class="px-6 py-4 text-right">{{ t('campaigns.table.actions') }}</th>
       </template>
 
       <template #row="{ item: campaign }">
@@ -41,8 +50,8 @@
             {{ campaign.statusLabel }}
           </BaseBadge>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
-          <p v-if="isListsLoading(campaign.id)" class="text-xs">Loading lists...</p>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 align-top">
+          <p v-if="isListsLoading(campaign.id)" class="text-xs">{{ t('campaigns.lists_loading') }}</p>
           <p v-else-if="campaign.lists.length === 0" class="text-xs">-</p>
           <template v-else-if="campaign.lists.length <= 3">
             <p
@@ -64,7 +73,7 @@
                 class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                 @click="toggleListsExpanded(campaign.id)"
             >
-              {{ isListsExpanded(campaign.id) ? '▼' : '▶' }} {{ campaign.lists.length }} lists
+              {{ isListsExpanded(campaign.id) ? '▼' : '▶' }} {{ t('campaigns.lists_count', { count: campaign.lists.length }) }}
             </button>
             <p
                 v-if="isListsExpanded(campaign.id)"
@@ -81,17 +90,17 @@
             </p>
           </template>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top">
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total:</span> {{ campaign.processedTotal }}</p>
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Text:</span> {{ campaign.processedText }}</p>
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">HTML:</span> {{ campaign.processedHtml }}</p>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 align-top">
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.started') }}</span> {{ campaign.startedAt }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.time_to_send') }}</span> {{ campaign.timeToSend }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.total') }}</span> {{ campaign.processedTotal }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.text') }}</span> {{ campaign.processedText }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.html') }}</span> {{ campaign.processedHtml }}</p>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 align-top" v-if="showStatistics">
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Total views:</span> {{ campaign.totalViews }}</p>
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Unique views:</span> {{ campaign.uniqueViews }}</p>
-          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">Bounced:</span> {{ campaign.bounced }}</p>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 align-top" v-if="showStatistics">
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.total_views') }}</span> {{ campaign.totalViews }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.unique_views') }}</span> {{ campaign.uniqueViews }}</p>
+          <p class="text-xs leading-5"><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.bounced') }}</span> {{ campaign.bounced }}</p>
         </td>
         <td class="px-6 py-4 align-top text-right">
           <div class="inline-flex flex-wrap justify-end gap-2">
@@ -102,7 +111,7 @@
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleDelete(campaign)"
             >
-              Delete
+              {{ t('campaigns.actions.delete') }}
             </ActionButton>
             <ActionButton
                 v-else-if="campaign.statusKey === 'active'"
@@ -111,7 +120,7 @@
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleSuspend(campaign.id)"
             >
-              Suspend
+              {{ t('campaigns.actions.suspend') }}
             </ActionButton>
             <ActionButton
                 v-else
@@ -120,7 +129,7 @@
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleRequeue(campaign.id)"
             >
-              Requeue
+              {{ t('campaigns.actions.requeue') }}
             </ActionButton>
             <ActionButton
                 v-if="campaign.statusKey === 'sent'"
@@ -129,7 +138,7 @@
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleCopyToDraft(campaign.id)"
             >
-              Copy to draft
+              {{ t('campaigns.actions.copy_to_draft') }}
             </ActionButton>
             <ActionButton
                 v-if="campaign.statusKey === 'draft'"
@@ -137,14 +146,14 @@
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleEdit(campaign.id)"
             >
-              Edit
+              {{ t('campaigns.actions.edit') }}
             </ActionButton>
             <ActionButton
                 icon="eye"
                 :disabled="isActionLoading(campaign.id)"
                 @click="handleView(campaign.id)"
             >
-              View
+              {{ t('campaigns.actions.view') }}
             </ActionButton>
           </div>
           <p
@@ -153,7 +162,7 @@
             :class="{
               'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
               'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-              'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+              'text-slate-500 dark:text-slate-350': getActionFeedback(campaign.id)?.type === 'info'
             }"
           >
             {{ getActionFeedback(campaign.id)?.message }}
@@ -171,9 +180,9 @@
           </BaseBadge>
         </div>
 
-        <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+        <div class="text-xs text-slate-600 dark:text-slate-350 space-y-1">
           <p>
-            <span class="font-medium text-slate-700 dark:text-slate-200">Lists: </span>
+            <span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.lists') }} </span>
             <template v-if="campaign.lists.length > 0">
               <span
                   v-for="(list, index) in campaign.lists"
@@ -189,12 +198,12 @@
               </span>
             </template>
           </p>
-          <p><span class="font-medium text-slate-700 dark:text-slate-200">Started:</span> {{ campaign.startedAt }}</p>
-          <p><span class="font-medium text-slate-700 dark:text-slate-200">Time to send:</span> {{ campaign.timeToSend }}</p>
-          <p><span class="font-medium text-slate-700 dark:text-slate-200">Processed:</span> {{ campaign.processedTotal }} (Text: {{ campaign.processedText }}, HTML: {{ campaign.processedHtml }})</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.started') }}</span> {{ campaign.startedAt }}</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.time_to_send') }}</span> {{ campaign.timeToSend }}</p>
+          <p><span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.processed') }}</span> {{ t('campaigns.card.processed_summary', { total: campaign.processedTotal, text: campaign.processedText, html: campaign.processedHtml }) }}</p>
           <p v-if="showStatistics">
-            <span class="font-medium text-slate-700 dark:text-slate-200">Statistics:</span>
-            Total views {{ campaign.totalViews }}, Unique views {{ campaign.uniqueViews }}, Bounced {{ campaign.bounced }}
+            <span class="font-medium text-slate-700 dark:text-slate-200">{{ t('campaigns.fields.statistics') }}</span>
+            {{ t('campaigns.card.statistics_summary', { total: campaign.totalViews, unique: campaign.uniqueViews, bounced: campaign.bounced }) }}
           </p>
         </div>
 
@@ -206,7 +215,7 @@
               :disabled="isActionLoading(campaign.id)"
               @click="handleDelete(campaign)"
           >
-            Delete
+            {{ t('campaigns.actions.delete') }}
           </ActionButton>
           <ActionButton
               v-else-if="campaign.statusKey === 'active'"
@@ -215,7 +224,7 @@
               :disabled="isActionLoading(campaign.id)"
               @click="handleSuspend(campaign.id)"
           >
-            Suspend
+            {{ t('campaigns.actions.suspend') }}
           </ActionButton>
           <ActionButton
               v-else
@@ -224,7 +233,7 @@
               :disabled="isActionLoading(campaign.id)"
               @click="handleRequeue(campaign.id)"
           >
-            Requeue
+            {{ t('campaigns.actions.requeue') }}
           </ActionButton>
           <ActionButton
               v-if="campaign.statusKey === 'sent'"
@@ -233,7 +242,7 @@
               :disabled="isActionLoading(campaign.id)"
               @click="handleCopyToDraft(campaign.id)"
           >
-            Copy to draft
+            {{ t('campaigns.actions.copy_to_draft') }}
           </ActionButton>
           <ActionButton
               v-if="campaign.statusKey === 'draft'"
@@ -241,14 +250,14 @@
               :disabled="isActionLoading(campaign.id)"
               @click="handleEdit(campaign.id)"
           >
-            Edit
+            {{ t('campaigns.actions.edit') }}
           </ActionButton>
           <ActionButton
               icon="eye"
               :disabled="isActionLoading(campaign.id)"
               @click="handleView(campaign.id)"
           >
-            View
+            {{ t('campaigns.actions.view') }}
           </ActionButton>
         </div>
         <p
@@ -257,7 +266,7 @@
           :class="{
             'text-emerald-700 dark:text-emerald-400': getActionFeedback(campaign.id)?.type === 'success',
             'text-red-700 dark:text-red-400': getActionFeedback(campaign.id)?.type === 'error',
-            'text-slate-500 dark:text-slate-400': getActionFeedback(campaign.id)?.type === 'info'
+            'text-slate-500 dark:text-slate-350': getActionFeedback(campaign.id)?.type === 'info'
           }"
         >
           {{ getActionFeedback(campaign.id)?.message }}
@@ -265,26 +274,26 @@
       </template>
     </BaseDataTable>
 
-    <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+    <div class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
       <div class="text-center sm:text-left">
-        Showing <span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeStart }}</span>-<span class="font-medium text-slate-900 dark:text-slate-100">{{ rangeEnd }}</span> of <span class="font-medium text-slate-900 dark:text-slate-100">{{ totalForFilter }}</span>
+        {{ t('campaigns.showing', { start: rangeStart, end: rangeEnd, total: totalForFilter }) }}
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           :disabled="!canGoPrevious"
           @click="previousPage"
         >
-          Previous
+          {{ t('common.previous') }}
         </button>
         <button
           type="button"
-          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+          class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           :disabled="!canGoNext"
           @click="nextPage"
         >
-          Next
+          {{ t('common.next') }}
         </button>
       </div>
     </div>
@@ -305,7 +314,9 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import BaseIcon from '../base/BaseIcon.vue'
 import { campaignClient, fetchAllLists, listMessagesClient, statisticsClient } from '../../api'
 import ViewCampaignModal from "./ViewCampaignModal.vue";
 import ActionButton from '../base/ActionButton.vue'
@@ -315,6 +326,8 @@ import { useCampaignPagination } from '../../composables/useCampaignPagination'
 import { useCampaignStatistics } from '../../composables/useCampaignStatistics'
 import { useCampaignLists } from '../../composables/useCampaignLists'
 import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
+
+const { t, locale } = useI18n()
 
 const pageSize = 5
 const route = useRoute()
@@ -382,12 +395,12 @@ const viewErrorMessage = ref('')
 const isResending = ref(false)
 const resendErrorMessage = ref('')
 
-const filterOptions = [
-  { id: 'all', label: 'All' },
-  { id: 'sent', label: 'Sent' },
-  { id: 'active', label: 'Active' },
-  { id: 'draft', label: 'Draft' }
-]
+const filterOptions = computed(() => [
+  { id: 'all', label: t('campaigns.filters.all') },
+  { id: 'sent', label: t('campaigns.filters.sent') },
+  { id: 'active', label: t('campaigns.filters.active') },
+  { id: 'draft', label: t('campaigns.filters.draft') }
+])
 
 const statusVariants = {
   sent: 'success',
@@ -404,33 +417,32 @@ const resolveStatusKey = (statusRaw) => {
 }
 
 const toStatusLabel = (statusKey, statusRaw) => {
-  if (statusKey === 'active') return 'Active'
-  if (statusKey === 'sent') return 'Sent'
-  if (statusKey === 'draft') return 'Draft'
-  return statusRaw ? statusRaw.replace(/_/g, ' ') : 'Unknown'
+  if (statusKey === 'active') return t('campaigns.status.active')
+  if (statusKey === 'sent') return t('campaigns.status.sent')
+  if (statusKey === 'draft') return t('campaigns.status.draft')
+  return statusRaw ? statusRaw.replace(/_/g, ' ') : t('campaigns.status.unknown')
 }
 
 const formatDate = (dateValue) => {
-  if (!dateValue) return 'No date'
+  if (!dateValue) return t('campaigns.no_date')
   const date = new Date(dateValue)
-  if (Number.isNaN(date.getTime())) return 'No date'
+  if (Number.isNaN(date.getTime())) return t('campaigns.no_date')
 
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true,
   }).format(date)
 }
 
 const formatDuration = (fromValue, toValue) => {
-  if (!fromValue || !toValue) return 'Not sent yet'
+  if (!fromValue || !toValue) return t('campaigns.not_sent_yet')
   const from = new Date(fromValue)
   const to = new Date(toValue)
   if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to < from) {
-    return 'Unknown'
+    return t('campaigns.status.unknown')
   }
 
   const diffSeconds = Math.floor((to.getTime() - from.getTime()) / 1000)
@@ -473,15 +485,15 @@ const setActionFeedback = (campaignId, message, type = 'info') => {
 const handleRequeue = async (campaignId) => {
   if (isActionLoading(campaignId)) return
   setActionLoading(campaignId, true)
-  setActionFeedback(campaignId, 'Requeueing campaign...')
+  setActionFeedback(campaignId, t('campaigns.feedback.requeueing'))
 
   try {
     await campaignClient.updateCampaignStatus(campaignId, 'submitted')
-    setActionFeedback(campaignId, 'Campaign requeued.', 'success')
+    setActionFeedback(campaignId, t('campaigns.feedback.requeued'), 'success')
     await refreshCurrentPage()
   } catch (error) {
     console.error(`Failed to requeue campaign ${campaignId}:`, error)
-    setActionFeedback(campaignId, error?.message || 'Failed to requeue campaign.', 'error')
+    setActionFeedback(campaignId, error?.message || t('campaigns.feedback.requeue_failed'), 'error')
   } finally {
     setActionLoading(campaignId, false)
   }
@@ -490,15 +502,15 @@ const handleRequeue = async (campaignId) => {
 const handleSuspend = async (campaignId) => {
   if (isActionLoading(campaignId)) return
   setActionLoading(campaignId, true)
-  setActionFeedback(campaignId, 'Suspending campaign...')
+  setActionFeedback(campaignId, t('campaigns.feedback.suspending'))
 
   try {
     await campaignClient.updateCampaignStatus(campaignId, 'suspended')
-    setActionFeedback(campaignId, 'Campaign suspended.', 'success')
+    setActionFeedback(campaignId, t('campaigns.feedback.suspended'), 'success')
     await refreshCurrentPage()
   } catch (error) {
     console.error(`Failed to suspend campaign ${campaignId}:`, error)
-    setActionFeedback(campaignId, error?.message || 'Failed to suspend campaign.', 'error')
+    setActionFeedback(campaignId, error?.message || t('campaigns.feedback.suspend_failed'), 'error')
   } finally {
     setActionLoading(campaignId, false)
   }
@@ -510,22 +522,22 @@ const handleEdit = async (campaignId) => {
 
 const handleDelete = async (campaign) => {
   if (isActionLoading(campaign.id)) return
-  const isConfirmed = window.confirm(`Delete draft campaign #${campaign.id} - ${campaign.subject}?`)
+  const isConfirmed = window.confirm(t('campaigns.delete_confirm', { id: campaign.id, subject: campaign.subject }))
   if (!isConfirmed) return
 
   setActionLoading(campaign.id, true)
-  setActionFeedback(campaign.id, 'Deleting campaign...')
+  setActionFeedback(campaign.id, t('campaigns.feedback.deleting'))
 
   try {
     await campaignClient.deleteCampaign(campaign.id)
-    setActionFeedback(campaign.id, 'Campaign deleted.', 'success')
+    setActionFeedback(campaign.id, t('campaigns.feedback.deleted'), 'success')
     // Delay the refresh so the success feedback is visible before the row disappears.
     setTimeout(() => {
       refreshCurrentPage()
     }, 1500)
   } catch (error) {
     console.error(`Failed to delete campaign ${campaign.id}:`, error)
-    setActionFeedback(campaign.id, error?.message || 'Failed to delete campaign.', 'error')
+    setActionFeedback(campaign.id, error?.message || t('campaigns.feedback.delete_failed'), 'error')
   } finally {
     setActionLoading(campaign.id, false)
   }
@@ -543,7 +555,7 @@ const handleView = async (campaignId) => {
     selectedCampaign.value = await campaignClient.getCampaign(campaignId)
   } catch (error) {
     console.error(`Failed to load campaign ${campaignId}:`, error)
-    viewErrorMessage.value = error?.message || 'Failed to load campaign.'
+    viewErrorMessage.value = error?.message || t('campaigns.errors.load_failed')
   } finally {
     isViewLoading.value = false
   }
@@ -582,7 +594,7 @@ const handleResend = async (listIds) => {
       await router.push({ name: 'campaign-edit', params: { campaignId }, state: { validationErrors } })
       return
     }
-    resendErrorMessage.value = error?.message || 'Failed to resend campaign.'
+    resendErrorMessage.value = error?.message || t('campaigns.errors.resend_failed')
   } finally {
     isResending.value = false
   }
@@ -591,15 +603,15 @@ const handleResend = async (listIds) => {
 const handleCopyToDraft = async (campaignId) => {
   if (isActionLoading(campaignId)) return
   setActionLoading(campaignId, true)
-  setActionFeedback(campaignId, 'Creating draft copy...')
+  setActionFeedback(campaignId, t('campaigns.feedback.copying'))
 
   try {
     await campaignClient.copyCampaign(campaignId)
     await refreshCurrentPage()
-    setActionFeedback(campaignId, 'Created draft copy')
+    setActionFeedback(campaignId, t('campaigns.feedback.copied'))
   } catch (error) {
     console.error(`Failed to copy campaign ${campaignId} to draft:`, error)
-    setActionFeedback(campaignId, error?.message || 'Failed to create draft copy.', 'error')
+    setActionFeedback(campaignId, error?.message || t('campaigns.feedback.copy_failed'), 'error')
   } finally {
     setActionLoading(campaignId, false)
   }
@@ -609,7 +621,7 @@ const handleCopyToDraft = async (campaignId) => {
 const normalizeCampaign = (campaign) => {
   const statusRaw = (campaign?.messageMetadata?.status || '').toLowerCase()
   const statusKey = resolveStatusKey(statusRaw)
-  const subject = campaign?.messageContent?.subject || `Campaign #${campaign.id}`
+  const subject = campaign?.messageContent?.subject || t('campaigns.fallback_subject', { id: campaign.id })
   const enteredAt = campaign?.messageMetadata?.entered || null
   const sentAt = campaign?.messageMetadata?.sent || null
   const statistics = getCampaignStatistics(campaign.id)

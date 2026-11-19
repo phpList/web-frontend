@@ -7,7 +7,7 @@
 <template>
   <div class="overflow-x-auto">
     <table class="w-full text-left text-sm hidden md:table">
-      <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
+      <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-350 font-medium">
         <tr>
           <slot name="head" />
         </tr>
@@ -23,7 +23,7 @@
         </tr>
 
         <tr v-if="isLoading">
-          <td :colspan="colspan" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+          <td :colspan="colspan" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">
             {{ loadingMessage }}
           </td>
         </tr>
@@ -35,7 +35,7 @@
         </tr>
 
         <tr v-else-if="items.length === 0">
-          <td :colspan="colspan" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+          <td :colspan="colspan" class="px-6 py-8 text-center text-slate-500 dark:text-slate-350">
             {{ emptyMessage }}
           </td>
         </tr>
@@ -51,7 +51,7 @@
         <slot name="card" :item="item" />
       </div>
 
-      <div v-if="isLoading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
+      <div v-if="isLoading" class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm">
         {{ loadingMessage }}
       </div>
 
@@ -59,7 +59,7 @@
         {{ loadError }}
       </div>
 
-      <div v-else-if="items.length === 0" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
+      <div v-else-if="items.length === 0" class="px-4 py-8 text-center text-slate-500 dark:text-slate-350 text-sm">
         {{ emptyMessage }}
       </div>
     </div>

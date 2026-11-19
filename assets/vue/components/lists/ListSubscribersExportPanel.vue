@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+  <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
     <div class="p-4 sm:p-6 space-y-5">
       <!-- Date type -->
       <div class="space-y-2">
-        <p class="text-sm font-medium text-slate-800 dark:text-slate-100">What date needs to be used:</p>
+        <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ t('subscribers.export.date_prompt') }}</p>
 
         <div class="flex flex-wrap gap-x-5 gap-y-2">
           <label
@@ -27,7 +27,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-3 items-end">
         <div>
           <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1" for="list-export-date-from">
-            Date From
+            {{ t('subscribers.export.date_from') }}
           </label>
           <input
               id="list-export-date-from"
@@ -50,7 +50,7 @@
 
         <div>
           <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1" for="list-export-date-to">
-            Date To
+            {{ t('subscribers.export.date_to') }}
           </label>
           <input
               id="list-export-date-to"
@@ -65,7 +65,7 @@
       <!-- Columns -->
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <p class="text-sm font-medium text-slate-800 dark:text-slate-100">Columns</p>
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ t('subscribers.export.columns') }}</p>
 
           <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100 cursor-pointer">
             <input
@@ -75,7 +75,7 @@
                 :checked="allColumnsSelected"
                 @change="toggleAllColumns"
             >
-            <span>Select all</span>
+            <span>{{ t('subscribers.export.select_all') }}</span>
           </label>
         </div>
 
@@ -91,7 +91,7 @@
                 class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-ext-wf1 focus:ring-ext-wf1 shrink-0 accent-ext-wf1"
                 :value="column.value"
             >
-            <span class="truncate">{{ column.label }}</span>
+            <span class="truncate">{{ columnLabel(column) }}</span>
           </label>
         </div>
       </div>
@@ -100,13 +100,13 @@
     </div>
 
     <!-- Footer -->
-    <div class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
+    <div class="px-4 sm:px-6 py-4 border-t border-slate-300 dark:border-slate-700 flex items-center justify-between gap-3">
       <button
           type="button"
           class="inline-flex items-center justify-center rounded-md border border-transparent bg-ext-wf1 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-ext-wf3 disabled:opacity-50 disabled:cursor-not-allowed"
           @click="exportSubscribers"
       >
-        Export
+        {{ t('subscribers.export.export') }}
       </button>
     </div>
   </div>
@@ -114,7 +114,10 @@
 
 <script setup>
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { subscriberAttributesClient } from '../../api'
+
+const { t } = useI18n()
 
 onMounted(async () => {
   const allAttributes = []
@@ -169,29 +172,32 @@ const props = defineProps({
   },
 })
 
-const dateTypeOptions = [
-  { value: 'any', label: 'Any date (Export all subscribers)' },
-  { value: 'signup', label: 'When they signed up' },
-  { value: 'changed', label: 'When the record was changed' },
-  { value: 'changelog', label: 'Based on changelog' },
-  { value: 'subscribed', label: 'When they subscribed to new list' }
-]
+const dateTypeOptions = computed(() => [
+  { value: 'any', label: t('subscribers.export.date_types.any') },
+  { value: 'signup', label: t('subscribers.export.date_types.signup') },
+  { value: 'changed', label: t('subscribers.export.date_types.changed') },
+  { value: 'changelog', label: t('subscribers.export.date_types.changelog') },
+  { value: 'subscribed', label: t('subscribers.export.date_types.subscribed') }
+])
+
+// Built-in columns carry a translation key; attribute columns carry the attribute name as label.
+const columnLabel = (column) => (column.labelKey ? t(column.labelKey) : column.label)
 
 const columnOptions = ref([
-  { value: 'id', label: 'ID' },
-  { value: 'email', label: 'Email' },
-  { value: 'confirmed', label: 'Is this subscriber confirmed' },
-  { value: 'blacklisted', label: 'Is this subscriber blacklisted' },
+  { value: 'id', labelKey: 'subscribers.export.columns.id' },
+  { value: 'email', labelKey: 'subscribers.export.columns.email' },
+  { value: 'confirmed', labelKey: 'subscribers.export.columns.confirmed' },
+  { value: 'blacklisted', labelKey: 'subscribers.export.columns.blacklisted' },
   // { value: 'manualConfirm', label: 'Did this subscriber manually confirm' },
-  { value: 'bounceCount', label: 'Number of bounces' },
-  { value: 'createdAt', label: 'Entered' },
-  { value: 'updatedAt', label: 'Last Modified' },
-  { value: 'uniqueId', label: 'Unique ID' },
-  { value: 'htmlEmail', label: 'Send this subscriber HTML emails' },
-  { value: 'rssFrequency', label: 'RSS Frequency' },
-  { value: 'disabled', label: 'Is this account disabled?' },
-  { value: 'extraData', label: 'Additional data' },
-  { value: 'foreignKey', label: 'Foreign Key' },
+  { value: 'bounceCount', labelKey: 'subscribers.export.columns.bounce_count' },
+  { value: 'createdAt', labelKey: 'subscribers.export.columns.created_at' },
+  { value: 'updatedAt', labelKey: 'subscribers.export.columns.updated_at' },
+  { value: 'uniqueId', labelKey: 'subscribers.export.columns.unique_id' },
+  { value: 'htmlEmail', labelKey: 'subscribers.export.columns.html_email' },
+  { value: 'rssFrequency', labelKey: 'subscribers.export.columns.rss_frequency' },
+  { value: 'disabled', labelKey: 'subscribers.export.columns.disabled' },
+  { value: 'extraData', labelKey: 'subscribers.export.columns.extra_data' },
+  { value: 'foreignKey', labelKey: 'subscribers.export.columns.foreign_key' },
 ])
 
 const form = ref({
@@ -245,11 +251,11 @@ const toggleAllColumns = (event) => {
 
 const exportSubscribers = () => {
   if (form.value.columns.length === 0) {
-    exportError.value = 'Select at least one column.'
+    exportError.value = t('subscribers.export.errors.no_columns')
     return
   }
   if (!usesAnyDate.value && form.value.dateFrom && form.value.dateTo && form.value.dateFrom > form.value.dateTo) {
-    exportError.value = 'Date From cannot be after Date To.'
+    exportError.value = t('subscribers.export.errors.date_order')
     return
   }
 

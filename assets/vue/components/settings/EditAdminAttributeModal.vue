@@ -1,7 +1,7 @@
 <template>
   <BaseModal
       :is-open="isOpen && !!attribute"
-      title="Edit Attribute"
+      :title="t('settings.admin_attributes.edit_title')"
       max-width="lg"
       @close="$emit('close')"
   >
@@ -11,7 +11,7 @@
         >
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
-              Name
+              {{ t('settings.attributes.name') }}
             </label>
 
             <input
@@ -23,15 +23,15 @@
 
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
-              Type
+              {{ t('settings.attributes.type') }}
             </label>
 
             <select
                 v-model="form.type"
                 class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2"
             >
-              <option value="textline">String</option>
-              <option value="hidden">Hidden</option>
+              <option value="textline">{{ t('settings.attribute_types.textline') }}</option>
+              <option value="hidden">{{ t('settings.attribute_types.hidden') }}</option>
             </select>
           </div>
 
@@ -42,7 +42,7 @@
             >
 
             <span class="text-sm text-slate-700 dark:text-slate-200">
-              Required
+              {{ t('settings.attributes.required') }}
             </span>
           </label>
 
@@ -59,14 +59,14 @@
                 class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                 @click="$emit('close')"
             >
-              Cancel
+              {{ t('common.cancel') }}
             </button>
 
             <button
                 class="px-4 py-2 rounded-lg bg-ext-wf1 text-white"
                 :disabled="saving"
             >
-              {{ saving ? 'Saving...' : 'Save' }}
+              {{ saving ? t('common.saving') : t('common.save') }}
             </button>
           </div>
         </form>
@@ -75,8 +75,11 @@
 
 <script setup>
 import { reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseModal from '../base/BaseModal.vue'
 import { adminAttributeClient } from '../../api'
+
+const { t } = useI18n()
 
 const props = defineProps({
   isOpen: Boolean,
@@ -126,7 +129,7 @@ const submit = async () => {
 
     emit('updated')
   } catch (e) {
-    error.value = e?.message || 'Unable to update attribute.'
+    error.value = e?.message || t('settings.attributes.errors.update_failed')
   } finally {
     saving.value = false
   }

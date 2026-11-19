@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.1']
+        php-versions: ['8.2']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -151,11 +151,28 @@ jobs:
             exit 1
           fi
 
+      - name: Capture application log during tests
+        run: |
+          mkdir -p var/logs
+          touch var/logs/test.log
+          nohup tail -F -n 0 var/logs/test.log > /tmp/app-test.log 2>&1 &
       - name: Run tests with phpunit
         run: vendor/bin/phpunit tests
 
       - name: Run tests with vitest
         run: node node_modules/vitest/vitest.mjs --run
+
+      - name: Print application logs
+        if: failure()
+        run: |
+          echo "::group::app test log (captured live, filtered)"
+          grep -v -e 'User Deprecated' -e 'Checking support on authenticator' \
+            -e 'Checking for authenticator support' -e 'does not support the request' \
+            -e 'set the failure response' -e 'set the response' /tmp/app-test.log | tail -n 2500 || true
+          echo "::endgroup::"
+          echo "::group::session files"
+          ls -la var/sessions/* 2>/dev/null || true
+          echo "::endgroup::"
 
       - name: Upload Panther screenshots
         if: failure()

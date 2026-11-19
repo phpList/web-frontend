@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ (app.request ? app.request.locale : 'en')|replace({'_': '-'}) }}">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}phpList{% endblock %}</title>

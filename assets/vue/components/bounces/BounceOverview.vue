@@ -1,18 +1,18 @@
 <template>
   <div class="space-y-6">
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounces</h3>
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ t('bounces.title') }}</h3>
         <div class="flex items-center gap-2">
-          <label class="text-sm text-slate-600 dark:text-slate-300" for="bounce-status-filter">Status</label>
+          <label class="text-sm text-slate-600 dark:text-slate-350" for="bounce-status-filter">{{ t('bounces.table.status') }}</label>
           <select
             id="bounce-status-filter"
             v-model="statusFilter"
             class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
             :disabled="isLoading"
           >
-            <option value="identified">Processed</option>
-            <option value="unidentified">Unidentified</option>
+            <option value="identified">{{ t('bounces.overview.processed') }}</option>
+            <option value="unidentified">{{ t('bounces.overview.unidentified') }}</option>
           </select>
         </div>
       </div>
@@ -21,22 +21,22 @@
           :items="paginatedBounces"
           :is-loading="isLoading"
           :load-error="errorMessage"
-          loading-message="Loading bounces..."
-          empty-message="No bounces found."
+          :loading-message="t('bounces.overview.loading')"
+          :empty-message="t('bounces.overview.empty')"
           :colspan="6"
       >
         <template #head>
-          <th class="px-6 py-4">ID</th>
-          <th class="px-6 py-4">Date</th>
-          <th class="px-6 py-4">Subscriber</th>
-          <th class="px-6 py-4">Campaign</th>
-          <th class="px-6 py-4">Status</th>
-          <th class="px-6 py-4">Comment</th>
+          <th class="px-6 py-4">{{ t('bounces.table.id') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.table.date') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.table.subscriber') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.table.campaign') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.table.status') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.table.comment') }}</th>
         </template>
 
         <template #row="{ item: bounce }">
           <td class="px-6 py-4 text-slate-700 dark:text-slate-200 font-mono">#{{ bounce.id }}</td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.formattedDate }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ bounce.formattedDate }}</td>
           <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ bounce.email }}</td>
           <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ bounce.subject }}</td>
           <td class="px-6 py-4">
@@ -44,7 +44,7 @@
               {{ bounce.status }}
             </BaseBadge>
           </td>
-          <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ bounce.comment }}</td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ bounce.comment }}</td>
         </template>
 
         <template #card="{ item: bounce }">
@@ -54,33 +54,33 @@
               {{ bounce.status }}
             </BaseBadge>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400">{{ bounce.formattedDate }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-350">{{ bounce.formattedDate }}</p>
           <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ bounce.email }}</p>
           <p class="text-sm text-slate-700 dark:text-slate-200">{{ bounce.subject }}</p>
-          <p class="text-xs text-slate-600 dark:text-slate-300">{{ bounce.comment }}</p>
+          <p class="text-xs text-slate-600 dark:text-slate-350">{{ bounce.comment }}</p>
         </template>
       </BaseDataTable>
 
-      <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+      <div class="p-4 sm:p-6 border-t border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-350">
         <div class="text-center sm:text-left">
-          Page <span class="font-medium text-slate-900 dark:text-slate-100">{{ currentPage }}</span>
+          {{ t('bounces.overview.page', { page: currentPage }) }}
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
           <button
             type="button"
-            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
             :disabled="!canGoPrevious"
             @click="previousPage"
           >
-            Previous
+            {{ t('common.previous') }}
           </button>
           <button
             type="button"
-            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+            class="flex-1 sm:flex-none px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
             :disabled="!canGoNext"
             @click="nextPage"
           >
-            Next
+            {{ t('common.next') }}
           </button>
         </div>
       </div>
@@ -90,9 +90,12 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { bouncesClient } from '../../api'
 import BaseBadge from '../base/BaseBadge.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'
+
+const { t, locale } = useI18n()
 
 const pageSize = 5
 const currentPage = ref(1)
@@ -105,18 +108,17 @@ const errorMessage = ref('')
 const statusFilter = ref('identified')
 
 const formatDate = (dateValue) => {
-  if (!dateValue) return 'No date'
+  if (!dateValue) return t('bounces.no_date')
 
   const date = new Date(dateValue)
-  if (Number.isNaN(date.getTime())) return 'No date'
+  if (Number.isNaN(date.getTime())) return t('bounces.no_date')
 
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true,
   }).format(date)
 }
 
@@ -142,9 +144,9 @@ const normalizedBounces = computed(() =>
     bounces.value.map((item) => ({
       id: item.id,
       formattedDate: formatDate(item.date),
-      email: item.subscriber_email ?? 'Unknown email',
-      subject: item.message_subject ?? 'No subject',
-      comment: item.comment ?? 'No comment',
+      email: item.subscriber_email ?? t('bounces.unknown_email'),
+      subject: item.message_subject ?? t('bounces.no_subject'),
+      comment: item.comment ?? t('bounces.no_comment'),
       status: item.status ?? 'unknown',
       statusVariant: getStatusVariant(item.status),
     }))
@@ -209,7 +211,7 @@ const loadBounces = async () => {
       return
     }
 
-    errorMessage.value = error?.message ?? 'Failed to load bounces.'
+    errorMessage.value = error?.message ?? t('bounces.overview.load_failed')
     bounces.value = []
     hasMore.value = false
   } finally {

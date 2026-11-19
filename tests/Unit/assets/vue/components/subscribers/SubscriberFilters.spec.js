@@ -2,7 +2,15 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import SubscriberFilters from '../../../../../../assets/vue/components/subscribers/SubscriberFilters.vue'
-import { subscriberFilters } from '../../../../../../assets/vue/components/subscribers/subscriberFilters'
+import { subscriberFilters as filterIds } from '../../../../../../assets/vue/components/subscribers/subscriberFilters'
+import { loadXliffMessages } from '../../support/xliff'
+
+// Filters only carry an id; the visible label comes from the English catalogue.
+const messages = loadXliffMessages('en')
+const subscriberFilters = filterIds.map(filter => ({
+    ...filter,
+    label: messages[`subscribers.filters.${filter.id}`],
+}))
 
 describe('SubscriberFilters', () => {
     const createWrapper = () =>

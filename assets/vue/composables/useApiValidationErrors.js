@@ -4,6 +4,10 @@ const ERROR_BORDER_CLASSES = 'border border-red-300 dark:border-red-500/40 focus
 const NORMAL_BORDER_CLASSES = 'border border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500'
 
 export function useApiValidationErrors(fieldLabels = {}) {
+  // TODO: translate the field-name prefix of validation errors. The API already answers in the UI language
+  //  (Accept-Language), but the "<Field>: " prefix built here is English unless the caller passes a label in
+  //  fieldLabels (CampaignEditView only covers 4 fields). Add translated labels for the remaining fields
+  //  (subject, fromField, replyTo, toField, template, ...) and translate the generic 'Field' fallback below.
   const normalizeFieldName = (fieldPath = '') => {
     if (fieldLabels[fieldPath]) return fieldLabels[fieldPath]
 

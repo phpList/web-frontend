@@ -92,7 +92,7 @@ describe('status badge', () => {
     it('applies the success (emerald) variant for "sent"', () => {
         const wrapper = mountWithStatus('sent')
         expect(wrapper.find('span.bg-emerald-100').exists()).toBe(true)
-        expect(wrapper.find('span.text-emerald-700').exists()).toBe(true)
+        expect(wrapper.find('span.text-emerald-900').exists()).toBe(true)
     })
 
     it('applies the info (blue) variant for "scheduled"', () => {

@@ -3,7 +3,7 @@
   <BaseCard>
     <header class="mb-3">
       <h2 class="text-sm font-bold text-gray-900 mb-0 dark:text-slate-100">
-        Recent Campaigns
+        {{ t('dashboard.recent_campaigns.title') }}
       </h2>
     </header>
 
@@ -29,8 +29,11 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../../components/base/BaseCard.vue'
 import CampaignsTable from './CampaignsTable.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
   rows: {

@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+  <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex justify-between items-center">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Administrators</h2>
-        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Manage administrator accounts and permissions</p>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('settings.admins.title') }}</h2>
+        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-350">{{ t('settings.admins.description') }}</p>
       </div>
 
       <BaseButton variant="accent" icon="plus" @click="openCreateModal">
-        Add Admin
+        {{ t('settings.admins.add') }}
       </BaseButton>
     </div>
 
@@ -15,39 +15,39 @@
         :items="admins"
         :is-loading="isLoading"
         :load-error="loadError"
-        loading-message="Loading administrators..."
-        empty-message="No administrators found. Create one to get started."
+        :loading-message="t('settings.admins.loading')"
+        :empty-message="t('settings.admins.empty')"
         :colspan="6"
     >
       <template #head>
-        <th class="px-6 py-4">ID</th>
-        <th class="px-6 py-4">Login Name</th>
-        <th class="px-6 py-4">Email</th>
-        <th class="px-6 py-4">Super User</th>
-        <th class="px-6 py-4">Created</th>
-        <th class="px-6 py-4 text-right">Actions</th>
+        <th class="px-6 py-4">{{ t('settings.admins.id') }}</th>
+        <th class="px-6 py-4">{{ t('settings.admins.login_name') }}</th>
+        <th class="px-6 py-4">{{ t('settings.admins.email') }}</th>
+        <th class="px-6 py-4">{{ t('settings.admins.super_user') }}</th>
+        <th class="px-6 py-4">{{ t('settings.admins.created') }}</th>
+        <th class="px-6 py-4 text-right">{{ t('settings.actions') }}</th>
       </template>
 
       <template #row="{ item: admin }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.id }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ admin.id }}</td>
         <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ admin.loginName }}</td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ admin.email }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ admin.email }}</td>
         <td class="px-6 py-4">
           <BaseBadge :variant="admin.superUser ? 'info' : 'neutral'">
-            {{ admin.superUser ? 'Yes' : 'No' }}
+            {{ admin.superUser ? t('common.yes') : t('common.no') }}
           </BaseBadge>
         </td>
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-xs">
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350 text-xs">
           {{ formatDate(admin.createdAt) }}
         </td>
         <td class="px-6 py-4">
           <div class="flex flex-wrap justify-end gap-2">
             <ActionButton icon="edit" @click="handleEdit(admin)">
-              Edit
+              {{ t('common.edit') }}
             </ActionButton>
 
             <ActionButton variant="danger" icon="delete" @click="handleDelete(admin)">
-              Delete
+              {{ t('common.delete') }}
             </ActionButton>
           </div>
         </td>
@@ -56,27 +56,27 @@
       <template #card="{ item: admin }">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ admin.id }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">#{{ admin.id }}</p>
             <p class="font-semibold text-slate-900 dark:text-slate-100">{{ admin.loginName }}</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400">{{ admin.email }}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-350">{{ admin.email }}</p>
           </div>
 
           <BaseBadge class="whitespace-nowrap" :variant="admin.superUser ? 'info' : 'neutral'">
-            {{ admin.superUser ? 'Super' : 'User' }}
+            {{ admin.superUser ? t('settings.admins.badge_super') : t('settings.admins.badge_user') }}
           </BaseBadge>
         </div>
 
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          Created: {{ formatDate(admin.createdAt) }}
+        <p class="text-xs text-slate-500 dark:text-slate-350">
+          {{ t('settings.admins.created_on', { date: formatDate(admin.createdAt) }) }}
         </p>
 
         <div class="grid grid-cols-2 gap-2">
           <ActionButton block icon="edit" @click="handleEdit(admin)">
-            Edit
+            {{ t('common.edit') }}
           </ActionButton>
 
           <ActionButton block variant="danger" icon="delete" @click="handleDelete(admin)">
-            Delete
+            {{ t('common.delete') }}
           </ActionButton>
         </div>
       </template>
@@ -101,6 +101,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import CreateAdminModal from './CreateAdminModal.vue'
 import EditAdminModal from './EditAdminModal.vue'
 import { fetchAllAdmins, adminClient } from '../../api'
@@ -108,6 +109,8 @@ import BaseButton from "../base/BaseButton.vue";
 import BaseBadge from "../base/BaseBadge.vue";
 import ActionButton from "../base/ActionButton.vue";
 import BaseDataTable from "../base/BaseDataTable.vue";
+
+const { t, locale } = useI18n()
 
 const admins = ref([])
 const isLoading = ref(false)
@@ -125,7 +128,7 @@ const fetchAdmins = async () => {
   } catch (error) {
     console.error('Failed to fetch administrators:', error)
     admins.value = []
-    loadError.value = error?.message || 'Failed to load administrators.'
+    loadError.value = error?.message || t('settings.admins.errors.load_failed')
   } finally {
     isLoading.value = false
   }
@@ -137,7 +140,7 @@ onMounted(() => {
 
 const handleDelete = async (admin) => {
   const confirmed = window.confirm(
-    `Delete administrator "${admin.loginName}"?\n\nThis action cannot be undone.`
+    t('settings.admins.delete_confirm', { name: admin.loginName })
   )
 
   if (!confirmed) return
@@ -147,7 +150,7 @@ const handleDelete = async (admin) => {
     await fetchAdmins()
   } catch (e) {
     console.error('Delete failed', e)
-    alert('Failed to delete administrator: ' + (e?.message || 'Unknown error'))
+    alert(t('settings.admins.errors.delete_failed', { reason: e?.message || t('settings.admins.errors.unknown') }))
   }
 }
 
@@ -181,7 +184,7 @@ const formatDate = (dateString) => {
   if (!dateString) return ''
   try {
     const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(locale.value, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

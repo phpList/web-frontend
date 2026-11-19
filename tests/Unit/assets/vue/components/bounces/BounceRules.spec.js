@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import BounceRules from '../../../../../../assets/vue/components/bounces/BounceRules.vue'
 import { bouncesClient } from '../../../../../../assets/vue/api'
 
@@ -35,11 +35,19 @@ const makeRule = (overrides = {}) => ({
     ...overrides,
 })
 
+let consoleErrorSpy
+
 beforeEach(() => {
     vi.clearAllMocks()
+    // Several tests make the API fail on purpose; the component logs those errors.
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     setAppDataset()
     bouncesClient.listRegex.mockResolvedValue([])
     bouncesClient.upsertRegex.mockResolvedValue({})
+})
+
+afterEach(() => {
+    consoleErrorSpy.mockRestore()
 })
 
 const mountComponent = () => mount(BounceRules)
@@ -72,26 +80,43 @@ describe('on mount', () => {
         expect(wrapper.text()).toContain('42')
     })
 
+    it('renders the rules in the shared data table with column headers and a status badge', async () => {
+        bouncesClient.listRegex.mockResolvedValue([makeRule()])
+        const wrapper = mountComponent()
+        await flushPromises()
+        const headers = wrapper.findAll('thead th').map((th) => th.text())
+        expect(headers).toEqual(['#', 'Rule', 'Pattern', 'Action', 'Hits', 'Status'])
+        expect(wrapper.findAll('tbody tr').length).toBeGreaterThan(0)
+        expect(wrapper.find('tbody tr span.capitalize').exists()).toBe(true)
+    })
+
+    it('shows the empty message when there are no rules', async () => {
+        const wrapper = mountComponent()
+        await flushPromises()
+        expect(wrapper.text()).toContain('No bounce rules found.')
+    })
+
     it('renders nothing in the list when the API returns an empty array', async () => {
         const wrapper = mountComponent()
         await flushPromises()
         // no rule rows — heading is still present
         expect(wrapper.text()).toContain('Bounce Rules')
-        expect(wrapper.findAll('[class*="border-b last:border-b-0"]').length).toBe(0)
+        expect(wrapper.findAll('tbody tr td.font-mono').length).toBe(0)
     })
 
     it('handles a non-array API response gracefully', async () => {
         bouncesClient.listRegex.mockResolvedValue(null)
         const wrapper = mountComponent()
         await flushPromises()
-        expect(wrapper.findAll('[class*="border-b last:border-b-0"]').length).toBe(0)
+        expect(wrapper.findAll('tbody tr td.font-mono').length).toBe(0)
     })
 
     it('silently clears rules on listRegex error', async () => {
         bouncesClient.listRegex.mockRejectedValue(new Error('Network error'))
         const wrapper = mountComponent()
         await flushPromises()
-        expect(wrapper.findAll('[class*="border-b last:border-b-0"]').length).toBe(0)
+        expect(wrapper.findAll('tbody tr td.font-mono').length).toBe(0)
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch bounce rules', expect.any(Error))
     })
 })
 

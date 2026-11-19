@@ -26,6 +26,27 @@ class AuthenticationService
         $session->save();
     }
 
+    public function clearAuthentication(Request $request): void
+    {
+        $session = $request->getSession();
+
+        $session->remove('auth_token');
+        $session->remove('auth_expiry_date');
+        $session->remove('auth_id');
+        $session->remove('admin_id');
+    }
+
+    /**
+     * The browser got a 401 from the API although the PHP session still holds a token, i.e. the token
+     * expired server-side. Drop it, otherwise /login would bounce back to the app and loop.
+     */
+    public function clearExpiredAuthentication(Request $request): void
+    {
+        if ($request->query->getBoolean('expired')) {
+            $this->clearAuthentication($request);
+        }
+    }
+
     public function consumeLoginError(Request $request): ?string
     {
         $session = $request->getSession();

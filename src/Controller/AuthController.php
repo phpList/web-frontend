@@ -38,6 +38,8 @@ class AuthController extends AbstractController
     {
         $redirectTarget = $this->resolveRedirectTarget($request);
 
+        $this->authenticationService->clearExpiredAuthentication($request);
+
         if ($request->getSession()->has('auth_token')) {
             return $this->redirectAfterLogin($redirectTarget);
         }
@@ -162,9 +164,7 @@ class AuthController extends AbstractController
     #[Route('/logout', name: 'logout')]
     public function logout(Request $request): Response
     {
-        $request->getSession()->remove('auth_token');
-        $request->getSession()->remove('auth_id');
-        $request->getSession()->remove('admin_id');
+        $this->authenticationService->clearAuthentication($request);
         $this->authClient->logout();
 
         return $this->redirectToRoute('login');

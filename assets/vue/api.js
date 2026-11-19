@@ -32,7 +32,7 @@ const redirectToLogin = () => {
     }
     isAuthenticationRedirectInProgress = true;
     const redirectTarget = `${window.location.pathname}${window.location.search}`;
-    const search = new URLSearchParams({ redirect: redirectTarget }).toString();
+    const search = new URLSearchParams({ redirect: redirectTarget, expired: '1' }).toString();
     window.location.href = `${AUTHENTICATION_REDIRECT_PATH}?${search}`;
 };
 

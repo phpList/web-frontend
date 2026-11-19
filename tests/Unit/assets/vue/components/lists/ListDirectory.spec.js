@@ -1,6 +1,6 @@
 // ListDirectory.spec.js
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import ListDirectory from '../../../../../../assets/vue/components/lists/ListDirectory.vue'
 import { fetchAllLists, listClient } from '../../../../../../assets/vue/api'
@@ -77,10 +77,18 @@ describe('ListDirectory', () => {
         },
     ]
 
+    let consoleErrorSpy
+
     beforeEach(() => {
         vi.clearAllMocks()
+        // Tests here make the API fail on purpose; the component logs those errors.
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
         window.confirm = vi.fn()
         hasPrivilegeMock.mockReturnValue(true)
+    })
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore()
     })
 
     it('loads mailing lists on mount', async () => {

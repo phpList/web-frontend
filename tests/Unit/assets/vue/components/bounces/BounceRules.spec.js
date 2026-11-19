@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import BounceRules from '../../../../../../assets/vue/components/bounces/BounceRules.vue'
 import { bouncesClient } from '../../../../../../assets/vue/api'
 
@@ -35,11 +35,19 @@ const makeRule = (overrides = {}) => ({
     ...overrides,
 })
 
+let consoleErrorSpy
+
 beforeEach(() => {
     vi.clearAllMocks()
+    // Several tests make the API fail on purpose; the component logs those errors.
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     setAppDataset()
     bouncesClient.listRegex.mockResolvedValue([])
     bouncesClient.upsertRegex.mockResolvedValue({})
+})
+
+afterEach(() => {
+    consoleErrorSpy.mockRestore()
 })
 
 const mountComponent = () => mount(BounceRules)
@@ -108,6 +116,7 @@ describe('on mount', () => {
         const wrapper = mountComponent()
         await flushPromises()
         expect(wrapper.findAll('tbody tr td.font-mono').length).toBe(0)
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch bounce rules', expect.any(Error))
     })
 })
 

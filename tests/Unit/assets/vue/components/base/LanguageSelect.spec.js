@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mount, flushPromises, config } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import { backendFetch } from '../../../../../../assets/vue/api'
 import LanguageSelect from '../../../../../../assets/vue/components/base/LanguageSelect.vue'
@@ -14,7 +14,25 @@ const setLocales = (locales) => {
 vi.mock('../../../../../../assets/vue/api', () => ({ backendFetch: vi.fn() }))
 
 describe('LanguageSelect', () => {
+    const globalPlugins = config.global.plugins
+
+    beforeEach(() => {
+        // Tests that pass their own i18n instance would otherwise install vue-i18n a second time on top of
+        // the shared one from setupI18n.js, which makes Vue warn that its components are already registered.
+        config.global.plugins = []
+
+        // Some tests use deliberately incomplete catalogues; only that expected warning is muted.
+        const warn = console.warn
+        vi.spyOn(console, 'warn').mockImplementation((message, ...rest) => {
+            if (typeof message === 'string' && message.startsWith('[intlify] Not found')) {
+                return
+            }
+            warn(message, ...rest)
+        })
+    })
+
     afterEach(() => {
+        config.global.plugins = globalPlugins
         vi.clearAllMocks()
         document.body.innerHTML = ''
         document.documentElement.removeAttribute('lang')
@@ -25,7 +43,7 @@ describe('LanguageSelect', () => {
     it('lists the languages offered by the server, named in their own language', () => {
         setLocales({ en: 'English', es: 'Español' })
 
-        const wrapper = mount(LanguageSelect)
+        const wrapper = mount(LanguageSelect, { global: { plugins: globalPlugins } })
         const options = wrapper.findAll('option')
 
         expect(options.map((o) => o.attributes('value'))).toEqual(['en', 'es'])
@@ -36,10 +54,10 @@ describe('LanguageSelect', () => {
 
     it('is hidden when there is nothing to choose from', () => {
         setLocales({ en: 'English' })
-        expect(mount(LanguageSelect).find('select').exists()).toBe(false)
+        expect(mount(LanguageSelect, { global: { plugins: globalPlugins } }).find('select').exists()).toBe(false)
 
         setLocales(null)
-        expect(mount(LanguageSelect).find('select').exists()).toBe(false)
+        expect(mount(LanguageSelect, { global: { plugins: globalPlugins } }).find('select').exists()).toBe(false)
     })
 
     it('switches the language in place and asks the server to remember it', async () => {
@@ -84,7 +102,7 @@ describe('LanguageSelect', () => {
         setLocales({ en: 'English', es: 'Español' })
         vi.stubGlobal('fetch', vi.fn())
 
-        await mount(LanguageSelect).find('select').setValue('en')
+        await mount(LanguageSelect, { global: { plugins: globalPlugins } }).find('select').setValue('en')
 
         expect(fetch).not.toHaveBeenCalled()
         expect(backendFetch).not.toHaveBeenCalled()

@@ -34,9 +34,13 @@ describe('i18n', () => {
     })
 
     it('falls back to the key for unknown messages', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
         const { global } = createAppI18n({ locale: 'en', messages: {} })
 
         expect(global.t('does.not.exist')).toBe('does.not.exist')
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining("Not found 'does.not.exist'"))
+
+        warn.mockRestore()
     })
 
     it('reads the languages offered by the server', () => {

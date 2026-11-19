@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import CampaignDirectory from '../../../../../../assets/vue/components/campaigns/CampaignDirectory.vue'
 import {
@@ -113,8 +113,12 @@ const mountComponent = async (query = {}) => {
     return { wrapper, router }
 }
 
+let consoleErrorSpy
+
 beforeEach(() => {
     vi.clearAllMocks()
+    // Tests here make the API fail on purpose; the component logs those errors.
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     campaignClient.getCampaigns.mockResolvedValue(makePagedResponse([makeCampaign()]))
     campaignClient.getCampaign.mockResolvedValue(makeCampaign())
     campaignClient.updateCampaignStatus.mockResolvedValue({})
@@ -125,6 +129,10 @@ beforeEach(() => {
     listMessagesClient.getListsByMessage.mockResolvedValue(makePagedResponse([]))
     statisticsClient.getCampaignStatistics.mockResolvedValue(defaultStats())
     statisticsClient.getStatisticsOfViewOpens.mockResolvedValue(makeStatsResponse())
+})
+
+afterEach(() => {
+    consoleErrorSpy.mockRestore()
 })
 
 describe('loading state', () => {

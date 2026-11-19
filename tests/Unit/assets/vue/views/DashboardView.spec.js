@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, nextTick } from 'vue'
 
@@ -64,14 +64,22 @@ vi.mock('../../../../../assets/vue/components/dashboard/RecentCampaignsCard.vue'
 }))
 
 describe('DashboardView', () => {
+    let consoleErrorSpy
+
     beforeEach(() => {
         document.body.innerHTML = ''
         vi.clearAllMocks()
+        // Tests here make the API fail on purpose; the component logs those errors.
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
         vi.resetModules()
         backendFetch.mockResolvedValue({
             ok: true,
             json: async () => ({ items: [{ title: 'News', link: 'https://www.phplist.org/newslist/a/' }] }),
         })
+    })
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore()
     })
 
     it('marks each section as loading independently, and clears loading once each resolves', async () => {

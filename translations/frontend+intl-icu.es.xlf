@@ -1204,6 +1204,282 @@ equipo@ejemplo.com</target>
         <source>campaigns.view.requeue_summary</source>
         <target>cada {interval} minutos hasta {until}</target>
       </trans-unit>
+      <trans-unit id="campaign_edit.label" resname="campaign_edit.label">
+        <source>campaign_edit.label</source>
+        <target>Campaña</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.back_to_campaigns" resname="campaign_edit.back_to_campaigns">
+        <source>campaign_edit.back_to_campaigns</source>
+        <target>Volver a campañas</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.loading" resname="campaign_edit.loading">
+        <source>campaign_edit.loading</source>
+        <target>Cargando campaña...</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.title.create" resname="campaign_edit.title.create">
+        <source>campaign_edit.title.create</source>
+        <target>Crear campaña</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.title.edit" resname="campaign_edit.title.edit">
+        <source>campaign_edit.title.edit</source>
+        <target>Editar campaña #{id}</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.steps.content" resname="campaign_edit.steps.content">
+        <source>campaign_edit.steps.content</source>
+        <target>Contenido</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.steps.format" resname="campaign_edit.steps.format">
+        <source>campaign_edit.steps.format</source>
+        <target>Formato</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.steps.scheduling" resname="campaign_edit.steps.scheduling">
+        <source>campaign_edit.steps.scheduling</source>
+        <target>Programación</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.steps.lists" resname="campaign_edit.steps.lists">
+        <source>campaign_edit.steps.lists</source>
+        <target>Listas</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.steps.test_send" resname="campaign_edit.steps.test_send">
+        <source>campaign_edit.steps.test_send</source>
+        <target>Envío de prueba</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.steps.finish" resname="campaign_edit.steps.finish">
+        <source>campaign_edit.steps.finish</source>
+        <target>Finalizar</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.subject" resname="campaign_edit.content.subject">
+        <source>campaign_edit.content.subject</source>
+        <target>Asunto</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.subject_placeholder" resname="campaign_edit.content.subject_placeholder">
+        <source>campaign_edit.content.subject_placeholder</source>
+        <target>Asunto de la campaña</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.compose_question" resname="campaign_edit.content.compose_question">
+        <source>campaign_edit.content.compose_question</source>
+        <target>¿Cómo desea redactar el contenido?</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.mode_webpage" resname="campaign_edit.content.mode_webpage">
+        <source>campaign_edit.content.mode_webpage</source>
+        <target>Enviar una página web</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.mode_compose" resname="campaign_edit.content.mode_compose">
+        <source>campaign_edit.content.mode_compose</source>
+        <target>Redactar mensaje</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.webpage_url" resname="campaign_edit.content.webpage_url">
+        <source>campaign_edit.content.webpage_url</source>
+        <target>URL de la página web</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.webpage_hint" resname="campaign_edit.content.webpage_hint">
+        <source>campaign_edit.content.webpage_hint</source>
+        <target>El contenido de la campaña se guardará como {token}.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.html_content" resname="campaign_edit.content.html_content">
+        <source>campaign_edit.content.html_content</source>
+        <target>Contenido HTML</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.content.footer" resname="campaign_edit.content.footer">
+        <source>campaign_edit.content.footer</source>
+        <target>Pie de página</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.use_template" resname="campaign_edit.format.use_template">
+        <source>campaign_edit.format.use_template</source>
+        <target>Usar plantilla</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.no_template" resname="campaign_edit.format.no_template">
+        <source>campaign_edit.format.no_template</source>
+        <target>Sin plantilla</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.send_format" resname="campaign_edit.format.send_format">
+        <source>campaign_edit.format.send_format</source>
+        <target>Formato de envío</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.html" resname="campaign_edit.format.html">
+        <source>campaign_edit.format.html</source>
+        <target>HTML</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.text" resname="campaign_edit.format.text">
+        <source>campaign_edit.format.text</source>
+        <target>Texto</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.invite" resname="campaign_edit.format.invite">
+        <source>campaign_edit.format.invite</source>
+        <target>Invitación</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.format.html_formatted" resname="campaign_edit.format.html_formatted">
+        <source>campaign_edit.format.html_formatted</source>
+        <target>Formato HTML</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.schedule.embargo" resname="campaign_edit.schedule.embargo">
+        <source>campaign_edit.schedule.embargo</source>
+        <target>Embargo hasta</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.schedule.repeat_interval" resname="campaign_edit.schedule.repeat_interval">
+        <source>campaign_edit.schedule.repeat_interval</source>
+        <target>Intervalo de repetición (minutos)</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.schedule.repeat_until" resname="campaign_edit.schedule.repeat_until">
+        <source>campaign_edit.schedule.repeat_until</source>
+        <target>Dejar de enviar después de</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.schedule.requeue_interval" resname="campaign_edit.schedule.requeue_interval">
+        <source>campaign_edit.schedule.requeue_interval</source>
+        <target>Reencolar cada (minutos)</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.schedule.requeue_until" resname="campaign_edit.schedule.requeue_until">
+        <source>campaign_edit.schedule.requeue_until</source>
+        <target>Reencolar hasta</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.lists.intro" resname="campaign_edit.lists.intro">
+        <source>campaign_edit.lists.intro</source>
+        <target>Seleccione las listas a las que desea enviar esta campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.lists.fallback_name" resname="campaign_edit.lists.fallback_name">
+        <source>campaign_edit.lists.fallback_name</source>
+        <target>Lista #{id}</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.lists.none" resname="campaign_edit.lists.none">
+        <source>campaign_edit.lists.none</source>
+        <target>No se encontraron listas de correo.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.test.title" resname="campaign_edit.test.title">
+        <source>campaign_edit.test.title</source>
+        <target>Enviar prueba</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.test.intro" resname="campaign_edit.test.intro">
+        <source>campaign_edit.test.intro</source>
+        <target>Enviar una prueba a una o varias direcciones de correo.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.test.hint" resname="campaign_edit.test.hint">
+        <source>campaign_edit.test.hint</source>
+        <target>(direcciones separadas por comas; todas deben ser suscriptores existentes)</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.test.placeholder" resname="campaign_edit.test.placeholder">
+        <source>campaign_edit.test.placeholder</source>
+        <target>correo1@ejemplo.com, correo2@ejemplo.com</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.from" resname="campaign_edit.finish.from">
+        <source>campaign_edit.finish.from</source>
+        <target>De</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.from_placeholder" resname="campaign_edit.finish.from_placeholder">
+        <source>campaign_edit.finish.from_placeholder</source>
+        <target>Nombre o dirección del remitente</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.reply_to" resname="campaign_edit.finish.reply_to">
+        <source>campaign_edit.finish.reply_to</source>
+        <target>Responder a</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.reply_to_placeholder" resname="campaign_edit.finish.reply_to_placeholder">
+        <source>campaign_edit.finish.reply_to_placeholder</source>
+        <target>Correo de respuesta</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.to_field" resname="campaign_edit.finish.to_field">
+        <source>campaign_edit.finish.to_field</source>
+        <target>Campo Para</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.to_field_placeholder" resname="campaign_edit.finish.to_field_placeholder">
+        <source>campaign_edit.finish.to_field_placeholder</source>
+        <target>Campo del destinatario</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.review" resname="campaign_edit.finish.review">
+        <source>campaign_edit.finish.review</source>
+        <target>Revise antes de guardar</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.finish.ready" resname="campaign_edit.finish.ready">
+        <source>campaign_edit.finish.ready</source>
+        <target>La campaña está lista para guardarse</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.warnings.no_lists" resname="campaign_edit.warnings.no_lists">
+        <source>campaign_edit.warnings.no_lists</source>
+        <target>Faltan las listas de destino.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.warnings.webpage_url_required" resname="campaign_edit.warnings.webpage_url_required">
+        <source>campaign_edit.warnings.webpage_url_required</source>
+        <target>La URL de la página web es obligatoria en el modo "Enviar una página web".</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.warnings.compose_required" resname="campaign_edit.warnings.compose_required">
+        <source>campaign_edit.warnings.compose_required</source>
+        <target>El modo "Redactar mensaje" requiere contenido HTML o de texto.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.actions.back" resname="campaign_edit.actions.back">
+        <source>campaign_edit.actions.back</source>
+        <target>Atrás</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.actions.save_continue" resname="campaign_edit.actions.save_continue">
+        <source>campaign_edit.actions.save_continue</source>
+        <target>Guardar y seguir editando</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.actions.queueing" resname="campaign_edit.actions.queueing">
+        <source>campaign_edit.actions.queueing</source>
+        <target>Encolando...</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.actions.queue" resname="campaign_edit.actions.queue">
+        <source>campaign_edit.actions.queue</source>
+        <target>Poner la campaña en cola para enviarla</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.fix_fields" resname="campaign_edit.errors.fix_fields">
+        <source>campaign_edit.errors.fix_fields</source>
+        <target>Corrija los siguientes campos:</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.invalid_id" resname="campaign_edit.errors.invalid_id">
+        <source>campaign_edit.errors.invalid_id</source>
+        <target>ID de campaña no válido.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.load_failed" resname="campaign_edit.errors.load_failed">
+        <source>campaign_edit.errors.load_failed</source>
+        <target>No se pudieron cargar los datos de la campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.save_before_lists" resname="campaign_edit.errors.save_before_lists">
+        <source>campaign_edit.errors.save_before_lists</source>
+        <target>La campaña debe guardarse antes de actualizar las listas asociadas.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.lists_update_failed" resname="campaign_edit.errors.lists_update_failed">
+        <source>campaign_edit.errors.lists_update_failed</source>
+        <target>No se pudo actualizar {count, plural, one {# asociación de lista} other {# asociaciones de listas}}.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.webpage_url_required" resname="campaign_edit.errors.webpage_url_required">
+        <source>campaign_edit.errors.webpage_url_required</source>
+        <target>La URL de la página web es obligatoria cuando se selecciona "Enviar una página web".</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.save_failed" resname="campaign_edit.errors.save_failed">
+        <source>campaign_edit.errors.save_failed</source>
+        <target>No se pudo guardar la campaña.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.save_before_queue" resname="campaign_edit.errors.save_before_queue">
+        <source>campaign_edit.errors.save_before_queue</source>
+        <target>La campaña debe guardarse antes de encolarla.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.queue_failed" resname="campaign_edit.errors.queue_failed">
+        <source>campaign_edit.errors.queue_failed</source>
+        <target>No se pudo poner la campaña en cola.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.no_test_recipient" resname="campaign_edit.errors.no_test_recipient">
+        <source>campaign_edit.errors.no_test_recipient</source>
+        <target>Introduzca al menos un correo de destinatario de prueba.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.save_before_test" resname="campaign_edit.errors.save_before_test">
+        <source>campaign_edit.errors.save_before_test</source>
+        <target>Guarde la campaña antes de enviar una prueba.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.errors.test_failed" resname="campaign_edit.errors.test_failed">
+        <source>campaign_edit.errors.test_failed</source>
+        <target>No se pudo enviar la campaña de prueba.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.success.saved" resname="campaign_edit.success.saved">
+        <source>campaign_edit.success.saved</source>
+        <target>Campaña guardada correctamente.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.success.queued" resname="campaign_edit.success.queued">
+        <source>campaign_edit.success.queued</source>
+        <target>La campaña se ha puesto en cola para enviarse.</target>
+      </trans-unit>
+      <trans-unit id="campaign_edit.success.test_sent" resname="campaign_edit.success.test_sent">
+        <source>campaign_edit.success.test_sent</source>
+        <target>Campaña de prueba enviada correctamente.</target>
+      </trans-unit>
       <trans-unit id="stuck_campaigns.title" resname="stuck_campaigns.title">
         <source>stuck_campaigns.title</source>
         <target>Campañas atascadas</target>

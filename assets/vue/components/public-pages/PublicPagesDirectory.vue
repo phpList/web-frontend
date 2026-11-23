@@ -1,9 +1,9 @@
 <template>
-  <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-    <header class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Subscribe Pages</h2>
+  <section class="bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+    <header class="p-4 sm:p-6 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ t('public_pages.title') }}</h2>
       <BaseButton variant="accent" icon="plus" :disabled="isLoading" @click="handleCreatePage">
-        Add New Subscribe Page
+        {{ t('public_pages.add') }}
       </BaseButton>
     </header>
 
@@ -11,23 +11,23 @@
         :items="subscribePages"
         :is-loading="isLoading"
         :load-error="loadError"
-        loading-message="Loading subscribe pages..."
-        empty-message="No subscribe pages found."
+        :loading-message="t('public_pages.loading')"
+        :empty-message="t('public_pages.empty')"
         :colspan="6"
     >
       <template #head>
-        <th class="px-6 py-4">ID</th>
-        <th class="px-6 py-4">Title</th>
-        <th class="px-6 py-4">Owner</th>
-        <th class="px-6 py-4">Default</th>
-        <th class="px-6 py-4">Active</th>
-        <th class="px-6 py-4 text-right">Actions</th>
+        <th class="px-6 py-4">{{ t('public_pages.table.id') }}</th>
+        <th class="px-6 py-4">{{ t('public_pages.table.title') }}</th>
+        <th class="px-6 py-4">{{ t('public_pages.table.owner') }}</th>
+        <th class="px-6 py-4">{{ t('public_pages.table.default') }}</th>
+        <th class="px-6 py-4">{{ t('public_pages.table.active') }}</th>
+        <th class="px-6 py-4 text-right">{{ t('public_pages.table.actions') }}</th>
       </template>
 
       <template #row="{ item: page }">
-        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ page.id }}</td>
-        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</td>
-        <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ page.owner?.loginName || page.owner?.email || 'No owner' }}</td>
+        <td class="px-6 py-4 text-slate-600 dark:text-slate-350">{{ page.id }}</td>
+        <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ page.title || t('public_pages.fallback_title', { id: page.id }) }}</td>
+        <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ page.owner?.loginName || page.owner?.email || t('public_pages.no_owner') }}</td>
         <td class="px-6 py-4">
           <label class="inline-flex items-center cursor-pointer">
             <input
@@ -53,15 +53,15 @@
         <td colspan="5" class="px-6 py-3">
           <div class="flex flex-wrap items-center justify-end gap-2">
             <ActionButton variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
-              Preview
+              {{ t('public_pages.preview') }}
             </ActionButton>
 
             <ActionButton icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
-              Edit
+              {{ t('common.edit') }}
             </ActionButton>
 
             <ActionButton variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
-              Delete
+              {{ t('common.delete') }}
             </ActionButton>
           </div>
         </td>
@@ -70,12 +70,12 @@
       <template #card="{ item: page }">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">#{{ page.id }}</p>
-            <p class="font-semibold text-slate-900 dark:text-slate-100">{{ page.title || `Subscribe page #${page.id}` }}</p>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {{ page.owner?.loginName || page.owner?.email || 'No owner' }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-350">#{{ page.id }}</p>
+            <p class="font-semibold text-slate-900 dark:text-slate-100">{{ page.title || t('public_pages.fallback_title', { id: page.id }) }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-350 mt-1">{{ t('public_pages.owner_label', { owner: page.owner?.loginName || page.owner?.email || t('public_pages.no_owner') }) }}</p>
           </div>
-          <div class="text-xs text-slate-500 dark:text-slate-400">
-            {{ isRowBusy(page.id) ? 'Updating...' : '' }}
+          <div class="text-xs text-slate-500 dark:text-slate-350">
+            {{ isRowBusy(page.id) ? t('common.updating') : '' }}
           </div>
         </div>
 
@@ -88,7 +88,7 @@
               :disabled="isRowBusy(page.id)"
               @change="handleSetDefault(page)"
             >
-            Default
+            {{ t('public_pages.table.default') }}
           </label>
 
           <label class="inline-flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
@@ -99,21 +99,21 @@
               :disabled="isRowBusy(page.id)"
               @change="handleToggleActive(page, $event)"
             >
-            Active
+            {{ t('public_pages.table.active') }}
           </label>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <ActionButton block variant="info" icon="eye" :disabled="isRowBusy(page.id)" @click="handlePreview(page)">
-            Preview
+            {{ t('public_pages.preview') }}
           </ActionButton>
 
           <ActionButton block icon="edit" :disabled="isRowBusy(page.id)" @click="handleEdit(page)">
-            Edit
+            {{ t('common.edit') }}
           </ActionButton>
 
           <ActionButton block variant="danger" icon="delete" :disabled="isRowBusy(page.id)" @click="handleDelete(page)">
-            Delete
+            {{ t('common.delete') }}
           </ActionButton>
         </div>
       </template>
@@ -124,12 +124,14 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Requests } from '@tatevikgr/rest-api-client'
 import BaseButton from '../base/BaseButton.vue'
 import ActionButton from '../base/ActionButton.vue'
 import BaseDataTable from '../base/BaseDataTable.vue'
 import { subscribePagesClient } from '../../api'
 
+const { t } = useI18n()
 const router = useRouter()
 const subscribePages = ref([])
 const isLoading = ref(false)
@@ -167,7 +169,7 @@ const loadSubscribePages = async () => {
   } catch (error) {
     console.error('Failed to load subscribe pages:', error)
     subscribePages.value = []
-    loadError.value = error?.message || 'Failed to load subscribe pages.'
+    loadError.value = error?.message || t('public_pages.errors.load_failed')
   } finally {
     isLoading.value = false
   }
@@ -200,7 +202,7 @@ const handleEdit = async (page) => {
 }
 
 const handleDelete = async (page) => {
-  const confirmed = window.confirm(`Delete subscribe page "${page.title || `#${page.id}`}"?`)
+  const confirmed = window.confirm(t('public_pages.delete_confirm', { title: page.title || `#${page.id}` }))
   if (!confirmed) {
     return
   }
@@ -211,7 +213,7 @@ const handleDelete = async (page) => {
       await loadSubscribePages()
     } catch (error) {
       console.error('Failed to delete subscribe page:', error)
-      window.alert(error?.message || 'Failed to delete subscribe page.')
+      window.alert(error?.message || t('public_pages.errors.delete_failed'))
     }
   })
 }
@@ -228,7 +230,7 @@ const handleToggleActive = async (page, event) => {
       page.active = checked
     } catch (error) {
       console.error('Failed to update subscribe page active state:', error)
-      window.alert(error?.message || 'Failed to update active state.')
+      window.alert(error?.message || t('public_pages.errors.active_failed'))
     }
   })
 }

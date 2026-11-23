@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import StuckCampaignsList from '../../../../../../assets/vue/components/campaigns/StuckCampaignsList.vue'
 import { campaignClient } from '../../../../../../assets/vue/api'
 
@@ -31,8 +31,16 @@ const mountComponent = () =>
     })
 
 describe('StuckCampaignsList', () => {
+    let consoleErrorSpy
+
     beforeEach(() => {
         vi.clearAllMocks()
+        // Tests here make the API fail on purpose; the component logs those errors.
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore()
     })
 
     it('loads and renders stuck campaigns on mount', async () => {

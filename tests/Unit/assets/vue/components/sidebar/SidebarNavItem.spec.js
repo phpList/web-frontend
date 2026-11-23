@@ -20,7 +20,7 @@ vi.mock('vue-router', () => ({
 
 const BaseIconStub = {
     name: 'BaseIcon',
-    props: ['name', 'active'],
+    props: { name: String, active: Boolean, inheritColor: Boolean },
     template: '<span class="base-icon" />',
 }
 
@@ -96,14 +96,14 @@ describe('SidebarNavItem', () => {
         expect(icon.props('name')).toBe('grid')
     })
 
-    it('passes active state to BaseIcon', () => {
+    it('lets the icon inherit the link text color', () => {
         const wrapper = createWrapper({
             active: true,
         })
 
         const icon = wrapper.findComponent(BaseIconStub)
 
-        expect(icon.props('active')).toBe(true)
+        expect(icon.props('inheritColor')).toBe(true)
     })
 
     it('applies active styling when active', () => {
@@ -112,10 +112,10 @@ describe('SidebarNavItem', () => {
         })
 
         expect(wrapper.find('a').classes())
-            .toContain('bg-indigo-50')
+            .toContain('bg-white/15')
 
         expect(wrapper.find('a').classes())
-            .toContain('text-ext-wf3')
+            .toContain('text-white')
     })
 
     it('applies inactive styling when inactive', () => {
@@ -124,10 +124,10 @@ describe('SidebarNavItem', () => {
         })
 
         expect(wrapper.find('a').classes())
-            .toContain('text-slate-600')
+            .toContain('text-slate-100')
 
         expect(wrapper.find('a').classes())
-            .toContain('hover:bg-slate-50')
+            .toContain('hover:bg-slate-600')
     })
 
     it('renders badge when present', () => {

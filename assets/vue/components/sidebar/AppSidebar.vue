@@ -8,14 +8,48 @@
     ></div>
 
     <aside
-        class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 w-64 z-50 transform transition-transform duration-300 lg:inset-auto lg:sticky lg:top-0 lg:self-start lg:h-screen lg:translate-x-0"
-        :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        class="fixed inset-y-0 left-0 bg-slate-500 dark:bg-slate-950 border-r border-slate-600 dark:border-slate-800 w-64 z-50 transform transition-all duration-300 lg:inset-auto lg:sticky lg:top-0 lg:self-start lg:h-screen lg:translate-x-0"
+        :class="[isSidebarOpen ? 'translate-x-0' : '-translate-x-full', isSidebarCollapsed ? 'lg:w-16' : '']"
     >
       <div class="flex flex-col h-full">
-        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-700">
-          <SidebarLogo />
+        <div
+            class="h-16 flex items-center justify-between px-6 border-b border-slate-600 dark:border-slate-800"
+            :class="isSidebarCollapsed ? 'lg:justify-center lg:px-0' : ''"
+        >
+          <SidebarLogo :class="isSidebarCollapsed ? 'lg:hidden' : ''" />
+
+          <!-- Desktop: collapse sidebar -->
           <button
-              class="lg:hidden p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400"
+              type="button"
+              class="hidden lg:block p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200"
+              :class="isSidebarCollapsed ? 'lg:hidden' : ''"
+              :aria-label="t('sidebar.collapse')"
+              :title="t('sidebar.collapse')"
+              @click="toggleCollapsed"
+          >
+            <BaseIcon name="sidebar" inherit-color />
+          </button>
+
+          <!-- Desktop, collapsed: logo becomes the expand button on hover -->
+          <button
+              v-if="isSidebarCollapsed"
+              type="button"
+              class="group hidden lg:flex w-9 h-9 items-center justify-center rounded-lg text-slate-100 hover:bg-slate-600 dark:text-slate-350 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+              :aria-label="t('sidebar.expand')"
+              :title="t('sidebar.expand')"
+              @click="toggleCollapsed"
+          >
+            <span class="w-8 h-8 rounded-full flex items-center justify-center bg-white/60 dark:bg-transparent group-hover:hidden">
+              <img :src="logo" :alt="t('sidebar.logo_alt')" class="w-full h-full block" style="object-fit: contain;" />
+            </span>
+            <span class="hidden group-hover:flex">
+              <BaseIcon name="sidebar" inherit-color />
+            </span>
+          </button>
+          <button
+              type="button"
+              :aria-label="t('sidebar.close')"
+              class="lg:hidden p-1.5 hover:bg-slate-600 dark:hover:bg-slate-800 rounded-lg text-slate-100 hover:text-white dark:text-slate-350 dark:hover:text-slate-200"
               @click="closeSidebar"
           >
             <BaseIcon name="close" />
@@ -23,13 +57,49 @@
         </div>
 
         <!-- Navigation area -->
-        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto overflow-x-hidden"
+             :class="isSidebarCollapsed ? 'lg:px-2' : ''">
           <SidebarNavSection
               v-for="section in visibleSections"
               :key="section.id"
               v-bind="section"
           />
         </nav>
+
+        <!-- Current admin + logout -->
+        <div class="border-t border-slate-600 dark:border-slate-800 px-4 py-4" :class="isSidebarCollapsed ? 'lg:px-2' : ''" data-testid="sidebar-user">
+          <div
+              class="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-600 dark:hover:bg-slate-800"
+              :class="isSidebarCollapsed ? 'lg:flex-col lg:px-0 lg:gap-2' : ''"
+          >
+            <div
+                class="shrink-0 h-9 w-9 rounded-full bg-slate-700 dark:bg-slate-800 border border-slate-400/40 dark:border-slate-700 flex items-center justify-center text-sm font-bold text-white uppercase transition-colors group-hover:border-slate-300"
+                data-testid="sidebar-avatar"
+                aria-hidden="true"
+            >
+              {{ adminInitial }}
+            </div>
+            <div class="min-w-0 flex-1 flex flex-col" :class="isSidebarCollapsed ? 'lg:hidden' : ''">
+              <span class="text-sm font-bold text-slate-100 leading-none truncate">
+                {{ adminName }}
+              </span>
+              <span class="text-[10px] text-slate-100 dark:text-slate-350 mt-1">
+                {{ adminData.super_user ? t('sidebar.role.super_admin') : t('sidebar.role.administrator') }}
+              </span>
+            </div>
+            <form method="post" action="/logout" class="shrink-0 m-0" data-testid="logout-form">
+              <input type="hidden" name="_token" :value="logoutToken" />
+              <button
+                  type="submit"
+                  class="p-2 rounded-lg text-slate-100 hover:text-white hover:bg-slate-500 dark:text-slate-350 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  :aria-label="t('sidebar.logout')"
+                  :title="t('sidebar.logout')"
+              >
+                <BaseIcon name="logout" inherit-color />
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </aside>
   </div>
@@ -37,59 +107,72 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import SidebarLogo from './SidebarLogo.vue'
 import SidebarNavSection from './SidebarNavSection.vue'
 import BaseIcon from '../base/BaseIcon.vue'
+import logo from '../../../images/logo-48.png'
 import { useSidebar } from '../../composables/useSidebar'
 import { useCurrentAdmin } from '../../composables/useCurrentAdmin'
 
-const { isSidebarOpen, closeSidebar } = useSidebar()
-const { loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
+const { t } = useI18n()
+const { isSidebarOpen, isSidebarCollapsed, toggleCollapsed, closeSidebar } = useSidebar()
+const { adminData, loadCurrentAdmin, hasPrivilege } = useCurrentAdmin()
 
 onMounted(loadCurrentAdmin)
+
+const adminName = computed(() => adminData.value?.login_name || t('sidebar.admin_fallback'))
+// CSRF token for the POST /logout form, rendered by spa.html.twig
+const logoutToken = document.getElementById('vue-app')?.dataset.logoutToken ?? ''
+const adminInitial = computed(() => adminName.value.trim().charAt(0) || 'A')
 
 const sections = [
   {
     id: 'general',
-    label: 'General',
+    labelKey: 'sidebar.section.general',
     items: [
-      { label: 'Dashboard', icon: 'grid', route: '/', badge: null },
-      { label: 'Subscribers', icon: 'users', route: '/subscribers', requiredPrivilege: 'subscribers' },
-      { label: 'Lists', icon: 'list', route: '/lists' },
+      { labelKey: 'sidebar.nav.dashboard', icon: 'grid', route: '/', badge: null },
+      { labelKey: 'sidebar.nav.subscribers', icon: 'users', route: '/subscribers', requiredPrivilege: 'subscribers' },
+      { labelKey: 'sidebar.nav.lists', icon: 'list', route: '/lists' },
     ],
   },
   {
     id: 'marketing',
-    label: 'Marketing',
+    labelKey: 'sidebar.section.marketing',
     items: [
-      { label: 'Campaigns', icon: 'plane', route: '/campaigns', requiredPrivilege: 'campaigns' },
-      { label: 'Stuck Campaigns', icon: 'warning', route: '/campaigns/stuck', requiredPrivilege: 'campaigns' },
-      { label: 'Templates', icon: 'template', route: '/templates' },
+      { labelKey: 'sidebar.nav.campaigns', icon: 'plane', route: '/campaigns', requiredPrivilege: 'campaigns' },
+      { labelKey: 'sidebar.nav.stuck_campaigns', icon: 'warning', route: '/campaigns/stuck', requiredPrivilege: 'campaigns' },
+      { labelKey: 'sidebar.nav.templates', icon: 'template', route: '/templates' },
     ],
   },
   {
     id: 'reports',
-    label: 'Reports',
+    labelKey: 'sidebar.section.reports',
     items: [
-      { label: 'Bounces', icon: 'warning', route: '/bounces' },
-      { label: 'Analytics', icon: 'chart', route: '/analytics', requiredPrivilege: 'statistics' },
+      { labelKey: 'sidebar.nav.bounces', icon: 'warning', route: '/bounces' },
+      { labelKey: 'sidebar.nav.analytics', icon: 'chart', route: '/analytics', requiredPrivilege: 'statistics' },
     ],
   },
   {
     id: 'system',
-    label: 'System',
+    labelKey: 'sidebar.section.system',
     items: [
-      { label: 'Settings', icon: 'settings', route: '/settings', requiredPrivilege: 'settings' },
-      { label: 'Public pages', icon: 'public', route: '/public' },
+      { labelKey: 'sidebar.nav.settings', icon: 'settings', route: '/settings', requiredPrivilege: 'settings' },
+      { labelKey: 'sidebar.nav.public_pages', icon: 'public', route: '/public' },
     ],
   },
 ]
 
+// Labels are translated here (not in the static config) so they react to locale changes.
+const translateLabel = ({ labelKey, ...rest }) => ({ ...rest, label: t(labelKey) })
+
 const visibleSections = computed(() =>
   sections
     .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => hasPrivilege(item.requiredPrivilege)),
+      ...translateLabel(section),
+      items: section.items
+        .filter((item) => hasPrivilege(item.requiredPrivilege))
+        .map(translateLabel),
     }))
     .filter((section) => section.items.length > 0)
 )

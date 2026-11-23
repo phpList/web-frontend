@@ -1,13 +1,13 @@
 <template>
   <BaseModal
       :is-open="isViewModalOpen"
-      :title="`Campaign details: ${campaign?.id || '-'}`"
+      :title="t('campaigns.view.title', { id: campaign?.id || '-' })"
       max-width="2xl"
       @close="emit('close')"
   >
       <div class="p-5">
-        <p v-if="isViewLoading" class="text-sm text-slate-500 dark:text-slate-400">
-          Loading campaign...
+        <p v-if="isViewLoading" class="text-sm text-slate-500 dark:text-slate-350">
+          {{ t('campaigns.view.loading') }}
         </p>
 
         <p v-else-if="viewErrorMessage" class="text-sm text-red-600 dark:text-red-400">
@@ -16,51 +16,51 @@
 
         <div v-else-if="campaign" class="space-y-2 text-sm text-slate-700 dark:text-slate-200">
           <p>
-            <span class="font-medium text-slate-900 dark:text-slate-100">Subject:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.subject') }}</span>
             {{ campaign?.messageContent?.subject || '-' }}
           </p>
 
           <p>
-            <span class="font-medium text-slate-900 dark:text-slate-100">Entered:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.entered') }}</span>
             {{ formatDate(campaign?.messageMetadata?.entered || null) }}
           </p>
 
           <p>
-            <span class="font-medium text-slate-900 dark:text-slate-100">From:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.from') }}</span>
             {{ campaign?.messageOptions?.fromField || '-' }}
           </p>
 
           <div class="pt-2">
-            <p class="font-medium text-slate-900 dark:text-slate-100">HTML content</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
+            <p class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.html_content') }}</p>
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-350 whitespace-pre-wrap">{{
                 campaign?.messageContent?.text || '-'
               }}</pre>
           </div>
 
           <div class="pt-2">
-            <p class="font-medium text-slate-900 dark:text-slate-100">Text content</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
+            <p class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.text_content') }}</p>
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-350 whitespace-pre-wrap">{{
                 campaign?.messageContent?.textMessage || '-'
               }}</pre>
           </div>
 
           <div class="pt-2">
-            <p class="font-medium text-slate-900 dark:text-slate-100">Footer</p>
-            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{
+            <p class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.footer') }}</p>
+            <pre class="mt-1 max-h-52 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 text-xs text-slate-700 dark:text-slate-350 whitespace-pre-wrap">{{
                 campaign?.messageContent?.footer || '-'
               }}</pre>
           </div>
 
           <p v-if="campaign?.messageSchedule?.requeueInterval || campaign?.messageSchedule?.repeatInterval">
-            <span class="font-medium text-slate-900 dark:text-slate-100">Requeueing:</span>
+            <span class="font-medium text-slate-900 dark:text-slate-100">{{ t('campaigns.view.requeueing') }}</span>
             {{ getMessage(campaign?.messageSchedule) }}
           </p>
 
           <div class="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
             <p class="mb-2 font-medium text-slate-900 dark:text-slate-100">
-              Resend campaign
-              <span class="ml-2 text-xs font-light text-slate-600 dark:text-slate-300">
-                Choose mailing lists
+              {{ t('campaigns.view.resend') }}
+              <span class="ml-2 text-xs font-light text-slate-600 dark:text-slate-350">
+                {{ t('campaigns.view.choose_lists') }}
               </span>
             </p>
 
@@ -85,8 +85,8 @@
                     <span>{{ list.name }}</span>
                   </label>
 
-                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500 dark:text-slate-400">
-                    No mailing lists found.
+                  <p v-if="mailingLists.length === 0" class="py-1 text-slate-500 dark:text-slate-350">
+                    {{ t('campaigns.view.no_lists') }}
                   </p>
                 </div>
               </div>
@@ -97,7 +97,7 @@
                   :disabled="selectedMailingListIds.length === 0 || isResending"
                   @click="handleResend"
               >
-                {{ isResending ? 'Sending...' : 'Send to lists' }}
+                {{ isResending ? t('campaigns.view.sending') : t('campaigns.view.send_to_lists') }}
               </button>
             </div>
 
@@ -107,8 +107,8 @@
           </div>
         </div>
 
-        <p v-else class="text-sm text-slate-500 dark:text-slate-400">
-          No campaign selected.
+        <p v-else class="text-sm text-slate-500 dark:text-slate-350">
+          {{ t('campaigns.view.none_selected') }}
         </p>
       </div>
   </BaseModal>
@@ -116,7 +116,10 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseModal from '../base/BaseModal.vue'
+
+const { t, locale } = useI18n()
 
 const props = defineProps({
   isViewModalOpen: {
@@ -175,7 +178,7 @@ function handleResend() {
 
 function getMessage(schedule) {
   const interval = schedule.requeueInterval ?? schedule.repeatInterval
-  if (!interval) return 'Invalid interval'
+  if (!interval) return t('campaigns.view.invalid_interval')
 
   const untilValue = schedule.requeueUntil ?? schedule.repeatUntil
   const end = new Date(
@@ -184,7 +187,7 @@ function getMessage(schedule) {
           : untilValue
   )
 
-  if (isNaN(end)) return 'Invalid date'
+  if (isNaN(end)) return t('campaigns.view.invalid_date')
 
   const minutes = end.getMinutes()
   const flooredMinutes = minutes - (minutes % interval)
@@ -192,7 +195,7 @@ function getMessage(schedule) {
   const final = new Date(end)
   final.setMinutes(flooredMinutes, 0, 0)
 
-  return `every ${interval} minutes until ${final.toLocaleString()}`
+  return t('campaigns.view.requeue_summary', { interval, until: final.toLocaleString(locale.value) })
 }
 
 function formatDate(value) {
@@ -201,6 +204,6 @@ function formatDate(value) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '-'
 
-  return date.toLocaleString()
+  return date.toLocaleString(locale.value)
 }
 </script>

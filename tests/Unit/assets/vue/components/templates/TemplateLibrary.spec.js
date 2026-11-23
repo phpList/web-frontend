@@ -29,9 +29,12 @@ const BaseIconStub = {
 
 describe('TemplateLibrary', () => {
     const originalConfirm = window.confirm
+    let consoleErrorSpy
     beforeEach(() => {
         vi.clearAllMocks()
         window.confirm = vi.fn()
+        // Several tests make the API fail on purpose; the component logs those errors.
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
         templateClient.getTemplates.mockResolvedValue({
             items: [],
@@ -40,6 +43,7 @@ describe('TemplateLibrary', () => {
 
     afterEach(() => {
         window.confirm = originalConfirm
+        consoleErrorSpy.mockRestore()
     })
 
     const createWrapper = () =>

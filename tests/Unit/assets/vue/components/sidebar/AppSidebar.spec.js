@@ -9,6 +9,7 @@ const isSidebarOpen = ref(false)
 const closeSidebar = vi.fn()
 const loadCurrentAdmin = vi.fn()
 let hasPrivilege = vi.fn(() => true)
+const adminData = ref({ login_name: 'jane', super_user: true })
 
 vi.mock('../../../../../../assets/vue/composables/useSidebar', () => ({
     useSidebar: () => ({
@@ -19,6 +20,7 @@ vi.mock('../../../../../../assets/vue/composables/useSidebar', () => ({
 
 vi.mock('../../../../../../assets/vue/composables/useCurrentAdmin', () => ({
     useCurrentAdmin: () => ({
+        adminData,
         loadCurrentAdmin,
         hasPrivilege: (...args) => hasPrivilege(...args),
     }),
@@ -190,9 +192,9 @@ describe('AppSidebar', () => {
     it('closes sidebar when close button is clicked', async () => {
         const wrapper = createWrapper()
 
-        const buttons = wrapper.findAll('button')
-
-        await buttons[0].trigger('click')
+        await wrapper
+            .find('button[aria-label="Close sidebar"]')
+            .trigger('click')
 
         expect(closeSidebar)
             .toHaveBeenCalledTimes(1)
@@ -212,5 +214,35 @@ describe('AppSidebar', () => {
         expect(
             wrapper.find('aside').classes()
         ).toContain('translate-x-0')
+    })
+
+    it('shows the admin name, role and logout link at the bottom', () => {
+        const wrapper = mount(AppSidebar, { global: { stubs: { SidebarLogo: SidebarLogoStub, BaseIcon: BaseIconStub, SidebarNavSection: SidebarNavSectionStub } } })
+        const user = wrapper.find('[data-testid="sidebar-user"]')
+
+        expect(user.text()).toContain('jane')
+        expect(user.text()).toContain('Super Admin')
+        expect(user.find('[data-testid="sidebar-avatar"]').text()).toBe('j')
+        expect(user.find('form[action="/logout"] button').attributes('aria-label')).toBe('Logout')
+        expect(user.find('form[action="/logout"] button .base-icon').exists()).toBe(true)
+    })
+
+    it('logs out with a CSRF-protected POST, not a GET link', () => {
+        const app = document.createElement('div')
+        app.id = 'vue-app'
+        app.dataset.logoutToken = 'csrf-123'
+        document.body.appendChild(app)
+
+        try {
+            const wrapper = mount(AppSidebar, { global: { stubs: { SidebarLogo: SidebarLogoStub, BaseIcon: BaseIconStub, SidebarNavSection: SidebarNavSectionStub } } })
+            const form = wrapper.find('[data-testid="logout-form"]')
+
+            expect(form.attributes('method')).toBe('post')
+            expect(form.attributes('action')).toBe('/logout')
+            expect(form.find('input[name="_token"]').element.value).toBe('csrf-123')
+            expect(wrapper.find('a[href="/logout"]').exists()).toBe(false)
+        } finally {
+            app.remove()
+        }
     })
 })

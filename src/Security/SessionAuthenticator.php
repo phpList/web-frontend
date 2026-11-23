@@ -7,6 +7,11 @@ namespace PhpList\WebFrontend\Security;
 use PhpList\WebFrontend\Trait\LoginUrlBuilderTrait;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use PhpList\WebFrontend\Trait\SessionExpiredResponseTrait;
+use DateTimeImmutable;
+use Exception;
+use Psr\Clock\ClockInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,8 +49,14 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
         '/robots.txt',
     ];
 
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    private readonly LoggerInterface $logger;
+
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        ?LoggerInterface $logger = null,
+        private readonly ?ClockInterface $clock = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function supports(Request $request): ?bool
@@ -68,11 +79,23 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
     public function authenticate(Request $request): Passport
     {
         if (!$request->hasSession()) {
+            $this->logger->debug('Auth rejected: no session available', ['uri' => $request->getRequestUri()]);
+
             throw new AuthenticationException('Session is not available');
         }
         $session = $request->getSession();
 
         if ($session->has('auth_token')) {
+            if ($this->isAuthenticationExpired($session->get('auth_expiry_date'))) {
+                // Drop the stale credentials, otherwise /login would see the token and bounce straight back.
+                foreach (['auth_token', 'auth_expiry_date', 'auth_id', 'admin_id'] as $key) {
+                    $session->remove($key);
+                }
+                $this->logger->debug('Auth rejected: API token expired', ['uri' => $request->getRequestUri()]);
+
+                throw new AuthenticationException('Authentication token expired');
+            }
+
             // Build a simple user granted ROLE_ADMIN when a session token exists
             $userBadge = new UserBadge('session-user', function (): InMemoryUser {
                 return new InMemoryUser('session-user', '', ['ROLE_ADMIN']);
@@ -80,6 +103,13 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
 
             return new SelfValidatingPassport($userBadge);
         }
+
+        $this->logger->debug('Auth rejected: no auth_token in session', [
+            'uri' => $request->getRequestUri(),
+            'session_cookie_sent' => $request->cookies->has($session->getName()),
+            'session_id_hash' => substr(hash('sha256', $session->getId()), 0, 8),
+            'session_started' => $session->isStarted(),
+        ]);
 
         throw new AuthenticationException('No auth token in session');
     }
@@ -103,6 +133,27 @@ class SessionAuthenticator extends AbstractAuthenticator implements Authenticati
         }
 
         return new RedirectResponse($loginUrl);
+    }
+
+    /**
+     * The API remains the authority on token validity; this only stops the app from treating a token as
+     * valid after the expiry it handed out at login. A missing or unparseable date is not enforced.
+     */
+    private function isAuthenticationExpired(mixed $expiryDate): bool
+    {
+        if (!is_string($expiryDate) || $expiryDate === '') {
+            return false;
+        }
+
+        try {
+            $expiry = new DateTimeImmutable($expiryDate);
+        } catch (Exception) {
+            return false;
+        }
+
+        $now = $this->clock?->now() ?? new DateTimeImmutable();
+
+        return $expiry <= $now;
     }
 
     private function matchesPrefix(string $path, string $prefix): bool

@@ -93,8 +93,8 @@ describe('SubscriberDirectory', () => {
         backendFetch.mockResolvedValue({
             json: () =>
                 Promise.resolve({
-                    items: subscribers,
-                    pagination,
+                    items: createSubscribers(),
+                    pagination: createPagination(),
                 }),
         })
     })

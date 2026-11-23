@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 sm:p-6">
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm p-4 sm:p-6">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Configs</h3>
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t('settings.configs.title') }}</h3>
         </div>
 
         <div class="flex items-center gap-2">
           <input
             v-model="filter"
             type="search"
-            placeholder="Search keys..."
+            :placeholder="t('settings.configs.search')"
             class="rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm outline-none transition focus:border-ext-wf1 focus:ring-2 focus:ring-ext-wf2"
           />
           <button
@@ -18,30 +18,30 @@
             type="button"
             @click="loadConfigs"
           >
-            Refresh
+            {{ t('common.refresh') }}
           </button>
         </div>
       </div>
     </div>
 
-    <section class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 mt-4">
-      <div v-if="isLoading" class="text-sm text-slate-500 dark:text-slate-400">Loading configuration keys...</div>
+    <section class="bg-slate-200 dark:bg-slate-800 rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm p-4 mt-4">
+      <div v-if="isLoading" class="text-sm text-slate-500 dark:text-slate-350">{{ t('settings.configs.loading') }}</div>
       <div v-else-if="error" class="text-sm text-red-600 dark:text-red-400">{{ error }}</div>
       <div v-else-if="filtered.length" class="overflow-x-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div v-for="item in filtered" :key="item.key" class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+          <div v-for="item in filtered" :key="item.key" class="border border-slate-300 dark:border-slate-700 rounded-lg p-3">
             <div class="mb-2">
               <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">
                 {{ item.key }}
               </div>
-              <div v-if="item.description" class="text-xs text-slate-500 dark:text-slate-400">
+              <div v-if="item.description" class="text-xs text-slate-500 dark:text-slate-350">
                 {{ item.description }}
               </div>
             </div>
 
             <input
                 v-model="edited[item.key]"
-                :aria-label="`Value for ${item.key}`"
+                :aria-label="t('settings.configs.value_for', { key: item.key })"
                 :readonly="!item.editable"
                 :class="['w-full px-2 py-1.5 text-sm rounded border',item.editable ? 'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-ext-wf1 focus:border-ext-wf1' : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-500 cursor-not-allowed']"
             />
@@ -52,11 +52,11 @@
                   :disabled="saving[item.key] || !item.editable"
                   @click="save(item.key)"
               >
-                {{ saving[item.key] ? '...' : 'Save' }}
+                {{ saving[item.key] ? '...' : t('common.save') }}
               </button>
 
               <button class="px-2 py-1 text-xs rounded border border-slate-300 dark:border-slate-600 dark:text-slate-200" @click="reset(item.key)">
-                Reset
+                {{ t('settings.configs.reset') }}
               </button>
             </div>
 
@@ -70,14 +70,17 @@
           </div>
         </div>
       </div>
-      <div v-else class="text-sm text-slate-500 dark:text-slate-400">No configuration keys found.</div>
+      <div v-else class="text-sm text-slate-500 dark:text-slate-350">{{ t('settings.configs.empty') }}</div>
     </section>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { default as apiClient, configClient } from '../../api'
+
+const { t } = useI18n()
 
 const configs = ref([])
 const isLoading = ref(false)
@@ -103,7 +106,7 @@ const loadConfigs = async () => {
     edited.value = map
   } catch (err) {
     console.error('Failed to load configs', err)
-    error.value = err?.message || 'Failed to load settings.'
+    error.value = err?.message || t('settings.configs.errors.load_failed')
   } finally {
     isLoading.value = false
   }
@@ -128,10 +131,10 @@ const save = async (key) => {
     if (idx !== -1) {
       configs.value[idx] = response || { ...configs.value[idx], value: edited.value[key] }
     }
-    success.value = { ...success.value, [key]: 'Saved' }
+    success.value = { ...success.value, [key]: t('settings.configs.saved') }
   } catch (err) {
     console.error('Failed to save config', key, err)
-    const msg = err?.message || 'Save failed.'
+    const msg = err?.message || t('settings.configs.errors.save_failed')
     errors.value = { ...errors.value, [key]: msg }
   } finally {
     saving.value = { ...saving.value, [key]: false }

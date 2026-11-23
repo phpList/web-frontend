@@ -14,7 +14,7 @@
             <h3 id="editor-asset-picker-title" class="text-sm font-semibold text-slate-900 dark:text-slate-100">
               Choose an existing asset
             </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Pick a file to insert it at the cursor position.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-350">Pick a file to insert it at the cursor position.</p>
           </div>
 
           <button
@@ -46,7 +46,7 @@
         </div>
 
         <div class="max-h-[60vh] overflow-auto">
-          <div v-if="loading" class="px-4 py-8 text-sm text-slate-500 dark:text-slate-400">
+          <div v-if="loading" class="px-4 py-8 text-sm text-slate-500 dark:text-slate-350">
             Loading assets...
           </div>
 
@@ -56,7 +56,7 @@
 
           <table v-else class="w-full table-fixed border-separate border-spacing-0">
             <thead class="sticky top-0 bg-slate-50 dark:bg-slate-800">
-              <tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-350">
                 <th class="w-24 border-b border-slate-200 dark:border-slate-700 px-4 py-3">Preview</th>
                 <th class="border-b border-slate-200 dark:border-slate-700 px-4 py-3">Name</th>
                 <th class="w-32 border-b border-slate-200 dark:border-slate-700 px-4 py-3">Type</th>
@@ -67,7 +67,7 @@
             </thead>
             <tbody>
               <tr v-if="!filteredItems.length">
-                <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-350">
                   No assets found.
                 </td>
               </tr>
@@ -86,22 +86,22 @@
                   >
                   <div
                     v-else
-                    class="flex h-14 w-14 items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400"
+                    class="flex h-14 w-14 items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-350"
                   >
                     {{ extensionLabel(item.fileName) }}
                   </div>
                 </td>
                 <td class="px-4 py-3 align-top">
                   <p class="break-all font-medium text-slate-900 dark:text-slate-100">{{ item.fileName }}</p>
-                  <p class="break-all text-xs text-slate-500 dark:text-slate-400">{{ item.url }}</p>
+                  <p class="break-all text-xs text-slate-500 dark:text-slate-350">{{ item.url }}</p>
                 </td>
-                <td class="px-4 py-3 align-top text-xs uppercase text-slate-500 dark:text-slate-400">
+                <td class="px-4 py-3 align-top text-xs uppercase text-slate-500 dark:text-slate-350">
                   {{ item.mimeType }}
                 </td>
-                <td class="px-4 py-3 align-top text-sm text-slate-600 dark:text-slate-300">
+                <td class="px-4 py-3 align-top text-sm text-slate-600 dark:text-slate-350">
                   {{ formatBytes(item.size) }}
                 </td>
-                <td class="px-4 py-3 align-top text-sm text-slate-600 dark:text-slate-300">
+                <td class="px-4 py-3 align-top text-sm text-slate-600 dark:text-slate-350">
                   {{ formatDate(item.modifiedAt) }}
                 </td>
                 <td class="px-4 py-3 align-top text-right">
@@ -118,9 +118,9 @@
           </table>
         </div>
 
-        <div class="flex items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+        <div class="flex items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-600 dark:text-slate-350">
           <span>{{ filteredItems.length }} asset{{ filteredItems.length === 1 ? '' : 's' }}</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400">Choose a row to insert it immediately.</span>
+          <span class="text-xs text-slate-500 dark:text-slate-350">Choose a row to insert it immediately.</span>
         </div>
       </div>
     </div>

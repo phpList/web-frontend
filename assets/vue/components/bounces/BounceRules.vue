@@ -1,81 +1,78 @@
 <template>
   <div class="space-y-6 pb-4">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div>
-        <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Bounce Rules</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-          Rules are evaluated top-to-bottom. Drag to reorder priority.
-        </p>
-      </div>
-      <button
-        type="button"
-        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
-        @click="openCreateModal"
-      >
-        New Rule
-      </button>
-    </div>
-
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="hidden md:grid px-5 py-3.5 border-b border-slate-100 dark:border-slate-700 grid-cols-12 gap-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-        <span class="col-span-1 hidden md:block">#</span>
-        <span class="col-span-4 md:col-span-3">Rule</span>
-        <span class="col-span-4 md:col-span-3">Pattern</span>
-        <span class="col-span-4 md:col-span-2">Action</span>
-        <span class="col-span-1 hidden md:block text-right">Hits</span>
-        <span class="col-span-4 md:col-span-2 text-right">Status</span>
-      </div>
-
-      <div
-          v-for="rule in allBounceRules"
-          :key="rule.id"
-          class="border-b last:border-b-0 border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
-      >
-        <div class="md:hidden px-5 py-4 space-y-1.5 text-sm">
-          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Rule -</span> <span class="text-slate-900 dark:text-slate-100 min-w-0 break-words">{{ rule.comment }}</span></p>
-          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Pattern -</span> <span class="font-mono text-xs text-slate-500 dark:text-slate-400 min-w-0 break-all">{{ rule.regex }}</span></p>
-          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Action -</span> <span :class="rule.actionClass" class="text-xs font-medium min-w-0 break-words">{{ rule.action }}</span></p>
-          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Hits -</span> <span class="text-slate-700 dark:text-slate-200 min-w-0 break-words">{{ rule.count }}</span></p>
-          <p class="flex items-start gap-1"><span class="font-medium text-slate-700 dark:text-slate-200 shrink-0">Status -</span> <span class="capitalize min-w-0 break-words">{{ rule.status }}</span></p>
+    <div class="bg-slate-200 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ t('bounces.rules.title') }}</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-350 mt-0.5">
+            {{ t('bounces.rules.description') }}
+          </p>
         </div>
+        <button
+          type="button"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          @click="openCreateModal"
+        >
+          {{ t('bounces.rules.new') }}
+        </button>
+      </div>
 
-        <div class="hidden md:grid md:grid-cols-12 md:gap-4 px-5 py-4 items-center">
-          <span class="col-span-1 text-xs font-mono text-slate-400 dark:text-slate-500">{{ rule.list_order }}</span>
-          <div class="col-span-3">
-          <p class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ rule.comment }}</p>
-          </div>
-          <p class="col-span-3 text-xs font-mono text-slate-500 dark:text-slate-400" :title="rule.pattern">{{ rule.regex }}</p>
-          <span class="col-span-2">
+      <BaseDataTable
+          :items="allBounceRules"
+          :is-loading="isLoading"
+          :loading-message="t('bounces.rules.loading')"
+          :empty-message="t('bounces.rules.empty')"
+          :colspan="6"
+      >
+        <template #head>
+          <th class="px-6 py-4">#</th>
+          <th class="px-6 py-4">{{ t('bounces.rules.rule') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.rules.pattern') }}</th>
+          <th class="px-6 py-4">{{ t('bounces.rules.action') }}</th>
+          <th class="px-6 py-4 text-right">{{ t('bounces.rules.hits') }}</th>
+          <th class="px-6 py-4 text-right">{{ t('bounces.table.status') }}</th>
+        </template>
+
+        <template #row="{ item: rule }">
+          <td class="px-6 py-4 text-xs font-mono text-slate-500 dark:text-slate-350">{{ rule.list_order }}</td>
+          <td class="px-6 py-4 text-slate-900 dark:text-slate-100 font-medium">{{ rule.comment }}</td>
+          <td class="px-6 py-4 text-xs font-mono text-slate-600 dark:text-slate-350" :title="rule.pattern">{{ rule.regex }}</td>
+          <td class="px-6 py-4">
             <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="rule.actionClass">{{ rule.action }}</span>
-          </span>
-          <span class="col-span-1 text-right text-sm font-semibold text-slate-700 dark:text-slate-200">{{ rule.count }}</span>
-          <div class="col-span-2 flex justify-end items-center gap-2">
-            <button
-                type="button"
-                class="text-xs px-2 py-1 rounded-md"
-                :class="rule.status === 'active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'"
-            >
-              {{ rule.status }}
-            </button>
-          </div>
-        </div>
-      </div>
+          </td>
+          <td class="px-6 py-4 text-right font-semibold text-slate-700 dark:text-slate-200">{{ rule.count }}</td>
+          <td class="px-6 py-4 text-right">
+            <BaseBadge class="capitalize" :variant="rule.status === 'active' ? 'success' : 'neutral'">
+              {{ statusLabel(rule.status) }}
+            </BaseBadge>
+          </td>
+        </template>
 
-<!--      <div class="px-5 py-3.5 flex items-center justify-between text-xs text-slate-500">-->
-<!--        <span>{{ activeRulesCount }} of {{ bounceRules.length }} rules active</span>-->
-<!--        <button type="button" class="hover:text-slate-700 transition-colors">Export Rules</button>-->
-<!--      </div>-->
+        <template #card="{ item: rule }">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-semibold text-slate-900 dark:text-slate-100 min-w-0 break-words">{{ rule.comment }}</p>
+            <BaseBadge class="capitalize" :variant="rule.status === 'active' ? 'success' : 'neutral'">
+              {{ statusLabel(rule.status) }}
+            </BaseBadge>
+          </div>
+          <p class="text-xs font-mono text-slate-600 dark:text-slate-350 break-all">{{ rule.regex }}</p>
+          <div class="flex items-center justify-between gap-2 text-sm">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="rule.actionClass">{{ rule.action }}</span>
+            <span class="text-slate-700 dark:text-slate-200">{{ t('bounces.rules.hits_label') }} <span class="font-semibold">{{ rule.count }}</span></span>
+          </div>
+        </template>
+      </BaseDataTable>
     </div>
 
     <BaseModal
         :is-open="isCreateModalOpen"
-        title="New Bounce Rule"
+        :title="t('bounces.rules.modal_title')"
         max-width="lg"
         @close="closeCreateModal"
     >
       <form class="px-4 pt-5 pb-4 sm:p-6 space-y-4" @submit.prevent="submitCreateRule">
             <div>
-              <label for="bounce-rule-regex" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Regex</label>
+              <label for="bounce-rule-regex" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('bounces.rules.regex') }}</label>
               <input
                 id="bounce-rule-regex"
                 v-model.trim="createForm.regex"
@@ -87,7 +84,7 @@
             </div>
 
             <div>
-              <label for="bounce-rule-comment" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Comment (optional)</label>
+              <label for="bounce-rule-comment" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('bounces.rules.comment') }}</label>
               <input
                 id="bounce-rule-comment"
                 v-model.trim="createForm.comment"
@@ -99,7 +96,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="bounce-rule-action" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Action</label>
+                <label for="bounce-rule-action" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('bounces.rules.action') }}</label>
                 <select
                   id="bounce-rule-action"
                   v-model="createForm.action"
@@ -111,21 +108,21 @@
               </div>
 
               <div>
-                <label for="bounce-rule-status" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Status</label>
+                <label for="bounce-rule-status" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('bounces.table.status') }}</label>
                 <select
                   id="bounce-rule-status"
                   v-model="createForm.status"
                   :class="fieldInputClass('status', 'mt-1 block w-full rounded-md shadow-sm py-2 px-3 bg-white dark:bg-slate-800 dark:text-slate-100 focus:outline-none sm:text-sm')"
                 >
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
+                  <option value="active">{{ t('bounces.status.active') }}</option>
+                  <option value="inactive">{{ t('bounces.status.inactive') }}</option>
                 </select>
                 <FieldError :messages="fieldErrors('status')" />
               </div>
             </div>
 
             <div>
-              <label for="bounce-rule-order" class="block text-sm font-medium text-slate-700 dark:text-slate-200">List Order (optional)</label>
+              <label for="bounce-rule-order" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('bounces.rules.list_order') }}</label>
               <input
                 id="bounce-rule-order"
                 v-model="createForm.list_order"
@@ -149,16 +146,16 @@
             data-testid="modal-submit"
             @click="submitCreateRule"
         >
-          {{ isCreatingRule ? 'Creating...' : 'Create Rule' }}
+          {{ isCreatingRule ? t('bounces.rules.creating') : t('bounces.rules.create') }}
         </button>
         <button
             type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
             :disabled="isCreatingRule"
             data-testid="modal-cancel"
             @click="closeCreateModal"
         >
-          Cancel
+          {{ t('common.cancel') }}
         </button>
       </template>
     </BaseModal>
@@ -167,16 +164,26 @@
 
 <script setup>
 import {onMounted, ref} from "vue";
+import { useI18n } from 'vue-i18n'
+import BaseBadge from '../base/BaseBadge.vue'
+import BaseDataTable from '../base/BaseDataTable.vue'
 import BaseModal from '../base/BaseModal.vue'
 import FieldError from '../base/FieldError.vue'
 import { bouncesClient} from "../../api";
 import { useApiValidationErrors } from '../../composables/useApiValidationErrors'
 
+const { t } = useI18n()
+
 const KNOWN_FIELDS = ['regex', 'comment', 'action', 'status', 'list_order']
 
 const { fieldErrors, fieldInputClass, generalErrors, fieldErrorsMap, setErrorsFromError, clearErrors, hasFieldErrors } = useApiValidationErrors()
 
+const statusLabel = (status) => (
+  status === 'active' || status === 'inactive' ? t(`bounces.status.${status}`) : status
+)
+
 const allBounceRules = ref([])
+const isLoading = ref(true)
 const isCreateModalOpen = ref(false)
 const isCreatingRule = ref(false)
 const createError = ref('')
@@ -222,6 +229,8 @@ const loadBounceRules = async () => {
   } catch (error) {
     console.error('Failed to fetch bounce rules', error)
     allBounceRules.value = []
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -244,7 +253,7 @@ const submitCreateRule = async () => {
 
   const regex = createForm.value.regex.trim()
   if (!regex) {
-    fieldErrorsMap.value = { regex: ['Regex is required.'] }
+    fieldErrorsMap.value = { regex: [t('bounces.rules.errors.regex_required')] }
     createError.value = ''
     return
   }
@@ -269,7 +278,7 @@ const submitCreateRule = async () => {
     if (!Number.isInteger(parsedListOrder) || parsedListOrder < 0) {
       fieldErrorsMap.value = {
         ...fieldErrorsMap.value,
-        list_order: ['List Order must be a whole number greater than or equal to 0.']
+        list_order: [t('bounces.rules.errors.list_order_invalid')]
       }
       createError.value = ''
       return
@@ -287,7 +296,7 @@ const submitCreateRule = async () => {
     await loadBounceRules()
   } catch (error) {
     setErrorsFromError(error)
-    createError.value = hasFieldErrors.value ? '' : (error?.message ?? 'Failed to create rule.')
+    createError.value = hasFieldErrors.value ? '' : (error?.message ?? t('bounces.rules.errors.create_failed'))
   } finally {
     isCreatingRule.value = false
   }

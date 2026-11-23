@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import CampaignDirectory from '../../../../../../assets/vue/components/campaigns/CampaignDirectory.vue'
 import {
@@ -94,6 +94,7 @@ const makeRouter = async (query = {}) => {
         history: createMemoryHistory(),
         routes: [
             { path: '/', component: { template: '<div />' } },
+            { path: '/campaigns/create', component: { template: '<div />' } },
             { path: '/campaigns/:campaignId/edit', name: 'campaign-edit', component: { template: '<div />' } },
             { path: '/lists/:listId/subscribers', component: { template: '<div />' } },
         ],
@@ -112,8 +113,12 @@ const mountComponent = async (query = {}) => {
     return { wrapper, router }
 }
 
+let consoleErrorSpy
+
 beforeEach(() => {
     vi.clearAllMocks()
+    // Tests here make the API fail on purpose; the component logs those errors.
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     campaignClient.getCampaigns.mockResolvedValue(makePagedResponse([makeCampaign()]))
     campaignClient.getCampaign.mockResolvedValue(makeCampaign())
     campaignClient.updateCampaignStatus.mockResolvedValue({})
@@ -126,10 +131,23 @@ beforeEach(() => {
     statisticsClient.getStatisticsOfViewOpens.mockResolvedValue(makeStatsResponse())
 })
 
+afterEach(() => {
+    consoleErrorSpy.mockRestore()
+})
+
 describe('loading state', () => {
     it('clears loading text after the API resolves', async () => {
         const { wrapper } = await mountComponent()
         expect(wrapper.text()).not.toContain('Loading campaigns...')
+    })
+})
+
+describe('create campaign button', () => {
+    it('links to the create campaign page', async () => {
+        const { wrapper } = await mountComponent()
+        const link = wrapper.findAll('a').find((a) => a.text().includes('Create Campaign'))
+        expect(link).toBeTruthy()
+        expect(link.attributes('href')).toBe('/campaigns/create')
     })
 })
 

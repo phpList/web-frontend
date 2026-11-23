@@ -12,6 +12,7 @@ use PhpList\RestApiClient\Endpoint\PasswordResetClient;
 use PhpList\RestApiClient\Exception\ApiException;
 use PhpList\RestApiClient\Exception\AuthenticationException;
 use PhpList\WebFrontend\Service\AuthenticationService;
+use PhpList\WebFrontend\Service\LoginThrottle;
 use PhpList\WebFrontend\Trait\RedirectValidationTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,12 +25,16 @@ class AuthController extends AbstractController
 {
     use RedirectValidationTrait;
 
+    private const LOGIN_FAILED_MESSAGE = 'Invalid credentials.';
+    private const LOGIN_ERROR_MESSAGE = 'Unable to sign in right now. Please try again later.';
+
     public function __construct(
         private readonly AuthClient $authClient,
         private readonly PasswordResetClient $passwordResetClient,
         private readonly Client $apiClient,
         private readonly AuthenticationService $authenticationService,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly LoginThrottle $throttle,
     ) {
     }
 
@@ -38,36 +43,23 @@ class AuthController extends AbstractController
     {
         $redirectTarget = $this->resolveRedirectTarget($request);
 
+        $this->authenticationService->clearExpiredAuthentication($request);
+
         if ($request->getSession()->has('auth_token')) {
             return $this->redirectAfterLogin($redirectTarget);
         }
 
         $error = $this->authenticationService->consumeLoginError($request);
-        $success = $request->get('reset') === 'success'
+        $success = $request->query->get('reset') === 'success'
             ? 'Your password has been reset successfully. Please sign in.'
             : null;
 
         if ($request->isMethod('POST')) {
-            $username = trim((string) $request->request->get('username', ''));
-            $password = (string) $request->request->get('password', '');
-
-            if ($username === '' || $password === '') {
-                return $this->render('@PhpListFrontend/auth/login.html.twig', [
-                    'error' => 'Username and password are required.',
-                    'redirect' => $redirectTarget,
-                ]);
+            $result = $this->submitLogin($request, $redirectTarget);
+            if ($result instanceof Response) {
+                return $result;
             }
-
-            try {
-                $authData = $this->authClient->login($username, $password);
-                $this->authenticationService->storeAuthentication($request, $authData);
-
-                return $this->redirectAfterLogin($redirectTarget);
-            } catch (GuzzleException $e) {
-                $error = 'Invalid credentials or server error: ' . $e->getMessage();
-            } catch (Exception $e) {
-                $error = $e->getCode() === 401 ? 'Invalid credentials: ' . $e->getMessage() : $e->getMessage();
-            }
+            $error = $result;
         }
 
         return $this->render('@PhpListFrontend/auth/login.html.twig', [
@@ -75,6 +67,49 @@ class AuthController extends AbstractController
             'success' => $success,
             'redirect' => $redirectTarget,
         ]);
+    }
+
+    /**
+     * Handles the login form POST.
+     *
+     * @return Response|string a response to send as-is (redirect, validation or throttling page),
+     *                         or the error message to show on the login form
+     */
+    private function submitLogin(Request $request, ?string $redirectTarget): Response|string
+    {
+        $username = trim((string) $request->request->get('username', ''));
+        $password = (string) $request->request->get('password', '');
+
+        if ($username === '' || $password === '') {
+            return $this->render('@PhpListFrontend/auth/login.html.twig', [
+                'error' => 'Username and password are required.',
+                'success' => null,
+                'redirect' => $redirectTarget,
+            ]);
+        }
+
+        if ($this->throttle->isBlocked($request, LoginThrottle::SCOPE_LOGIN, $username)) {
+            return $this->tooManyAttempts('@PhpListFrontend/auth/login.html.twig', [
+                'redirect' => $redirectTarget,
+            ]);
+        }
+
+        try {
+            $authData = $this->authClient->login($username, $password);
+            $this->authenticationService->storeAuthentication($request, $authData);
+            $this->throttle->reset($request, LoginThrottle::SCOPE_LOGIN, $username);
+            $this->rememberAdminId($request);
+
+            return $this->redirectAfterLogin($redirectTarget);
+        } catch (Exception $e) {
+            // Upstream details (URLs, hosts, response bodies) must not reach the browser.
+            $this->throttle->hit($request, LoginThrottle::SCOPE_LOGIN, $username);
+            $this->logger->error('Login request failed: ' . $e->getMessage());
+
+            $isCredentialsError = $e instanceof GuzzleException || $e->getCode() === 401;
+
+            return $isCredentialsError ? self::LOGIN_FAILED_MESSAGE : self::LOGIN_ERROR_MESSAGE;
+        }
     }
 
     #[Route('/forgot-password', name: 'forgot_password', methods: ['GET', 'POST'])]
@@ -92,7 +127,10 @@ class AuthController extends AbstractController
 
             if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error = 'Please enter a valid email address.';
+            } elseif ($this->throttle->isBlocked($request, LoginThrottle::SCOPE_FORGOT_PASSWORD, $email)) {
+                return $this->tooManyAttempts('@PhpListFrontend/auth/forgot_password.html.twig');
             } else {
+                $this->throttle->hit($request, LoginThrottle::SCOPE_FORGOT_PASSWORD, $email);
                 try {
                     $this->passwordResetClient->request($email);
                 } catch (ApiException $e) {
@@ -122,6 +160,11 @@ class AuthController extends AbstractController
         $invalidTokenError = 'This password reset link is invalid or has expired. Please request a new one.';
 
         if ($request->isMethod('POST')) {
+            if ($this->throttle->isBlocked($request, LoginThrottle::SCOPE_RESET_PASSWORD)) {
+                return $this->tooManyAttempts('@PhpListFrontend/auth/reset_password.html.twig', ['token' => null]);
+            }
+            $this->throttle->hit($request, LoginThrottle::SCOPE_RESET_PASSWORD);
+
             $token = (string) $request->request->get('token', '');
             $newPassword = (string) $request->request->get('newPassword', '');
             $confirmPassword = (string) $request->request->get('confirmPassword', '');
@@ -144,7 +187,7 @@ class AuthController extends AbstractController
             ]);
         }
 
-        $token = (string) $request->get('uniqueId', '');
+        $token = (string) $request->query->get('uniqueId', '');
         if ($token === '' || !$this->authenticationService->isPasswordResetTokenValid($token)) {
             return $this->render('@PhpListFrontend/auth/reset_password.html.twig', [
                 'error' => $invalidTokenError,
@@ -158,12 +201,18 @@ class AuthController extends AbstractController
         ]);
     }
 
-    #[Route('/logout', name: 'logout')]
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
     public function logout(Request $request): Response
     {
-        $request->getSession()->remove('auth_token');
-        $request->getSession()->remove('auth_id');
+        // State-changing, so POST + CSRF token: a cross-site <img src="/logout"> must not be able to sign admins out.
+        if (!$this->isCsrfTokenValid('logout', (string) $request->request->get('_token', ''))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->authenticationService->clearAuthentication($request);
         $this->authClient->logout();
+        // Drop the whole server-side session (and rotate its id), not just the auth keys.
+        $request->getSession()->invalidate();
 
         return $this->redirectToRoute('login');
     }
@@ -216,6 +265,21 @@ class AuthController extends AbstractController
         return new JsonResponse($userData);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    private function tooManyAttempts(string $template, array $parameters = []): Response
+    {
+        $response = $this->render($template, $parameters + [
+            'error' => 'Too many attempts. Please wait a few minutes and try again.',
+            'success' => null,
+        ]);
+        $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
+        $response->headers->set('Retry-After', (string) $this->throttle->getRetryAfterSeconds());
+
+        return $response;
+    }
+
     private function redirectAfterLogin(?string $redirectTarget): Response
     {
         if ($redirectTarget !== null) {
@@ -227,7 +291,7 @@ class AuthController extends AbstractController
 
     private function resolveRedirectTarget(Request $request): ?string
     {
-        $redirectTarget = $request->get('redirect');
+        $redirectTarget = $request->query->get('redirect') ?? $request->request->get('redirect');
         if (!is_string($redirectTarget)) {
             return null;
         }
@@ -238,5 +302,20 @@ class AuthController extends AbstractController
         }
 
         return $this->isSafeRedirectTarget($redirectTarget) ? $redirectTarget : null;
+    }
+
+    /**
+     * The session's "auth_id" is the API session id, so keep the administrator's own id as well.
+     * It identifies whose remembered UI language applies (see LocalePreference).
+     */
+    private function rememberAdminId(Request $request): void
+    {
+        try {
+            $request->getSession()->set('admin_id', $this->authClient->getSessionUser()->id);
+        } catch (Exception $e) {
+            // Best effort (API errors, or a response that cannot be parsed): it must never fail a login that
+            // already succeeded. Without the id the browser's last-used language applies.
+            $this->logger->warning('Unable to load the administrator id after login: ' . $e->getMessage());
+        }
     }
 }

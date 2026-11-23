@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PhpList\WebFrontend\Tests\Unit\Security;
 
+use DateTimeImmutable;
 use PhpList\WebFrontend\Security\SessionAuthenticator;
+use Psr\Clock\ClockInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -101,10 +103,10 @@ class SessionAuthenticatorTest extends TestCase
 
         $this->assertInstanceOf(SelfValidatingPassport::class, $passport);
         $this->assertTrue($passport->hasBadge(UserBadge::class));
-        
+
         $userBadge = $passport->getBadge(UserBadge::class);
         $this->assertEquals('session-user', $userBadge->getUserIdentifier());
-        
+
         $user = $userBadge->getUser();
         $this->assertEquals(['ROLE_ADMIN'], $user->getRoles());
     }
@@ -113,9 +115,9 @@ class SessionAuthenticatorTest extends TestCase
     {
         $request = Request::create('/dashboard');
         $token = $this->createMock(TokenInterface::class);
-        
+
         $response = $this->authenticator->onAuthenticationSuccess($request, $token, 'main');
-        
+
         $this->assertNull($response);
     }
 
@@ -159,5 +161,103 @@ class SessionAuthenticatorTest extends TestCase
         $payload = json_decode($response->getContent(), true);
         $this->assertEquals('session_expired', $payload['error']);
         $this->assertEquals('/login?redirect=%2Fsubscribers%3Ftab%3Doverview', $payload['redirect']);
+    }
+
+    public function testAuthenticateRejectsAndClearsAnExpiredToken(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(true);
+        $session->method('get')->with('auth_expiry_date')->willReturn('2026-03-18T14:15:38+04:00');
+
+        $removed = [];
+        $session->method('remove')->willReturnCallback(function (string $key) use (&$removed): void {
+            $removed[] = $key;
+        });
+
+        $request = Request::create('/dashboard');
+        $request->setSession($session);
+
+        $authenticator = new SessionAuthenticator(
+            $this->urlGenerator,
+            null,
+            $this->clockAt('2026-03-18T10:15:39+00:00')
+        );
+
+        try {
+            $authenticator->authenticate($request);
+            $this->fail('An expired token must not authenticate.');
+        } catch (AuthenticationException $exception) {
+            $this->assertSame('Authentication token expired', $exception->getMessage());
+        }
+
+        // Credentials are dropped so /login does not bounce the browser back into the app.
+        $this->assertSame(['auth_token', 'auth_expiry_date', 'auth_id', 'admin_id'], $removed);
+    }
+
+    public function testAuthenticateAcceptsATokenThatHasNotExpiredYet(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(true);
+        $session->method('get')->with('auth_expiry_date')->willReturn('2026-03-18T14:15:38+04:00');
+        $session->expects($this->never())->method('remove');
+
+        $request = Request::create('/dashboard');
+        $request->setSession($session);
+
+        $authenticator = new SessionAuthenticator(
+            $this->urlGenerator,
+            null,
+            $this->clockAt('2026-03-18T10:15:37+00:00')
+        );
+
+        $this->assertInstanceOf(SelfValidatingPassport::class, $authenticator->authenticate($request));
+    }
+
+    public function testAuthenticateTreatsTheExpiryInstantAsExpired(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('has')->with('auth_token')->willReturn(true);
+        $session->method('get')->with('auth_expiry_date')->willReturn('2026-03-18T14:15:38+04:00');
+
+        $request = Request::create('/dashboard');
+        $request->setSession($session);
+
+        $authenticator = new SessionAuthenticator(
+            $this->urlGenerator,
+            null,
+            $this->clockAt('2026-03-18T10:15:38+00:00')
+        );
+
+        $this->expectException(AuthenticationException::class);
+
+        $authenticator->authenticate($request);
+    }
+
+    public function testAuthenticateDoesNotEnforceMissingOrUnparseableExpiry(): void
+    {
+        foreach ([null, '', 'not-a-date'] as $expiry) {
+            $session = $this->createMock(SessionInterface::class);
+            $session->method('has')->with('auth_token')->willReturn(true);
+            $session->method('get')->with('auth_expiry_date')->willReturn($expiry);
+
+            $request = Request::create('/dashboard');
+            $request->setSession($session);
+
+            $this->assertInstanceOf(SelfValidatingPassport::class, $this->authenticator->authenticate($request));
+        }
+    }
+
+    private function clockAt(string $now): ClockInterface
+    {
+        return new class (new DateTimeImmutable($now)) implements ClockInterface {
+            public function __construct(private readonly DateTimeImmutable $now)
+            {
+            }
+
+            public function now(): DateTimeImmutable
+            {
+                return $this->now;
+            }
+        };
     }
 }

@@ -7,18 +7,21 @@
         :class="[
         activeFilter === filter.id
           ? 'bg-ext-wf2 text-ext-wf1'
-          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 hover:bg-slate-200 dark:hover:bg-slate-700'
       ]"
         @click="toggleFilter(filter.id)"
     >
-      {{ filter.label }}
+      {{ t(`subscribers.filters.${filter.id}`) }}
     </button>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { subscriberFilters } from './subscriberFilters'
+
+const { t } = useI18n()
 
 const activeFilter = ref('all')
 

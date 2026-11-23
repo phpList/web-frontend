@@ -43,9 +43,19 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
             'paths' => [
                 $bundlePath . '/templates' => self::TWIG_NAMESPACE,
             ],
+            // base.html.twig needs it. Defined here, not only in config/packages/twig.yaml, because a host
+            // application (e.g. phplist/base-distribution) does not load this package's config/packages.
+            'globals' => [
+                'api_base_url' => '%app.api_base_url%',
+            ],
         ]);
 
         $container->prependExtensionConfig('framework', [
+            // The kernel's translator only scans core's resources; register this bundle's catalogues
+            // (frontend+intl-icu.<locale>.xlf for the admin UI, public.<locale>.phplist for legacy texts).
+            'translator' => [
+                'paths' => [$bundlePath . '/translations'],
+            ],
             'assets' => [
                 'packages' => [
                     self::ASSET_PACKAGE_NAME => [
@@ -57,6 +67,10 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
         ]);
 
         $container->prependExtensionConfig('security', [
+            // SessionAuthenticator re-authenticates from the session on every request. Migrating the session id
+            // each time would destroy the id that concurrent requests (XHR + navigation) still carry and log the
+            // user out. The session is migrated once at login instead (AuthenticationService::storeAuthentication).
+            'session_fixation_strategy' => 'none',
             'providers' => [
                 'in_memory' => ['memory' => null],
             ],

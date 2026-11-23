@@ -43,6 +43,11 @@ class PhpListFrontendExtension extends Extension implements PrependExtensionInte
             'paths' => [
                 $bundlePath . '/templates' => self::TWIG_NAMESPACE,
             ],
+            // base.html.twig needs it. Defined here, not only in config/packages/twig.yaml, because a host
+            // application (e.g. phplist/base-distribution) does not load this package's config/packages.
+            'globals' => [
+                'api_base_url' => '%app.api_base_url%',
+            ],
         ]);
 
         $container->prependExtensionConfig('framework', [

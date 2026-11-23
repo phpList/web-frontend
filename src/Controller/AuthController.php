@@ -50,7 +50,7 @@ class AuthController extends AbstractController
         }
 
         $error = $this->authenticationService->consumeLoginError($request);
-        $success = $request->get('reset') === 'success'
+        $success = $request->query->get('reset') === 'success'
             ? 'Your password has been reset successfully. Please sign in.'
             : null;
 
@@ -83,6 +83,7 @@ class AuthController extends AbstractController
         if ($username === '' || $password === '') {
             return $this->render('@PhpListFrontend/auth/login.html.twig', [
                 'error' => 'Username and password are required.',
+                'success' => null,
                 'redirect' => $redirectTarget,
             ]);
         }
@@ -186,7 +187,7 @@ class AuthController extends AbstractController
             ]);
         }
 
-        $token = (string) $request->get('uniqueId', '');
+        $token = (string) $request->query->get('uniqueId', '');
         if ($token === '' || !$this->authenticationService->isPasswordResetTokenValid($token)) {
             return $this->render('@PhpListFrontend/auth/reset_password.html.twig', [
                 'error' => $invalidTokenError,
@@ -271,6 +272,7 @@ class AuthController extends AbstractController
     {
         $response = $this->render($template, $parameters + [
             'error' => 'Too many attempts. Please wait a few minutes and try again.',
+            'success' => null,
         ]);
         $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
         $response->headers->set('Retry-After', (string) $this->throttle->getRetryAfterSeconds());
@@ -289,7 +291,7 @@ class AuthController extends AbstractController
 
     private function resolveRedirectTarget(Request $request): ?string
     {
-        $redirectTarget = $request->get('redirect');
+        $redirectTarget = $request->query->get('redirect') ?? $request->request->get('redirect');
         if (!is_string($redirectTarget)) {
             return null;
         }
